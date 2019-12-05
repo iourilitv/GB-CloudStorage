@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="center" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.2-internal" fx:controller="javafx.Controller">
+    <HBox VBox.vgrow="ALWAYS">
+        <ListView fx:id="clientFiles" HBox.hgrow="ALWAYS" />
+        <ListView fx:id="serverFiles" HBox.hgrow="ALWAYS" />
+    </HBox>
+    <HBox>
+        <Button maxWidth="Infinity" onAction="#btnClickSelectedClientFile" text="Selected Client File!" HBox.hgrow="ALWAYS" />
+        <Button maxWidth="Infinity" onAction="#btnClickSelectedServerFile" text="Selected Server File!" HBox.hgrow="ALWAYS" />
+    </HBox>
+    <Label fx:id="label" alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-background-color: #FFF;" text="..." textAlignment="CENTER">
+      <font>
+         <Font size="18.0" />
+      </font></Label>
+</VBox>
