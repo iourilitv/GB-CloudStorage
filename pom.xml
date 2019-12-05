@@ -12,6 +12,7 @@
         <module>client</module>
         <module>server</module>
         <module>network</module>
+        <module>jdbc</module>
     </modules>
 
     <properties>
