@@ -1,5 +1,3 @@
-package transfer;
-
 /**
  * A Class for file objects.
  */

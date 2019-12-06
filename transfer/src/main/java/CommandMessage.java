@@ -1,5 +1,3 @@
-package transfer;
-
 /**
  * A Class for communication commands between client and server.
  */

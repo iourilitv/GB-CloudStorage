@@ -1,5 +1,3 @@
-package transfer;
-
 /**
  * A Class for authorization commands from client to server.
  */

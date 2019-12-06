@@ -1,5 +1,3 @@
-package transfer;
-
 import java.io.Serializable;
 
 /**
