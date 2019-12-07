@@ -40,8 +40,8 @@ public class TCPConnectionByte {
                     while(!rxThread.isInterrupted()){
 
                         //TODO
-                        inComByte[0] = dis.readByte();
-                        eventListenerByte.onReceiveBytes(TCPConnectionByte.this, inComByte[0]);
+                        //слушаем вход соединения и читаем поступающие байты(пока они есть)
+                        eventListenerByte.onReceiveByte(TCPConnectionByte.this, dis.readByte());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

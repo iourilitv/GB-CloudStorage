@@ -10,4 +10,6 @@ public interface TCPConnectionListenerByte {
      * @param bytes - последовательность байт
      */
     void onReceiveBytes(TCPConnectionByte tcpConnectionByte, byte... bytes);
+
+    void onReceiveByte(TCPConnectionByte tcpConnectionByte, byte b);
 }

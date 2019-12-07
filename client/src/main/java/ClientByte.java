@@ -1,5 +1,5 @@
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ClientByte implements TCPConnectionListenerByte {
@@ -11,8 +11,12 @@ public class ClientByte implements TCPConnectionListenerByte {
     private final PrintStream log = System.out;
     //объявляем переменную сетевого соединения
     private TCPConnectionByte connection;
+    //объявляем объект файла
+    private File file;
 
     public ClientByte(){
+        //инициируем объект файла
+        file = new File("D:\\GeekBrains\\20191130_GB-Разработка_сетевого_хранилища_на_Java\\cloudstorage\\client\\src\\main\\resources\\files\\file1.txt");
         try {
             //инициируем переменную сетевого соединения
             connection = new TCPConnectionByte(this, IP_ADDR, PORT);//устанавливаем соединение при открытии окна
@@ -21,10 +25,29 @@ public class ClientByte implements TCPConnectionListenerByte {
         }
     }
 
-    public void send () {
-        byte [] arr = { 65 , 66 , 67 };
+    public void send () throws IOException {
+        byte [] arr = { 65 , 66 , 67 , -127};
+        //собираем байтовый массив из файла
+//        byte [] arr = readFile(file);
+
         connection.sendMessageObject(arr);
         printMsg("client sending bytes");
+    }
+
+    private byte[] readFile(File file) {
+        //TODO Длина файла в long!
+        byte[] array =  new byte[(int) file.length()];
+
+        try (InputStream in = new BufferedInputStream( new
+                FileInputStream( file ))) {
+            int x;
+            while ((x = in.read()) != - 1 ) {
+//                x;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return array;
     }
 
     //метод для работы с исключением. Т.к. он будет работать из разных потоков и окна, и соединения,
@@ -56,5 +79,10 @@ public class ClientByte implements TCPConnectionListenerByte {
     @Override
     public void onReceiveBytes(TCPConnectionByte tcpConnectionByte, byte... bytes) {
         System.out.println("Client input bytes array: " + Arrays.toString(bytes));
+    }
+
+    @Override
+    public void onReceiveByte(TCPConnectionByte tcpConnectionByte, byte b) {
+        System.out.println("Client input byte: " + b);
     }
 }
