@@ -1,3 +1,5 @@
+import java.io.BufferedInputStream;
+
 public interface TCPConnectionListenerByte {
     //возможные события
     void onConnectionReady(TCPConnectionByte tcpConnectionByte);//соединение установлено
@@ -12,4 +14,5 @@ public interface TCPConnectionListenerByte {
     void onReceiveBytes(TCPConnectionByte tcpConnectionByte, byte... bytes);
 
     void onReceiveByte(TCPConnectionByte tcpConnectionByte, byte b);
+
 }

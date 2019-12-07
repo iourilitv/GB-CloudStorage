@@ -63,6 +63,29 @@ public class TCPConnectionByte {
             disconnect();
         }
     }
+    public synchronized void sendByte(byte b){
+        try {
+            outCom.write(b);
+            outCom.flush();//принудительно передаем в сеть байт из буфера
+        } catch (IOException e) {
+            eventListenerByte.onException(TCPConnectionByte.this, e);
+            disconnect();
+        }
+    }
+
+//    public synchronized void sendByte(BufferedInputStream bis){
+//        try {
+//            int x;
+//            while((x = bis.read()) != -1){
+//                System.out.println("TCPConn.. x: " + x);
+//                outCom.write(x);
+//                outCom.flush();//принудительно передаем в сеть байты из буфера
+//            }
+//        } catch (IOException e) {
+//            eventListenerByte.onException(TCPConnectionByte.this, e);
+//            disconnect();
+//        }
+//    }
 
     public synchronized void disconnect(){
         rxThread.interrupt();

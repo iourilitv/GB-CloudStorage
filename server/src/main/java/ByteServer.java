@@ -13,23 +13,30 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
     private final ArrayList<TCPConnectionByte> connections = new ArrayList<>();
     //объявляем объект файла
     private File file;
+    //объявляем объект графического файла
+    private File fileG;
     //объявляем объект потока записи байтов в файл
     FileOutputStream fos;
     //объявляем объект буферезированного потока записи байтов в файл
     BufferedOutputStream bos;
 
     private ByteServer() throws IOException {
-        //инициируем объект файла
-        file = new File("D:\\GeekBrains\\20191130_GB-Разработка_сетевого_хранилища_на_Java\\cloudstorage\\server\\src\\main\\resources\\files\\fileS1.txt");
-        //создаем новый файл, если его нет и очищаем, если есть
-        file.createNewFile();
-        //удаляем файл по закрытию приложения
-        file.deleteOnExit();//TODO не работает, если останавливать в IDEA!
-        //инициируем объект потока записи байтов в файл
-//        fos = new FileOutputStream(file, true);//2-nd param = true - append to the file, instead of renew the file
-        fos = new FileOutputStream(file);
-        //инициируем объект буферезированного потока записи байтов в файл
-//        bos = new BufferedOutputStream(fos, 2);//2-nd param = 2 bytes - a size of buffer instead of 8192 in default
+//        //инициируем объект файла
+//        file = new File("D:\\GeekBrains\\20191130_GB-Разработка_сетевого_хранилища_на_Java\\cloudstorage\\server\\src\\main\\resources\\files\\fileS1.txt");
+//        //создаем новый файл, если его нет и очищаем, если есть
+//        file.createNewFile();
+//        //удаляем файл по закрытию приложения
+//        file.deleteOnExit();//TODO не работает, если останавливать в IDEA!
+//        //инициируем объект потока записи байтов в файл
+////        fos = new FileOutputStream(file, true);//2-nd param = true - append to the file, instead of renew the file
+//        fos = new FileOutputStream(file);
+//        //инициируем объект буферезированного потока записи байтов в файл
+////        bos = new BufferedOutputStream(fos, 2);//2-nd param = 2 bytes - a size of buffer instead of 8192 in default
+//        bos = new BufferedOutputStream(fos);
+
+        fileG = new File("D:\\GeekBrains\\20191130_GB-Разработка_сетевого_хранилища_на_Java\\cloudstorage\\server\\src\\main\\resources\\files\\acmp_ru.png");
+        fileG.createNewFile();
+        fos = new FileOutputStream(fileG);
         bos = new BufferedOutputStream(fos);
 
         System.out.println("Server running...");
@@ -112,7 +119,7 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
      */
     @Override
     public void onReceiveByte(TCPConnectionByte tcpConnectionByte, byte b) {
-        System.out.println("Server input byte: " + b);
+//        System.out.println("Server input byte: " + b);
         try {
             bos.write(b);
             bos.flush();
