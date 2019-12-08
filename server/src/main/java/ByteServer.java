@@ -25,19 +25,6 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
     BufferedOutputStream bos;
 
     private ByteServer() throws IOException {
-//        //инициируем объект файла
-//        file = new File("D:\\GeekBrains\\20191130_GB-Разработка_сетевого_хранилища_на_Java\\cloudstorage\\server\\src\\main\\resources\\files\\fileS1.txt");
-//        //создаем новый файл, если его нет и очищаем, если есть
-//        file.createNewFile();
-//        //удаляем файл по закрытию приложения
-//        file.deleteOnExit();//TODO не работает, если останавливать в IDEA!
-//        //инициируем объект потока записи байтов в файл
-////        fos = new FileOutputStream(file, true);//2-nd param = true - append to the file, instead of renew the file
-//        fos = new FileOutputStream(file);
-//        //инициируем объект буферезированного потока записи байтов в файл
-////        bos = new BufferedOutputStream(fos, 2);//2-nd param = 2 bytes - a size of buffer instead of 8192 in default
-//        bos = new BufferedOutputStream(fos);
-
         //инициируем объект графического файла
         fileG = new File(storageDir + "/" + fileName);
         fileG.createNewFile();
@@ -166,3 +153,15 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
     }
 }
 
+//        //инициируем объект файла
+//        file = new File("D:\\GeekBrains\\20191130_GB-Разработка_сетевого_хранилища_на_Java\\cloudstorage\\server\\src\\main\\resources\\files\\fileS1.txt");
+//        //создаем новый файл, если его нет и очищаем, если есть
+//        file.createNewFile();
+//        //удаляем файл по закрытию приложения
+//        file.deleteOnExit();//TODO не работает, если останавливать в IDEA!
+//        //инициируем объект потока записи байтов в файл
+////        fos = new FileOutputStream(file, true);//2-nd param = true - append to the file, instead of renew the file
+//        fos = new FileOutputStream(file);
+//        //инициируем объект буферезированного потока записи байтов в файл
+////        bos = new BufferedOutputStream(fos, 2);//2-nd param = 2 bytes - a size of buffer instead of 8192 in default
+//        bos = new BufferedOutputStream(fos);

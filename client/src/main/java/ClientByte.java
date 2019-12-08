@@ -29,14 +29,6 @@ public class ClientByte implements TCPConnectionListenerByte {
     BufferedInputStream bis;
 
     public ClientByte() throws FileNotFoundException {
-//        //инициируем объект файла
-//        file = new File("D:\\GeekBrains\\20191130_GB-Разработка_сетевого_хранилища_на_Java\\cloudstorage\\client\\src\\main\\resources\\files\\file1.txt");
-//        //инициируем объект потока чтения байтов из файла
-//        fis = new FileInputStream(file);
-//        //инициируем объект буферезированного потока чтения байтов из файла
-//        bis = new BufferedInputStream(fis);
-
-        //TODO
         //инициируем объект графического файла
         fileG = new File(storageDir + "/" + fileName);
 
@@ -132,3 +124,12 @@ public class ClientByte implements TCPConnectionListenerByte {
 //        System.out.println("Client input byte: " + b);
     }
 }
+
+//        //инициируем объект файла
+//        file = new File("D:\\GeekBrains\\20191130_GB-Разработка_сетевого_хранилища_на_Java\\cloudstorage\\client\\src\\main\\resources\\files\\file1.txt");
+//        //инициируем объект потока чтения байтов из файла
+//        fis = new FileInputStream(file);
+//        //инициируем объект буферезированного потока чтения байтов из файла
+//        bis = new BufferedInputStream(fis);
+
+//TODO
