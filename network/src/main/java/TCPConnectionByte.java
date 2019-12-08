@@ -42,6 +42,7 @@ public class TCPConnectionByte {
                         //TODO
                         //слушаем вход соединения и читаем поступающие байты(пока они есть)
                         eventListenerByte.onReceiveByte(TCPConnectionByte.this, dis.readByte());
+//                        eventListenerByte.onReceiveBytes(TCPConnectionByte.this, dis.readByte());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

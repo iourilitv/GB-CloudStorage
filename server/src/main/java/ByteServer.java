@@ -11,8 +11,12 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
 
     //создадим экземпляр ссылочного массива(список) установленных соединенией
     private final ArrayList<TCPConnectionByte> connections = new ArrayList<>();
+    //инициируем объект директории для хранения файлов клиента
+    private final File storageDir = new File("storage/server_storage");
     //объявляем объект файла
     private File file;
+    //инициируем объект имени файла
+    private String fileName = "acmp_ru.png";
     //объявляем объект графического файла
     private File fileG;
     //объявляем объект потока записи байтов в файл
@@ -34,7 +38,8 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
 ////        bos = new BufferedOutputStream(fos, 2);//2-nd param = 2 bytes - a size of buffer instead of 8192 in default
 //        bos = new BufferedOutputStream(fos);
 
-        fileG = new File("D:\\GeekBrains\\20191130_GB-Разработка_сетевого_хранилища_на_Java\\cloudstorage\\server\\src\\main\\resources\\files\\acmp_ru.png");
+        //инициируем объект графического файла
+        fileG = new File(storageDir + "/" + fileName);
         fileG.createNewFile();
         fos = new FileOutputStream(fileG);
         bos = new BufferedOutputStream(fos);
@@ -94,8 +99,8 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
      */
     @Override
     public void onReceiveBytes(TCPConnectionByte tcpConnectionByte, byte... bytes) {
-        System.out.println("Server input bytes array: " + Arrays.toString(bytes));
-
+//        System.out.println("Server input bytes array: " + Arrays.toString(bytes));
+//
 //        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes))) {
 //            Byte[] array;
 //            ArrayList<Byte> ab = new ArrayList<>();
@@ -119,7 +124,7 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
      */
     @Override
     public void onReceiveByte(TCPConnectionByte tcpConnectionByte, byte b) {
-//        System.out.println("Server input byte: " + b);
+        System.out.println("Server input byte: " + b);
         try {
             bos.write(b);
             bos.flush();
@@ -127,6 +132,28 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
             e.printStackTrace();
         }
     }
+//    public void onReceiveByte(TCPConnectionByte tcpConnectionByte, byte b) {
+//        System.out.println("Server input byte: " + b);
+//
+//        byte [] byteObj = null ;
+//        try (ByteArrayOutputStream barrOut = new ByteArrayOutputStream()) {
+//            barrOut.write(b);
+//            byteObj = barrOut.toByteArray();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        System.out.println("ByteServer.onReceiveByte byteObj: " + Arrays.toString(byteObj));
+//
+////        try (BufferedInputStream barrIn = new BufferedInputStream();
+////             ObjectInputStream objIn = new ObjectInputStream(barrIn)){
+////            CommandMessage commandMessage = (CommandMessage) objIn.readObject();
+////            bos.write(b);
+////            bos.flush();
+////        } catch (IOException e) {
+////            e.printStackTrace();
+////        }
+//    }
 
     //метод рассылки всем подключившимся сообщения об подключении/отключении пользователя
     private void sendToAllConnections(String value){

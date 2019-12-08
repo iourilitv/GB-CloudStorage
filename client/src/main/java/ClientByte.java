@@ -15,8 +15,12 @@ public class ClientByte implements TCPConnectionListenerByte {
     private final PrintStream log = System.out;
     //объявляем переменную сетевого соединения
     private TCPConnectionByte connection;
+    //инициируем объект директории для хранения файлов клиента
+    private final File storageDir = new File("storage/client_storage");
     //объявляем объект файла
     private File file;
+    //инициируем объект имени файла
+    private String fileName = "acmp_ru.png";
     //объявляем объект графического файла
     private File fileG;
     //объявляем объект потока чтения байтов из файла
@@ -31,10 +35,10 @@ public class ClientByte implements TCPConnectionListenerByte {
 //        fis = new FileInputStream(file);
 //        //инициируем объект буферезированного потока чтения байтов из файла
 //        bis = new BufferedInputStream(fis);
+
         //TODO
-        fileG = new File("D:\\GeekBrains\\20191130_GB-Разработка_сетевого_хранилища_на_Java\\cloudstorage\\client\\src\\main\\resources\\files\\acmp_ru.png");
-        fis = new FileInputStream(fileG);
-        bis = new BufferedInputStream(fis);
+        //инициируем объект графического файла
+        fileG = new File(storageDir + "/" + fileName);
 
         try {
             //инициируем переменную сетевого соединения
@@ -44,37 +48,17 @@ public class ClientByte implements TCPConnectionListenerByte {
         }
     }
 
-//    public void send () throws IOException {
-//        byte [] arr = { 65 , 66 , 67 , -127};
-//        //собираем байтовый массив из файла
-////        byte [] arr = readFile(file);
-//
-//        connection.sendMessageObject(arr);
-//        printMsg("client sending bytes");
-//    }
     public void send () throws IOException {
-    //читаем с помощью буферезированного потока данные из файла
-//    connection.sendByte(readFile(file));
-
+    //читаем и отправляем побайтно содержимое файла не зависимо от его типа
     readAndSendFile(fileG);
+//    readAndSendMessage(new CommandMessage(CommandMessage.CMD_MSG__REQUEST_FILES_LIST, fileG));
     printMsg("client sending bytes");
 }
 
-//    private BufferedInputStream readFile(/*File file*/) {
-//
-////        try (InputStream in = new BufferedInputStream( new
-////                FileInputStream( file ))) {
-//        try {
-//            int x;
-//            while ((x = bis.read()) != - 1 ) {
-////                System.out.println("ClientByte x: " + x);
-//                connection.sendByte((byte)x);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return bis;
-//    }
+    /**
+     * Метод читает файл и отправляет его на сервер побайтно
+     * @param file - объект файла
+     */
     private void readAndSendFile(File file) {
         try (InputStream in = new BufferedInputStream(new
                 FileInputStream(file))) {
@@ -83,6 +67,31 @@ public class ClientByte implements TCPConnectionListenerByte {
                 connection.sendByte((byte)x);
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void readAndSendMessage(AbstractMessage message) {
+        byte [] byteObj = null ;
+        try (ByteArrayOutputStream barrOut = new ByteArrayOutputStream();
+                ObjectOutputStream objOut = new ObjectOutputStream(barrOut)
+        ) {
+            objOut.writeObject(message);
+            byteObj = barrOut.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("ClientByte.readAndSendMessage byteObj: " + Arrays.toString(byteObj));
+
+        try (ByteArrayInputStream barrIn = new ByteArrayInputStream(byteObj)) {
+
+            int x;
+            while ((x = barrIn.read()) != - 1 ) {
+                connection.sendByte((byte)x);
+            }
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
