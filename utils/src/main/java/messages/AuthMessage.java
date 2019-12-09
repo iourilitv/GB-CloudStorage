@@ -21,9 +21,9 @@ public class AuthMessage extends AbstractMessage {
         return password;
     }
 
-//    public AuthMessage(String login, String password) {
-//        this.login = login;
-//        this.password = password;
-//    }
+    public AuthMessage(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
 }
 

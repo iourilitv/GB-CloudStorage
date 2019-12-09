@@ -1,4 +1,5 @@
 import messages.AbstractMessage;
+import messages.AuthMessage;
 import messages.CommandMessage;
 
 import java.io.*;
@@ -84,6 +85,13 @@ public void send () {
         //инициируем объект объекта сообщения, в котором завернуто сообщение типа "команда"
         messageObject = new MessageObject("Command",
                 new CommandMessage(storageDir, "file1.txt"));
+        out.writeObject(messageObject);
+
+//        out.close();//TODO
+        out = new ObjectOutputStream(connection.getSocket().getOutputStream());
+
+        messageObject = new MessageObject("Auth",
+                new AuthMessage("login1", "pass1"));
         out.writeObject(messageObject);
 
     } catch (IOException e) {

@@ -1,4 +1,5 @@
 import messages.AbstractMessage;
+import messages.AuthMessage;
 import messages.CommandMessage;
 
 import java.io.*;
@@ -110,19 +111,33 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
 //
 //            Files.write(Paths.get(storageDir, message.getFilename()), message.getData(), StandardOpenOption.CREATE);//TODO
 
-            System.out.println("ByteServer.onReceiveObject - messageObject.getMessageType(): " + messageObject.getMessageType() +
-                    ". messageObject.getMessage().getClass().getSimpleName(): " +
-                    messageObject.getMessage().getClass().getSimpleName() +
-                    ". messageObject.getMessage().getFilename(): " + messageObject.getMessage().getFilename() +
-                    ". Arrays.toString(messageObject.getMessage().getData()): " +
-                    Arrays.toString(messageObject.getMessage().getData()));
-
             switch (messageObject.getMessage().getClass().getSimpleName()){
                 case "CommandMessage":
-                    Files.write(Paths.get(storageDir, messageObject.getMessage().getFilename()),
-                            messageObject.getMessage().getData(), StandardOpenOption.CREATE);//TODO
-            }
+                    CommandMessage commandMessage = (CommandMessage) messageObject.getMessage();
+                    System.out.println("ByteServer.onReceiveObject - commandMessage.getFilename(): " +
+                            commandMessage.getFilename() +
+                            ". Arrays.toString(commandMessage.getData()): " +
+                            Arrays.toString(commandMessage.getData()));
+                    Files.write(Paths.get(storageDir, commandMessage.getFilename()),
+                            commandMessage.getData(), StandardOpenOption.CREATE);//TODO
+                    break;
+                case "AuthMessage":
+                    AuthMessage authMessage = (AuthMessage) messageObject.getMessage();
+                    System.out.println("ByteServer.onReceiveObject - commandMessage.getLogin(): " +
+                            authMessage.getLogin() +
+                            ". commandMessage.getPassword(): " + authMessage.getPassword());
+                    break;
 
+//                    System.out.println("ByteServer.onReceiveObject - messageObject.getMessageType(): " + messageObject.getMessageType() +
+//                            ". messageObject.getMessage().getClass().getSimpleName(): " +
+//                            messageObject.getMessage().getClass().getSimpleName() +
+//                            ". messageObject.getMessage().getFilename(): " + messageObject.getMessage().getFilename() +
+//                            ". Arrays.toString(messageObject.getMessage().getData()): " +
+//                            Arrays.toString(messageObject.getMessage().getData()));
+
+//                    Files.write(Paths.get(storageDir, messageObject.getMessage().getFilename()),
+//                            messageObject.getMessage().getData(), StandardOpenOption.CREATE);//TODO
+            }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
