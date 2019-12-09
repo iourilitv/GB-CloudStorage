@@ -1,5 +1,6 @@
 /client/target/
+/jdbc/target/
 /network/target/
 /server/target/
-/transfer/target/
+/utils/target/
 /target/
