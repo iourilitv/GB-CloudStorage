@@ -5,14 +5,14 @@ public class MainFile {
         new ClientByte().send();
 
         //***does not work
-//        FileMessage fileMessage = new FileMessage("files/file1.txt");
+//        messages.FileMessage fileMessage = new messages.FileMessage("files/file1.txt");
 //        System.out.println(fileMessage.fileName);
 //        //files/file1.txt
 //        System.out.println(fileMessage.file.exists());
 //        //false
 
         //***works
-//        FileMessage fileMessage = new FileMessage("D:\\GeekBrains\\20191130_GB-Разработка_сетевого_хранилища_на_Java\\cloudstorage\\client\\src\\main\\resources\\files\\file1.txt");
+//        messages.FileMessage fileMessage = new messages.FileMessage("D:\\GeekBrains\\20191130_GB-Разработка_сетевого_хранилища_на_Java\\cloudstorage\\client\\src\\main\\resources\\files\\file1.txt");
 //        System.out.println(fileMessage.fileName);
 //        //D:\GeekBrains\20191130_GB-Разработка_сетевого_хранилища_на_Java\cloudstorage\client\src\main\resources\files\file1.txt
 //        System.out.println(fileMessage.file.exists());
@@ -20,7 +20,7 @@ public class MainFile {
 //        System.out.println(fileMessage.file.createNewFile());
 
         //***works
-//        FileMessage fileMessage = new FileMessage("C:\\Users\\iurii\\Documents\\cloudstorage\\file1.txt");
+//        messages.FileMessage fileMessage = new messages.FileMessage("C:\\Users\\iurii\\Documents\\cloudstorage\\file1.txt");
 //        System.out.println(fileMessage.fileName);
 //        //C:\Users\iurii\Documents\cloudstorage\file1.txt
 //        System.out.println(fileMessage.file.exists());
@@ -35,7 +35,7 @@ public class MainFile {
 //        StringBuilder file = new StringBuilder("file1.txt");
 //        StringBuilder fileName = new StringBuilder();
 //        fileName.append(rootPath).append(file);
-//        FileMessage fileMessage = new FileMessage(fileName.toString());
+//        messages.FileMessage fileMessage = new messages.FileMessage(fileName.toString());
 //        System.out.println(fileMessage.fileName);
 //        //C:\Users\iurii\Documents\cloudstorage\file1.txt
 //        System.out.println(fileMessage.file.exists());
@@ -50,7 +50,7 @@ public class MainFile {
 //        StringBuilder file = new StringBuilder("file1.txt");
 //        StringBuilder fileName = new StringBuilder();
 //        fileName.append(rootPath).append(file);
-//        FileMessage fileMessage = new FileMessage(fileName.toString());
+//        messages.FileMessage fileMessage = new messages.FileMessage(fileName.toString());
 //        System.out.println(fileMessage.fileName);
 //        //jetbrains://idea/navigate/reference?project=cloudstorage&path=files/file1.txt
 //        System.out.println(fileMessage.file.exists());

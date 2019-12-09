@@ -1,3 +1,6 @@
+import messages.AbstractMessage;
+import messages.CommandMessage;
+
 import java.io.*;
 import java.util.Arrays;
 
@@ -23,14 +26,22 @@ public class ClientByte implements TCPConnectionListenerByte {
     private String fileName = "acmp_ru.png";
     //объявляем объект графического файла
     private File fileG;
+    //инициируем объект имени файла объекта команды(сообщения)
+    private String messageFileName = "massageFile.bin";
+    //объявляем объект файла объекта команды(сообщения)
+    private File messageFile;
     //объявляем объект потока чтения байтов из файла
     FileInputStream fis;
     //объявляем объект буферезированного потока чтения байтов из файла
     BufferedInputStream bis;
+    //объявляем объект команды(сообщения)
+    AbstractMessage message;
 
-    public ClientByte() throws FileNotFoundException {
+    public ClientByte() {
         //инициируем объект графического файла
         fileG = new File(storageDir + "/" + fileName);
+        //инициируем объект файла объекта команды(сообщения)
+        messageFile = new File(storageDir + "/" + messageFileName);
 
         try {
             //инициируем переменную сетевого соединения
@@ -40,12 +51,33 @@ public class ClientByte implements TCPConnectionListenerByte {
         }
     }
 
-    public void send () throws IOException {
+    public void send () {
     //читаем и отправляем побайтно содержимое файла не зависимо от его типа
-    readAndSendFile(fileG);
-//    readAndSendMessage(new CommandMessage(CommandMessage.CMD_MSG__REQUEST_FILES_LIST, fileG));
-    printMsg("client sending bytes");
+//    file = fileG;
+    //инициируем объект команды(сообщения)
+    message = new CommandMessage(CommandMessage.CMD_MSG__REQUEST_SERVER_DELETE_FILE, fileG);
+    //записываем объект команды во временный файл
+    writeDownMessageObjectToFile(message);
+    //отправляем на сервер побайтно содержимое файла
+    readAndSendFile(file);
+
+//    readAndSendMessage(new messages.CommandMessage(messages.CommandMessage.CMD_MSG__REQUEST_FILES_LIST, fileG));
+    printMsg("Client has sent the bytes.");
 }
+
+    private void writeDownMessageObjectToFile(AbstractMessage message){
+        file = new File(storageDir + "/" + messageFileName);
+        //в блоке трай с ресурсом(ами) записываем объект команды(сообщения) во временный файл
+        try(FileOutputStream fos = new FileOutputStream(file);
+            ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            //создаем файл, если его нет, или очищаем, если есть файл
+            file.createNewFile();
+            //записываем объект в файл с помощью потока
+            oos.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Метод читает файл и отправляет его на сервер побайтно
@@ -131,5 +163,3 @@ public class ClientByte implements TCPConnectionListenerByte {
 //        fis = new FileInputStream(file);
 //        //инициируем объект буферезированного потока чтения байтов из файла
 //        bis = new BufferedInputStream(fis);
-
-//TODO

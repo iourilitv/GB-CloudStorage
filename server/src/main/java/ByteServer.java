@@ -1,7 +1,9 @@
+import messages.AbstractMessage;
+import messages.CommandMessage;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ByteServer implements TCPConnectionListenerByte {//создаем слушателя прямо в этом классе
 
@@ -19,16 +21,25 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
     private String fileName = "acmp_ru.png";
     //объявляем объект графического файла
     private File fileG;
+    //инициируем объект имени файла объекта команды(сообщения)
+    private String messageFileName = "massageFile.bin";
+    //объявляем объект файла объекта команды(сообщения)
+    private File messageFile;
     //объявляем объект потока записи байтов в файл
     FileOutputStream fos;
     //объявляем объект буферезированного потока записи байтов в файл
     BufferedOutputStream bos;
+    //объявляем объект команды(сообщения)
+    AbstractMessage message;
 
     private ByteServer() throws IOException {
         //инициируем объект графического файла
         fileG = new File(storageDir + "/" + fileName);
         fileG.createNewFile();
-        fos = new FileOutputStream(fileG);
+        //инициируем объект файла объекта команды(сообщения)
+        messageFile = new File(storageDir + "/" + messageFileName);
+//        fos = new FileOutputStream(fileG);
+        fos = new FileOutputStream(messageFile);
         bos = new BufferedOutputStream(fos);
 
         System.out.println("Server running...");
@@ -111,10 +122,14 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
      */
     @Override
     public void onReceiveByte(TCPConnectionByte tcpConnectionByte, byte b) {
-        System.out.println("Server input byte: " + b);
+//        System.out.println("Server received byte: " + b);//TODO
         try {
             bos.write(b);
             bos.flush();
+
+//            if(bos.equals(CommandMessage.CMD_MSG__REQUEST_SERVER_DELETE_FILE)){
+//                System.out.println("onReceiveByte message" + message.toString());
+//            };
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -134,7 +149,7 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
 //
 ////        try (BufferedInputStream barrIn = new BufferedInputStream();
 ////             ObjectInputStream objIn = new ObjectInputStream(barrIn)){
-////            CommandMessage commandMessage = (CommandMessage) objIn.readObject();
+////            messages.CommandMessage commandMessage = (messages.CommandMessage) objIn.readObject();
 ////            bos.write(b);
 ////            bos.flush();
 ////        } catch (IOException e) {

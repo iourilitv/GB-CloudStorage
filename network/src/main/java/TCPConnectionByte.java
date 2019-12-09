@@ -55,7 +55,7 @@ public class TCPConnectionByte {
     }
 
     //TODO
-    public synchronized void sendMessageObject(byte [] arr/*AbstractMessage message*/){
+    public synchronized void sendMessageObject(byte [] arr/*messages.AbstractMessage message*/){
         try {
             outCom.write(arr);
             outCom.flush();//принудительно передаем в сеть строку их буфера
