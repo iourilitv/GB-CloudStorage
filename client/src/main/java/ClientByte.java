@@ -19,7 +19,8 @@ public class ClientByte implements TCPConnectionListenerByte {
     //объявляем переменную сетевого соединения
     private TCPConnectionByte connection;
     //инициируем объект директории для хранения файлов клиента
-    private final File storageDir = new File("storage/client_storage");
+//    private final File storageDir = new File("storage/client_storage");//TODO
+    private final String storageDir = "storage/client_storage";
     //объявляем объект файла
     private File file;
     //инициируем объект имени файла
@@ -27,7 +28,7 @@ public class ClientByte implements TCPConnectionListenerByte {
     //объявляем объект графического файла
     private File fileG;
     //инициируем объект имени файла объекта команды(сообщения)
-    private String messageFileName = "massageFile.bin";
+    private String messageFileName = "messageFile.bin";
     //объявляем объект файла объекта команды(сообщения)
     private File messageFile;
     //объявляем объект потока чтения байтов из файла
@@ -35,13 +36,14 @@ public class ClientByte implements TCPConnectionListenerByte {
     //объявляем объект буферезированного потока чтения байтов из файла
     BufferedInputStream bis;
     //объявляем объект команды(сообщения)
-    AbstractMessage message;
+    AbstractMessage message;//TODO
+//    FileFragment message;//TODO
 
     public ClientByte() {
-        //инициируем объект графического файла
-        fileG = new File(storageDir + "/" + fileName);
+//        //инициируем объект графического файла
+//        fileG = new File(storageDir + "/" + fileName);//TODO
         //инициируем объект файла объекта команды(сообщения)
-        messageFile = new File(storageDir + "/" + messageFileName);
+//        messageFile = new File(storageDir + "/" + messageFileName);
 
         try {
             //инициируем переменную сетевого соединения
@@ -51,17 +53,35 @@ public class ClientByte implements TCPConnectionListenerByte {
         }
     }
 
-    public void send () {
-    //читаем и отправляем побайтно содержимое файла не зависимо от его типа
-//    file = fileG;
-    //инициируем объект команды(сообщения)
-    message = new CommandMessage(CommandMessage.CMD_MSG__REQUEST_SERVER_DELETE_FILE, fileG);
-    //записываем объект команды во временный файл
-    writeDownMessageObjectToFile(message);
-    //отправляем на сервер побайтно содержимое файла
-    readAndSendFile(file);
+//    public void send () {
+////        //читаем и отправляем побайтно содержимое файла не зависимо от его типа
+////      file = fileG;//TODO
+//        //инициируем объект команды(сообщения)
+////      message = new CommandMessage(CommandMessage.CMD_MSG__REQUEST_SERVER_DELETE_FILE, fileG);
+//        try {
+//            message = new CommandMessage(storageDir, messageFileName);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        //записываем объект команды во временный файл
+//        writeDownMessageObjectToFile(message);
+//        //отправляем на сервер побайтно содержимое файла
+//        readAndSendFile(file);//TODO
+//
+////      readAndSendMessage(new messages.CommandMessage(messages.CommandMessage.CMD_MSG__REQUEST_FILES_LIST, fileG));
+//        printMsg("Client has sent the bytes.");
+//    }
+public void send () {
+    try {
+        ObjectOutputStream out = new ObjectOutputStream(connection.getSocket().getOutputStream());
+        message = new CommandMessage(storageDir, "file1.txt");//TODO
+//        message = new FileFragment(storageDir, messageFileName);
+//        message = new FileFragment(storageDir, "file1.txt");//TODO
+        out.writeObject(message);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
 
-//    readAndSendMessage(new messages.CommandMessage(messages.CommandMessage.CMD_MSG__REQUEST_FILES_LIST, fileG));
     printMsg("Client has sent the bytes.");
 }
 
@@ -154,6 +174,11 @@ public class ClientByte implements TCPConnectionListenerByte {
     @Override
     public void onReceiveByte(TCPConnectionByte tcpConnectionByte, byte b) {
 //        System.out.println("Client input byte: " + b);
+    }
+
+    @Override
+    public void onReceiveObject(TCPConnectionByte tcpConnectionByte, ObjectInputStream ois) {
+        System.out.println("Client received the object: ");
     }
 }
 

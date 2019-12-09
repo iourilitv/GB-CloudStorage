@@ -1,4 +1,6 @@
 import java.io.BufferedInputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public interface TCPConnectionListenerByte {
     //возможные события
@@ -14,5 +16,7 @@ public interface TCPConnectionListenerByte {
     void onReceiveBytes(TCPConnectionByte tcpConnectionByte, byte... bytes);
 
     void onReceiveByte(TCPConnectionByte tcpConnectionByte, byte b);
+
+    void onReceiveObject(TCPConnectionByte tcpConnectionByte, ObjectInputStream ois);
 
 }
