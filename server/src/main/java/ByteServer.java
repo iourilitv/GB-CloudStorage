@@ -35,8 +35,9 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
     //объявляем объект буферезированного потока записи байтов в файл
     BufferedOutputStream bos;
     //объявляем объект команды(сообщения)
-    AbstractMessage message;//TODO
+//    AbstractMessage message;//TODO
 //    FileFragment message;//TODO
+    MessageObject messageObject;//TODO
 
     private ByteServer() throws IOException {
 //        //инициируем объект графического файла
@@ -99,14 +100,28 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
     @Override
     public void onReceiveObject(TCPConnectionByte tcpConnectionByte, ObjectInputStream ois) {
         try {
-            message = (AbstractMessage)ois.readObject();//TODO
+//            message = (AbstractMessage)ois.readObject();//TODO
 //            message = (CommandMessage)ois.readObject();
 //            message = (FileFragment) ois.readObject();//TODO
+            messageObject = (MessageObject) ois.readObject();//TODO
 
-            System.out.println("ByteServer.onReceiveObject - message.getFilename(): " + message.getFilename() +
-                    ". message.getData(): " + Arrays.toString(message.getData()));
+//            System.out.println("ByteServer.onReceiveObject - message.getFilename(): " + message.getFilename() +
+//                    ". message.getData(): " + Arrays.toString(message.getData()));
+//
+//            Files.write(Paths.get(storageDir, message.getFilename()), message.getData(), StandardOpenOption.CREATE);//TODO
 
-            Files.write(Paths.get(storageDir, message.getFilename()), message.getData(), StandardOpenOption.CREATE);//TODO
+            System.out.println("ByteServer.onReceiveObject - messageObject.getMessageType(): " + messageObject.getMessageType() +
+                    ". messageObject.getMessage().getClass().getSimpleName(): " +
+                    messageObject.getMessage().getClass().getSimpleName() +
+                    ". messageObject.getMessage().getFilename(): " + messageObject.getMessage().getFilename() +
+                    ". Arrays.toString(messageObject.getMessage().getData()): " +
+                    Arrays.toString(messageObject.getMessage().getData()));
+
+            switch (messageObject.getMessage().getClass().getSimpleName()){
+                case "CommandMessage":
+                    Files.write(Paths.get(storageDir, messageObject.getMessage().getFilename()),
+                            messageObject.getMessage().getData(), StandardOpenOption.CREATE);//TODO
+            }
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

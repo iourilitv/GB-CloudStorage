@@ -7,7 +7,7 @@ import java.io.IOException;
  */
 public class FileListMessage extends AbstractMessage {
 
-    public FileListMessage(String root, String filename) throws IOException {//TODO
-        super(root, filename);
-    }
+//    public FileListMessage(String root, String filename) throws IOException {//TODO
+//        super(root, filename);
+//    }
 }

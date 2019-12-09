@@ -20,8 +20,8 @@ public class AbstractMessage implements Serializable {
         return data;
     }
 
-    public AbstractMessage(String root, String filename) throws IOException {
-        this.filename = filename;
-        this.data = Files.readAllBytes(Paths.get(root, filename));//TODO
-    }
+//    public AbstractMessage(String root, String filename) throws IOException {
+//        this.filename = filename;
+//        this.data = Files.readAllBytes(Paths.get(root, filename));//TODO
+//    }
 }
