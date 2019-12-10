@@ -1,5 +1,3 @@
-//import messages.AbstractMessage;
-
 import java.io.*;
 import java.net.Socket;
 
@@ -10,7 +8,8 @@ public class TCPConnection {
 
     //TODO
     //объявляем переменные для буферезированных входного и выходного потоков
-    private final BufferedOutputStream outCom;
+//    private final BufferedOutputStream outCom;//TODO
+
     //объявляем объект входящего потока для получения сериализованного объекта сообщения(команды)
     ObjectInputStream objectInputStream;
     //объявляем объект исходящего потока данных сериализованного объекта
@@ -23,11 +22,11 @@ public class TCPConnection {
     }
 
     //конструктор для создания соединения снаружи
-    public TCPConnection(TCPConnectionListener eventListener, Socket socket) throws IOException {
+    public TCPConnection(TCPConnectionListener eventListener, Socket socket) {
         this.eventListener = eventListener;
         this.socket = socket;
 
-        outCom = new BufferedOutputStream(new DataOutputStream(socket.getOutputStream()));
+//        outCom = new BufferedOutputStream(new DataOutputStream(socket.getOutputStream()));//TODO
 
         rxThread = new Thread(new Runnable() {
             @Override
@@ -50,22 +49,10 @@ public class TCPConnection {
         rxThread.start();
     }
 
-//    //FIXME
-//    //отправить сериализованный объект сообщения(команду)
-//    public synchronized void sendMessageObject(AbstractMessage messageObject){
-//        try {
-//            //инициируем объект исходящего потока данных сериализованного объекта
-//            objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-//            //передаем в исходящий поток сериализованный объект сообщения(команды)
-//            objectOutputStream.writeObject(messageObject);
-//
-//            System.out.println(socket + " has sent the object: " + messageObject.getClass().getSimpleName());
-//
-//        } catch (IOException e) {
-//            eventListener.onException(TCPConnection.this, e);
-//            disconnect();
-//        }
-//    }
+    /**
+     * Метод отправляет в сеть полученный сериализованный объект
+     * @param messageObject - сериализованный объект
+     */
     public synchronized void sendMessageObject(Object messageObject){
         try {
             //инициируем объект исходящего потока данных сериализованного объекта

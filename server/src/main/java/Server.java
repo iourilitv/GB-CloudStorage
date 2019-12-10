@@ -76,47 +76,7 @@ public class Server implements TCPConnectionListener {//создаем слуш�
         }
         //распознаем и обрабатываем полученный объект сообщения(команды)
         objectHandler.recognizeAndArrangeMessageObject(messageObject, storageDir);
-
-//        try {
-//            //десериализуем объект сообщения(команды)
-//            messageObject = (AbstractMessage) ois.readObject();
-//            //выполняем операции в зависимости от типа полученного сообщения(команды)
-//            switch (messageObject.getClass().getSimpleName()){
-//                case "CommandMessage":
-//                    CommandMessage commandMessage = (CommandMessage) messageObject;
-//                    System.out.println("ByteServer.onReceiveObject - commandMessage.getFilename(): " +
-//                            commandMessage.getFilename() +
-//                            ". Arrays.toString(commandMessage.getData()): " +
-//                            Arrays.toString(commandMessage.getData()));
-//                    Files.write(Paths.get(storageDir, commandMessage.getFilename()),
-//                            commandMessage.getData(), StandardOpenOption.CREATE);
-//                    break;
-//                case "AuthMessage":
-//                    AuthMessage authMessage = (AuthMessage) messageObject;
-//                    System.out.println("ByteServer.onReceiveObject - commandMessage.getLogin(): " +
-//                            authMessage.getLogin() +
-//                            ". commandMessage.getPassword(): " + authMessage.getPassword());
-//                    break;
-//            }
-//        } catch (IOException | ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
     }
-
-//    @Override //TODO
-//    public void sendMessageObject(AbstractMessage messageObject) {
-//        printMsg("Server has sent the object " + messageObject.getClass().getSimpleName());
-//    }
-
-//    //метод рассылки всем подключившимся сообщения об подключении/отключении пользователя
-//    private void sendToAllConnections(String value){//TODO
-//        System.out.println(value);//для отладки выводим сообщение в консоль
-//        final int cnt = connections.size();
-//        for (int i = 0; i < cnt; i++) {
-//            //TODO Использовать только для рассылки сервисных сообщений всем пользователям
-////            connections.get(i).sendMessageObject();
-//        }
-//    }
 
     //TODO
     private synchronized void printMsg(String msg){
@@ -260,3 +220,13 @@ public class Server implements TCPConnectionListener {//создаем слуш�
 
 //onDisconnect()
 //        sendToAllConnections("ClientByte disconnected: " + tcpConnection);//TODO
+
+//    //метод рассылки всем подключившимся сообщения об подключении/отключении пользователя
+//    private void sendToAllConnections(String value){//TODO
+//        System.out.println(value);//для отладки выводим сообщение в консоль
+//        final int cnt = connections.size();
+//        for (int i = 0; i < cnt; i++) {
+//            //TODO Использовать только для рассылки сервисных сообщений всем пользователям
+////            connections.get(i).sendMessageObject();
+//        }
+//    }
