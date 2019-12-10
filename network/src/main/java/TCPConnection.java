@@ -1,4 +1,4 @@
-import messages.AbstractMessage;
+//import messages.AbstractMessage;
 
 import java.io.*;
 import java.net.Socket;
@@ -50,9 +50,23 @@ public class TCPConnection {
         rxThread.start();
     }
 
-    //FIXME
-    //отправить сериализованный объект сообщения(команду)
-    public synchronized void sendMessageObject(AbstractMessage messageObject){
+//    //FIXME
+//    //отправить сериализованный объект сообщения(команду)
+//    public synchronized void sendMessageObject(AbstractMessage messageObject){
+//        try {
+//            //инициируем объект исходящего потока данных сериализованного объекта
+//            objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+//            //передаем в исходящий поток сериализованный объект сообщения(команды)
+//            objectOutputStream.writeObject(messageObject);
+//
+//            System.out.println(socket + " has sent the object: " + messageObject.getClass().getSimpleName());
+//
+//        } catch (IOException e) {
+//            eventListener.onException(TCPConnection.this, e);
+//            disconnect();
+//        }
+//    }
+    public synchronized void sendMessageObject(Object messageObject){
         try {
             //инициируем объект исходящего потока данных сериализованного объекта
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
