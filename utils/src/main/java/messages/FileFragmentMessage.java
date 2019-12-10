@@ -14,7 +14,7 @@ public class FileFragmentMessage extends AbstractMessage {
     private int currentFragNumber;
     //объявляем переменную общего количества фрагментов файла
     private int totalFragsNumber;
-
+    //FIXME переделать под фрагменты
     public FileFragmentMessage(String root, String filename) throws IOException {
         this.filename = filename;
         //читаем все данные из файла побайтно в байтовый массив

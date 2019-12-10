@@ -21,9 +21,10 @@ public class Server implements TCPConnectionListener {//создаем слуш�
     //инициируем строку названия директории для хранения файлов клиента
     private final String storageDir = "storage/server_storage";
     //объявляем объект сообщения(команды)
-    AbstractMessage messageObject;
+//    AbstractMessage messageObject;
+    private CommandMessage messageObject;
     //объявляем объект обработчика сообщений(команд)
-    ObjectHandler objectHandler;
+    private ObjectHandler objectHandler;
 
     private Server() {
 //        System.out.println("Server running...");//TODO
@@ -83,10 +84,20 @@ public class Server implements TCPConnectionListener {//создаем слуш�
     }
 
     @Override
+//    public void onReceiveObject(TCPConnection tcpConnection, ObjectInputStream ois) {
+//        //десериализуем объект сообщения(команды)
+//        try {
+//            messageObject = (AbstractMessage) ois.readObject();
+//        } catch (IOException | ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        //распознаем и обрабатываем полученный объект сообщения(команды)
+//        objectHandler.recognizeAndArrangeMessageObject(messageObject, storageDir);
+//    }
     public void onReceiveObject(TCPConnection tcpConnection, ObjectInputStream ois) {
         //десериализуем объект сообщения(команды)
         try {
-            messageObject = (AbstractMessage) ois.readObject();
+            messageObject = (CommandMessage) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
