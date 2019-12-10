@@ -9,8 +9,8 @@
         <module name="network" />
         <module name="client" />
         <module name="server" />
-        <module name="jdbc" />
         <module name="utils" />
+        <module name="jdbc" />
       </profile>
     </annotationProcessing>
   </component>
