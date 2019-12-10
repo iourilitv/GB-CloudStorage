@@ -10,23 +10,20 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ByteServer implements TCPConnectionListenerByte {//создаем слушателя прямо в этом классе
+public class Server implements TCPConnectionListener {//создаем слушателя прямо в этом классе
 
     public static void main(String[] args) throws IOException {
-        new ByteServer();
+        new Server();
     }
 
     //создадим экземпляр ссылочного массива(список) установленных соединенией
-    private final ArrayList<TCPConnectionByte> connections = new ArrayList<>();
+    private final ArrayList<TCPConnection> connections = new ArrayList<>();
     //инициируем строку названия директории для хранения файлов клиента
     private final String storageDir = "storage/server_storage";
-    //объявляем объект команды(сообщения)
-//    AbstractMessage message;//TODO
-//    FileFragment message;//TODO
-//    MessageObject messageObject;//TODO
+    //объявляем объект сообщения(команды)
     AbstractMessage messageObject;
 
-    private ByteServer() {
+    private Server() {
         System.out.println("Server running...");
         //создаем серверсокет, который слушает порт TCP:8189
         try(ServerSocket serverSocket = new ServerSocket(8189)){//это "try с ресурсом"
@@ -40,7 +37,7 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
                     //и как только соединение установилось он возвращает готовый объект сокета, который связан
                     //с этим соединением. Мы тут же передаем этот сокет в конструктор TCPConnection, включая и себя,
                     // как слушателя и создаем его экземпляр
-                    new TCPConnectionByte(this, serverSocket.accept());
+                    new TCPConnection(this, serverSocket.accept());
                 } catch(IOException e){
                     System.out.println("TCPConnection: " + e);
                 }
@@ -52,54 +49,27 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
 
     //синхронизируем методы, чтобы нельзя было в них попасть одновременно из разных потоков
     @Override
-    public void onConnectionReady(TCPConnectionByte tcpConnectionByte) {
+    public void onConnectionReady(TCPConnection tcpConnection) {
         //если соединение установлено, то добавляем его в список
-        connections.add(tcpConnectionByte);
-        sendToAllConnections("ClientByte connected: " + tcpConnectionByte);
+        connections.add(tcpConnection);
+        sendToAllConnections("ClientByte connected: " + tcpConnection);
         //при этом неявно вызовется переопределенный метод toString в tcpConnection //"TCPConnection: " + socket.getInetAddress() + ": " + socket.getPort();
     }
 
     @Override
-    public void onDisconnect(TCPConnectionByte tcpConnectionByte) {
+    public void onDisconnect(TCPConnection tcpConnection) {
         //если соединение отвалилось, то удаляем его из списка
-        connections.remove(tcpConnectionByte);
-        sendToAllConnections("ClientByte disconnected: " + tcpConnectionByte);
+        connections.remove(tcpConnection);
+        sendToAllConnections("ClientByte disconnected: " + tcpConnection);
     }
 
     @Override
-    public void onException(TCPConnectionByte tcpConnectionByte, Exception e) {
+    public void onException(TCPConnection tcpConnection, Exception e) {
         System.out.println("TCPConnectionByte exception: " + e);
     }
 
-//    @Override
-//    public void onReceiveObject(TCPConnectionByte tcpConnectionByte, ObjectInputStream ois) {
-//        try {
-//            //десериализуем объект сообщения(команды)
-//            messageObject = (MessageObject) ois.readObject();
-//            //выполняем операции в зависимости от типа полученного сообщения(команды)
-//            switch (messageObject.getMessage().getClass().getSimpleName()){
-//                case "CommandMessage":
-//                    CommandMessage commandMessage = (CommandMessage) messageObject.getMessage();
-//                    System.out.println("ByteServer.onReceiveObject - commandMessage.getFilename(): " +
-//                            commandMessage.getFilename() +
-//                            ". Arrays.toString(commandMessage.getData()): " +
-//                            Arrays.toString(commandMessage.getData()));
-//                    Files.write(Paths.get(storageDir, commandMessage.getFilename()),
-//                            commandMessage.getData(), StandardOpenOption.CREATE);
-//                    break;
-//                case "AuthMessage":
-//                    AuthMessage authMessage = (AuthMessage) messageObject.getMessage();
-//                    System.out.println("ByteServer.onReceiveObject - commandMessage.getLogin(): " +
-//                            authMessage.getLogin() +
-//                            ". commandMessage.getPassword(): " + authMessage.getPassword());
-//                    break;
-//            }
-//        } catch (IOException | ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//    }
     @Override
-    public void onReceiveObject(TCPConnectionByte tcpConnectionByte, ObjectInputStream ois) {
+    public void onReceiveObject(TCPConnection tcpConnection, ObjectInputStream ois) {
         try {
             //десериализуем объект сообщения(команды)
             messageObject = (AbstractMessage) ois.readObject();

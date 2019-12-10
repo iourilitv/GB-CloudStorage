@@ -4,10 +4,10 @@ import messages.CommandMessage;
 
 import java.io.*;
 
-public class ClientByte implements TCPConnectionListenerByte {
+public class Client implements TCPConnectionListener {
 
     public static void main(String[] args) throws IOException {
-        ClientByte clientByte = new ClientByte();
+        Client clientByte = new Client();
 //        clientByte.sendMessageObject(new CommandMessage(clientByte.getStorageDir(), "file1.txt"));
 //        clientByte.sendMessageObject(new AuthMessage("login1", "pass1"));
         clientByte.send();
@@ -20,7 +20,7 @@ public class ClientByte implements TCPConnectionListenerByte {
     //инициируем переменную для печати сообщений в консоль
     private final PrintStream log = System.out;
     //объявляем переменную сетевого соединения
-    private TCPConnectionByte connection;
+    private TCPConnection connection;
     //инициируем строку названия директории для хранения файлов клиента
     private final String storageDir = "storage/client_storage";
     //объявляем объект команды(сообщения)
@@ -28,11 +28,11 @@ public class ClientByte implements TCPConnectionListenerByte {
     //объявляем объект исходящего потока данных сериализованного объекта
     private ObjectOutputStream objectOutputStream;
 
-    public ClientByte() {
+    public Client() {
         try {
             //инициируем переменную сетевого соединения
             //устанавливаем соединение при открытии окна
-            connection = new TCPConnectionByte(this, IP_ADDR, PORT);
+            connection = new TCPConnection(this, IP_ADDR, PORT);
         } catch (IOException e) {
             printMsg("Connection exception: " + e);
         }
@@ -60,12 +60,12 @@ public class ClientByte implements TCPConnectionListenerByte {
     }
 
     @Override
-    public void onConnectionReady(TCPConnectionByte tcpConnectionByte) {
+    public void onConnectionReady(TCPConnection tcpConnection) {
         printMsg("Connection ready...");
     }
 
     @Override
-    public void onDisconnect(TCPConnectionByte tcpConnectionByte) {
+    public void onDisconnect(TCPConnection tcpConnection) {
         try {
             objectOutputStream.close();//TODO
         } catch (IOException e) {
@@ -75,12 +75,12 @@ public class ClientByte implements TCPConnectionListenerByte {
     }
 
     @Override
-    public void onException(TCPConnectionByte tcpConnectionByte, Exception e) {
+    public void onException(TCPConnection tcpConnection, Exception e) {
         printMsg("Connection exception: " + e);
     }
 
     @Override
-    public void onReceiveObject(TCPConnectionByte tcpConnectionByte, ObjectInputStream ois) {
+    public void onReceiveObject(TCPConnection tcpConnection, ObjectInputStream ois) {
         System.out.println("Client received the object: ");
     }
 

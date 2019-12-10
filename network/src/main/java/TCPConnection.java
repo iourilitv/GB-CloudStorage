@@ -1,10 +1,10 @@
 import java.io.*;
 import java.net.Socket;
 
-public class TCPConnectionByte {
+public class TCPConnection {
     private final Socket socket;
     private final Thread rxThread;
-    private final TCPConnectionListenerByte eventListenerByte;
+    private final TCPConnectionListener eventListenerByte;
 
     //TODO
     //объявляем переменные для буферезированных входного и выходного потоков
@@ -13,13 +13,13 @@ public class TCPConnectionByte {
     ObjectInputStream objectInputStream;
 
     //конструктор для создания соединения
-    public TCPConnectionByte(TCPConnectionListenerByte eventListenerByte, String ipAddr, int port) throws IOException {
+    public TCPConnection(TCPConnectionListener eventListenerByte, String ipAddr, int port) throws IOException {
         //создаем его на базе другого конструктора
         this(eventListenerByte, new Socket(ipAddr, port));
     }
 
     //конструктор для создания соединения снаружи
-    public TCPConnectionByte(TCPConnectionListenerByte eventListenerByte, Socket socket) throws IOException {
+    public TCPConnection(TCPConnectionListener eventListenerByte, Socket socket) throws IOException {
         this.eventListenerByte = eventListenerByte;
         this.socket = socket;
 
@@ -29,17 +29,17 @@ public class TCPConnectionByte {
             @Override
             public void run() {
                 try {
-                    eventListenerByte.onConnectionReady(TCPConnectionByte.this);
+                    eventListenerByte.onConnectionReady(TCPConnection.this);
                     while(!rxThread.isInterrupted()){
                         //инициируем объект входящего потока для получения сериализованного объекта сообщения(команды)
                         objectInputStream = new ObjectInputStream(socket.getInputStream());
                         //слушаем вход соединения и читаем поступающие байты(пока они есть)
-                        eventListenerByte.onReceiveObject(TCPConnectionByte.this, objectInputStream);//TODO
+                        eventListenerByte.onReceiveObject(TCPConnection.this, objectInputStream);//TODO
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
-                    eventListenerByte.onDisconnect(TCPConnectionByte.this);
+                    eventListenerByte.onDisconnect(TCPConnection.this);
                 }
             }
         });
@@ -52,7 +52,7 @@ public class TCPConnectionByte {
             outCom.write(arr);
             outCom.flush();//принудительно передаем в сеть строку их буфера
         } catch (IOException e) {
-            eventListenerByte.onException(TCPConnectionByte.this, e);
+            eventListenerByte.onException(TCPConnection.this, e);
             disconnect();
         }
     }
@@ -65,7 +65,7 @@ public class TCPConnectionByte {
 
             socket.close();
         } catch (IOException e) {
-            eventListenerByte.onException(TCPConnectionByte.this, e);
+            eventListenerByte.onException(TCPConnection.this, e);
         }
     }
 
