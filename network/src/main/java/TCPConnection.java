@@ -51,6 +51,7 @@ public class TCPConnection {
     }
 
     //FIXME
+    //отправить сериализованный объект сообщения(команду)
     public synchronized void sendMessageObject(AbstractMessage messageObject){
         try {
             //инициируем объект исходящего потока данных сериализованного объекта

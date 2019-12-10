@@ -20,9 +20,6 @@ public class Client implements TCPConnectionListener {
     //инициируем строку названия директории для хранения файлов клиента
     private final String storageDir = "storage/client_storage";
 
-//    //объявляем объект исходящего потока данных сериализованного объекта
-//    private ObjectOutputStream objectOutputStream;//TODO
-
     public Client() {
         try {
             //инициируем переменную сетевого соединения
@@ -38,27 +35,6 @@ public class Client implements TCPConnectionListener {
         connection.sendMessageObject(new AuthMessage("login1", "pass1"));
     }
 
-//    @Override
-//    public void sendMessageObject(AbstractMessage messageObject) {
-//        printMsg("Client has sent the object " + messageObject.getClass().getSimpleName());
-//    }
-
-//    public void sendMessageObject (AbstractMessage messageObject) {
-//        try {
-//            //инициируем объект исходящего потока данных сериализованного объекта
-//            objectOutputStream = new ObjectOutputStream(connection.getSocket().getOutputStream());
-//            //передаем в исходящий поток сериализованный объект сообщения(команды)
-//            objectOutputStream.writeObject(messageObject);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        printMsg("Client has sent the object " + messageObject.getClass().getSimpleName());
-//    }
-
-    private synchronized void printMsg(String msg){
-        log.append(msg).append("\n");
-    }
-
     @Override
     public void onConnectionReady(TCPConnection tcpConnection) {
         printMsg("Connection ready...");
@@ -66,11 +42,6 @@ public class Client implements TCPConnectionListener {
 
     @Override
     public void onDisconnect(TCPConnection tcpConnection) {
-//        try {
-//            objectOutputStream.close();//TODO Delete
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
         printMsg("Connection close");
     }
 
@@ -86,6 +57,10 @@ public class Client implements TCPConnectionListener {
 
     public String getStorageDir() {
         return storageDir;
+    }
+
+    private synchronized void printMsg(String msg){
+        log.append(msg).append("\n");
     }
 }
 

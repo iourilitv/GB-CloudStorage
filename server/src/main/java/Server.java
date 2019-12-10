@@ -54,17 +54,12 @@ public class Server implements TCPConnectionListener {//создаем слуш�
     public void onConnectionReady(TCPConnection tcpConnection) {
         //если соединение установлено, то добавляем его в список
         connections.add(tcpConnection);
-
-//        sendToAllConnections("ClientByte connected: " + tcpConnection);//TODO
-        //при этом неявно вызовется переопределенный метод toString в tcpConnection //"TCPConnection: " + socket.getInetAddress() + ": " + socket.getPort();
     }
 
     @Override
     public void onDisconnect(TCPConnection tcpConnection) {
         //если соединение отвалилось, то удаляем его из списка
         connections.remove(tcpConnection);
-
-//        sendToAllConnections("ClientByte disconnected: " + tcpConnection);//TODO
     }
 
     @Override
@@ -250,3 +245,10 @@ public class Server implements TCPConnectionListener {//создаем слуш�
 ////            e.printStackTrace();
 ////        }
 //    }
+
+//onConnectionReady()
+//        sendToAllConnections("ClientByte connected: " + tcpConnection);//TODO
+//при этом неявно вызовется переопределенный метод toString в tcpConnection //"TCPConnection: " + socket.getInetAddress() + ": " + socket.getPort();
+
+//onDisconnect()
+//        sendToAllConnections("ClientByte disconnected: " + tcpConnection);//TODO
