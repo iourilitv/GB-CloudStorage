@@ -7,10 +7,7 @@ import java.io.*;
 public class Client implements TCPConnectionListener {
 
     public static void main(String[] args) throws IOException {
-        Client clientByte = new Client();
-//        clientByte.sendMessageObject(new CommandMessage(clientByte.getStorageDir(), "file1.txt"));
-//        clientByte.sendMessageObject(new AuthMessage("login1", "pass1"));
-        clientByte.send();
+        new Client().send();
     }
 
     //инициируем константу IP адреса сервера(здесь - адрес моего ноута в домашней локальной сети)
@@ -23,8 +20,6 @@ public class Client implements TCPConnectionListener {
     private TCPConnection connection;
     //инициируем строку названия директории для хранения файлов клиента
     private final String storageDir = "storage/client_storage";
-    //объявляем объект команды(сообщения)
-//    MessageObject messageObject;//TODO
     //объявляем объект исходящего потока данных сериализованного объекта
     private ObjectOutputStream objectOutputStream;
 

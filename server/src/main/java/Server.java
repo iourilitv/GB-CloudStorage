@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 public class Server implements TCPConnectionListener {//создаем слушателя прямо в этом классе
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         new Server();
     }
 
@@ -103,6 +103,7 @@ public class Server implements TCPConnectionListener {//создаем слуш�
         for (int i = 0; i < cnt; i++) {
             //TODO Использовать только для рассылки сервисных сообщений всем пользователям
 //            connections.get(i).sendMessageObject();
+            System.out.println("TODO Delete");//TODO Delete
         }
     }
 }
