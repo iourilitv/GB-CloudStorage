@@ -1,14 +1,9 @@
+import handlers.ObjectHandler;
 import messages.AbstractMessage;
-import messages.AuthMessage;
-import messages.CommandMessage;
 
 import java.io.*;
 import java.net.ServerSocket;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Server implements TCPConnectionListener {//создаем слушателя прямо в этом классе
 
@@ -24,9 +19,13 @@ public class Server implements TCPConnectionListener {//создаем слуш�
     private final String storageDir = "storage/server_storage";
     //объявляем объект сообщения(команды)
     AbstractMessage messageObject;
+    //объявляем объект обработчика сообщений(команд)
+    ObjectHandler objectHandler;//TODO
 
     private Server() {
         System.out.println("Server running...");
+        //инициируем объект обработчика сообщений(команд)
+        objectHandler = new ObjectHandler();//TODO
         //создаем серверсокет, который слушает порт TCP:8189
         try(ServerSocket serverSocket = new ServerSocket(8189)){//это "try с ресурсом"
             //сервер слушает входящие соединения
@@ -69,30 +68,39 @@ public class Server implements TCPConnectionListener {//создаем слуш�
 
     @Override
     public void onReceiveObject(TCPConnection tcpConnection, ObjectInputStream ois) {
+        //десериализуем объект сообщения(команды)
         try {
-            //десериализуем объект сообщения(команды)
             messageObject = (AbstractMessage) ois.readObject();
-            //выполняем операции в зависимости от типа полученного сообщения(команды)
-            switch (messageObject.getClass().getSimpleName()){
-                case "CommandMessage":
-                    CommandMessage commandMessage = (CommandMessage) messageObject;
-                    System.out.println("ByteServer.onReceiveObject - commandMessage.getFilename(): " +
-                            commandMessage.getFilename() +
-                            ". Arrays.toString(commandMessage.getData()): " +
-                            Arrays.toString(commandMessage.getData()));
-                    Files.write(Paths.get(storageDir, commandMessage.getFilename()),
-                            commandMessage.getData(), StandardOpenOption.CREATE);
-                    break;
-                case "AuthMessage":
-                    AuthMessage authMessage = (AuthMessage) messageObject;
-                    System.out.println("ByteServer.onReceiveObject - commandMessage.getLogin(): " +
-                            authMessage.getLogin() +
-                            ". commandMessage.getPassword(): " + authMessage.getPassword());
-                    break;
-            }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+        //распознаем и обрабатываем полученный объект сообщения(команды)
+        objectHandler.recognizeAndArrangeMessageObject(messageObject, storageDir);
+
+//        try {
+//            //десериализуем объект сообщения(команды)
+//            messageObject = (AbstractMessage) ois.readObject();
+//            //выполняем операции в зависимости от типа полученного сообщения(команды)
+//            switch (messageObject.getClass().getSimpleName()){
+//                case "CommandMessage":
+//                    CommandMessage commandMessage = (CommandMessage) messageObject;
+//                    System.out.println("ByteServer.onReceiveObject - commandMessage.getFilename(): " +
+//                            commandMessage.getFilename() +
+//                            ". Arrays.toString(commandMessage.getData()): " +
+//                            Arrays.toString(commandMessage.getData()));
+//                    Files.write(Paths.get(storageDir, commandMessage.getFilename()),
+//                            commandMessage.getData(), StandardOpenOption.CREATE);
+//                    break;
+//                case "AuthMessage":
+//                    AuthMessage authMessage = (AuthMessage) messageObject;
+//                    System.out.println("ByteServer.onReceiveObject - commandMessage.getLogin(): " +
+//                            authMessage.getLogin() +
+//                            ". commandMessage.getPassword(): " + authMessage.getPassword());
+//                    break;
+//            }
+//        } catch (IOException | ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
     }
 
 //    @Override //TODO
