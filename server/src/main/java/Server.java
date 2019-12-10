@@ -18,6 +18,8 @@ public class Server implements TCPConnectionListener {//создаем слуш�
 
     //создадим экземпляр ссылочного массива(список) установленных соединенией
     private final ArrayList<TCPConnection> connections = new ArrayList<>();
+    //инициируем переменную для печати сообщений в консоль
+    private final PrintStream log = System.out;
     //инициируем строку названия директории для хранения файлов клиента
     private final String storageDir = "storage/server_storage";
     //объявляем объект сообщения(команды)
@@ -52,7 +54,8 @@ public class Server implements TCPConnectionListener {//создаем слуш�
     public void onConnectionReady(TCPConnection tcpConnection) {
         //если соединение установлено, то добавляем его в список
         connections.add(tcpConnection);
-        sendToAllConnections("ClientByte connected: " + tcpConnection);
+
+//        sendToAllConnections("ClientByte connected: " + tcpConnection);//TODO
         //при этом неявно вызовется переопределенный метод toString в tcpConnection //"TCPConnection: " + socket.getInetAddress() + ": " + socket.getPort();
     }
 
@@ -60,7 +63,8 @@ public class Server implements TCPConnectionListener {//создаем слуш�
     public void onDisconnect(TCPConnection tcpConnection) {
         //если соединение отвалилось, то удаляем его из списка
         connections.remove(tcpConnection);
-        sendToAllConnections("ClientByte disconnected: " + tcpConnection);
+
+//        sendToAllConnections("ClientByte disconnected: " + tcpConnection);//TODO
     }
 
     @Override
@@ -96,15 +100,24 @@ public class Server implements TCPConnectionListener {//создаем слуш�
         }
     }
 
-    //метод рассылки всем подключившимся сообщения об подключении/отключении пользователя
-    private void sendToAllConnections(String value){
-        System.out.println(value);//для отладки выводим сообщение в консоль
-        final int cnt = connections.size();
-        for (int i = 0; i < cnt; i++) {
-            //TODO Использовать только для рассылки сервисных сообщений всем пользователям
-//            connections.get(i).sendMessageObject();
-            System.out.println("TODO Delete");//TODO Delete
-        }
+//    @Override //TODO
+//    public void sendMessageObject(AbstractMessage messageObject) {
+//        printMsg("Server has sent the object " + messageObject.getClass().getSimpleName());
+//    }
+
+//    //метод рассылки всем подключившимся сообщения об подключении/отключении пользователя
+//    private void sendToAllConnections(String value){//TODO
+//        System.out.println(value);//для отладки выводим сообщение в консоль
+//        final int cnt = connections.size();
+//        for (int i = 0; i < cnt; i++) {
+//            //TODO Использовать только для рассылки сервисных сообщений всем пользователям
+////            connections.get(i).sendMessageObject();
+//        }
+//    }
+
+    //TODO
+    private synchronized void printMsg(String msg){
+        log.append(msg).append("\n");
     }
 }
 

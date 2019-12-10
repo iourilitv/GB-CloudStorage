@@ -1,4 +1,3 @@
-import messages.AbstractMessage;
 import messages.AuthMessage;
 import messages.CommandMessage;
 
@@ -20,8 +19,9 @@ public class Client implements TCPConnectionListener {
     private TCPConnection connection;
     //инициируем строку названия директории для хранения файлов клиента
     private final String storageDir = "storage/client_storage";
-    //объявляем объект исходящего потока данных сериализованного объекта
-    private ObjectOutputStream objectOutputStream;
+
+//    //объявляем объект исходящего потока данных сериализованного объекта
+//    private ObjectOutputStream objectOutputStream;//TODO
 
     public Client() {
         try {
@@ -34,21 +34,26 @@ public class Client implements TCPConnectionListener {
     }
 
     public void send () throws IOException {
-        sendMessageObject(new CommandMessage(storageDir, "file1.txt"));
-        sendMessageObject(new AuthMessage("login1", "pass1"));
+        connection.sendMessageObject(new CommandMessage(storageDir, "file1.txt"));
+        connection.sendMessageObject(new AuthMessage("login1", "pass1"));
     }
 
-    public void sendMessageObject (AbstractMessage messageObject) {
-        try {
-            //инициируем объект исходящего потока данных сериализованного объекта
-            objectOutputStream = new ObjectOutputStream(connection.getSocket().getOutputStream());
-            //передаем в исходящий поток сериализованный объект сообщения(команды)
-            objectOutputStream.writeObject(messageObject);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        printMsg("Client has sent the object " + messageObject.getClass().getSimpleName());
-    }
+//    @Override
+//    public void sendMessageObject(AbstractMessage messageObject) {
+//        printMsg("Client has sent the object " + messageObject.getClass().getSimpleName());
+//    }
+
+//    public void sendMessageObject (AbstractMessage messageObject) {
+//        try {
+//            //инициируем объект исходящего потока данных сериализованного объекта
+//            objectOutputStream = new ObjectOutputStream(connection.getSocket().getOutputStream());
+//            //передаем в исходящий поток сериализованный объект сообщения(команды)
+//            objectOutputStream.writeObject(messageObject);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        printMsg("Client has sent the object " + messageObject.getClass().getSimpleName());
+//    }
 
     private synchronized void printMsg(String msg){
         log.append(msg).append("\n");
@@ -61,11 +66,11 @@ public class Client implements TCPConnectionListener {
 
     @Override
     public void onDisconnect(TCPConnection tcpConnection) {
-        try {
-            objectOutputStream.close();//TODO
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            objectOutputStream.close();//TODO Delete
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         printMsg("Connection close");
     }
 

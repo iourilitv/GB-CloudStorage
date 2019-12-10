@@ -1,3 +1,5 @@
+import messages.AbstractMessage;
+
 import java.io.ObjectInputStream;
 
 public interface TCPConnectionListener {
@@ -7,5 +9,6 @@ public interface TCPConnectionListener {
     void onException(TCPConnection tcpConnection, Exception e);//что-то пошло не так и появилось исключение
     //получен сериализованный объект сообщения(объект команды)
     void onReceiveObject(TCPConnection tcpConnection, ObjectInputStream ois);
-
+//    //отправить сериализованный объект сообщения(команду)
+//    void sendMessageObject(AbstractMessage messageObject);
 }

@@ -1,3 +1,5 @@
+import messages.AbstractMessage;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -11,6 +13,8 @@ public class TCPConnection {
     private final BufferedOutputStream outCom;
     //объявляем объект входящего потока для получения сериализованного объекта сообщения(команды)
     ObjectInputStream objectInputStream;
+    //объявляем объект исходящего потока данных сериализованного объекта
+    private ObjectOutputStream objectOutputStream;
 
     //конструктор для создания соединения
     public TCPConnection(TCPConnectionListener eventListener, String ipAddr, int port) throws IOException {
@@ -47,10 +51,15 @@ public class TCPConnection {
     }
 
     //FIXME
-    public synchronized void sendMessageObject(byte [] arr/*messages.AbstractMessage message*/){
+    public synchronized void sendMessageObject(AbstractMessage messageObject){
         try {
-            outCom.write(arr);
-            outCom.flush();//принудительно передаем в сеть строку их буфера
+            //инициируем объект исходящего потока данных сериализованного объекта
+            objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            //передаем в исходящий поток сериализованный объект сообщения(команды)
+            objectOutputStream.writeObject(messageObject);
+
+            System.out.println(socket + " has sent the object: " + messageObject.getClass().getSimpleName());
+
         } catch (IOException e) {
             eventListener.onException(TCPConnection.this, e);
             disconnect();
@@ -62,6 +71,7 @@ public class TCPConnection {
         try {
 
             objectInputStream.close();//TODO
+            objectOutputStream.close();//TODO
 
             socket.close();
         } catch (IOException e) {
@@ -89,6 +99,16 @@ public class TCPConnection {
 //            outCom.flush();//принудительно передаем в сеть байт из буфера
 //        } catch (IOException e) {
 //            eventListenerByte.onException(TCPConnectionByte.this, e);
+//            disconnect();
+//        }
+//    }
+
+//    public synchronized void sendMessageObject(byte [] arr/*messages.AbstractMessage message*/){
+//        try {
+//            outCom.write(arr);
+//            outCom.flush();//принудительно передаем в сеть строку их буфера
+//        } catch (IOException e) {
+//            eventListener.onException(TCPConnection.this, e);
 //            disconnect();
 //        }
 //    }
