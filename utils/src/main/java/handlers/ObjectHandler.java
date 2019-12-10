@@ -3,12 +3,29 @@ package handlers;
 import messages.*;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 
 public class ObjectHandler {
+
+    public void recognizeAndArrangeMessageObject(CommandMessage messageObject, String storageDir) {
+        try {
+            //выполняем операции в зависимости от типа полученного сообщения(команды)
+            switch (messageObject.getCommand()){
+                case CommandMessage.CMD_MSG_REQUEST_FILE_UPLOAD:
+                    UploadCommandHandler uploadCommandHandler = (UploadCommandHandler)messageObject.getCommandHandler();
+                    uploadCommandHandler.uploadFile(storageDir);
+                    break;
+                case CommandMessage.CMD_MSG_REQUEST_AUTH:
+                    ServiceCommandHandler serviceCommandHandler = (ServiceCommandHandler) messageObject.getCommandHandler();
+                    serviceCommandHandler.authorizeUser();
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+//TODO Delete at the finish.
 
 //    public void recognizeAndArrangeMessageObject(AbstractMessage messageObject, String storageDir) {
 //        try {
@@ -70,22 +87,3 @@ public class ObjectHandler {
 //            e.printStackTrace();
 //        }
 //    }
-
-    public void recognizeAndArrangeMessageObject(CommandMessage messageObject, String storageDir) {
-        try {
-            //выполняем операции в зависимости от типа полученного сообщения(команды)
-            switch (messageObject.getCommand()){
-                case CommandMessage.CMD_MSG_REQUEST_FILE_UPLOAD:
-                    UploadCommandHandler uploadCommandHandler = (UploadCommandHandler)messageObject.getCommandHandler();
-                    uploadCommandHandler.uploadFile(storageDir);
-                    break;
-                case CommandMessage.CMD_MSG_REQUEST_AUTH:
-                    ServiceCommandHandler serviceCommandHandler = (ServiceCommandHandler) messageObject.getCommandHandler();
-                    serviceCommandHandler.authorizeUser();
-                    break;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-}

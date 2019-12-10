@@ -22,12 +22,9 @@ public class Client implements TCPConnectionListener {
     //инициируем строку названия директории для хранения файлов клиента
     private final String storageDir = "storage/client_storage";
     //объявляем объект сообщения(команды)
-//    AbstractMessage messageObject;
     private CommandMessage messageObject;
     //объявляем объект обработчика сообщений(команд)
     private ObjectHandler objectHandler;
-//    //объявляем объект обработчика команды на сохранение файла
-//    private UploadCommandHandler uploadCommandHandler;
 
     public Client() {
         //инициируем объект обработчика сообщений(команд)
@@ -42,14 +39,8 @@ public class Client implements TCPConnectionListener {
     }
 
     public void send () throws IOException {
-//        connection.sendMessageObject(new CommandMessage(storageDir, "file1.txt"));
-//        connection.sendMessageObject(new FileFragmentMessage(storageDir, "file1.txt"));
-//        connection.sendMessageObject(new FileMessage(storageDir, "file1.txt"));
-
         connection.sendMessageObject(new CommandMessage(CommandMessage.CMD_MSG_REQUEST_FILE_UPLOAD,
                 new UploadCommandHandler(new FileMessage(storageDir, "file1.txt"))));
-
-//        connection.sendMessageObject(new AuthMessage("login1", "pass1"));
 
         connection.sendMessageObject(new CommandMessage(CommandMessage.CMD_MSG_REQUEST_AUTH,
                 new ServiceCommandHandler(new AuthMessage("login1", "pass1"))));
@@ -71,9 +62,6 @@ public class Client implements TCPConnectionListener {
     }
 
     @Override
-//    public void onReceiveObject(TCPConnection tcpConnection, ObjectInputStream ois) {
-//        System.out.println("Client received the object: ");
-//    }
     public void onReceiveObject(TCPConnection tcpConnection, ObjectInputStream ois) {
         //десериализуем объект сообщения(команды)
         try {

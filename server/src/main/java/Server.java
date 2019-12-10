@@ -5,7 +5,6 @@ import messages.CommandMessage;
 
 import java.io.*;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 
 public class Server implements TCPConnectionListener {//создаем слушателя прямо в этом классе
@@ -21,13 +20,11 @@ public class Server implements TCPConnectionListener {//создаем слуш�
     //инициируем строку названия директории для хранения файлов клиента
     private final String storageDir = "storage/server_storage";
     //объявляем объект сообщения(команды)
-//    AbstractMessage messageObject;
     private CommandMessage messageObject;
     //объявляем объект обработчика сообщений(команд)
     private ObjectHandler objectHandler;
 
     private Server() {
-//        System.out.println("Server running...");//TODO
         printMsg("Server running...");
         //инициируем объект обработчика сообщений(команд)
         objectHandler = new ObjectHandler();
@@ -84,16 +81,6 @@ public class Server implements TCPConnectionListener {//создаем слуш�
     }
 
     @Override
-//    public void onReceiveObject(TCPConnection tcpConnection, ObjectInputStream ois) {
-//        //десериализуем объект сообщения(команды)
-//        try {
-//            messageObject = (AbstractMessage) ois.readObject();
-//        } catch (IOException | ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        //распознаем и обрабатываем полученный объект сообщения(команды)
-//        objectHandler.recognizeAndArrangeMessageObject(messageObject, storageDir);
-//    }
     public void onReceiveObject(TCPConnection tcpConnection, ObjectInputStream ois) {
         //десериализуем объект сообщения(команды)
         try {
