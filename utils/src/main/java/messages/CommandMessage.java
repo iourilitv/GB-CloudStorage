@@ -25,19 +25,18 @@ public class CommandMessage extends AbstractMessage {
         return attachment;
     }
 
-//    public CommandMessage(int type, Object... attachment) {
-//        super();
-//        this.type = type;
-//        this.attachment = attachment;
-//    }
-
-    private String filename;
-    private byte[] data;
-
-    public CommandMessage(String root, String filename) throws IOException {
-        this.filename = filename;
-        this.data = Files.readAllBytes(Paths.get(root, filename));//TODO
+    public CommandMessage(int type, Object... attachment) {
+        this.type = type;
+        this.attachment = attachment;
     }
+
+//    private String filename;
+//    private byte[] data;
+//
+//    public CommandMessage(String root, String filename) throws IOException {
+//        this.filename = filename;
+//        this.data = Files.readAllBytes(Paths.get(root, filename));//TODO
+//    }
 
     @Override
     public String toString() {
@@ -47,15 +46,13 @@ public class CommandMessage extends AbstractMessage {
                 '}';
     }
 
-    public String getFilename() {
-        return filename;
-    }
-
-    public byte[] getData() {
-        return data;
-    }
+//    public String getFilename() {
+//        return filename;
+//    }
+//
+//    public byte[] getData() {
+//        return data;
+//    }
 }
-
-//TODO Delete ta the finish
 
 

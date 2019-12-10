@@ -1,8 +1,11 @@
 import handlers.ObjectHandler;
 import messages.AbstractMessage;
+import messages.AuthMessage;
+import messages.CommandMessage;
 
 import java.io.*;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class Server implements TCPConnectionListener {//создаем слушателя прямо в этом классе
@@ -20,12 +23,13 @@ public class Server implements TCPConnectionListener {//создаем слуш�
     //объявляем объект сообщения(команды)
     AbstractMessage messageObject;
     //объявляем объект обработчика сообщений(команд)
-    ObjectHandler objectHandler;//TODO
+    ObjectHandler objectHandler;
 
     private Server() {
-        System.out.println("Server running...");
+//        System.out.println("Server running...");//TODO
+        printMsg("Server running...");
         //инициируем объект обработчика сообщений(команд)
-        objectHandler = new ObjectHandler();//TODO
+        objectHandler = new ObjectHandler();
         //создаем серверсокет, который слушает порт TCP:8189
         try(ServerSocket serverSocket = new ServerSocket(8189)){//это "try с ресурсом"
             //сервер слушает входящие соединения
@@ -53,6 +57,18 @@ public class Server implements TCPConnectionListener {//создаем слуш�
     public void onConnectionReady(TCPConnection tcpConnection) {
         //если соединение установлено, то добавляем его в список
         connections.add(tcpConnection);
+//        //отправляем файл клиенту
+//        try {
+//            send();//TODO
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    public void send () throws IOException {
+//        connection.sendMessageObject(new CommandMessage(storageDir, "file1.txt"));
+        //TODO как распознавать? по логину? по порту? по сокету?
+        sendToClient("49884", new AuthMessage("login1", "pass1"));
     }
 
     @Override
@@ -76,6 +92,17 @@ public class Server implements TCPConnectionListener {//создаем слуш�
         }
         //распознаем и обрабатываем полученный объект сообщения(команды)
         objectHandler.recognizeAndArrangeMessageObject(messageObject, storageDir);
+    }
+
+    public void sendToClient(String login, AbstractMessage messageObject){
+
+        printMsg("Server.getSocket()");//для отладки выводим сообщение в консоль
+
+        for (int i = 0; i < connections.size(); i++) {
+            if(connections.get(i).getSocket().getLocalPort() == Integer.parseInt(login)){//FIXME
+                connections.get(i).sendMessageObject(messageObject);
+            }
+        }
     }
 
     //TODO

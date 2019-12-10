@@ -1,5 +1,5 @@
-import messages.AuthMessage;
-import messages.CommandMessage;
+import handlers.ObjectHandler;
+import messages.*;
 
 import java.io.*;
 
@@ -19,8 +19,14 @@ public class Client implements TCPConnectionListener {
     private TCPConnection connection;
     //инициируем строку названия директории для хранения файлов клиента
     private final String storageDir = "storage/client_storage";
+    //объявляем объект сообщения(команды)
+    AbstractMessage messageObject;
+    //объявляем объект обработчика сообщений(команд)
+    ObjectHandler objectHandler;
 
     public Client() {
+        //инициируем объект обработчика сообщений(команд)
+        objectHandler = new ObjectHandler();
         try {
             //инициируем переменную сетевого соединения
             //устанавливаем соединение при открытии окна
@@ -31,7 +37,9 @@ public class Client implements TCPConnectionListener {
     }
 
     public void send () throws IOException {
-        connection.sendMessageObject(new CommandMessage(storageDir, "file1.txt"));
+//        connection.sendMessageObject(new CommandMessage(storageDir, "file1.txt"));
+//        connection.sendMessageObject(new FileFragmentMessage(storageDir, "file1.txt"));
+        connection.sendMessageObject(new FileMessage(storageDir, "file1.txt"));
         connection.sendMessageObject(new AuthMessage("login1", "pass1"));
     }
 
@@ -51,8 +59,18 @@ public class Client implements TCPConnectionListener {
     }
 
     @Override
+//    public void onReceiveObject(TCPConnection tcpConnection, ObjectInputStream ois) {
+//        System.out.println("Client received the object: ");
+//    }
     public void onReceiveObject(TCPConnection tcpConnection, ObjectInputStream ois) {
-        System.out.println("Client received the object: ");
+        //десериализуем объект сообщения(команды)
+        try {
+            messageObject = (AbstractMessage) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        //распознаем и обрабатываем полученный объект сообщения(команды)
+        objectHandler.recognizeAndArrangeMessageObject(messageObject, storageDir);
     }
 
     public String getStorageDir() {
