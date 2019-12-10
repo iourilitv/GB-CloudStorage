@@ -1,3 +1,4 @@
+import messages.AbstractMessage;
 import messages.AuthMessage;
 import messages.CommandMessage;
 
@@ -22,7 +23,8 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
     //объявляем объект команды(сообщения)
 //    AbstractMessage message;//TODO
 //    FileFragment message;//TODO
-    MessageObject messageObject;//TODO
+//    MessageObject messageObject;//TODO
+    AbstractMessage messageObject;
 
     private ByteServer() {
         System.out.println("Server running...");
@@ -69,15 +71,42 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
         System.out.println("TCPConnectionByte exception: " + e);
     }
 
+//    @Override
+//    public void onReceiveObject(TCPConnectionByte tcpConnectionByte, ObjectInputStream ois) {
+//        try {
+//            //десериализуем объект сообщения(команды)
+//            messageObject = (MessageObject) ois.readObject();
+//            //выполняем операции в зависимости от типа полученного сообщения(команды)
+//            switch (messageObject.getMessage().getClass().getSimpleName()){
+//                case "CommandMessage":
+//                    CommandMessage commandMessage = (CommandMessage) messageObject.getMessage();
+//                    System.out.println("ByteServer.onReceiveObject - commandMessage.getFilename(): " +
+//                            commandMessage.getFilename() +
+//                            ". Arrays.toString(commandMessage.getData()): " +
+//                            Arrays.toString(commandMessage.getData()));
+//                    Files.write(Paths.get(storageDir, commandMessage.getFilename()),
+//                            commandMessage.getData(), StandardOpenOption.CREATE);
+//                    break;
+//                case "AuthMessage":
+//                    AuthMessage authMessage = (AuthMessage) messageObject.getMessage();
+//                    System.out.println("ByteServer.onReceiveObject - commandMessage.getLogin(): " +
+//                            authMessage.getLogin() +
+//                            ". commandMessage.getPassword(): " + authMessage.getPassword());
+//                    break;
+//            }
+//        } catch (IOException | ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//    }
     @Override
     public void onReceiveObject(TCPConnectionByte tcpConnectionByte, ObjectInputStream ois) {
         try {
             //десериализуем объект сообщения(команды)
-            messageObject = (MessageObject) ois.readObject();
+            messageObject = (AbstractMessage) ois.readObject();
             //выполняем операции в зависимости от типа полученного сообщения(команды)
-            switch (messageObject.getMessage().getClass().getSimpleName()){
+            switch (messageObject.getClass().getSimpleName()){
                 case "CommandMessage":
-                    CommandMessage commandMessage = (CommandMessage) messageObject.getMessage();
+                    CommandMessage commandMessage = (CommandMessage) messageObject;
                     System.out.println("ByteServer.onReceiveObject - commandMessage.getFilename(): " +
                             commandMessage.getFilename() +
                             ". Arrays.toString(commandMessage.getData()): " +
@@ -86,7 +115,7 @@ public class ByteServer implements TCPConnectionListenerByte {//создаем �
                             commandMessage.getData(), StandardOpenOption.CREATE);
                     break;
                 case "AuthMessage":
-                    AuthMessage authMessage = (AuthMessage) messageObject.getMessage();
+                    AuthMessage authMessage = (AuthMessage) messageObject;
                     System.out.println("ByteServer.onReceiveObject - commandMessage.getLogin(): " +
                             authMessage.getLogin() +
                             ". commandMessage.getPassword(): " + authMessage.getPassword());

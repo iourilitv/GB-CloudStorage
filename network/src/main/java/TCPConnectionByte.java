@@ -9,6 +9,8 @@ public class TCPConnectionByte {
     //TODO
     //объявляем переменные для буферезированных входного и выходного потоков
     private final BufferedOutputStream outCom;
+    //объявляем объект входящего потока для получения сериализованного объекта сообщения(команды)
+    ObjectInputStream objectInputStream;
 
     //конструктор для создания соединения
     public TCPConnectionByte(TCPConnectionListenerByte eventListenerByte, String ipAddr, int port) throws IOException {
@@ -29,11 +31,10 @@ public class TCPConnectionByte {
                 try {
                     eventListenerByte.onConnectionReady(TCPConnectionByte.this);
                     while(!rxThread.isInterrupted()){
-                    //создаем объект входящего потока десериализации объекта
-                    ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                        //инициируем объект входящего потока для получения сериализованного объекта сообщения(команды)
+                        objectInputStream = new ObjectInputStream(socket.getInputStream());
                         //слушаем вход соединения и читаем поступающие байты(пока они есть)
-                        eventListenerByte.onReceiveObject(TCPConnectionByte.this, ois);//TODO
-//                        ois.close();//FIXME
+                        eventListenerByte.onReceiveObject(TCPConnectionByte.this, objectInputStream);//TODO
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -56,20 +57,12 @@ public class TCPConnectionByte {
         }
     }
 
-    //TODO Delete
-//    public synchronized void sendByte(byte b){
-//        try {
-//            outCom.write(b);
-//            outCom.flush();//принудительно передаем в сеть байт из буфера
-//        } catch (IOException e) {
-//            eventListenerByte.onException(TCPConnectionByte.this, e);
-//            disconnect();
-//        }
-//    }
-
     public synchronized void disconnect(){
         rxThread.interrupt();
         try {
+
+            objectInputStream.close();//TODO
+
             socket.close();
         } catch (IOException e) {
             eventListenerByte.onException(TCPConnectionByte.this, e);
@@ -86,3 +79,16 @@ public class TCPConnectionByte {
         return socket;
     }
 }
+
+
+//TODO Delete at the finish
+
+//    public synchronized void sendByte(byte b){
+//        try {
+//            outCom.write(b);
+//            outCom.flush();//принудительно передаем в сеть байт из буфера
+//        } catch (IOException e) {
+//            eventListenerByte.onException(TCPConnectionByte.this, e);
+//            disconnect();
+//        }
+//    }

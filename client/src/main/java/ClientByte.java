@@ -1,3 +1,4 @@
+import messages.AbstractMessage;
 import messages.AuthMessage;
 import messages.CommandMessage;
 
@@ -5,8 +6,11 @@ import java.io.*;
 
 public class ClientByte implements TCPConnectionListenerByte {
 
-    public static void main(String[] args) {
-        new ClientByte().send();
+    public static void main(String[] args) throws IOException {
+        ClientByte clientByte = new ClientByte();
+//        clientByte.sendMessageObject(new CommandMessage(clientByte.getStorageDir(), "file1.txt"));
+//        clientByte.sendMessageObject(new AuthMessage("login1", "pass1"));
+        clientByte.send();
     }
 
     //инициируем константу IP адреса сервера(здесь - адрес моего ноута в домашней локальной сети)
@@ -20,7 +24,9 @@ public class ClientByte implements TCPConnectionListenerByte {
     //инициируем строку названия директории для хранения файлов клиента
     private final String storageDir = "storage/client_storage";
     //объявляем объект команды(сообщения)
-    MessageObject messageObject;//TODO
+//    MessageObject messageObject;//TODO
+    //объявляем объект исходящего потока данных сериализованного объекта
+    private ObjectOutputStream objectOutputStream;
 
     public ClientByte() {
         try {
@@ -32,26 +38,21 @@ public class ClientByte implements TCPConnectionListenerByte {
         }
     }
 
-    public void send () {
+    public void send () throws IOException {
+        sendMessageObject(new CommandMessage(storageDir, "file1.txt"));
+        sendMessageObject(new AuthMessage("login1", "pass1"));
+    }
+
+    public void sendMessageObject (AbstractMessage messageObject) {
         try {
-            ObjectOutputStream out = new ObjectOutputStream(connection.getSocket().getOutputStream());
-            //инициируем объект объекта сообщения, в котором завернуто сообщение типа "команда"
-            messageObject = new MessageObject("Command",
-                    new CommandMessage(storageDir, "file1.txt"));
-            out.writeObject(messageObject);
-
-    //        out.close();//TODO
-            out = new ObjectOutputStream(connection.getSocket().getOutputStream());
-
-            messageObject = new MessageObject("Auth",
-                    new AuthMessage("login1", "pass1"));
-            out.writeObject(messageObject);
-
+            //инициируем объект исходящего потока данных сериализованного объекта
+            objectOutputStream = new ObjectOutputStream(connection.getSocket().getOutputStream());
+            //передаем в исходящий поток сериализованный объект сообщения(команды)
+            objectOutputStream.writeObject(messageObject);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        printMsg("Client has sent the bytes.");
+        printMsg("Client has sent the object " + messageObject.getClass().getSimpleName());
     }
 
     private synchronized void printMsg(String msg){
@@ -65,6 +66,11 @@ public class ClientByte implements TCPConnectionListenerByte {
 
     @Override
     public void onDisconnect(TCPConnectionByte tcpConnectionByte) {
+        try {
+            objectOutputStream.close();//TODO
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         printMsg("Connection close");
     }
 
@@ -76,6 +82,10 @@ public class ClientByte implements TCPConnectionListenerByte {
     @Override
     public void onReceiveObject(TCPConnectionByte tcpConnectionByte, ObjectInputStream ois) {
         System.out.println("Client received the object: ");
+    }
+
+    public String getStorageDir() {
+        return storageDir;
     }
 }
 
