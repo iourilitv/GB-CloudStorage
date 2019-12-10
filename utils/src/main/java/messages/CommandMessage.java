@@ -35,7 +35,6 @@ public class CommandMessage extends AbstractMessage {
     private byte[] data;
 
     public CommandMessage(String root, String filename) throws IOException {
-//        super(root, filename);
         this.filename = filename;
         this.data = Files.readAllBytes(Paths.get(root, filename));//TODO
     }
@@ -56,3 +55,7 @@ public class CommandMessage extends AbstractMessage {
         return data;
     }
 }
+
+//TODO Delete ta the finish
+
+

@@ -1,9 +1,6 @@
 import messages.AbstractMessage;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 /**
  * A class of an object of any types of messages.

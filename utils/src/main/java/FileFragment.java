@@ -1,4 +1,3 @@
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
@@ -11,8 +10,6 @@ public class FileFragment implements Serializable {
 
     public FileFragment(String root, String filename) throws IOException {
         this.filename = filename;
-//        //создаем новый файл, если его нет и очищаем, если есть
-//        new File(root + "/" + filename).createNewFile();//FIXME Не нужно?
         //читаем все данные из файла побайтно в байтовый массив
         this.data = Files.readAllBytes(Paths.get(root, filename));//TODO
     }
@@ -33,3 +30,8 @@ public class FileFragment implements Serializable {
                 '}';
     }
 }
+
+//TODO Delete ta the finish
+
+////        //создаем новый файл, если его нет и очищаем, если есть
+////        new File(root + "/" + filename).createNewFile();//FIXME Не нужно?
