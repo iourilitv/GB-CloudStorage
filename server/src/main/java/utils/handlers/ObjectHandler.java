@@ -47,14 +47,14 @@ public class ObjectHandler {
             switch (messageObject.getCommand()){
                 //обрабатываем полученный от клиента запрос на загрузку(сохранение) файла в облачное хранилище
                 case Commands.REQUEST_SERVER_FILE_UPLOAD:
-                    UploadCommandHandler uploadCommandHandler = (UploadCommandHandler)messageObject.getCommandHandler();
+                    FileCommandHandler uploadCommandHandler = (FileCommandHandler)messageObject.getCommandHandler();
                     fileMessage = uploadCommandHandler.getFileMessage();
                     currentDir = fileMessage.getRoot();
                     uploadCommandHandler.saveUploadedFile(fileMessage, currentDir);
                     break;
                 //обрабатываем полученный от клиента запрос на скачивание файла из облачного хранилища
                 case Commands.REQUEST_SERVER_FILE_DOWNLOAD:
-                    uploadCommandHandler = (UploadCommandHandler)messageObject.getCommandHandler();
+                    uploadCommandHandler = (FileCommandHandler)messageObject.getCommandHandler();
                     fileMessage = uploadCommandHandler.getFileMessage();
                     currentDir = fileMessage.getRoot();
                     uploadCommandHandler.downloadFile(tcpServer, fileMessage, currentDir);

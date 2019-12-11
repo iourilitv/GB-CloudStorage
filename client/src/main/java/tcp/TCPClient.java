@@ -58,14 +58,14 @@ public class TCPClient implements TCPConnectionListener {
         //отправляем на сервер запрос на загрузку файла в облачное хранилище
 //        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
 //                new FileCommandHandler(new FileMessage(storageDir, "file1.txt"))));
-        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
-                new FileCommandHandler(new FileMessage(clientDir, "file1.txt"))));
+//        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
+//                new FileCommandHandler(new FileMessage(clientDir, "file1.txt"))));
         //отправляем на сервер запрос на авторизацию в облачное хранилище
         connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
                 new ServiceCommandHandler(new AuthMessage("login1", "pass1"))));
-        //отправляем на сервер запрос на скачивание файла из облачного хранилища
-        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_DOWNLOAD,
-                new FileCommandHandler(new FileMessage(storageDir, "acmp_ru.png"))));
+//        //отправляем на сервер запрос на скачивание файла из облачного хранилища
+//        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_DOWNLOAD,
+//                new FileCommandHandler(new FileMessage(storageDir, "acmp_ru.png"))));
     }
 
     @Override

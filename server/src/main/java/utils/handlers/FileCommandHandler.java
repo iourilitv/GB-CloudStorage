@@ -15,15 +15,15 @@ import java.util.Arrays;
 /**
  * The server class for operating with the command message "upload() a file".
  */
-public class UploadCommandHandler extends CommandHandler{
+public class FileCommandHandler extends CommandHandler{
     private FileMessage fileMessage;
     private FileFragmentMessage fileFragmentMessage;
 
-    public UploadCommandHandler(FileMessage fileMessage) {
+    public FileCommandHandler(FileMessage fileMessage) {
         this.fileMessage = fileMessage;
     }
 
-    public UploadCommandHandler(FileFragmentMessage fileFragmentMessage) {
+    public FileCommandHandler(FileFragmentMessage fileFragmentMessage) {
         this.fileFragmentMessage = fileFragmentMessage;
     }
 
@@ -67,7 +67,7 @@ public class UploadCommandHandler extends CommandHandler{
                 Arrays.toString(fileMessage.getData()));
 
         tcpServer.sendToClient("login", new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
-                new UploadCommandHandler(new FileMessage(storageDir, "file1.txt"))));
+                new FileCommandHandler(new FileMessage(storageDir, "file1.txt"))));
 //        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
 //                new FileCommandHandler(new FileMessage(storageDir, "file1.txt"))));
     }
