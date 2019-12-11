@@ -58,7 +58,7 @@ public class Client {
 //        }
 //    }
 
-//        message = new CommandMessage(storageDir, "file1.txt");
+//        message = new utils.CommandMessage(storageDir, "file1.txt");
 //        message = new FileFragment(storageDir, messageFileName);
 //        message = new FileFragment(storageDir, "file1.txt");
 //        out.writeObject(message);

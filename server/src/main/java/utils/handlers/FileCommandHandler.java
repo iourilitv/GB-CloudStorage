@@ -60,16 +60,23 @@ public class FileCommandHandler extends CommandHandler{
                 fileMessage.getData(), StandardOpenOption.CREATE);
     }
 
-    public void downloadFile(TCPServer tcpServer, FileMessage fileMessage, String storageDir) throws IOException {
+//    public void downloadFile(TCPServer tcpServer, FileMessage fileMessage, String storageDir) throws IOException {
+//        System.out.println("(Server)UploadCommandHandler.downloadFile - fileMessage.getFilename(): " +
+//                fileMessage.getFilename() +
+//                ". Arrays.toString(fileMessage.getData()): " +
+//                Arrays.toString(fileMessage.getData()));
+//
+//        tcpServer.sendToClient("login", new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
+//                new FileMessage(storageDir, "file1.txt")));
+//    }
+    public void downloadFile(TCPServer tcpServer, String filename, String storageDir) throws IOException {
         System.out.println("(Server)UploadCommandHandler.downloadFile - fileMessage.getFilename(): " +
                 fileMessage.getFilename() +
                 ". Arrays.toString(fileMessage.getData()): " +
                 Arrays.toString(fileMessage.getData()));
 
-        tcpServer.sendToClient("login", new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
-                new FileCommandHandler(new FileMessage(storageDir, "file1.txt"))));
-//        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
-//                new FileCommandHandler(new FileMessage(storageDir, "file1.txt"))));
+        tcpServer.sendToClient("login", new CommandMessage(Commands.SERVER_RESPONSE_FILE_DOWNLOAD,
+                new FileMessage(storageDir, filename)));
     }
 
 

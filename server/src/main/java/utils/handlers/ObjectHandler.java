@@ -1,5 +1,6 @@
 package utils.handlers;
 
+import messages.AuthMessage;
 import messages.Commands;
 import messages.FileMessage;
 import tcp.TCPServer;
@@ -12,7 +13,7 @@ import java.io.IOException;
  */
 public class ObjectHandler {
 
-//    public void recognizeAndArrangeMessageObject(TCPServer tcpServer, CommandMessage messageObject, String storageDir) {
+//    public void recognizeAndArrangeMessageObject(TCPServer tcpServer, utils.CommandMessage messageObject, String storageDir) {
 //        try {
 //            FileMessage fileMessage;
 //            //выполняем операции в зависимости от типа полученного сообщения(команды)
@@ -42,26 +43,31 @@ public class ObjectHandler {
     public void recognizeAndArrangeMessageObject(TCPServer tcpServer, CommandMessage messageObject) {
         try {
             FileMessage fileMessage;
+            FileCommandHandler fileCommandHandler;
             String currentDir;
             //выполняем операции в зависимости от типа полученного сообщения(команды)
             switch (messageObject.getCommand()){
                 //обрабатываем полученный от клиента запрос на загрузку(сохранение) файла в облачное хранилище
                 case Commands.REQUEST_SERVER_FILE_UPLOAD:
-                    FileCommandHandler uploadCommandHandler = (FileCommandHandler)messageObject.getCommandHandler();
-                    fileMessage = uploadCommandHandler.getFileMessage();
+//                    FileCommandHandler uploadCommandHandler = (FileCommandHandler)messageObject.getCommandHandler();
+//                    fileMessage = uploadCommandHandler.getFileMessage();
+                    fileMessage = (FileMessage) messageObject.getMessageObject();
+                    fileCommandHandler = new FileCommandHandler(fileMessage);
                     currentDir = fileMessage.getRoot();
-                    uploadCommandHandler.saveUploadedFile(fileMessage, currentDir);
+                    fileCommandHandler.saveUploadedFile(fileMessage, currentDir);
                     break;
                 //обрабатываем полученный от клиента запрос на скачивание файла из облачного хранилища
                 case Commands.REQUEST_SERVER_FILE_DOWNLOAD:
-                    uploadCommandHandler = (FileCommandHandler)messageObject.getCommandHandler();
-                    fileMessage = uploadCommandHandler.getFileMessage();
+                    fileMessage = (FileMessage) messageObject.getMessageObject();
+                    fileCommandHandler = new FileCommandHandler(fileMessage);
                     currentDir = fileMessage.getRoot();
-                    uploadCommandHandler.downloadFile(tcpServer, fileMessage, currentDir);
+                    fileCommandHandler.downloadFile(tcpServer, fileMessage.getFilename(), currentDir);
                     break;
                 //обрабатываем полученный от клиента запрос на авторизацию в облачное хранилище
                 case Commands.REQUEST_SERVER_AUTH:
-                    ServiceCommandHandler serviceCommandHandler = (ServiceCommandHandler) messageObject.getCommandHandler();
+//                    ServiceCommandHandler serviceCommandHandler = (ServiceCommandHandler) messageObject.getCommandHandler();
+                    AuthMessage authMessage = (AuthMessage) messageObject.getMessageObject();
+                    ServiceCommandHandler serviceCommandHandler = new ServiceCommandHandler(authMessage);
                     serviceCommandHandler.authorizeUser();
                     break;
             }
@@ -77,8 +83,8 @@ public class ObjectHandler {
 //        try {
 //            //выполняем операции в зависимости от типа полученного сообщения(команды)
 //            switch (messageObject.getClass().getSimpleName()){
-//                case "CommandMessage":
-//                    CommandMessage commandMessage = (CommandMessage) messageObject;
+//                case "utils.CommandMessage":
+//                    utils.CommandMessage commandMessage = (utils.CommandMessage) messageObject;
 //                    System.out.println("ByteServer.onReceiveObject - commandMessage.getFilename(): " +
 //                            commandMessage.getFilename() +
 //                            ". Arrays.toString(commandMessage.getData()): " +

@@ -69,7 +69,7 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
     }
 
     public void send () throws IOException {
-//        connection.sendMessageObject(new CommandMessage(storageDir, "file1.txt"));
+//        connection.sendMessageObject(new utils.CommandMessage(storageDir, "file1.txt"));
         //TODO как распознавать? по логину? по порту? по сокету?
 //        sendToClient("49884", new AuthMessage("login1", "pass1"));
     }
@@ -165,7 +165,7 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
 //        }
 
 //            message = (AbstractMessage)ois.readObject();
-//            message = (CommandMessage)ois.readObject();
+//            message = (utils.CommandMessage)ois.readObject();
 //            message = (FileFragment) ois.readObject();
 //            System.out.println("ByteServer.onReceiveObject - message.getFilename(): " + message.getFilename() +
 //                    ". message.getData(): " + Arrays.toString(message.getData()));
@@ -217,7 +217,7 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
 //            bos.write(b);
 //            bos.flush();
 //
-////            if(bos.equals(CommandMessage.CMD_MSG__REQUEST_SERVER_DELETE_FILE)){
+////            if(bos.equals(utils.CommandMessage.CMD_MSG__REQUEST_SERVER_DELETE_FILE)){
 ////                System.out.println("onReceiveByte message" + message.toString());
 ////            };
 //        } catch (IOException e) {
@@ -239,7 +239,7 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
 //
 ////        try (BufferedInputStream barrIn = new BufferedInputStream();
 ////             ObjectInputStream objIn = new ObjectInputStream(barrIn)){
-////            messages.CommandMessage commandMessage = (messages.CommandMessage) objIn.readObject();
+////            messages.utils.CommandMessage commandMessage = (messages.utils.CommandMessage) objIn.readObject();
 ////            bos.write(b);
 ////            bos.flush();
 ////        } catch (IOException e) {

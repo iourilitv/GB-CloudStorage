@@ -1,5 +1,6 @@
 package utils.handlers;
 
+import messages.AuthMessage;
 import messages.Commands;
 import messages.FileMessage;
 import utils.CommandMessage;
@@ -16,12 +17,13 @@ public class ObjectHandler {
             //выполняем операции в зависимости от типа полученного сообщения(команды)
             switch (messageObject.getCommand()){
                 case Commands.SERVER_RESPONSE_FILE_DOWNLOAD:
-                    FileCommandHandler fileCommandHandler = (FileCommandHandler)messageObject.getCommandHandler();
-                    FileMessage fileMessage = fileCommandHandler.getFileMessage();
+                    FileMessage fileMessage = (FileMessage) messageObject.getMessageObject();
+                    FileCommandHandler fileCommandHandler = new FileCommandHandler(fileMessage);
                     fileCommandHandler.saveDownloadedFile(fileMessage, storageDir);
                     break;
                 case Commands.SERVER_RESPONSE_AUTH_OK:
-                    ServiceCommandHandler serviceCommandHandler = (ServiceCommandHandler) messageObject.getCommandHandler();
+                    AuthMessage authMessage = (AuthMessage) messageObject.getMessageObject();
+                    ServiceCommandHandler serviceCommandHandler = new ServiceCommandHandler(authMessage);
                     serviceCommandHandler.isAuthorized();
                     break;
             }
@@ -37,8 +39,8 @@ public class ObjectHandler {
 //        try {
 //            //выполняем операции в зависимости от типа полученного сообщения(команды)
 //            switch (messageObject.getClass().getSimpleName()){
-//                case "CommandMessage":
-//                    CommandMessage commandMessage = (CommandMessage) messageObject;
+//                case "utils.CommandMessage":
+//                    utils.CommandMessage commandMessage = (utils.CommandMessage) messageObject;
 //                    System.out.println("ByteServer.onReceiveObject - commandMessage.getFilename(): " +
 //                            commandMessage.getFilename() +
 //                            ". Arrays.toString(commandMessage.getData()): " +
