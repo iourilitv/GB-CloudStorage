@@ -3,7 +3,7 @@ package utils.handlers;
 import messages.AuthMessage;
 
 /**
- * A class for operating with service command messages.
+ * The client class for operating with service command messages.
  */
 public class ServiceCommandHandler extends CommandHandler{
     private AuthMessage authMessage;
@@ -16,10 +16,9 @@ public class ServiceCommandHandler extends CommandHandler{
         return authMessage;
     }
 
-    public void authorizeUser(){
+    public void isAuthorized(){
 
-        System.out.println("Server.onReceiveObject - authMessage.getLogin(): " +
-                authMessage.getLogin() + ". authMessage.getPassword(): " + authMessage.getPassword());
+        System.out.println("(Client)ServiceCommandHandler.isAuthorized: true!");
 
     }
 }

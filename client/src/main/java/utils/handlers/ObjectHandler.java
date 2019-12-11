@@ -1,11 +1,13 @@
 package utils.handlers;
 
+import messages.Commands;
+import messages.FileMessage;
 import utils.CommandMessage;
 
 import java.io.IOException;
 
 /**
- * A class for recognizing command messages and control command handlers.
+ * The client class for recognizing command messages and control command handlers.
  */
 public class ObjectHandler {
 
@@ -13,13 +15,14 @@ public class ObjectHandler {
         try {
             //выполняем операции в зависимости от типа полученного сообщения(команды)
             switch (messageObject.getCommand()){
-                case CommandMessage.CMD_MSG_REQUEST_FILE_UPLOAD:
-                    UploadCommandHandler uploadCommandHandler = (UploadCommandHandler)messageObject.getCommandHandler();
-                    uploadCommandHandler.uploadFile(storageDir);
+                case Commands.SERVER_RESPONSE_FILE_DOWNLOAD:
+                    FileCommandHandler fileCommandHandler = (FileCommandHandler)messageObject.getCommandHandler();
+                    FileMessage fileMessage = fileCommandHandler.getFileMessage();
+                    fileCommandHandler.saveDownloadedFile(fileMessage, storageDir);
                     break;
-                case CommandMessage.CMD_MSG_REQUEST_AUTH:
+                case Commands.SERVER_RESPONSE_AUTH_OK:
                     ServiceCommandHandler serviceCommandHandler = (ServiceCommandHandler) messageObject.getCommandHandler();
-                    serviceCommandHandler.authorizeUser();
+                    serviceCommandHandler.isAuthorized();
                     break;
             }
         } catch (IOException e) {
