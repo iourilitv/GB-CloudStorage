@@ -1,23 +1,66 @@
 package utils.handlers;
 
+import messages.Commands;
+import messages.FileMessage;
+import tcp.TCPServer;
 import utils.CommandMessage;
 
 import java.io.IOException;
 
 /**
- * A class for recognizing command messages and control command handlers.
+ * The server class for recognizing command messages and control command handlers.
  */
 public class ObjectHandler {
 
-    public void recognizeAndArrangeMessageObject(CommandMessage messageObject, String storageDir) {
+//    public void recognizeAndArrangeMessageObject(TCPServer tcpServer, CommandMessage messageObject, String storageDir) {
+//        try {
+//            FileMessage fileMessage;
+//            //выполняем операции в зависимости от типа полученного сообщения(команды)
+//            switch (messageObject.getCommand()){
+//                //обрабатываем полученный от клиента запрос на загрузку(сохранение) файла в облачное хранилище
+//                case Commands.REQUEST_SERVER_FILE_UPLOAD:
+//                    UploadCommandHandler uploadCommandHandler = (UploadCommandHandler)messageObject.getCommandHandler();
+//                    fileMessage = uploadCommandHandler.getFileMessage();
+//                    uploadCommandHandler.saveUploadedFile(fileMessage, storageDir);
+//                    break;
+//                //обрабатываем полученный от клиента запрос на скачивание файла из облачного хранилища
+//                case Commands.REQUEST_SERVER_FILE_DOWNLOAD:
+//                    uploadCommandHandler = (UploadCommandHandler)messageObject.getCommandHandler();
+//                    fileMessage = uploadCommandHandler.getFileMessage();
+//                    uploadCommandHandler.downloadFile(tcpServer, fileMessage, storageDir);
+//                    break;
+//                //обрабатываем полученный от клиента запрос на авторизацию в облачное хранилище
+//                case Commands.REQUEST_SERVER_AUTH:
+//                    ServiceCommandHandler serviceCommandHandler = (ServiceCommandHandler) messageObject.getCommandHandler();
+//                    serviceCommandHandler.authorizeUser();
+//                    break;
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+    public void recognizeAndArrangeMessageObject(TCPServer tcpServer, CommandMessage messageObject) {
         try {
+            FileMessage fileMessage;
+            String currentDir;
             //выполняем операции в зависимости от типа полученного сообщения(команды)
             switch (messageObject.getCommand()){
-                case CommandMessage.CMD_MSG_REQUEST_FILE_UPLOAD:
+                //обрабатываем полученный от клиента запрос на загрузку(сохранение) файла в облачное хранилище
+                case Commands.REQUEST_SERVER_FILE_UPLOAD:
                     UploadCommandHandler uploadCommandHandler = (UploadCommandHandler)messageObject.getCommandHandler();
-                    uploadCommandHandler.uploadFile(storageDir);
+                    fileMessage = uploadCommandHandler.getFileMessage();
+                    currentDir = fileMessage.getRoot();
+                    uploadCommandHandler.saveUploadedFile(fileMessage, currentDir);
                     break;
-                case CommandMessage.CMD_MSG_REQUEST_AUTH:
+                //обрабатываем полученный от клиента запрос на скачивание файла из облачного хранилища
+                case Commands.REQUEST_SERVER_FILE_DOWNLOAD:
+                    uploadCommandHandler = (UploadCommandHandler)messageObject.getCommandHandler();
+                    fileMessage = uploadCommandHandler.getFileMessage();
+                    currentDir = fileMessage.getRoot();
+                    uploadCommandHandler.downloadFile(tcpServer, fileMessage, currentDir);
+                    break;
+                //обрабатываем полученный от клиента запрос на авторизацию в облачное хранилище
+                case Commands.REQUEST_SERVER_AUTH:
                     ServiceCommandHandler serviceCommandHandler = (ServiceCommandHandler) messageObject.getCommandHandler();
                     serviceCommandHandler.authorizeUser();
                     break;
