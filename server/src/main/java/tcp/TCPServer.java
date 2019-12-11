@@ -20,8 +20,10 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
     private final ArrayList<TCPConnection> connections = new ArrayList<>();
     //инициируем переменную для печати сообщений в консоль
     private final PrintStream log = System.out;
-    //инициируем строку названия директории для хранения файлов клиента
+    //инициируем строку названия директории облачного хранилища(сервера) для хранения файлов клиента
     private final String storageDir = "storage/server_storage";
+    //инициируем строку названия директории клиента для хранения файлов
+    private final String clientDir = "storage/client_storage";
     //объявляем объект сообщения(команды)
     private CommandMessage messageObject;
     //объявляем объект обработчика сообщений(команд)
@@ -69,7 +71,7 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
     public void send () throws IOException {
 //        connection.sendMessageObject(new CommandMessage(storageDir, "file1.txt"));
         //TODO как распознавать? по логину? по порту? по сокету?
-        sendToClient("49884", new AuthMessage("login1", "pass1"));
+//        sendToClient("49884", new AuthMessage("login1", "pass1"));
     }
 
     @Override
@@ -92,17 +94,20 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
             e.printStackTrace();
         }
         //распознаем и обрабатываем полученный объект сообщения(команды)
-        objectHandler.recognizeAndArrangeMessageObject(messageObject, storageDir);
+//        objectHandler.recognizeAndArrangeMessageObject(this, messageObject, storageDir);
+        objectHandler.recognizeAndArrangeMessageObject(this, messageObject);
     }
 
-    public void sendToClient(String login, AbstractMessage messageObject){
+    public void sendToClient(String login, CommandMessage messageObject){
 
         printMsg("Server.getSocket()");//для отладки выводим сообщение в консоль
 
         for (int i = 0; i < connections.size(); i++) {
-            if(connections.get(i).getSocket().getLocalPort() == Integer.parseInt(login)){//FIXME
-                connections.get(i).sendMessageObject(messageObject);
-            }
+//            if(connections.get(i).getSocket().getLocalPort() == Integer.parseInt(login)){//FIXME
+//                connections.get(i).sendMessageObject(messageObject);
+//            }
+            connections.get(i).sendMessageObject(messageObject);//TODO пока отправляем всем
+
         }
     }
 
