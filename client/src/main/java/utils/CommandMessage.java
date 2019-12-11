@@ -5,26 +5,28 @@ import utils.handlers.CommandHandler;
 import java.io.Serializable;
 
 /**
- * A Class for communication commands between client and server.
+ * The client class for operating with commands for communication between the client and server.
  */
 public class CommandMessage implements Serializable {
-    //***инициируем константы команд:***
-    //запрос на авторизацию пользователя с таким логином и паролем
-    public static final int CMD_MSG_REQUEST_AUTH = 23792836;
-    //авторизация прошла успешно
-    public static final int CMD_MSG_AUTH_OK = 23792837;
-    //загрузить(сохранить) файл
-    public static final int CMD_MSG_REQUEST_FILE_UPLOAD = 398472947;
-    //скачать файл
-    public static final int CMD_MSG_REQUEST_FILE_DOWNLOAD = 398472948;
-    //предоставить список файлов в папке
-    public static final int CMD_MSG__REQUEST_FILES_LIST = 398472949;//340274982;
-    //переименовать файл на сервере
-    public static final int CMD_MSG__REQUEST_SERVER_RENAME_FILE = 239622745;
-    //удалить файл на сервере
-    public static final int CMD_MSG__REQUEST_SERVER_DELETE_FILE = 239622746;
-    //переместить файл в другую папку
-    public static final int CMD_MSG__REQUEST_SERVER_MOVE_FILE = 239622747;
+//    //***инициируем константы команд:***
+//    //запрос на сервер на авторизацию пользователя с таким логином и паролем
+//    public static final int CMD_MSG_REQUEST_SERVER_AUTH = 911101;
+//    //ответ сервера, что авторизация прошла успешно
+//    public static final int CMD_MSG_SERVER_RESPONSE_AUTH_OK = 911202;
+//    //запрос на сервер загрузить(сохранить) файл
+//    public static final int CMD_MSG_REQUEST_SERVER_FILE_UPLOAD = 101101;
+//    //ответ сервера, что файл успешно загружен(сохранен)
+//    public static final int CMD_MSG_SERVER_RESPONSE_FILE_UPLOADED = 101202;
+//    //запрос на сервер скачать файл
+//    public static final int CMD_MSG_REQUEST_SERVER_FILE_DOWNLOAD = 202101;
+//    //запрос на сервер предоставить список файлов в папке
+//    public static final int CMD_MSG_REQUEST_SERVER_FILES_LIST = 303101;
+//    //переименовать файл на сервере
+//    public static final int CMD_MSG_REQUEST_SERVER_RENAME_FILE = 239622745;
+//    //удалить файл на сервере
+//    public static final int CMD_MSG_REQUEST_SERVER_DELETE_FILE = 239622746;
+//    //переместить файл в другую папку
+//    public static final int CMD_MSG_REQUEST_SERVER_MOVE_FILE = 239622747;
 
     private int command;//тип операции на выполнение
     private CommandHandler commandHandler;//хендлер операции
