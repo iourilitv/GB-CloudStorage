@@ -1,4 +1,4 @@
-package handlers;
+package utils.handlers;
 
 import messages.FileFragmentMessage;
 import messages.FileMessage;
@@ -9,6 +9,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 
+/**
+ * A class for operating with the command message "upload() a file".
+ */
 public class UploadCommandHandler extends CommandHandler{
     private FileMessage fileMessage;
     private FileFragmentMessage fileFragmentMessage;

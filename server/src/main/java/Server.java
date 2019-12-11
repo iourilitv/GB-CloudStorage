@@ -1,7 +1,7 @@
-import handlers.ObjectHandler;
+import utils.handlers.ObjectHandler;
 import messages.AbstractMessage;
 import messages.AuthMessage;
-import messages.CommandMessage;
+import utils.CommandMessage;
 
 import java.io.*;
 import java.net.ServerSocket;

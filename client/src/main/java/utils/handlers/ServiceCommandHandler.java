@@ -1,7 +1,10 @@
-package handlers;
+package utils.handlers;
 
 import messages.AuthMessage;
 
+/**
+ * A class for operating with service command messages.
+ */
 public class ServiceCommandHandler extends CommandHandler{
     private AuthMessage authMessage;
 
@@ -16,7 +19,7 @@ public class ServiceCommandHandler extends CommandHandler{
     public void authorizeUser(){
 
         System.out.println("Server.onReceiveObject - authMessage.getLogin(): " +
-            authMessage.getLogin() + ". authMessage.getPassword(): " + authMessage.getPassword());
+                authMessage.getLogin() + ". authMessage.getPassword(): " + authMessage.getPassword());
 
     }
 }

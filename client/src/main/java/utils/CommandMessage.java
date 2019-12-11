@@ -1,11 +1,13 @@
-package messages;
+package utils;
 
-import handlers.CommandHandler;
+import utils.handlers.CommandHandler;
+
+import java.io.Serializable;
 
 /**
  * A Class for communication commands between client and server.
  */
-public class CommandMessage extends AbstractMessage {
+public class CommandMessage implements Serializable {
     //***инициируем константы команд:***
     //запрос на авторизацию пользователя с таким логином и паролем
     public static final int CMD_MSG_REQUEST_AUTH = 23792836;

@@ -1,6 +1,6 @@
-import handlers.ObjectHandler;
-import handlers.ServiceCommandHandler;
-import handlers.UploadCommandHandler;
+
+import utils.CommandMessage;
+import utils.handlers.*;
 import messages.*;
 
 import java.io.*;

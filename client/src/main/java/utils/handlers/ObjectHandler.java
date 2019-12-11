@@ -1,9 +1,12 @@
-package handlers;
+package utils.handlers;
 
-import messages.*;
+import utils.CommandMessage;
 
 import java.io.IOException;
 
+/**
+ * A class for recognizing command messages and control command handlers.
+ */
 public class ObjectHandler {
 
     public void recognizeAndArrangeMessageObject(CommandMessage messageObject, String storageDir) {
