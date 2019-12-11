@@ -9,13 +9,19 @@ import java.nio.file.Paths;
  * CONST_FRAG_SIZE in the FileFragmentMessage class.
  */
 public class FileMessage extends AbstractMessage {
+    private String root;
     private String filename;
     private byte[] data;
 
     public FileMessage(String root, String filename) throws IOException {
+        this.root = root;
         this.filename = filename;
         //читаем все данные из файла побайтно в байтовый массив
         this.data = Files.readAllBytes(Paths.get(root, filename));
+    }
+
+    public String getRoot() {
+        return root;
     }
 
     public String getFilename() {
