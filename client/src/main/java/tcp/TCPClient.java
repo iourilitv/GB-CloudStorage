@@ -1,3 +1,5 @@
+package tcp;
+
 import messages.AuthMessage;
 import messages.FileMessage;
 import utils.CommandMessage;

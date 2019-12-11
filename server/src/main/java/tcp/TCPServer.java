@@ -1,3 +1,5 @@
+package tcp;
+
 import messages.AbstractMessage;
 import messages.AuthMessage;
 import utils.CommandMessage;
@@ -32,18 +34,18 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
         //создаем серверсокет, который слушает порт TCP:8189
         try(ServerSocket serverSocket = new ServerSocket(8189)){//это "try с ресурсом"
             //сервер слушает входящие соединения
-            //на каждое новое соединение сервер создает TCPConnection
+            //на каждое новое соединение сервер создает tcp.TCPConnection
             while(true){
                 try{
                     //сначала настроить dependencies с network в настройках модуля
                     //передаем себя как слушателя и объект сокета (его возвращает accept() при входящем соединении)
                     //в бесконечном цикле висим в методе accept(), который ждет новое внешнее соединение
                     //и как только соединение установилось он возвращает готовый объект сокета, который связан
-                    //с этим соединением. Мы тут же передаем этот сокет в конструктор TCPConnection, включая и себя,
+                    //с этим соединением. Мы тут же передаем этот сокет в конструктор tcp.TCPConnection, включая и себя,
                     // как слушателя и создаем его экземпляр
                     new TCPConnection(this, serverSocket.accept());
                 } catch(IOException e){
-                    System.out.println("TCPConnection: " + e);
+                    System.out.println("tcp.TCPConnection: " + e);
                 }
             }
         } catch (IOException e){
@@ -242,7 +244,7 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
 
 //onConnectionReady()
 //        sendToAllConnections("ClientByte connected: " + tcpConnection);//TODO
-//при этом неявно вызовется переопределенный метод toString в tcpConnection //"TCPConnection: " + socket.getInetAddress() + ": " + socket.getPort();
+//при этом неявно вызовется переопределенный метод toString в tcpConnection //"tcp.TCPConnection: " + socket.getInetAddress() + ": " + socket.getPort();
 
 //onDisconnect()
 //        sendToAllConnections("ClientByte disconnected: " + tcpConnection);//TODO

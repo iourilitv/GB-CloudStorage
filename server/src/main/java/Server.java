@@ -1,3 +1,5 @@
+import tcp.TCPServer;
+
 /**
  * The main class of server cloudstorage applet.
  */
@@ -139,7 +141,7 @@ public class Server {
 
 //onConnectionReady()
 //        sendToAllConnections("ClientByte connected: " + tcpConnection);//TODO
-//при этом неявно вызовется переопределенный метод toString в tcpConnection //"TCPConnection: " + socket.getInetAddress() + ": " + socket.getPort();
+//при этом неявно вызовется переопределенный метод toString в tcpConnection //"tcp.TCPConnection: " + socket.getInetAddress() + ": " + socket.getPort();
 
 //onDisconnect()
 //        sendToAllConnections("ClientByte disconnected: " + tcpConnection);//TODO

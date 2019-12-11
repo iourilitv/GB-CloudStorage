@@ -1,3 +1,5 @@
+package tcp;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -110,7 +112,7 @@ public class TCPConnection {
 //            outCom.write(arr);
 //            outCom.flush();//принудительно передаем в сеть строку их буфера
 //        } catch (IOException e) {
-//            eventListener.onException(TCPConnection.this, e);
+//            eventListener.onException(tcp.TCPConnection.this, e);
 //            disconnect();
 //        }
 //    }
