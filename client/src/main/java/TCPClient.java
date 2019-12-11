@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintStream;
 
+/**
+ * The class is responded for connecting with the server app.
+ */
 public class TCPClient implements TCPConnectionListener {
     //инициируем константу IP адреса сервера(здесь - адрес моего ноута в домашней локальной сети)
     private static final String IP_ADDR = "192.168.1.103";//89.222.249.131(внешний белый адрес)

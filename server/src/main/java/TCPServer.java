@@ -9,6 +9,9 @@ import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 
+/**
+ * The class is responded for connecting with the clients apps.
+ */
 public class TCPServer implements TCPConnectionListener {//создаем слушателя прямо в этом классе
 
     //создадим экземпляр ссылочного массива(список) установленных соединенией

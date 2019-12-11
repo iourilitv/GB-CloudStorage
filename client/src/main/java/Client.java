@@ -1,5 +1,8 @@
 import java.io.*;
 
+/**
+ * The main class of client cloudstorage applet.
+ */
 public class Client {
 
     public static void main(String[] args) throws IOException {
