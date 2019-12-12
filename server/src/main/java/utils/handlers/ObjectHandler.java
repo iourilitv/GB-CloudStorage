@@ -44,24 +44,30 @@ public class ObjectHandler {
         try {
             FileMessage fileMessage;
             FileCommandHandler fileCommandHandler;
-            String currentDir;
+
+//            String currentDir;//TODO
+            String clientDir;
+            String storageDir;
+
             //выполняем операции в зависимости от типа полученного сообщения(команды)
             switch (messageObject.getCommand()){
-                //обрабатываем полученный от клиента запрос на загрузку(сохранение) файла в облачное хранилище
-                case Commands.REQUEST_SERVER_FILE_UPLOAD:
-//                    FileCommandHandler uploadCommandHandler = (FileCommandHandler)messageObject.getCommandHandler();
-//                    fileMessage = uploadCommandHandler.getFileMessage();
-                    fileMessage = (FileMessage) messageObject.getMessageObject();
-                    fileCommandHandler = new FileCommandHandler(fileMessage);
-                    currentDir = fileMessage.getRoot();
-                    fileCommandHandler.saveUploadedFile(fileMessage, currentDir);
-                    break;
+//                //обрабатываем полученный от клиента запрос на загрузку(сохранение) файла в облачное хранилище
+//                case Commands.REQUEST_SERVER_FILE_UPLOAD:
+////                    FileCommandHandler uploadCommandHandler = (FileCommandHandler)messageObject.getCommandHandler();
+////                    fileMessage = uploadCommandHandler.getFileMessage();
+//                    fileMessage = (FileMessage) messageObject.getMessageObject();
+//                    fileCommandHandler = new FileCommandHandler(fileMessage);
+//                    currentDir = fileMessage.getRoot();
+//                    fileCommandHandler.saveUploadedFile(fileMessage, currentDir);
+//                    break;
                 //обрабатываем полученный от клиента запрос на скачивание файла из облачного хранилища
                 case Commands.REQUEST_SERVER_FILE_DOWNLOAD:
                     fileMessage = (FileMessage) messageObject.getMessageObject();
                     fileCommandHandler = new FileCommandHandler(fileMessage);
-                    currentDir = fileMessage.getRoot();
-                    fileCommandHandler.downloadFile(tcpServer, fileMessage.getFilename(), currentDir);
+//                    currentDir = fileMessage.getRoot();
+                    storageDir = fileMessage.getFromDir();
+                    clientDir = fileMessage.getToDir();
+                    fileCommandHandler.downloadFile(tcpServer, storageDir, clientDir, fileMessage.getFilename());
                     break;
                 //обрабатываем полученный от клиента запрос на авторизацию в облачное хранилище
                 case Commands.REQUEST_SERVER_AUTH:

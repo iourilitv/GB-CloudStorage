@@ -69,14 +69,26 @@ public class FileCommandHandler extends CommandHandler{
 //        tcpServer.sendToClient("login", new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
 //                new FileMessage(storageDir, "file1.txt")));
 //    }
-    public void downloadFile(TCPServer tcpServer, String filename, String storageDir) throws IOException {
-        System.out.println("(Server)UploadCommandHandler.downloadFile - fileMessage.getFilename(): " +
+//    public void downloadFile(TCPServer tcpServer, String filename, String storageDir) throws IOException {
+//        System.out.println("(Server)UploadCommandHandler.downloadFile - fileMessage.getFilename(): " +
+//                fileMessage.getFilename() +
+//                ". Arrays.toString(fileMessage.getData()): " +
+//                Arrays.toString(fileMessage.getData()));
+//
+//        tcpServer.sendToClient("login", new CommandMessage(Commands.SERVER_RESPONSE_FILE_DOWNLOAD,
+//                new FileMessage(storageDir, filename)));
+//    }
+    public void downloadFile(TCPServer tcpServer, String fromDir, String toDir, String filename) throws IOException {
+        System.out.println("(Server)FileCommandHandler.downloadFile - fileMessage.getFilename(): " +
                 fileMessage.getFilename() +
                 ". Arrays.toString(fileMessage.getData()): " +
                 Arrays.toString(fileMessage.getData()));
 
-        tcpServer.sendToClient("login", new CommandMessage(Commands.SERVER_RESPONSE_FILE_DOWNLOAD,
-                new FileMessage(storageDir, filename)));
+        FileMessage fileMessage = new FileMessage(fromDir, toDir, filename);
+        fileMessage.readFileData();//TODO
+
+        tcpServer.sendToClient("login1", new CommandMessage(Commands.SERVER_RESPONSE_FILE_DOWNLOAD,
+                fileMessage));
     }
 
 

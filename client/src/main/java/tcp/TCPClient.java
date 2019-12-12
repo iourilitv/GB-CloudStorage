@@ -69,15 +69,17 @@ public class TCPClient implements TCPConnectionListener {
 ////                new FileCommandHandler(new FileMessage(storageDir, "acmp_ru.png"))));
 //    }
     public void send () throws IOException {
-        //отправляем на сервер запрос на загрузку файла в облачное хранилище
-        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
-                new FileMessage(clientDir, "file1.txt")));
-        //отправляем на сервер запрос на авторизацию в облачное хранилище
-        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
-                new AuthMessage("login1", "pass1")));
-//        //отправляем на сервер запрос на скачивание файла из облачного хранилища
+//        //отправляем на сервер запрос на загрузку файла в облачное хранилище
+//        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
+//                new FileMessage(clientDir, "file1.txt")));
+//        //отправляем на сервер запрос на авторизацию в облачное хранилище
+//        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
+//                new AuthMessage("login1", "pass1")));
+        //отправляем на сервер запрос на скачивание файла из облачного хранилища
+//        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_DOWNLOAD,
+//                new FileMessage(storageDir, "acmp_ru.png")));//TODO не существующие имя и директория у клиента
         connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_DOWNLOAD,
-                new FileMessage(storageDir, "acmp_ru.png")));//TODO не существующие имя и директория у клиента
+                new FileMessage(storageDir, clientDir, "acmp_ru.png")));
     }
 
     @Override
@@ -104,7 +106,8 @@ public class TCPClient implements TCPConnectionListener {
             e.printStackTrace();
         }
         //распознаем и обрабатываем полученный объект сообщения(команды)
-        objectHandler.recognizeAndArrangeMessageObject(messageObject, storageDir);
+//        objectHandler.recognizeAndArrangeMessageObject(messageObject, storageDir);
+        objectHandler.recognizeAndArrangeMessageObject(messageObject);
     }
 
     public String getStorageDir() {

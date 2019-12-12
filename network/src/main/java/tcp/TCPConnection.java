@@ -2,6 +2,7 @@ package tcp;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class TCPConnection {
     private final Socket socket;
@@ -55,14 +56,16 @@ public class TCPConnection {
      * Метод отправляет в сеть полученный сериализованный объект
      * @param messageObject - сериализованный объект
      */
-    public synchronized void sendMessageObject(Object messageObject){
+    public synchronized void sendMessageObject(Object messageObject){//FIXME поменять на CommandMessage, если TCP перенести в utils module
         try {
             //инициируем объект исходящего потока данных сериализованного объекта
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             //передаем в исходящий поток сериализованный объект сообщения(команды)
             objectOutputStream.writeObject(messageObject);
 
-            System.out.println(socket + " has sent the object: " + messageObject.getClass().getSimpleName());
+            System.out.println("TCPConnection.sendMessageObject() - " + socket + " has sent the object: " +
+                    messageObject.getClass().getSimpleName() +
+                    ": " + Arrays.toString(messageObject.getClass().getFields()));//TODO проверить - должно заработать, если TCP перенести в utils module
 
         } catch (IOException e) {
             eventListener.onException(TCPConnection.this, e);

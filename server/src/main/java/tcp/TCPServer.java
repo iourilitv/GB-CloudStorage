@@ -100,7 +100,7 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
 
     public void sendToClient(String login, CommandMessage messageObject){
 
-        printMsg("Server.getSocket()");//для отладки выводим сообщение в консоль
+        printMsg("TCPServer.sendToClient() - login: " + login);//для отладки выводим сообщение в консоль
 
         for (int i = 0; i < connections.size(); i++) {
 //            if(connections.get(i).getSocket().getLocalPort() == Integer.parseInt(login)){//FIXME
