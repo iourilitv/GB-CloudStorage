@@ -33,8 +33,6 @@ public class TCPClient implements TCPConnectionListener {
 
     public TCPClient() {
         //инициируем объект обработчика сообщений(команд)
-//        objectHandler = new ObjectHandler();
-
         objectHandler = new ObjectHandler(this);
         try {
             //инициируем переменную сетевого соединения
