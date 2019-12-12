@@ -45,22 +45,50 @@ public class FileCommandHandler extends CommandHandler{
 //                fileMessage.getData(), StandardOpenOption.CREATE);
 //    }
 
+//    /**
+//     * Метод сохраняет полученный целый файл в заданную директорию
+//     * @param storageDir - заданная директория(папка)
+//     * @throws IOException - исключение ввода-вывода
+//     */
+//    public void saveUploadedFile(FileMessage fileMessage, String storageDir) throws IOException {
+//        System.out.println("(Server)FileCommandHandler.saveDownloadedFile - fileMessage.getFilename(): " +
+//                fileMessage.getFilename() +
+//                ". Arrays.toString(fileMessage.getData()): " +
+//                Arrays.toString(fileMessage.getData()));
+//
+//        Files.write(Paths.get(storageDir, fileMessage.getFilename()),
+//                fileMessage.getData(), StandardOpenOption.CREATE);
+//    }
+
     /**
-     * Метод сохраняет полученный целый файл в заданную директорию
-     * @param storageDir - заданная директория(папка)
+     * Метод сохраняет полученный от клиента целый файл
+     * в заданную директорию сетевого хранилища(сервера)
+     * @param fromDir - заданная директория(папка) сервера
+     * @param toDir - заданная директория(папка) клиента
+     * @param fileMessage - объект файла, полученного от сервера
      * @throws IOException - исключение ввода-вывода
      */
-    public void saveUploadedFile(FileMessage fileMessage, String storageDir) throws IOException {
+    public boolean saveUploadedFile(String fromDir, String toDir, FileMessage fileMessage) throws IOException {
         System.out.println("(Server)FileCommandHandler.saveDownloadedFile - fileMessage.getFilename(): " +
                 fileMessage.getFilename() +
                 ". Arrays.toString(fileMessage.getData()): " +
                 Arrays.toString(fileMessage.getData()));
 
-        Files.write(Paths.get(storageDir, fileMessage.getFilename()),
+        Files.write(Paths.get(toDir, fileMessage.getFilename()),
                 fileMessage.getData(), StandardOpenOption.CREATE);
+        return true;//FIXME
     }
 
-    public void downloadFile(TCPServer tcpServer, String fromDir, String toDir, String filename) throws IOException {
+    /**
+     * Метод читает данные из целого файла в заданной директорию сетевого хранилища и
+     * отпраляет клиенту объект сообщения с данными файла.
+     * @param server - объект сервера
+     * @param fromDir - заданная директория(папка) сервера
+     * @param toDir - заданная директория(папка) клиента
+     * @param filename - имя файла
+     * @throws IOException - исключение ввода-вывода
+     */
+    public void downloadAndSendFile(TCPServer server, String fromDir, String toDir, String filename) throws IOException {
         //FIXME добавить проверку на наличие файла в директории?
 
         System.out.println("(Server)FileCommandHandler.downloadFile - fileMessage.getFilename(): " +
@@ -71,7 +99,7 @@ public class FileCommandHandler extends CommandHandler{
         FileMessage fileMessage = new FileMessage(fromDir, toDir, filename);
         fileMessage.readFileData();//TODO
 
-        tcpServer.sendToClient("login1", new CommandMessage(Commands.SERVER_RESPONSE_FILE_DOWNLOAD,
+        server.sendToClient("login1", new CommandMessage(Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK,
                 fileMessage));
     }
 

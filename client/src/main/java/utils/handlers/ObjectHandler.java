@@ -3,7 +3,6 @@ package utils.handlers;
 import messages.AuthMessage;
 import messages.Commands;
 import messages.FileMessage;
-import tcp.TCPClient;
 import utils.CommandMessage;
 
 import java.io.IOException;
@@ -22,7 +21,7 @@ public class ObjectHandler {
 
             //выполняем операции в зависимости от типа полученного сообщения(команды)
             switch (messageObject.getCommand()){
-                case Commands.SERVER_RESPONSE_FILE_DOWNLOAD:
+                case Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK:
                     fileMessage = (FileMessage) messageObject.getMessageObject();
                     fileCommandHandler = new FileCommandHandler(fileMessage);
                     storageDir = fileMessage.getFromDir();

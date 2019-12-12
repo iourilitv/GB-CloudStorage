@@ -18,11 +18,10 @@ public class FileMessage extends AbstractMessage {
     //объявляем байтовый массив с данными из файла
     private byte[] data;
 
-    public FileMessage(String fromDir, String toDir, String filename) throws IOException {
+    public FileMessage(String fromDir, String toDir, String filename) {
         this.fromDir = fromDir;
         this.toDir = toDir;
         this.filename = filename;
-
     }
 
     /**

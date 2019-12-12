@@ -3,7 +3,6 @@ package tcp;
 import messages.AuthMessage;
 import messages.Commands;
 import messages.FileMessage;
-//import utils.utils.CommandMessage;
 import utils.CommandMessage;
 import utils.handlers.ObjectHandler;
 
@@ -44,16 +43,50 @@ public class TCPClient implements TCPConnectionListener {
         }
     }
 
+    //FIXME удалить, когда будет реализован интерфейс
     public void send () throws IOException {
-//        //отправляем на сервер запрос на загрузку файла в облачное хранилище
+        //отправляем на сервер запрос на загрузку файла в облачное хранилище
+//        FileMessage fileMessage = new FileMessage(clientDir, storageDir, "file1.txt"));
+//        fileMessage.readFileData();
 //        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
-//                new FileMessage(clientDir, "file1.txt")));
+//                fileMessage));
+        uploadFile(clientDir, storageDir, "file1.txt");
+
 //        //отправляем на сервер запрос на авторизацию в облачное хранилище
 //        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
 //                new AuthMessage("login1", "pass1")));
         //отправляем на сервер запрос на скачивание файла из облачного хранилища
+//        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_DOWNLOAD,
+//                new FileMessage(storageDir, clientDir, "acmp_ru.png")));
+        downloadFile(storageDir, clientDir, "acmp_ru.png");
+    }
+
+    //отправляем на сервер запрос на загрузку файла в облачное хранилище
+    //FIXME перенести в контроллер интерфейса
+    public void uploadFile(String fromDir, String toDir, String filename){
+        //инициируем объект файлового сообщения
+        FileMessage fileMessage = new FileMessage(fromDir, toDir, filename);
+        try {
+            //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
+            fileMessage.readFileData();
+        } catch (IOException e) {
+            //печатаем в консоль сообщение об ошибке считывания файла
+            printMsg("There is no file in the directory!");
+            e.printStackTrace();//TODO
+        }
+        //отправляем на сервер объект сообщения(команды)
+        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
+                fileMessage));
+    }
+
+    //отправляем на сервер запрос на скачивание файла из облачного хранилища
+    //FIXME перенести в контроллер интерфейса
+    public void downloadFile(String fromDir, String toDir, String filename){
+        //инициируем объект файлового сообщения
+        FileMessage fileMessage = new FileMessage(fromDir, toDir, filename);
+        //отправляем на сервер объект сообщения(команды)
         connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_DOWNLOAD,
-                new FileMessage(storageDir, clientDir, "acmp_ru.png")));
+                fileMessage));
     }
 
     @Override
@@ -81,10 +114,6 @@ public class TCPClient implements TCPConnectionListener {
         }
         //распознаем и обрабатываем полученный объект сообщения(команды)
         objectHandler.recognizeAndArrangeMessageObject(messageObject);
-    }
-
-    public String getStorageDir() {
-        return storageDir;
     }
 
     private synchronized void printMsg(String msg){

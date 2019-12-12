@@ -32,19 +32,9 @@ public class FileCommandHandler extends CommandHandler{
         return fileFragmentMessage;
     }
 
-    //FIXME
-//    public void uploadFile(String storageDir) throws IOException {
-//        System.out.println("Server.onReceiveObject - fileMessage.getFilename(): " +
-//                fileMessage.getFilename() +
-//                ". Arrays.toString(fileMessage.getData()): " +
-//                Arrays.toString(fileMessage.getData()));
-//
-//        Files.write(Paths.get(storageDir, fileMessage.getFilename()),
-//                fileMessage.getData(), StandardOpenOption.CREATE);
-//    }
-
     /**
-     * Метод сохраняет скачанный(полученный) целый файл в заданную директорию клиента
+     * Метод сохраняет скачанный из сетевого хранилища(полученный от сервера) целый файл
+     * в заданную директорию клиента
      * @param fromDir - заданная директория(папка) сервера
      * @param toDir - заданная директория(папка) клиента
      * @param fileMessage - объект файла, полученного от сервера

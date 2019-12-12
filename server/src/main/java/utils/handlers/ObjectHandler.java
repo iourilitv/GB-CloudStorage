@@ -29,22 +29,50 @@ public class ObjectHandler {
 
             //выполняем операции в зависимости от типа полученного сообщения(команды)
             switch (messageObject.getCommand()){
-//                //обрабатываем полученный от клиента запрос на загрузку(сохранение) файла в облачное хранилище
-//                case Commands.REQUEST_SERVER_FILE_UPLOAD:
-////                    FileCommandHandler uploadCommandHandler = (FileCommandHandler)messageObject.getCommandHandler();
-////                    fileMessage = uploadCommandHandler.getFileMessage();
-//                    fileMessage = (FileMessage) messageObject.getMessageObject();
-//                    fileCommandHandler = new FileCommandHandler(fileMessage);
+                //обрабатываем полученный от клиента запрос на загрузку(сохранение) файла в облачное хранилище
+                case Commands.REQUEST_SERVER_FILE_UPLOAD:
+                    fileMessage = (FileMessage) messageObject.getMessageObject();
+                    fileCommandHandler = new FileCommandHandler(fileMessage);
 //                    currentDir = fileMessage.getRoot();
 //                    fileCommandHandler.saveUploadedFile(fileMessage, currentDir);
-//                    break;
+                    clientDir = fileMessage.getFromDir();
+                    storageDir = fileMessage.getToDir();
+                    int command = Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR;
+                    //если сохранение прошло удачно
+                    if(fileCommandHandler.saveUploadedFile(clientDir, storageDir, fileMessage)){
+                        //проверяем сохраненный файл по контрольной сумме//FIXME
+                        if(true){
+                            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+                            // FIXME
+//                            server.sendToClient("login1", new CommandMessage(Commands.SERVER_RESPONSE_FILE_UPLOAD_OK,
+//                                    fileMessage));
+                            command = Commands.SERVER_RESPONSE_FILE_UPLOAD_OK;
+                        }
+//                        else {
+//                            //отправляем сообщение на сервер: запрос на повторную отправку файла
+////                            server.sendToClient("login1", new CommandMessage(Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR,
+////                                    fileMessage));
+//                            command = Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR;
+//                        }
+                    //если сохранение не удалось
+                    }
+//                    else {
+//                        //отправляем сообщение на сервер: запрос на повторную отправку файла
+////                        server.sendToClient("login1", new CommandMessage(Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR,
+////                                fileMessage));
+//                        command = Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR;
+//                    }
+                    fileMessage = new FileMessage(storageDir, clientDir, fileMessage.getFilename());
+                    server.sendToClient("login1", new CommandMessage(command,
+                            fileMessage));
+                    break;
                 //обрабатываем полученный от клиента запрос на скачивание файла из облачного хранилища
                 case Commands.REQUEST_SERVER_FILE_DOWNLOAD:
                     fileMessage = (FileMessage) messageObject.getMessageObject();
                     fileCommandHandler = new FileCommandHandler(fileMessage);
                     storageDir = fileMessage.getFromDir();
                     clientDir = fileMessage.getToDir();
-                    fileCommandHandler.downloadFile(server, storageDir, clientDir, fileMessage.getFilename());
+                    fileCommandHandler.downloadAndSendFile(server, storageDir, clientDir, fileMessage.getFilename());
                     break;
                 //обрабатываем полученный от клиента запрос на авторизацию в облачное хранилище
                 case Commands.REQUEST_SERVER_AUTH:
