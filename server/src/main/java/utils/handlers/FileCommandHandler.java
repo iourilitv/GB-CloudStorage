@@ -16,7 +16,9 @@ import java.util.Arrays;
  * The server class for operating with the command message "upload() a file".
  */
 public class FileCommandHandler extends CommandHandler{
+    //принимаем объект файлового сообщения для полного файла
     private FileMessage fileMessage;
+    //принимаем объект файлового сообщения для фрагмента файла
     private FileFragmentMessage fileFragmentMessage;
 
     public FileCommandHandler(FileMessage fileMessage) {
@@ -34,31 +36,6 @@ public class FileCommandHandler extends CommandHandler{
     public FileFragmentMessage getFileFragmentMessage() {
         return fileFragmentMessage;
     }
-
-//    public void uploadFile(FileMessage fileMessage, String storageDir) throws IOException {
-//        System.out.println("Server.onReceiveObject - fileMessage.getFilename(): " +
-//                fileMessage.getFilename() +
-//                ". Arrays.toString(fileMessage.getData()): " +
-//                Arrays.toString(fileMessage.getData()));
-//
-//        Files.write(Paths.get(storageDir, fileMessage.getFilename()),
-//                fileMessage.getData(), StandardOpenOption.CREATE);
-//    }
-
-//    /**
-//     * Метод сохраняет полученный целый файл в заданную директорию
-//     * @param storageDir - заданная директория(папка)
-//     * @throws IOException - исключение ввода-вывода
-//     */
-//    public void saveUploadedFile(FileMessage fileMessage, String storageDir) throws IOException {
-//        System.out.println("(Server)FileCommandHandler.saveDownloadedFile - fileMessage.getFilename(): " +
-//                fileMessage.getFilename() +
-//                ". Arrays.toString(fileMessage.getData()): " +
-//                Arrays.toString(fileMessage.getData()));
-//
-//        Files.write(Paths.get(storageDir, fileMessage.getFilename()),
-//                fileMessage.getData(), StandardOpenOption.CREATE);
-//    }
 
     /**
      * Метод сохраняет полученный от клиента целый файл

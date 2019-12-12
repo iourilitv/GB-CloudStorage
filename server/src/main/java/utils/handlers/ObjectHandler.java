@@ -19,7 +19,6 @@ public class ObjectHandler {
         this.server = server;
     }
 
-//    public void recognizeAndArrangeMessageObject(TCPServer tcpServer, CommandMessage messageObject) {
     public void recognizeAndArrangeMessageObject(CommandMessage messageObject) {
         try {
             FileMessage fileMessage;
@@ -33,8 +32,6 @@ public class ObjectHandler {
                 case Commands.REQUEST_SERVER_FILE_UPLOAD:
                     fileMessage = (FileMessage) messageObject.getMessageObject();
                     fileCommandHandler = new FileCommandHandler(fileMessage);
-//                    currentDir = fileMessage.getRoot();
-//                    fileCommandHandler.saveUploadedFile(fileMessage, currentDir);
                     clientDir = fileMessage.getFromDir();
                     storageDir = fileMessage.getToDir();
                     int command = Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR;
@@ -43,28 +40,13 @@ public class ObjectHandler {
                         //проверяем сохраненный файл по контрольной сумме//FIXME
                         if(true){
                             //отправляем сообщение на сервер: подтверждение, что все прошло успешно
-                            // FIXME
-//                            server.sendToClient("login1", new CommandMessage(Commands.SERVER_RESPONSE_FILE_UPLOAD_OK,
-//                                    fileMessage));
                             command = Commands.SERVER_RESPONSE_FILE_UPLOAD_OK;
                         }
-//                        else {
-//                            //отправляем сообщение на сервер: запрос на повторную отправку файла
-////                            server.sendToClient("login1", new CommandMessage(Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR,
-////                                    fileMessage));
-//                            command = Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR;
-//                        }
-                    //если сохранение не удалось
                     }
-//                    else {
-//                        //отправляем сообщение на сервер: запрос на повторную отправку файла
-////                        server.sendToClient("login1", new CommandMessage(Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR,
-////                                fileMessage));
-//                        command = Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR;
-//                    }
+                    //создаем объект файлового сообщения
                     fileMessage = new FileMessage(storageDir, clientDir, fileMessage.getFilename());
-                    server.sendToClient("login1", new CommandMessage(command,
-                            fileMessage));
+                    //отправляем объект сообщения(команды) клиенту
+                    server.sendToClient("login1", new CommandMessage(command, fileMessage));
                     break;
                 //обрабатываем полученный от клиента запрос на скачивание файла из облачного хранилища
                 case Commands.REQUEST_SERVER_FILE_DOWNLOAD:

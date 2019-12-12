@@ -13,7 +13,9 @@ import java.util.Arrays;
  * The client class for operating with the command message "upload() a file".
  */
 public class FileCommandHandler extends CommandHandler{
+    //принимаем объект файлового сообщения для полного файла
     private FileMessage fileMessage;
+    //принимаем объект файлового сообщения для фрагмента файла
     private FileFragmentMessage fileFragmentMessage;
 
     public FileCommandHandler(FileMessage fileMessage) {
@@ -46,7 +48,7 @@ public class FileCommandHandler extends CommandHandler{
                 ". Arrays.toString(fileMessage.getData()): " +
                 Arrays.toString(fileMessage.getData()));
 
-        //сохраняем полученный файл
+        //сохраняем полученный файл//FIXME добавить проверку директории и наличия файла с таким названием
         Files.write(Paths.get(toDir, fileMessage.getFilename()),
                 fileMessage.getData(), StandardOpenOption.CREATE);
 

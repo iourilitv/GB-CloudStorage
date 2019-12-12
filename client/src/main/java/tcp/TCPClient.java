@@ -44,20 +44,15 @@ public class TCPClient implements TCPConnectionListener {
     }
 
     //FIXME удалить, когда будет реализован интерфейс
-    public void send () throws IOException {
+    public void send () {
         //отправляем на сервер запрос на загрузку файла в облачное хранилище
-//        FileMessage fileMessage = new FileMessage(clientDir, storageDir, "file1.txt"));
-//        fileMessage.readFileData();
-//        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
-//                fileMessage));
         uploadFile(clientDir, storageDir, "file1.txt");
 
 //        //отправляем на сервер запрос на авторизацию в облачное хранилище
 //        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
 //                new AuthMessage("login1", "pass1")));
+
         //отправляем на сервер запрос на скачивание файла из облачного хранилища
-//        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_DOWNLOAD,
-//                new FileMessage(storageDir, clientDir, "acmp_ru.png")));
         downloadFile(storageDir, clientDir, "acmp_ru.png");
     }
 
