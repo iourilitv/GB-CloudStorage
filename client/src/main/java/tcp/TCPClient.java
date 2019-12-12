@@ -33,7 +33,9 @@ public class TCPClient implements TCPConnectionListener {
 
     public TCPClient() {
         //инициируем объект обработчика сообщений(команд)
-        objectHandler = new ObjectHandler();
+//        objectHandler = new ObjectHandler();
+
+        objectHandler = new ObjectHandler(this);
         try {
             //инициируем переменную сетевого соединения
             //устанавливаем соединение при открытии окна
@@ -111,7 +113,11 @@ public class TCPClient implements TCPConnectionListener {
         objectHandler.recognizeAndArrangeMessageObject(messageObject);
     }
 
-    private synchronized void printMsg(String msg){
+    public TCPConnection getConnection() {
+        return connection;
+    }
+
+    public synchronized void printMsg(String msg){
         log.append(msg).append("\n");
     }
 }

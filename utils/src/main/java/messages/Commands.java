@@ -15,9 +15,13 @@ public class Commands {
     //запрос на сервер скачать файл
     public static final int REQUEST_SERVER_FILE_DOWNLOAD = 202101;
     //ответ сервера с файлом, если нет ошибок
+    public static final int CLIENT_RESPONSE_FILE_DOWNLOAD_OK = 202102;
+    //ответ сервера, что при скачивании файла произошла ошибка
+    public static final int CLIENT_RESPONSE_FILE_DOWNLOAD_ERROR = 202109;
+    //ответ сервера с файлом, если нет ошибок
     public static final int SERVER_RESPONSE_FILE_DOWNLOAD_OK = 202202;
     //ответ сервера, что при скачивании файла произошла ошибка
-    public static final int SERVER_RESPONSE_FILE_DOWNLOAD_ERROR = 202909;
+    public static final int SERVER_RESPONSE_FILE_DOWNLOAD_ERROR = 202209;
     //запрос на сервер предоставить список файлов в папке
     public static final int REQUEST_SERVER_FILES_LIST = 303101;
     //переименовать файл на сервере

@@ -2,6 +2,7 @@ package utils.handlers;
 
 import messages.FileFragmentMessage;
 import messages.FileMessage;
+import tcp.TCPClient;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,23 +35,50 @@ public class FileCommandHandler extends CommandHandler{
         return fileFragmentMessage;
     }
 
+//    /**
+//     * Метод сохраняет скачанный из сетевого хранилища(полученный от сервера) целый файл
+//     * в заданную директорию клиента
+//     * @param fromDir - заданная директория(папка) сервера
+//     * @param toDir - заданная директория(папка) клиента
+//     * @param fileMessage - объект файла, полученного от сервера
+//     * @throws IOException - исключение ввода-вывода
+//     */
+//    public void saveDownloadedFile(String fromDir, String toDir,FileMessage fileMessage) throws IOException {
+//        System.out.println("(Client)FileCommandHandler.saveDownloadedFile - fileMessage.getFilename(): " +
+//                fileMessage.getFilename() +
+//                ". Arrays.toString(fileMessage.getData()): " +
+//                Arrays.toString(fileMessage.getData()));
+//
+//        //сохраняем полученный файл//FIXME добавить проверку директории и наличия файла с таким названием
+//        Files.write(Paths.get(toDir, fileMessage.getFilename()),
+//                fileMessage.getData(), StandardOpenOption.CREATE);
+//
+//    }
+
     /**
      * Метод сохраняет скачанный из сетевого хранилища(полученный от сервера) целый файл
      * в заданную директорию клиента
-     * @param fromDir - заданная директория(папка) сервера
+     * @param client - объект клиента
      * @param toDir - заданная директория(папка) клиента
-     * @param fileMessage - объект файла, полученного от сервера
-     * @throws IOException - исключение ввода-вывода
+     * @param fileMessage - объект файлового сообщения с данными файла
+     * @return true, если файл сохранен без ошибок
      */
-    public void saveDownloadedFile(String fromDir, String toDir,FileMessage fileMessage) throws IOException {
+    public boolean saveDownloadedFile(TCPClient client, String toDir, FileMessage fileMessage) {
         System.out.println("(Client)FileCommandHandler.saveDownloadedFile - fileMessage.getFilename(): " +
                 fileMessage.getFilename() +
                 ". Arrays.toString(fileMessage.getData()): " +
                 Arrays.toString(fileMessage.getData()));
 
-        //сохраняем полученный файл//FIXME добавить проверку директории и наличия файла с таким названием
-        Files.write(Paths.get(toDir, fileMessage.getFilename()),
-                fileMessage.getData(), StandardOpenOption.CREATE);
-
+        //FIXME добавить проверку директории и наличия файла с таким названием
+        try {
+            //создаем новый файл и записываем в него данные из объекта файлового сообщения
+            Files.write(Paths.get(toDir, fileMessage.getFilename()),
+                    fileMessage.getData(), StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            client.printMsg("FileCommandHandler.saveUploadedFile() - Something wrong with the directory or the file!");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }
