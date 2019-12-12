@@ -6,8 +6,6 @@ import messages.FileMessage;
 import tcp.TCPServer;
 import utils.CommandMessage;
 
-import java.io.IOException;
-
 /**
  * The server class for recognizing command messages and control command handlers.
  */
@@ -40,11 +38,35 @@ public class ObjectHandler {
                 // в директорию в сетевом хранилище.
                 uploadFile(messageObject);
                 break;
-            //обрабатываем полученный от клиента запрос на скачивание файла из облачного хранилища
+            //обрабатываем полученное от клиента подтверждение успешного получения обновленного
+            // списка файлов клиента в облачном хранилище
+            case Commands.CLIENT_RESPONSE_FILE_UPLOAD_OK:
+                //вызываем метод обработки ответа клиента
+                respondOnUploadFileOK(messageObject);
+                break;
+            //обрабатываем полученное от клиента сообщение об ошибке получения обновленного
+            // списка файлов клиента в облачном хранилище
+            case Commands.CLIENT_RESPONSE_FILE_UPLOAD_ERROR:
+                //вызываем метод обработки ответа клиента
+                respondOnUploadFileError(messageObject);
+                break;
+            //обрабатываем полученный от клиента запрос на скачивание целого файла из облачного хранилища
             case Commands.REQUEST_SERVER_FILE_DOWNLOAD:
                 //вызываем метод обработки запроса от клиента на скачивание целого файла клиента
                 // из директории в сетевом хранилище
                 downloadFile(messageObject);
+                break;
+            //обрабатываем полученное от клиента подтверждение успешного сохранения целого файла,
+            // скачанного из облачного хранилища
+            case Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_OK:
+                //вызываем метод обработки ответа клиента
+                respondOnDownloadFileOK(messageObject);
+                break;
+            //обрабатываем полученное от клиента сообщение об ошибке сохранения целого файла,
+            // скачанного из облачного хранилища
+            case Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_ERROR:
+                //вызываем метод обработки ответа клиента
+                respondOnDownloadFileError(messageObject);
                 break;
             //обрабатываем полученный от клиента запрос на авторизацию в облачное хранилище
             case Commands.REQUEST_SERVER_AUTH:
@@ -88,6 +110,26 @@ public class ObjectHandler {
     }
 
     /**
+     * Метод обрабатывает полученное от клиента подтверждение успешного получения
+     * обновленного списка файлов клиента в облачном хранилище
+     * @param messageObject - объект сообщения(команды)
+     */
+    private void respondOnUploadFileOK(CommandMessage messageObject) {
+        //FIXME fill me!
+        server.printMsg("Server.respondOnUploadFileOK command: " + messageObject.getCommand());
+    }
+
+    /**
+     * Метод обрабатывает полученное от клиента сообщение об ошибке получения обновленного
+     * списка файлов клиента в облачном хранилище
+     * @param messageObject - объект сообщения(команды)
+     */
+    private void respondOnUploadFileError(CommandMessage messageObject) {
+        //FIXME fill me!
+        server.printMsg("Server.respondOnUploadFileError command: " + messageObject.getCommand());
+    }
+
+    /**
      * Метод обработки запроса от клиента на скачивание целого файла клиента из директории в
      * сетевом хранилище.
      * @param messageObject - объект сообщения(команды)
@@ -115,5 +157,25 @@ public class ObjectHandler {
         }
         //отправляем объект сообщения(команды) клиенту
         server.sendToClient("login1", new CommandMessage(command, fileMessage));
+    }
+
+    /**
+     * Метод обрабатывает полученное от клиента подтверждение успешного сохранения целого файла,
+     * скачанного из облачного хранилища
+     * @param messageObject - объект сообщения(команды)
+     */
+    private void respondOnDownloadFileOK(CommandMessage messageObject) {
+        //FIXME fill me!
+        server.printMsg("Server.respondOnDownloadFileOK command: " + messageObject.getCommand());
+    }
+
+    /**
+     * Метод обрабатывает полученное от клиента сообщение об ошибке сохранения целого файла,
+     * скачанного из облачного хранилища
+     * @param messageObject - объект сообщения(команды)
+     */
+    private void respondOnDownloadFileError(CommandMessage messageObject) {
+        //FIXME fill me!
+        server.printMsg("Server.respondOnDownloadFileError command: " + messageObject.getCommand());
     }
 }

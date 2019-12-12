@@ -32,16 +32,55 @@ public class ObjectHandler {
     public void recognizeAndArrangeMessageObject(CommandMessage messageObject) {
         //выполняем операции в зависимости от типа полученного сообщения(команды)
         switch (messageObject.getCommand()) {
+            //обрабатываем полученное от сервера подтверждение успешной загрузки(сохранения)
+            // файла в облачное хранилище
+            case Commands.SERVER_RESPONSE_FILE_UPLOAD_OK:
+                //вызываем метод обработки ответа сервера
+                respondOnUploadFileOK(messageObject);
+                break;
+            //обрабатываем полученное от сервера сообщение об ошибке загрузки(сохранения)
+            // файла в облачное хранилище
+            case Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR:
+                //вызываем метод обработки ответа сервера
+                respondOnUploadFileError(messageObject);
+                break;
+            //обрабатываем полученное от сервера подтверждение успешного скачивания файла из облачного хранилища
             case Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK:
                 //вызываем метод обработки ответа сервера со скачанным целым файлом внутри
                 respondOnDownloadFileOK(messageObject);
                 break;
+            //обрабатываем полученное от сервера сообщение об ошибке скачивания файла из облачного хранилища
+            case Commands.SERVER_RESPONSE_FILE_DOWNLOAD_ERROR:
+                //вызываем метод обработки ответа сервера
+                respondOnDownloadFileError(messageObject);
+                break;
+            //обрабатываем полученное от сервера подтверждение успешной авторизации в облачное хранилище
             case Commands.SERVER_RESPONSE_AUTH_OK:
                 AuthMessage authMessage = (AuthMessage) messageObject.getMessageObject();
                 ServiceCommandHandler serviceCommandHandler = new ServiceCommandHandler(authMessage);
                 serviceCommandHandler.isAuthorized();
                 break;
         }
+    }
+
+    /**
+     * Метод обрабатывает полученное от сервера подтверждение успешной загрузки(сохранения)
+     * файла в облачное хранилище
+     * @param messageObject - объект сообщения(команды)
+     */
+    private void respondOnUploadFileOK(CommandMessage messageObject) {
+        //FIXME fill me!
+        client.printMsg("Client.respondOnUploadFileOK command: " + messageObject.getCommand());
+    }
+
+    /**
+     * Метод обрабатывает полученное от сервера сообщение об ошибке загрузки(сохранения)
+     * файла в облачное хранилище
+     * @param messageObject - объект сообщения(команды)
+     */
+    private void respondOnUploadFileError(CommandMessage messageObject) {
+        //FIXME fill me!
+        client.printMsg("Client.respondOnUploadFileError command: " + messageObject.getCommand());
     }
 
     /**
@@ -71,5 +110,15 @@ public class ObjectHandler {
         fileMessage = new FileMessage(storageDir, clientDir, fileMessage.getFilename());
         //отправляем объект сообщения(команды) на сервер
         client.getConnection().sendMessageObject(new CommandMessage(command, fileMessage));
+    }
+
+    /**
+     * Метод обрабатывает полученное от сервера сообщение об ошибке
+     * скачивания файла из облачного хранилища
+     * @param messageObject - объект сообщения(команды)
+     */
+    private void respondOnDownloadFileError(CommandMessage messageObject) {
+        //FIXME fill me!
+        client.printMsg("Client.respondOnDownloadFileError command: " + messageObject.getCommand());
     }
 }

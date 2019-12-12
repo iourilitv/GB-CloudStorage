@@ -1,5 +1,8 @@
 package messages;
 
+/**
+ * The class is a public storage of command types.
+ */
 public class Commands {
     //***инициируем константы команд:***
     //запрос на сервер на авторизацию пользователя с таким логином и паролем
@@ -8,6 +11,10 @@ public class Commands {
     public static final int SERVER_RESPONSE_AUTH_OK = 911202;
     //запрос на сервер загрузить(сохранить) файл
     public static final int REQUEST_SERVER_FILE_UPLOAD = 101101;
+    //ответ клиента - подтверждение успешного получения обновленного списка, файлов в облачном хранилище
+    public static final int CLIENT_RESPONSE_FILE_UPLOAD_OK = 101102;
+    //ответ клиента - сообщение об ошибке получения обновленного списка, файлов в облачном хранилище
+    public static final int CLIENT_RESPONSE_FILE_UPLOAD_ERROR = 101109;
     //ответ сервера, что файл успешно загружен(сохранен)
     public static final int SERVER_RESPONSE_FILE_UPLOAD_OK = 101202;
     //ответ сервера, что при загрузки(сохранении) файла произошла ошибка
