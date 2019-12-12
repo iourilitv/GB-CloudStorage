@@ -32,7 +32,7 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
     public TCPServer() {
         printMsg("Server running...");
         //инициируем объект обработчика сообщений(команд)
-        objectHandler = new ObjectHandler();
+        objectHandler = new ObjectHandler(this);
         //создаем серверсокет, который слушает порт TCP:8189
         try(ServerSocket serverSocket = new ServerSocket(8189)){//это "try с ресурсом"
             //сервер слушает входящие соединения
@@ -60,18 +60,6 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
     public void onConnectionReady(TCPConnection tcpConnection) {
         //если соединение установлено, то добавляем его в список
         connections.add(tcpConnection);
-//        //отправляем файл клиенту
-//        try {
-//            send();//TODO
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-    }
-
-    public void send () throws IOException {
-//        connection.sendMessageObject(new utils.CommandMessage(storageDir, "file1.txt"));
-        //TODO как распознавать? по логину? по порту? по сокету?
-//        sendToClient("49884", new AuthMessage("login1", "pass1"));
     }
 
     @Override
@@ -94,8 +82,7 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
             e.printStackTrace();
         }
         //распознаем и обрабатываем полученный объект сообщения(команды)
-//        objectHandler.recognizeAndArrangeMessageObject(this, messageObject, storageDir);
-        objectHandler.recognizeAndArrangeMessageObject(this, messageObject);
+        objectHandler.recognizeAndArrangeMessageObject(messageObject);
     }
 
     public void sendToClient(String login, CommandMessage messageObject){

@@ -3,6 +3,7 @@ package utils.handlers;
 import messages.AuthMessage;
 import messages.Commands;
 import messages.FileMessage;
+import tcp.TCPClient;
 import utils.CommandMessage;
 
 import java.io.IOException;
@@ -12,31 +13,10 @@ import java.io.IOException;
  */
 public class ObjectHandler {
 
-//    public void recognizeAndArrangeMessageObject(CommandMessage messageObject, String storageDir) {
-//        try {
-//            //выполняем операции в зависимости от типа полученного сообщения(команды)
-//            switch (messageObject.getCommand()){
-//                case Commands.SERVER_RESPONSE_FILE_DOWNLOAD:
-//                    FileMessage fileMessage = (FileMessage) messageObject.getMessageObject();
-//                    FileCommandHandler fileCommandHandler = new FileCommandHandler(fileMessage);
-//                    fileCommandHandler.saveDownloadedFile(fileMessage, storageDir);
-//                    break;
-//                case Commands.SERVER_RESPONSE_AUTH_OK:
-//                    AuthMessage authMessage = (AuthMessage) messageObject.getMessageObject();
-//                    ServiceCommandHandler serviceCommandHandler = new ServiceCommandHandler(authMessage);
-//                    serviceCommandHandler.isAuthorized();
-//                    break;
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
     public void recognizeAndArrangeMessageObject(CommandMessage messageObject) {
         try {
             FileMessage fileMessage;
             FileCommandHandler fileCommandHandler;
-
-//            String currentDir;//TODO
             String clientDir;
             String storageDir;
 
@@ -45,12 +25,10 @@ public class ObjectHandler {
                 case Commands.SERVER_RESPONSE_FILE_DOWNLOAD:
                     fileMessage = (FileMessage) messageObject.getMessageObject();
                     fileCommandHandler = new FileCommandHandler(fileMessage);
-//                    currentDir = fileMessage.getRoot();
-//                    fileCommandHandler.saveDownloadedFile(fileMessage, currentDir);
                     storageDir = fileMessage.getFromDir();
                     clientDir = fileMessage.getToDir();
 
-                    if(fileMessage != null){
+                    if(fileMessage != null){//FIXME
                         fileCommandHandler.saveDownloadedFile(storageDir, clientDir, fileMessage);
                     } else {
                         System.out.println("There is no any file attached!");//FIXME выводить в GUI?

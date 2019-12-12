@@ -43,20 +43,13 @@ public class FileCommandHandler extends CommandHandler{
 //                fileMessage.getData(), StandardOpenOption.CREATE);
 //    }
 
-//    /**
-//     * Метод сохраняет скачанный(полученный) целый файл в заданную директорию клиента
-//     * @param clientDir - заданная директория(папка) клиента
-//     * @throws IOException - исключение ввода-вывода
-//     */
-//    public void saveDownloadedFile(FileMessage fileMessage, String clientDir) throws IOException {
-//        System.out.println("(Client)FileCommandHandler.saveDownloadedFile - fileMessage.getFilename(): " +
-//                fileMessage.getFilename() +
-//                ". Arrays.toString(fileMessage.getData()): " +
-//                Arrays.toString(fileMessage.getData()));
-//
-//        Files.write(Paths.get(clientDir, fileMessage.getFilename()),
-//                fileMessage.getData(), StandardOpenOption.CREATE);
-//    }
+    /**
+     * Метод сохраняет скачанный(полученный) целый файл в заданную директорию клиента
+     * @param fromDir - заданная директория(папка) сервера
+     * @param toDir - заданная директория(папка) клиента
+     * @param fileMessage - объект файла, полученного от сервера
+     * @throws IOException - исключение ввода-вывода
+     */
     public void saveDownloadedFile(String fromDir, String toDir,FileMessage fileMessage) throws IOException {
         System.out.println("(Client)FileCommandHandler.saveDownloadedFile - fileMessage.getFilename(): " +
                 fileMessage.getFilename() +

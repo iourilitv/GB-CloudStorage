@@ -12,40 +12,18 @@ import java.io.IOException;
  * The server class for recognizing command messages and control command handlers.
  */
 public class ObjectHandler {
+    //принимаем объект сервера
+    TCPServer server;
 
-//    public void recognizeAndArrangeMessageObject(TCPServer tcpServer, utils.CommandMessage messageObject, String storageDir) {
-//        try {
-//            FileMessage fileMessage;
-//            //выполняем операции в зависимости от типа полученного сообщения(команды)
-//            switch (messageObject.getCommand()){
-//                //обрабатываем полученный от клиента запрос на загрузку(сохранение) файла в облачное хранилище
-//                case Commands.REQUEST_SERVER_FILE_UPLOAD:
-//                    UploadCommandHandler uploadCommandHandler = (UploadCommandHandler)messageObject.getCommandHandler();
-//                    fileMessage = uploadCommandHandler.getFileMessage();
-//                    uploadCommandHandler.saveUploadedFile(fileMessage, storageDir);
-//                    break;
-//                //обрабатываем полученный от клиента запрос на скачивание файла из облачного хранилища
-//                case Commands.REQUEST_SERVER_FILE_DOWNLOAD:
-//                    uploadCommandHandler = (UploadCommandHandler)messageObject.getCommandHandler();
-//                    fileMessage = uploadCommandHandler.getFileMessage();
-//                    uploadCommandHandler.downloadFile(tcpServer, fileMessage, storageDir);
-//                    break;
-//                //обрабатываем полученный от клиента запрос на авторизацию в облачное хранилище
-//                case Commands.REQUEST_SERVER_AUTH:
-//                    ServiceCommandHandler serviceCommandHandler = (ServiceCommandHandler) messageObject.getCommandHandler();
-//                    serviceCommandHandler.authorizeUser();
-//                    break;
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-    public void recognizeAndArrangeMessageObject(TCPServer tcpServer, CommandMessage messageObject) {
+    public ObjectHandler(TCPServer server) {
+        this.server = server;
+    }
+
+//    public void recognizeAndArrangeMessageObject(TCPServer tcpServer, CommandMessage messageObject) {
+    public void recognizeAndArrangeMessageObject(CommandMessage messageObject) {
         try {
             FileMessage fileMessage;
             FileCommandHandler fileCommandHandler;
-
-//            String currentDir;//TODO
             String clientDir;
             String storageDir;
 
@@ -64,10 +42,9 @@ public class ObjectHandler {
                 case Commands.REQUEST_SERVER_FILE_DOWNLOAD:
                     fileMessage = (FileMessage) messageObject.getMessageObject();
                     fileCommandHandler = new FileCommandHandler(fileMessage);
-//                    currentDir = fileMessage.getRoot();
                     storageDir = fileMessage.getFromDir();
                     clientDir = fileMessage.getToDir();
-                    fileCommandHandler.downloadFile(tcpServer, storageDir, clientDir, fileMessage.getFilename());
+                    fileCommandHandler.downloadFile(server, storageDir, clientDir, fileMessage.getFilename());
                     break;
                 //обрабатываем полученный от клиента запрос на авторизацию в облачное хранилище
                 case Commands.REQUEST_SERVER_AUTH:

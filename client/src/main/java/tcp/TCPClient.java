@@ -6,8 +6,6 @@ import messages.FileMessage;
 //import utils.utils.CommandMessage;
 import utils.CommandMessage;
 import utils.handlers.ObjectHandler;
-import utils.handlers.ServiceCommandHandler;
-import utils.handlers.FileCommandHandler;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -33,8 +31,6 @@ public class TCPClient implements TCPConnectionListener {
     private CommandMessage messageObject;
     //объявляем объект обработчика сообщений(команд)
     private ObjectHandler objectHandler;
-//    //объявляем объект хранилища типов сообщений(команд)
-//    private final Commands commands = Commands.getInstance();//TODO не надо?
 
     public TCPClient() {
         //инициируем объект обработчика сообщений(команд)
@@ -48,26 +44,6 @@ public class TCPClient implements TCPConnectionListener {
         }
     }
 
-//    public void send () throws IOException {
-//        connection.sendMessageObject(new utils.CommandMessage(utils.CommandMessage.CMD_MSG_REQUEST_SERVER_FILE_UPLOAD,
-//                new UploadCommandHandler(new FileMessage(storageDir, "file1.txt"))));
-//
-//        connection.sendMessageObject(new utils.CommandMessage(utils.CommandMessage.CMD_MSG_REQUEST_SERVER_AUTH,
-//                new ServiceCommandHandler(new AuthMessage("login1", "pass1"))));
-//    }
-//    public void send () throws IOException {
-//        //отправляем на сервер запрос на загрузку файла в облачное хранилище
-////        connection.sendMessageObject(new utils.CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
-////                new FileCommandHandler(new FileMessage(storageDir, "file1.txt"))));
-////        connection.sendMessageObject(new utils.CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
-////                new FileCommandHandler(new FileMessage(clientDir, "file1.txt"))));
-//        //отправляем на сервер запрос на авторизацию в облачное хранилище
-//        connection.sendMessageObject(new utils.CommandMessage(Commands.REQUEST_SERVER_AUTH,
-//                new ServiceCommandHandler(new AuthMessage("login1", "pass1"))));
-////        //отправляем на сервер запрос на скачивание файла из облачного хранилища
-////        connection.sendMessageObject(new utils.CommandMessage(Commands.REQUEST_SERVER_FILE_DOWNLOAD,
-////                new FileCommandHandler(new FileMessage(storageDir, "acmp_ru.png"))));
-//    }
     public void send () throws IOException {
 //        //отправляем на сервер запрос на загрузку файла в облачное хранилище
 //        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
@@ -76,8 +52,6 @@ public class TCPClient implements TCPConnectionListener {
 //        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
 //                new AuthMessage("login1", "pass1")));
         //отправляем на сервер запрос на скачивание файла из облачного хранилища
-//        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_DOWNLOAD,
-//                new FileMessage(storageDir, "acmp_ru.png")));//TODO не существующие имя и директория у клиента
         connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_DOWNLOAD,
                 new FileMessage(storageDir, clientDir, "acmp_ru.png")));
     }
@@ -106,7 +80,6 @@ public class TCPClient implements TCPConnectionListener {
             e.printStackTrace();
         }
         //распознаем и обрабатываем полученный объект сообщения(команды)
-//        objectHandler.recognizeAndArrangeMessageObject(messageObject, storageDir);
         objectHandler.recognizeAndArrangeMessageObject(messageObject);
     }
 
