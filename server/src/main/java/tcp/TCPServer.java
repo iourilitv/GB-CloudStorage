@@ -99,7 +99,7 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
     }
 
     //TODO
-    private synchronized void printMsg(String msg){
+    public synchronized void printMsg(String msg){
         log.append(msg).append("\n");
     }
 }
