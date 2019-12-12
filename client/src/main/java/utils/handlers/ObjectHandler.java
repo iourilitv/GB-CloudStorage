@@ -20,6 +20,10 @@ public class ObjectHandler {
     String clientDir;
     //объявляем пременную для директории в сетевом хранилище
     String storageDir;
+    //объявляем объект авторизационного сообщения
+    AuthMessage authMessage;
+    //объявляем объект сервисного хендлера
+    ServiceCommandHandler serviceCommandHandler;
 
     public ObjectHandler(TCPClient client) {
         this.client = client;
@@ -56,11 +60,43 @@ public class ObjectHandler {
                 break;
             //обрабатываем полученное от сервера подтверждение успешной авторизации в облачное хранилище
             case Commands.SERVER_RESPONSE_AUTH_OK:
-                AuthMessage authMessage = (AuthMessage) messageObject.getMessageObject();
-                ServiceCommandHandler serviceCommandHandler = new ServiceCommandHandler(authMessage);
-                serviceCommandHandler.isAuthorized();
+                //вызываем метод обработки ответа сервера
+                respondOnAuthOK(messageObject);
+//                AuthMessage authMessage = (AuthMessage) messageObject.getMessageObject();
+//                ServiceCommandHandler serviceCommandHandler = new ServiceCommandHandler(authMessage);
+//                serviceCommandHandler.isAuthorized();
+                break;
+            //обрабатываем полученное от сервера сообщение об ошибке авторизации в облачное хранилище
+            case Commands.SERVER_RESPONSE_AUTH_ERROR:
+                //вызываем метод обработки ответа сервера
+                respondOnAuthError(messageObject);
                 break;
         }
+    }
+
+    /**
+     * Метод обрабатывает полученное от сервера подтверждение успешной авторизации в облачное хранилище
+     * @param messageObject - объект сообщения(команды)
+     */
+    private void respondOnAuthOK(CommandMessage messageObject) {
+        //вынимаем объект авторизационного сообщения из объекта сообщения(команды)
+        authMessage = (AuthMessage) messageObject.getMessageObject();
+        //инициируем объект сервисного хендлера
+        serviceCommandHandler = new ServiceCommandHandler(authMessage);
+        //вызываем метод обработки события успешной авторизации в облачном хранилище
+        serviceCommandHandler.isAuthorized(client);
+    }
+
+    /**
+     * Метод обрабатывает полученное от сервера сообщение об ошибке авторизации в облачное хранилище
+     * @param messageObject - объект сообщения(команды)
+     */
+    private void respondOnAuthError(CommandMessage messageObject) {
+        //FIXME
+        // вывести в GUI сообщение об ошибке
+        // повторить запрос на авторизацию с новыми данными логина и пароля
+
+        client.printMsg("ObjectHandler.respondOnAuthError() - Something wrong with your login and password!");
     }
 
     /**

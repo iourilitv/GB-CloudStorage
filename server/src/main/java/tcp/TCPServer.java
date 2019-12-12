@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * The class is responded for connecting with the clients apps.
@@ -60,6 +61,10 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
     public void onConnectionReady(TCPConnection tcpConnection) {
         //если соединение установлено, то добавляем его в список
         connections.add(tcpConnection);
+
+        //TODO temporarily
+        printMsg("TCPServer.onConnectionReady() " + connections.toString());
+
     }
 
     @Override
@@ -99,6 +104,32 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
     }
 
     //TODO
+    public boolean checkLoginAndPassword(String login, String password) {
+        //FIXME запросить jdbс проверить логин и пароль
+        //если порт соединения совпадает с портом полученного объекта авторизационного запроса
+        if(login.equals("login1") && password.equals("pass1")){//FIXME
+            return true;
+        }
+        return false;
+    }
+
+    public boolean determineClient(int port, String login) {
+        //листаем список активных соединений
+        for (int i = 0; i < connections.size(); i++) {
+
+            printMsg("TCPServer.determineClient() - connections.get(i).getSocket().getLocalPort(): " +
+                    connections.get(i).getSocket().getPort());
+
+            //если порт соединения совпадает с портом полученного объекта авторизационного запроса
+            if(connections.get(i).getSocket().getPort() == port){//FIXME
+                //записываем логин клиента как идентификатор клиента
+                connections.get(i).setClientID(login);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public synchronized void printMsg(String msg){
         log.append(msg).append("\n");
     }

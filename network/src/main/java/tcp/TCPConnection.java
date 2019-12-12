@@ -8,6 +8,8 @@ public class TCPConnection {
     private final Socket socket;
     private final Thread rxThread;
     private final TCPConnectionListener eventListener;
+    //инициируем переменную идентификатора подсоединенного клиента
+    private String clientID = "unknownID";
 
     //TODO
     //объявляем переменные для буферезированных входного и выходного потоков
@@ -94,6 +96,14 @@ public class TCPConnection {
 
     public Socket getSocket() {
         return socket;
+    }
+
+    public String getClientID() {
+        return clientID;
+    }
+
+    public void setClientID(String clientID) {
+        this.clientID = clientID;
     }
 }
 

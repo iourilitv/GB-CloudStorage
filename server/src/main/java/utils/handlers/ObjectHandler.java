@@ -20,6 +20,10 @@ public class ObjectHandler {
     String clientDir;
     //объявляем пременную для директории в сетевом хранилище
     String storageDir;
+    //объявляем объект авторизационного сообщения
+    AuthMessage authMessage;
+    //объявляем объект сервисного хендлера
+    ServiceCommandHandler serviceCommandHandler;
 
     public ObjectHandler(TCPServer server) {
         this.server = server;
@@ -70,13 +74,41 @@ public class ObjectHandler {
                 break;
             //обрабатываем полученный от клиента запрос на авторизацию в облачное хранилище
             case Commands.REQUEST_SERVER_AUTH:
+                //вызываем метод обработки запроса от клиента
+                respondOnAuthRequest(messageObject);
 //                    ServiceCommandHandler serviceCommandHandler = (ServiceCommandHandler) messageObject.getCommandHandler();
-                AuthMessage authMessage = (AuthMessage) messageObject.getMessageObject();
-                ServiceCommandHandler serviceCommandHandler = new ServiceCommandHandler(authMessage);
-                serviceCommandHandler.authorizeUser();
+//                AuthMessage authMessage = (AuthMessage) messageObject.getMessageObject();
+//                ServiceCommandHandler serviceCommandHandler = new ServiceCommandHandler(authMessage);
+//                serviceCommandHandler.authorizeUser();
                 break;
         }
 
+    }
+
+    /**
+     * Метод обрабатывает полученный от клиента запрос на авторизацию в облачное хранилище
+     * @param messageObject - объект сообщения(команды)
+     */
+    private void respondOnAuthRequest(CommandMessage messageObject) {
+        //вынимаем объект авторизационного сообщения из объекта сообщения(команды)
+        authMessage = (AuthMessage) messageObject.getMessageObject();
+        //инициируем объект сервисного хендлера
+        serviceCommandHandler = new ServiceCommandHandler(authMessage);
+        //вызываем метод авторизации клиента в облачном хранилище
+//        serviceCommandHandler.authorizeUser(server, authMessage);
+
+        //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+        int command = Commands.SERVER_RESPONSE_AUTH_ERROR;
+        //если авторизации клиента в облачном хранилище прошла удачно
+        if(serviceCommandHandler.authorizeUser(server, authMessage)){
+            //меняем команду на успешную
+            command = Commands.SERVER_RESPONSE_AUTH_OK;
+        }
+//        //создаем объект авторизационного сообщения
+//        authMessage = new AuthMessage();//TODO надо?
+
+        //отправляем объект сообщения(команды) клиенту//FIXME где брать логин?
+        server.sendToClient("login1", new CommandMessage(command, authMessage));
     }
 
     /**

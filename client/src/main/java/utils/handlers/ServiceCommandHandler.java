@@ -1,6 +1,7 @@
 package utils.handlers;
 
 import messages.AuthMessage;
+import tcp.TCPClient;
 
 /**
  * The client class for operating with service command messages.
@@ -16,9 +17,15 @@ public class ServiceCommandHandler extends CommandHandler{
         return authMessage;
     }
 
-    public void isAuthorized(){
-
-        System.out.println("(Client)ServiceCommandHandler.isAuthorized: true!");
+    /**
+     * Метод обработки события успешной авторизации в облачном хранилище
+     * @param client - объект клиента
+     */
+    public void isAuthorized(TCPClient client){
+        //FIXME что здесь делать?//чтото изменить в GUI?
+        // Вывести список файлов в директории в сетевом хранилище, например
+        client.printMsg("(Client)ServiceCommandHandler.isAuthorized: true! - authMessage.getLogin(): " +
+                authMessage.getLogin() + ". authMessage.getPassword(): " + authMessage.getPassword());
 
     }
 }

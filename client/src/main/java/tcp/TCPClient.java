@@ -45,15 +45,25 @@ public class TCPClient implements TCPConnectionListener {
 
     //FIXME удалить, когда будет реализован интерфейс
     public void send () {
-        //отправляем на сервер запрос на загрузку файла в облачное хранилище
-        uploadFile(clientDir, storageDir, "file1.txt");
+        //отправляем на сервер запрос на авторизацию в облачное хранилище
+        requestAuthorization("login1", "pass1");
 
-//        //отправляем на сервер запрос на авторизацию в облачное хранилище
-//        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
-//                new AuthMessage("login1", "pass1")));
+//        //отправляем на сервер запрос на загрузку файла в облачное хранилище
+//        uploadFile(clientDir, storageDir, "file1.txt");
+//
+//        //отправляем на сервер запрос на скачивание файла из облачного хранилища
+//        downloadFile(storageDir, clientDir, "acmp_ru.png");
+    }
 
-        //отправляем на сервер запрос на скачивание файла из облачного хранилища
-        downloadFile(storageDir, clientDir, "acmp_ru.png");
+    //отправляем на сервер запрос на авторизацию в облачное хранилище
+    private void requestAuthorization(String login, String password) {
+        //отправляем на сервер объект сообщения(команды)
+        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
+                new AuthMessage(connection.getSocket().getLocalPort(), login, password)));
+
+        //TODO temporarily
+        printMsg("TCPClient.requestAuthorization() - connection.getSocket().getPort(): " +
+                connection.getSocket().getLocalPort());
     }
 
     //отправляем на сервер запрос на загрузку файла в облачное хранилище

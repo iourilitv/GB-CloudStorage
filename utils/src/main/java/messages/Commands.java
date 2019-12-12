@@ -9,6 +9,8 @@ public class Commands {
     public static final int REQUEST_SERVER_AUTH = 911101;
     //ответ сервера, что авторизация прошла успешно
     public static final int SERVER_RESPONSE_AUTH_OK = 911202;
+    //ответ сервера, что авторизация прошла успешно
+    public static final int SERVER_RESPONSE_AUTH_ERROR = 911209;
     //запрос на сервер загрузить(сохранить) файл
     public static final int REQUEST_SERVER_FILE_UPLOAD = 101101;
     //ответ клиента - подтверждение успешного получения обновленного списка, файлов в облачном хранилище
@@ -18,7 +20,7 @@ public class Commands {
     //ответ сервера, что файл успешно загружен(сохранен)
     public static final int SERVER_RESPONSE_FILE_UPLOAD_OK = 101202;
     //ответ сервера, что при загрузки(сохранении) файла произошла ошибка
-    public static final int SERVER_RESPONSE_FILE_UPLOAD_ERROR = 101909;
+    public static final int SERVER_RESPONSE_FILE_UPLOAD_ERROR = 101209;
     //запрос на сервер скачать файл
     public static final int REQUEST_SERVER_FILE_DOWNLOAD = 202101;
     //ответ сервера с файлом, если нет ошибок
