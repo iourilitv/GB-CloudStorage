@@ -12,9 +12,9 @@ public class FileMessage extends AbstractMessage {
     //принимаем переменную имени файла
     String fileName;
 
-    public FileMessage(String root, String filename) throws IOException {//TODO
-        super(root, filename);
-    }
+//    public FileMessage(String root, String filename) throws IOException {//TODO
+//        super(root, filename);
+//    }
 
 //    public FileMessage(String fileName) {
 //        this.fileName = fileName;

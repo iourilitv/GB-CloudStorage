@@ -9,19 +9,19 @@ import java.nio.file.Paths;
  * Abstract class for any types of messages such as files, commands etc.
  */
 public class AbstractMessage implements Serializable {
-    private String filename;
-    private byte[] data;
+//    private String filename;
+//    private byte[] data;
 
-    public String getFilename() {
-        return filename;
-    }
+//    public String getFilename() {
+//        return filename;
+//    }
 
-    public byte[] getData() {
-        return data;
-    }
+//    public byte[] getData() {
+//        return data;
+//    }
 
-    public AbstractMessage(String root, String filename) throws IOException {
-        this.filename = filename;
-        this.data = Files.readAllBytes(Paths.get(root, filename));//TODO
-    }
+//    public AbstractMessage(String root, String filename) throws IOException {
+//        this.filename = filename;
+//        this.data = Files.readAllBytes(Paths.get(root, filename));//TODO
+//    }
 }

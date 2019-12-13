@@ -1,4 +1,5 @@
 import messages.AbstractMessage;
+import messages.AuthMessage;
 import messages.CommandMessage;
 
 import java.io.*;
@@ -36,8 +37,9 @@ public class ClientByte implements TCPConnectionListenerByte {
     //объявляем объект буферезированного потока чтения байтов из файла
     BufferedInputStream bis;
     //объявляем объект команды(сообщения)
-    AbstractMessage message;//TODO
+//    AbstractMessage message;//TODO
 //    FileFragment message;//TODO
+    MessageObject messageObject;//TODO
 
     public ClientByte() {
 //        //инициируем объект графического файла
@@ -74,10 +76,24 @@ public class ClientByte implements TCPConnectionListenerByte {
 public void send () {
     try {
         ObjectOutputStream out = new ObjectOutputStream(connection.getSocket().getOutputStream());
-        message = new CommandMessage(storageDir, "file1.txt");//TODO
+//        message = new CommandMessage(storageDir, "file1.txt");//TODO
 //        message = new FileFragment(storageDir, messageFileName);
 //        message = new FileFragment(storageDir, "file1.txt");//TODO
-        out.writeObject(message);
+//        out.writeObject(message);//TODO
+
+        //TODO
+        //инициируем объект объекта сообщения, в котором завернуто сообщение типа "команда"
+        messageObject = new MessageObject("Command",
+                new CommandMessage(storageDir, "file1.txt"));
+        out.writeObject(messageObject);
+
+//        out.close();//TODO
+        out = new ObjectOutputStream(connection.getSocket().getOutputStream());
+
+        messageObject = new MessageObject("Auth",
+                new AuthMessage("login1", "pass1"));
+        out.writeObject(messageObject);
+
     } catch (IOException e) {
         e.printStackTrace();
     }

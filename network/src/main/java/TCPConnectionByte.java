@@ -45,6 +45,7 @@ public class TCPConnectionByte {
 //                        eventListenerByte.onReceiveByte(TCPConnectionByte.this, dis.readByte());//TODO
 //                        eventListenerByte.onReceiveBytes(TCPConnectionByte.this, dis.readByte());
                         eventListenerByte.onReceiveObject(TCPConnectionByte.this, ois);//TODO
+//                        ois.close();//TODO
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
