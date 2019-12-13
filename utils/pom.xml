@@ -11,5 +11,8 @@
 
     <artifactId>utils</artifactId>
 
+    <dependencies>
+
+    </dependencies>
 
 </project>
