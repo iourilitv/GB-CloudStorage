@@ -1,3 +1,5 @@
 /client/target/
 /network/target/
 /server/target/
+/transfer/target/
+/target/
