@@ -84,7 +84,7 @@ public class TCPClient implements TCPConnectionListener {
     private void requestAuthorization(String login, String password) {
         //отправляем на сервер объект сообщения(команды)
         connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
-                new AuthMessage(connection.getSocket().getLocalPort(), login, password)));
+                new AuthMessage(login, password)));
 
         //TODO temporarily
         printMsg("TCPClient.requestAuthorization() - connection.getSocket().getPort(): " +

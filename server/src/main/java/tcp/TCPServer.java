@@ -83,19 +83,27 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
             e.printStackTrace();
         }
         //распознаем и обрабатываем полученный объект сообщения(команды)
-        objectHandler.recognizeAndArrangeMessageObject(messageObject);
+//        objectHandler.recognizeAndArrangeMessageObject(messageObject);//TODO
+        objectHandler.recognizeAndArrangeMessageObject(tcpConnection, messageObject);
     }
 
-    public void sendToClient(String login, CommandMessage messageObject){
-
-        printMsg("TCPServer.sendToClient() - login: " + login);//для отладки выводим сообщение в консоль
-
-        for (int i = 0; i < connections.size(); i++) {
-//            if(connections.get(i).getSocket().getLocalPort() == Integer.parseInt(login)){//FIXME
-//                connections.get(i).sendMessageObject(messageObject);
-//            }
-            connections.get(i).sendMessageObject(messageObject);//TODO пока отправляем всем
-
+//    public void sendToClient(String login, CommandMessage messageObject){
+//
+//        printMsg("TCPServer.sendToClient() - login: " + login);//для отладки выводим сообщение в консоль
+//
+//        for (int i = 0; i < connections.size(); i++) {
+////            if(connections.get(i).getSocket().getLocalPort() == Integer.parseInt(login)){//FIXME
+////                connections.get(i).sendMessageObject(messageObject);
+////            }
+//            connections.get(i).sendMessageObject(messageObject);//TODO пока отправляем всем
+//
+//        }
+//    }
+    public void sendToClient(TCPConnection tcpConnection, CommandMessage messageObject){
+        //если соединение не прервано
+        if(tcpConnection != null && tcpConnection.getSocket().isConnected()){
+            //отравляем клиенту объект сообщения(команды)
+            tcpConnection.sendMessageObject(messageObject);
         }
     }
 

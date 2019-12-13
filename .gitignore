@@ -1,7 +1,5 @@
 /client/target/
-/jdbc/target/
-/network/target/
 /server/target/
-/utils/target/
+/shared/target/
 /target/
 /.idea/
