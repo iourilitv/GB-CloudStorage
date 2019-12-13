@@ -6,17 +6,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="network" />
         <module name="client" />
         <module name="server" />
-        <module name="jdbc" />
         <module name="utils" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="jdbc" target="1.8" />
       <module name="network" target="1.8" />
-      <module name="utils" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
