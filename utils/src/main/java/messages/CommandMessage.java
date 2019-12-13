@@ -1,5 +1,8 @@
 package messages;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 /**
@@ -22,9 +25,19 @@ public class CommandMessage extends AbstractMessage {
         return attachment;
     }
 
-    public CommandMessage(int type, Object... attachment) {
-        this.type = type;
-        this.attachment = attachment;
+//    public CommandMessage(int type, Object... attachment) {
+//        super();
+//        this.type = type;
+//        this.attachment = attachment;
+//    }
+
+    private String filename;
+    private byte[] data;
+
+    public CommandMessage(String root, String filename) throws IOException {
+        super(root, filename);
+        this.filename = filename;
+        this.data = Files.readAllBytes(Paths.get(root, filename));//TODO
     }
 
     @Override

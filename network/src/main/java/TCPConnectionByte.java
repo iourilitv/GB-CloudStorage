@@ -25,10 +25,11 @@ public class TCPConnectionByte {
         //TODO
 //        inCom = new BufferedInputStream(new DataInputStream(socket.getInputStream()));
         //
-        DataInputStream dis = new DataInputStream(socket.getInputStream());
+//        DataInputStream dis = new DataInputStream(socket.getInputStream());//TODO
+
         //синтаксис требует использовать только финализированную переменную, но просто переменную нельзя менять
         //поэтому используется схема с элементом финализированного массива с только одним элементом
-        final Byte[] inComByte = new Byte[1];
+//        final Byte[] inComByte = new Byte[1];
 //        outCom = new BufferedOutputStream(new FileOutputStream(""));
         outCom = new BufferedOutputStream(new DataOutputStream(socket.getOutputStream()));
 
@@ -39,10 +40,11 @@ public class TCPConnectionByte {
                     eventListenerByte.onConnectionReady(TCPConnectionByte.this);
                     while(!rxThread.isInterrupted()){
 
-                        //TODO
+                    ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());//TODO
                         //слушаем вход соединения и читаем поступающие байты(пока они есть)
-                        eventListenerByte.onReceiveByte(TCPConnectionByte.this, dis.readByte());
+//                        eventListenerByte.onReceiveByte(TCPConnectionByte.this, dis.readByte());//TODO
 //                        eventListenerByte.onReceiveBytes(TCPConnectionByte.this, dis.readByte());
+                        eventListenerByte.onReceiveObject(TCPConnectionByte.this, ois);//TODO
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -64,6 +66,7 @@ public class TCPConnectionByte {
             disconnect();
         }
     }
+
     public synchronized void sendByte(byte b){
         try {
             outCom.write(b);
@@ -101,5 +104,9 @@ public class TCPConnectionByte {
     @Override
     public String toString(){
         return "TCPConnectionByte: " + socket.getInetAddress() + ": " + socket.getPort();
+    }
+
+    public Socket getSocket() {
+        return socket;
     }
 }
