@@ -21,9 +21,6 @@ public class ObjectHandler {
     //объявляем переменную для заданной относительно userStorageRoot директории в сетевом хранилище
     private String storageDir;
 
-    //объявляем переменную для текущей директории клиента//TODO может и лишнее здесь, т.к. есть clientDir
-    private String currentDir;
-
     //объявляем объект авторизационного сообщения
     private AuthMessage authMessage;
     //объявляем объект сервисного хендлера
@@ -44,36 +41,33 @@ public class ObjectHandler {
             // файла в облачное хранилище
             case Commands.SERVER_RESPONSE_FILE_UPLOAD_OK:
                 //вызываем метод обработки ответа сервера
-                respondOnUploadFileOK(messageObject);
+                onUploadFileOkServerResponse(messageObject);
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке загрузки(сохранения)
             // файла в облачное хранилище
             case Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR:
                 //вызываем метод обработки ответа сервера
-                respondOnUploadFileError(messageObject);
+                onUploadFileErrorServerResponse(messageObject);
                 break;
             //обрабатываем полученное от сервера подтверждение успешного скачивания файла из облачного хранилища
             case Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK:
                 //вызываем метод обработки ответа сервера со скачанным целым файлом внутри
-                respondOnDownloadFileOK(messageObject);
+                onDownloadFileOkServerResponse(messageObject);
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке скачивания файла из облачного хранилища
             case Commands.SERVER_RESPONSE_FILE_DOWNLOAD_ERROR:
                 //вызываем метод обработки ответа сервера
-                respondOnDownloadFileError(messageObject);
+                onDownloadFileErrorServerResponse(messageObject);
                 break;
             //обрабатываем полученное от сервера подтверждение успешной авторизации в облачное хранилище
             case Commands.SERVER_RESPONSE_AUTH_OK:
                 //вызываем метод обработки ответа сервера
-                respondOnAuthOK(messageObject);
-//                AuthMessage authMessage = (AuthMessage) messageObject.getMessageObject();
-//                ServiceCommandHandler serviceCommandHandler = new ServiceCommandHandler(authMessage);
-//                serviceCommandHandler.isAuthorized();
+                onAuthOkServerResponse(messageObject);
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке авторизации в облачное хранилище
             case Commands.SERVER_RESPONSE_AUTH_ERROR:
                 //вызываем метод обработки ответа сервера
-                respondOnAuthError(messageObject);
+                onAuthErrorServerResponse(messageObject);
                 break;
         }
     }
@@ -82,7 +76,7 @@ public class ObjectHandler {
      * Метод обрабатывает полученное от сервера подтверждение успешной авторизации в облачное хранилище
      * @param messageObject - объект сообщения(команды)
      */
-    private void respondOnAuthOK(CommandMessage messageObject) {
+    private void onAuthOkServerResponse(CommandMessage messageObject) {
         //вынимаем объект авторизационного сообщения из объекта сообщения(команды)
         authMessage = (AuthMessage) messageObject.getMessageObject();
         //инициируем объект сервисного хендлера
@@ -95,7 +89,7 @@ public class ObjectHandler {
      * Метод обрабатывает полученное от сервера сообщение об ошибке авторизации в облачное хранилище
      * @param messageObject - объект сообщения(команды)
      */
-    private void respondOnAuthError(CommandMessage messageObject) {
+    private void onAuthErrorServerResponse(CommandMessage messageObject) {
         //FIXME
         // вывести в GUI сообщение об ошибке
         // повторить запрос на авторизацию с новыми данными логина и пароля
@@ -108,7 +102,7 @@ public class ObjectHandler {
      * файла в облачное хранилище
      * @param messageObject - объект сообщения(команды)
      */
-    private void respondOnUploadFileOK(CommandMessage messageObject) {
+    private void onUploadFileOkServerResponse(CommandMessage messageObject) {
         //FIXME fill me!
         client.printMsg("Client.respondOnUploadFileOK command: " + messageObject.getCommand());
 
@@ -122,7 +116,7 @@ public class ObjectHandler {
      * файла в облачное хранилище
      * @param messageObject - объект сообщения(команды)
      */
-    private void respondOnUploadFileError(CommandMessage messageObject) {
+    private void onUploadFileErrorServerResponse(CommandMessage messageObject) {
         //FIXME fill me!
         client.printMsg("Client.respondOnUploadFileError command: " + messageObject.getCommand());
     }
@@ -131,7 +125,7 @@ public class ObjectHandler {
      * Метод обработки ответа сервера со скачанным целым файлом внутри
      * @param messageObject - объект сообщения(команды)
      */
-    private void respondOnDownloadFileOK(CommandMessage messageObject) {
+    private void onDownloadFileOkServerResponse(CommandMessage messageObject) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         fileMessage = (FileMessage) messageObject.getMessageObject();
         //инициируем объект файлового хендлера
@@ -145,14 +139,9 @@ public class ObjectHandler {
         //собираем текущую директорию на клиенте
         String toDir = client.getClientDefaultRoot();
         toDir = toDir.concat("/").concat(storageDir);
-
-        //TODO temporarily
-        client.printMsg("(Client)ObjectHandler.respondOnDownloadFileOK() - new toDir: " + toDir);
-
         //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
         int command = Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_ERROR;
         //если сохранение прошло удачно
-//        if(fileCommandHandler.saveDownloadedFile(client, clientDir, fileMessage)){
         if(fileCommandHandler.saveDownloadedFile(client, toDir, fileMessage)){//FIXME см.выше
             //проверяем сохраненный файл по контрольной сумме//FIXME
             if(true){
@@ -171,7 +160,7 @@ public class ObjectHandler {
      * скачивания файла из облачного хранилища
      * @param messageObject - объект сообщения(команды)
      */
-    private void respondOnDownloadFileError(CommandMessage messageObject) {
+    private void onDownloadFileErrorServerResponse(CommandMessage messageObject) {
         //FIXME fill me!
         client.printMsg("Client.respondOnDownloadFileError command: " + messageObject.getCommand());
     }

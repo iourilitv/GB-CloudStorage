@@ -28,13 +28,8 @@ public class TCPClient implements TCPConnectionListener {
     //объявляем объект защелки
     private CountDownLatch countDownLatch;
 
-    //инициируем строку названия директории облачного хранилища(сервера) для хранения файлов клиента
-//    private String storageDir = "storage/server_storage";//FIXME
     //инициируем переменную для директории, заданной относительно userStorageRoot в сетевом хранилище
     private String storageDir = "";
-
-    //инициируем строку названия директории клиента для хранения файлов
-//    private final String clientDir = "storage/client_storage";
     //инициируем строку названия директории облачного хранилища(сервера) для хранения файлов клиента
     private final String clientDefaultRoot = "storage/client_storage";
     //инициируем переменную для директории, заданной относительно clientRoot
@@ -74,12 +69,10 @@ public class TCPClient implements TCPConnectionListener {
             //отправляем на сервер запрос на загрузку файла в облачное хранилище
             uploadFile(clientDir, storageDir, "file1.txt");
 
-            //ждем сброса защелки//TODO
             //инициируем объект защелки на один сброс
             countDownLatch = new CountDownLatch(1);
-            printMsg("TCPClient.send() - countDownLatch.getCount(): " + countDownLatch.getCount());
+            //ждем сброса защелки
             countDownLatch.await();
-
             //отправляем на сервер запрос на скачивание файла из облачного хранилища
             downloadFile(storageDir, clientDir, "acmp_ru.png");
         } catch (InterruptedException e) {
@@ -105,12 +98,12 @@ public class TCPClient implements TCPConnectionListener {
         FileMessage fileMessage = new FileMessage(fromDir, toDir, filename);
         try {
             //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
-            fileMessage.readFileData(currentClientDir);//TODO
+            fileMessage.readFileData(currentClientDir);//FIXME Разобраться с абсолютными папкими клиента
 
         } catch (IOException e) {
             //печатаем в консоль сообщение об ошибке считывания файла
-            printMsg("There is no file in the directory!");
-            e.printStackTrace();//TODO
+            printMsg("TCPClient.uploadFile() - There is no file in the directory!");
+            e.printStackTrace();
         }
         //отправляем на сервер объект сообщения(команды)
         connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
@@ -162,17 +155,10 @@ public class TCPClient implements TCPConnectionListener {
         return clientDefaultRoot;
     }
 
+    //TODO temporarily
     public CountDownLatch getCountDownLatch() {
         return countDownLatch;
     }
-
-    //    public String getStorageDir() {//TODO
-//        return storageDir;
-//    }
-//
-//    public void setStorageDir(String storageDir) {
-//        this.storageDir = storageDir;
-//    }
 
     public synchronized void printMsg(String msg){
         log.append(msg).append("\n");

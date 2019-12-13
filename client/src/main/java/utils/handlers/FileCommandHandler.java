@@ -44,10 +44,10 @@ public class FileCommandHandler extends CommandHandler{
      * @return true, если файл сохранен без ошибок
      */
     public boolean saveDownloadedFile(TCPClient client, String toDir, FileMessage fileMessage) {
-        System.out.println("(Client)FileCommandHandler.saveDownloadedFile - fileMessage.getFilename(): " +
-                fileMessage.getFilename() +
-                ". Arrays.toString(fileMessage.getData()): " +
-                Arrays.toString(fileMessage.getData()));
+//        System.out.println("(Client)FileCommandHandler.saveDownloadedFile - fileMessage.getFilename(): " +
+//                fileMessage.getFilename() +
+//                ". Arrays.toString(fileMessage.getData()): " +
+//                Arrays.toString(fileMessage.getData()));
 
         //FIXME добавить проверку директории и наличия файла с таким названием
         try {
@@ -55,7 +55,8 @@ public class FileCommandHandler extends CommandHandler{
             Files.write(Paths.get(toDir, fileMessage.getFilename()),
                     fileMessage.getData(), StandardOpenOption.CREATE);
         } catch (IOException e) {
-            client.printMsg("FileCommandHandler.saveUploadedFile() - Something wrong with the directory or the file!");
+            client.printMsg("(Client)FileCommandHandler.saveUploadedFile() - " +
+                    "Something wrong with the directory or the file!");
             e.printStackTrace();
             return false;
         }

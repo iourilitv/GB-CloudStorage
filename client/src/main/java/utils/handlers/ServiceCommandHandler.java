@@ -31,7 +31,5 @@ public class ServiceCommandHandler extends CommandHandler{
         //сбрасываем защелку
         client.getCountDownLatch().countDown();
 
-//        client.setStorageDir(client.getStorageDir().concat("/").concat(authMessage.getLogin()));//TODO
-//        client.printMsg("(Client)ServiceCommandHandler.isAuthorized - new client.getStorageDir():" + client.getStorageDir());
     }
 }
