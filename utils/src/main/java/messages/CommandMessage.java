@@ -1,3 +1,7 @@
+package messages;
+
+import java.util.Arrays;
+
 /**
  * A Class for communication commands between client and server.
  */
@@ -21,5 +25,13 @@ public class CommandMessage extends AbstractMessage {
     public CommandMessage(int type, Object... attachment) {
         this.type = type;
         this.attachment = attachment;
+    }
+
+    @Override
+    public String toString() {
+        return "messages.CommandMessage{" +
+                "type=" + type +
+                ", attachment=" + Arrays.toString(attachment) +
+                '}';
     }
 }

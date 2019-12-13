@@ -1,3 +1,5 @@
+package messages;
+
 /**
  * A Class for a list of files objects.
  */

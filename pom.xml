@@ -13,7 +13,7 @@
         <module>server</module>
         <module>network</module>
         <module>jdbc</module>
-        <module>transfer</module>
+        <module>utils</module>
     </modules>
 
     <properties>

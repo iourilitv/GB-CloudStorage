@@ -1,3 +1,5 @@
+package messages;
+
 /**
  * A Class for authorization commands from client to server.
  */
