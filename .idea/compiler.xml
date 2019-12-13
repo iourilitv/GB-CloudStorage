@@ -8,7 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="client" />
         <module name="server" />
-        <module name="utils" />
+        <module name="shared" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
