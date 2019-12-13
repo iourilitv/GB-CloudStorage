@@ -44,16 +44,16 @@ public class FileCommandHandler extends CommandHandler{
      * @return true, если файл сохранен без ошибок
      */
     public boolean saveUploadedFile(TCPServer server, String toDir, FileMessage fileMessage) {
-        System.out.println("(Server)FileCommandHandler.saveDownloadedFile - fileMessage.getFilename(): " +
-                fileMessage.getFilename() +
-                ". Arrays.toString(fileMessage.getData()): " +
-                Arrays.toString(fileMessage.getData()));
+//        System.out.println("(Server)FileCommandHandler.saveDownloadedFile - fileMessage.getFilename(): " +
+//                fileMessage.getFilename() +
+//                ". Arrays.toString(fileMessage.getData()): " +
+//                Arrays.toString(fileMessage.getData()));
         try {
             //создаем новый файл и записываем в него данные из объекта файлового сообщения
             Files.write(Paths.get(toDir, fileMessage.getFilename()),
                     fileMessage.getData(), StandardOpenOption.CREATE);
         } catch (IOException e) {
-            server.printMsg("FileCommandHandler.saveUploadedFile() - Something wrong with the directory or the file!");
+            server.printMsg("(Server)FileCommandHandler.saveUploadedFile() - Something wrong with the directory or the file!");
             e.printStackTrace();
             return false;
         }
@@ -70,22 +70,19 @@ public class FileCommandHandler extends CommandHandler{
     public boolean downloadFile(TCPServer server, FileMessage fileMessage, String fromDir) {
         //FIXME добавить проверку на наличие файла в директории?
 
-        System.out.println("(Server)FileCommandHandler.downloadFile - fileMessage.getFilename(): " +
-                fileMessage.getFilename() +
-                ". Arrays.toString(fileMessage.getData()): " +
-                Arrays.toString(fileMessage.getData()));
+//        System.out.println("(Server)FileCommandHandler.downloadFile - fileMessage.getFilename(): " +
+//                fileMessage.getFilename() +
+//                ". Arrays.toString(fileMessage.getData()): " +
+//                Arrays.toString(fileMessage.getData()));
 
         try {
             //считываем данные из файла и записываем их в объект файлового сообщения
-//            fileMessage.readFileData();
-            fileMessage.readFileData(fromDir);//TODO
-
+            fileMessage.readFileData(fromDir);
         } catch (IOException e) {
-            server.printMsg("FileCommandHandler.downloadFile() - Something wrong with the directory or the file!");
+            server.printMsg("(Server)FileCommandHandler.downloadFile() - Something wrong with the directory or the file!");
             e.printStackTrace();
             return false;
         }
-
         return true;
     }
 

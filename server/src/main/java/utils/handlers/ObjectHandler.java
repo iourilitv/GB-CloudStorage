@@ -22,8 +22,6 @@ public class ObjectHandler {
     private String userStorageRoot;
     //объявляем переменную для директории, заданной относительно userStorageRoot в сетевом хранилище
     private String storageDir;
-    //объявляем переменную для текущей директории, заданной относительно userStorageRoot в сетевом хранилище
-    private String currentStorageDir;
     //объявляем объект авторизационного сообщения
     private AuthMessage authMessage;
     //объявляем объект сервисного хендлера
@@ -33,9 +31,6 @@ public class ObjectHandler {
         this.server = server;
         //инициируем переменную для корневой директории пользователя в сетевом хранилище
         userStorageRoot = server.getStorageRoot();//FIXME не будет ли юзер видеть все хранилище?
-
-//        //инициируем переменную для текущей директории, заданной относительно userStorageRoot в сетевом хранилище
-//        currentStorageDir = userStorageRoot;//TODO delete?
     }
 
     /**
@@ -48,47 +43,43 @@ public class ObjectHandler {
             //обрабатываем полученный от клиента запрос на авторизацию в облачное хранилище
             case Commands.REQUEST_SERVER_AUTH:
                 //вызываем метод обработки запроса от клиента
-                respondOnAuthRequest(messageObject);
-//                    ServiceCommandHandler serviceCommandHandler = (ServiceCommandHandler) messageObject.getCommandHandler();
-//                AuthMessage authMessage = (AuthMessage) messageObject.getMessageObject();
-//                ServiceCommandHandler serviceCommandHandler = new ServiceCommandHandler(authMessage);
-//                serviceCommandHandler.authorizeUser();
+                onAuthClientRequest(messageObject);
                 break;
             //обрабатываем полученный от клиента запрос на загрузку(сохранение) файла в облачное хранилище
             case Commands.REQUEST_SERVER_FILE_UPLOAD:
                 //вызываем метод обработки запроса от клиента на загрузку целого файла клиента
                 // в директорию в сетевом хранилище.
-                uploadFile(messageObject);
+                onUploadFileClientRequest(messageObject);
                 break;
             //обрабатываем полученное от клиента подтверждение успешного получения обновленного
             // списка файлов клиента в облачном хранилище
             case Commands.CLIENT_RESPONSE_FILE_UPLOAD_OK:
                 //вызываем метод обработки ответа клиента
-                respondOnUploadFileOK(messageObject);
+                onUploadFileOkClientResponse(messageObject);
                 break;
             //обрабатываем полученное от клиента сообщение об ошибке получения обновленного
             // списка файлов клиента в облачном хранилище
             case Commands.CLIENT_RESPONSE_FILE_UPLOAD_ERROR:
                 //вызываем метод обработки ответа клиента
-                respondOnUploadFileError(messageObject);
+                onUploadFileErrorClientResponse(messageObject);
                 break;
             //обрабатываем полученный от клиента запрос на скачивание целого файла из облачного хранилища
             case Commands.REQUEST_SERVER_FILE_DOWNLOAD:
                 //вызываем метод обработки запроса от клиента на скачивание целого файла клиента
                 // из директории в сетевом хранилище
-                downloadFile(messageObject);
+                onDownloadFileClientRequest(messageObject);
                 break;
             //обрабатываем полученное от клиента подтверждение успешного сохранения целого файла,
             // скачанного из облачного хранилища
             case Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_OK:
                 //вызываем метод обработки ответа клиента
-                respondOnDownloadFileOK(messageObject);
+                onDownloadFileOkClientResponse(messageObject);
                 break;
             //обрабатываем полученное от клиента сообщение об ошибке сохранения целого файла,
             // скачанного из облачного хранилища
             case Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_ERROR:
                 //вызываем метод обработки ответа клиента
-                respondOnDownloadFileError(messageObject);
+                onDownloadFileErrorClientResponse(messageObject);
                 break;
         }
 
@@ -98,14 +89,11 @@ public class ObjectHandler {
      * Метод обрабатывает полученный от клиента запрос на авторизацию в облачное хранилище
      * @param messageObject - объект сообщения(команды)
      */
-    private void respondOnAuthRequest(CommandMessage messageObject) {
+    private void onAuthClientRequest(CommandMessage messageObject) {
         //вынимаем объект авторизационного сообщения из объекта сообщения(команды)
         authMessage = (AuthMessage) messageObject.getMessageObject();
         //инициируем объект сервисного хендлера
         serviceCommandHandler = new ServiceCommandHandler(authMessage);
-        //вызываем метод авторизации клиента в облачном хранилище
-//        serviceCommandHandler.authorizeUser(server, authMessage);
-
         //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
         int command = Commands.SERVER_RESPONSE_AUTH_ERROR;
         //если авторизации клиента в облачном хранилище прошла удачно
@@ -115,12 +103,6 @@ public class ObjectHandler {
             //добавляем логин пользователя(имя его папки в сетевом хранилище)
             // к корневой директории клиента по умолчанию
             userStorageRoot = userStorageRoot.concat("/").concat(authMessage.getLogin());
-
-//            //записываем в текущую директорию новое значение корневой директории пользователя
-//            currentStorageDir = userStorageRoot;//TODO delete?
-
-            //TODO temporarily
-            server.printMsg("(Server)ServiceCommandHandler.isAuthorized - new userStorageRoot: " + userStorageRoot);
         }
 //        //создаем объект авторизационного сообщения
 //        authMessage = new AuthMessage();//TODO надо?
@@ -134,7 +116,7 @@ public class ObjectHandler {
      * сетевом хранилище.
      * @param messageObject - объект сообщения(команды)
      */
-    private void uploadFile(CommandMessage messageObject) {
+    private void onUploadFileClientRequest(CommandMessage messageObject) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         fileMessage = (FileMessage) messageObject.getMessageObject();
         //инициируем объект файлового хендлера
@@ -143,20 +125,12 @@ public class ObjectHandler {
         clientDir = fileMessage.getFromDir();
         //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
         storageDir = fileMessage.getToDir();
-//        //собираем текущую директорию пользователя в сетевом хранилище
-//        currentStorageDir = currentStorageDir.concat("/").concat(storageDir);//TODO delete?
         //собираем целевую директорию пользователя в сетевом хранилище
         String toDir = userStorageRoot;//сбрасываем до корневой папки пользователя в сетевом хранилище
         toDir = toDir.concat("/").concat(storageDir);//добавляем значение подпапки
-
-        //TODO temporarily
-        server.printMsg("(Server)ObjectHandler.uploadFile - new toDir: " + toDir);
-
         //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
         int command = Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR;
         //если сохранение прошло удачно
-//        if(fileCommandHandler.saveUploadedFile(server, storageDir, fileMessage)){
-//        if(fileCommandHandler.saveUploadedFile(server, currentStorageDir, fileMessage)){//TODO delete?
         if(fileCommandHandler.saveUploadedFile(server, toDir, fileMessage)){
             //проверяем сохраненный файл по контрольной сумме//FIXME
             if(true){
@@ -164,9 +138,6 @@ public class ObjectHandler {
                 command = Commands.SERVER_RESPONSE_FILE_UPLOAD_OK;
             }
         }
-//        //сбрасываем до папки пользователя текущую директорию пользователя в сетевом хранилище
-//        currentStorageDir = userStorageRoot;//TODO delete?
-
         //создаем объект файлового сообщения
         fileMessage = new FileMessage(storageDir, clientDir, fileMessage.getFilename());
         //отправляем объект сообщения(команды) клиенту//FIXME где брать логин?
@@ -178,7 +149,7 @@ public class ObjectHandler {
      * обновленного списка файлов клиента в облачном хранилище
      * @param messageObject - объект сообщения(команды)
      */
-    private void respondOnUploadFileOK(CommandMessage messageObject) {
+    private void onUploadFileOkClientResponse(CommandMessage messageObject) {
         //FIXME fill me!
         server.printMsg("Server.respondOnUploadFileOK command: " + messageObject.getCommand());
     }
@@ -188,7 +159,7 @@ public class ObjectHandler {
      * списка файлов клиента в облачном хранилище
      * @param messageObject - объект сообщения(команды)
      */
-    private void respondOnUploadFileError(CommandMessage messageObject) {
+    private void onUploadFileErrorClientResponse(CommandMessage messageObject) {
         //FIXME fill me!
         server.printMsg("Server.respondOnUploadFileError command: " + messageObject.getCommand());
     }
@@ -198,7 +169,7 @@ public class ObjectHandler {
      * сетевом хранилище.
      * @param messageObject - объект сообщения(команды)
      */
-    private void downloadFile(CommandMessage messageObject) {
+    private void onDownloadFileClientRequest(CommandMessage messageObject) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         fileMessage = (FileMessage) messageObject.getMessageObject();
         //инициируем объект файлового хендлера
@@ -207,22 +178,14 @@ public class ObjectHandler {
         storageDir = fileMessage.getFromDir();
         //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
         clientDir = fileMessage.getToDir();
-//        //собираем текущую директорию пользователя в сетевом хранилище
-//        currentStorageDir = currentStorageDir.concat("/").concat(storageDir);//TODO delete?
         //собираем целевую директорию пользователя в сетевом хранилище
         String fromDir = userStorageRoot;//сбрасываем до корневой папки пользователя в сетевом хранилище
         fromDir = fromDir.concat("/").concat(storageDir);//добавляем значение подпапки
-
-        //TODO temporarily
-        server.printMsg("(Server)ObjectHandler.uploadFile - new currentStorageDir: " + currentStorageDir);
-
         //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
         int command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_ERROR;
         //создаем объект файлового сообщения
         fileMessage = new FileMessage(storageDir, clientDir, fileMessage.getFilename());
         //если скачивание прошло удачно
-//        if(fileCommandHandler.downloadFile(server, fileMessage)){//TODO
-//        if(fileCommandHandler.downloadFile(server, fileMessage, currentStorageDir)){//TODO delete?
         if(fileCommandHandler.downloadFile(server, fileMessage, fromDir)){
             //проверяем сохраненный файл по контрольной сумме//FIXME
             if(true){
@@ -230,8 +193,6 @@ public class ObjectHandler {
                 command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK;
             }
         }
-//        //сбрасываем до папки пользователя текущую директорию пользователя в сетевом хранилище
-//        currentStorageDir = userStorageRoot;
         //отправляем объект сообщения(команды) клиенту//FIXME где брать логин?
         server.sendToClient("login1", new CommandMessage(command, fileMessage));
     }
@@ -241,7 +202,7 @@ public class ObjectHandler {
      * скачанного из облачного хранилища
      * @param messageObject - объект сообщения(команды)
      */
-    private void respondOnDownloadFileOK(CommandMessage messageObject) {
+    private void onDownloadFileOkClientResponse(CommandMessage messageObject) {
         //FIXME fill me!
         server.printMsg("Server.respondOnDownloadFileOK command: " + messageObject.getCommand());
     }
@@ -251,7 +212,7 @@ public class ObjectHandler {
      * скачанного из облачного хранилища
      * @param messageObject - объект сообщения(команды)
      */
-    private void respondOnDownloadFileError(CommandMessage messageObject) {
+    private void onDownloadFileErrorClientResponse(CommandMessage messageObject) {
         //FIXME fill me!
         server.printMsg("Server.respondOnDownloadFileError command: " + messageObject.getCommand());
     }
