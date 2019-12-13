@@ -11,9 +11,7 @@
     <modules>
         <module>client</module>
         <module>server</module>
-        <module>network</module>
-        <module>jdbc</module>
-        <module>utils</module>
+        <module>shared</module>
     </modules>
 
     <properties>

@@ -14,13 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>gb-lys</groupId>
-            <artifactId>network</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>gb-lys</groupId>
-            <artifactId>utils</artifactId>
+            <artifactId>shared</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
