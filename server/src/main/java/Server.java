@@ -1,111 +1,11 @@
-import handlers.ObjectHandler;
-import messages.AbstractMessage;
-import messages.AuthMessage;
-import messages.CommandMessage;
+import tcp.TCPServer;
 
-import java.io.*;
-import java.net.ServerSocket;
-import java.util.ArrayList;
-
-public class Server implements TCPConnectionListener {//создаем слушателя прямо в этом классе
-
+/**
+ * The main class of server cloudstorage applet.
+ */
+public class Server {
     public static void main(String[] args) {
-        new Server();
-    }
-
-    //создадим экземпляр ссылочного массива(список) установленных соединенией
-    private final ArrayList<TCPConnection> connections = new ArrayList<>();
-    //инициируем переменную для печати сообщений в консоль
-    private final PrintStream log = System.out;
-    //инициируем строку названия директории для хранения файлов клиента
-    private final String storageDir = "storage/server_storage";
-    //объявляем объект сообщения(команды)
-    private CommandMessage messageObject;
-    //объявляем объект обработчика сообщений(команд)
-    private ObjectHandler objectHandler;
-
-    private Server() {
-        printMsg("Server running...");
-        //инициируем объект обработчика сообщений(команд)
-        objectHandler = new ObjectHandler();
-        //создаем серверсокет, который слушает порт TCP:8189
-        try(ServerSocket serverSocket = new ServerSocket(8189)){//это "try с ресурсом"
-            //сервер слушает входящие соединения
-            //на каждое новое соединение сервер создает TCPConnection
-            while(true){
-                try{
-                    //сначала настроить dependencies с network в настройках модуля
-                    //передаем себя как слушателя и объект сокета (его возвращает accept() при входящем соединении)
-                    //в бесконечном цикле висим в методе accept(), который ждет новое внешнее соединение
-                    //и как только соединение установилось он возвращает готовый объект сокета, который связан
-                    //с этим соединением. Мы тут же передаем этот сокет в конструктор TCPConnection, включая и себя,
-                    // как слушателя и создаем его экземпляр
-                    new TCPConnection(this, serverSocket.accept());
-                } catch(IOException e){
-                    System.out.println("TCPConnection: " + e);
-                }
-            }
-        } catch (IOException e){
-            throw new RuntimeException(e);//закрываем сокет, если что-то пошло не так
-        }
-    }
-
-    //синхронизируем методы, чтобы нельзя было в них попасть одновременно из разных потоков
-    @Override
-    public void onConnectionReady(TCPConnection tcpConnection) {
-        //если соединение установлено, то добавляем его в список
-        connections.add(tcpConnection);
-//        //отправляем файл клиенту
-//        try {
-//            send();//TODO
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-    }
-
-    public void send () throws IOException {
-//        connection.sendMessageObject(new CommandMessage(storageDir, "file1.txt"));
-        //TODO как распознавать? по логину? по порту? по сокету?
-        sendToClient("49884", new AuthMessage("login1", "pass1"));
-    }
-
-    @Override
-    public void onDisconnect(TCPConnection tcpConnection) {
-        //если соединение отвалилось, то удаляем его из списка
-        connections.remove(tcpConnection);
-    }
-
-    @Override
-    public void onException(TCPConnection tcpConnection, Exception e) {
-        System.out.println("TCPConnectionByte exception: " + e);
-    }
-
-    @Override
-    public void onReceiveObject(TCPConnection tcpConnection, ObjectInputStream ois) {
-        //десериализуем объект сообщения(команды)
-        try {
-            messageObject = (CommandMessage) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        //распознаем и обрабатываем полученный объект сообщения(команды)
-        objectHandler.recognizeAndArrangeMessageObject(messageObject, storageDir);
-    }
-
-    public void sendToClient(String login, AbstractMessage messageObject){
-
-        printMsg("Server.getSocket()");//для отладки выводим сообщение в консоль
-
-        for (int i = 0; i < connections.size(); i++) {
-            if(connections.get(i).getSocket().getLocalPort() == Integer.parseInt(login)){//FIXME
-                connections.get(i).sendMessageObject(messageObject);
-            }
-        }
-    }
-
-    //TODO
-    private synchronized void printMsg(String msg){
-        log.append(msg).append("\n");
+        new TCPServer();
     }
 }
 
@@ -157,7 +57,7 @@ public class Server implements TCPConnectionListener {//создаем слуш�
 //        }
 
 //            message = (AbstractMessage)ois.readObject();
-//            message = (CommandMessage)ois.readObject();
+//            message = (utils.CommandMessage)ois.readObject();
 //            message = (FileFragment) ois.readObject();
 //            System.out.println("ByteServer.onReceiveObject - message.getFilename(): " + message.getFilename() +
 //                    ". message.getData(): " + Arrays.toString(message.getData()));
@@ -209,7 +109,7 @@ public class Server implements TCPConnectionListener {//создаем слуш�
 //            bos.write(b);
 //            bos.flush();
 //
-////            if(bos.equals(CommandMessage.CMD_MSG__REQUEST_SERVER_DELETE_FILE)){
+////            if(bos.equals(utils.CommandMessage.CMD_MSG__REQUEST_SERVER_DELETE_FILE)){
 ////                System.out.println("onReceiveByte message" + message.toString());
 ////            };
 //        } catch (IOException e) {
@@ -231,7 +131,7 @@ public class Server implements TCPConnectionListener {//создаем слуш�
 //
 ////        try (BufferedInputStream barrIn = new BufferedInputStream();
 ////             ObjectInputStream objIn = new ObjectInputStream(barrIn)){
-////            messages.CommandMessage commandMessage = (messages.CommandMessage) objIn.readObject();
+////            messages.utils.CommandMessage commandMessage = (messages.utils.CommandMessage) objIn.readObject();
 ////            bos.write(b);
 ////            bos.flush();
 ////        } catch (IOException e) {
@@ -241,7 +141,7 @@ public class Server implements TCPConnectionListener {//создаем слуш�
 
 //onConnectionReady()
 //        sendToAllConnections("ClientByte connected: " + tcpConnection);//TODO
-//при этом неявно вызовется переопределенный метод toString в tcpConnection //"TCPConnection: " + socket.getInetAddress() + ": " + socket.getPort();
+//при этом неявно вызовется переопределенный метод toString в tcpConnection //"tcp.TCPConnection: " + socket.getInetAddress() + ": " + socket.getPort();
 
 //onDisconnect()
 //        sendToAllConnections("ClientByte disconnected: " + tcpConnection);//TODO

@@ -1,10 +1,15 @@
+package tcp;
+
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class TCPConnection {
     private final Socket socket;
     private final Thread rxThread;
     private final TCPConnectionListener eventListener;
+    //инициируем переменную идентификатора подсоединенного клиента
+    private String clientID = "unknownID";
 
     //TODO
     //объявляем переменные для буферезированных входного и выходного потоков
@@ -53,14 +58,16 @@ public class TCPConnection {
      * Метод отправляет в сеть полученный сериализованный объект
      * @param messageObject - сериализованный объект
      */
-    public synchronized void sendMessageObject(Object messageObject){
+    public synchronized void sendMessageObject(Object messageObject){//FIXME поменять на CommandMessage, если TCP перенести в utils module
         try {
             //инициируем объект исходящего потока данных сериализованного объекта
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             //передаем в исходящий поток сериализованный объект сообщения(команды)
             objectOutputStream.writeObject(messageObject);
 
-            System.out.println(socket + " has sent the object: " + messageObject.getClass().getSimpleName());
+            System.out.println("TCPConnection.sendMessageObject() - " + socket + " has sent the object: " +
+                    messageObject.getClass().getSimpleName() +
+                    ": " + Arrays.toString(messageObject.getClass().getFields()));//TODO проверить - должно заработать, если TCP перенести в utils module
 
         } catch (IOException e) {
             eventListener.onException(TCPConnection.this, e);
@@ -90,6 +97,14 @@ public class TCPConnection {
     public Socket getSocket() {
         return socket;
     }
+
+    public String getClientID() {
+        return clientID;
+    }
+
+    public void setClientID(String clientID) {
+        this.clientID = clientID;
+    }
 }
 
 
@@ -110,7 +125,7 @@ public class TCPConnection {
 //            outCom.write(arr);
 //            outCom.flush();//принудительно передаем в сеть строку их буфера
 //        } catch (IOException e) {
-//            eventListener.onException(TCPConnection.this, e);
+//            eventListener.onException(tcp.TCPConnection.this, e);
 //            disconnect();
 //        }
 //    }

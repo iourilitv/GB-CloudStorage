@@ -1,3 +1,5 @@
+package tcp;
+
 import java.io.ObjectInputStream;
 
 public interface TCPConnectionListener {
