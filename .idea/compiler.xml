@@ -9,6 +9,7 @@
         <module name="network" />
         <module name="client" />
         <module name="server" />
+        <module name="jdbc" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
