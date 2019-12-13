@@ -11,19 +11,23 @@ import utils.CommandMessage;
  */
 public class ObjectHandler {
     //принимаем объект клиента
-    TCPClient client;
+    private TCPClient client;
     //объявляем объект файлового сообщения для полного файла
-    FileMessage fileMessage;
+    private FileMessage fileMessage;
     //объявляем объект файлового хендлера
-    FileCommandHandler fileCommandHandler;
-    //объявляем пременную для клиентской директории
-    String clientDir;
-    //объявляем пременную для директории в сетевом хранилище
-    String storageDir;
+    private FileCommandHandler fileCommandHandler;
+    //объявляем переменную для клиентской директории
+    private String clientDir;
+    //объявляем переменную для заданной относительно userStorageRoot директории в сетевом хранилище
+    private String storageDir;
+
+    //объявляем переменную для текущей директории клиента//TODO может и лишнее здесь, т.к. есть clientDir
+    private String currentDir;
+
     //объявляем объект авторизационного сообщения
-    AuthMessage authMessage;
+    private AuthMessage authMessage;
     //объявляем объект сервисного хендлера
-    ServiceCommandHandler serviceCommandHandler;
+    private ServiceCommandHandler serviceCommandHandler;
 
     public ObjectHandler(TCPClient client) {
         this.client = client;
@@ -84,7 +88,7 @@ public class ObjectHandler {
         //инициируем объект сервисного хендлера
         serviceCommandHandler = new ServiceCommandHandler(authMessage);
         //вызываем метод обработки события успешной авторизации в облачном хранилище
-        serviceCommandHandler.isAuthorized(client);
+        serviceCommandHandler.isAuthorized(client, authMessage);
     }
 
     /**
@@ -107,6 +111,10 @@ public class ObjectHandler {
     private void respondOnUploadFileOK(CommandMessage messageObject) {
         //FIXME fill me!
         client.printMsg("Client.respondOnUploadFileOK command: " + messageObject.getCommand());
+
+        //TODO temporarily
+        //сбрасываем защелку
+        client.getCountDownLatch().countDown();
     }
 
     /**
@@ -132,10 +140,20 @@ public class ObjectHandler {
         storageDir = fileMessage.getFromDir();
         //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
         clientDir = fileMessage.getToDir();
+
+        //FIXME придется указывать абсолютный путь, если будет выбор папки клиента
+        //собираем текущую директорию на клиенте
+        String toDir = client.getClientDefaultRoot();
+        toDir = toDir.concat("/").concat(storageDir);
+
+        //TODO temporarily
+        client.printMsg("(Client)ObjectHandler.respondOnDownloadFileOK() - new toDir: " + toDir);
+
         //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
         int command = Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_ERROR;
         //если сохранение прошло удачно
-        if(fileCommandHandler.saveDownloadedFile(client, clientDir, fileMessage)){
+//        if(fileCommandHandler.saveDownloadedFile(client, clientDir, fileMessage)){
+        if(fileCommandHandler.saveDownloadedFile(client, toDir, fileMessage)){//FIXME см.выше
             //проверяем сохраненный файл по контрольной сумме//FIXME
             if(true){
                 //отправляем сообщение на сервер: подтверждение, что все прошло успешно

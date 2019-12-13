@@ -33,6 +33,12 @@ public class FileMessage extends AbstractMessage {
         this.data = Files.readAllBytes(Paths.get(fromDir, filename));
     }
 
+    //TODO
+    public void readFileData(String fromDir) throws IOException {
+        //читаем все данные из файла побайтно в байтовый массив
+        this.data = Files.readAllBytes(Paths.get(fromDir, filename));
+    }
+
     public String getFromDir() {
         return fromDir;
     }

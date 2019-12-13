@@ -22,9 +22,11 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
     //инициируем переменную для печати сообщений в консоль
     private final PrintStream log = System.out;
     //инициируем строку названия директории облачного хранилища(сервера) для хранения файлов клиента
-    private final String storageDir = "storage/server_storage";
-    //инициируем строку названия директории клиента для хранения файлов
-    private final String clientDir = "storage/client_storage";
+    private final String storageRoot = "storage/server_storage";
+
+//    //инициируем строку названия директории клиента для хранения файлов
+//    private final String clientDir = "storage/client_storage";//TODO
+
     //объявляем объект сообщения(команды)
     private CommandMessage messageObject;
     //объявляем объект обработчика сообщений(команд)
@@ -128,6 +130,10 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
             }
         }
         return false;
+    }
+
+    public String getStorageRoot() {
+        return storageRoot;
     }
 
     public synchronized void printMsg(String msg){

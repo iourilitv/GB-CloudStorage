@@ -21,11 +21,17 @@ public class ServiceCommandHandler extends CommandHandler{
      * Метод обработки события успешной авторизации в облачном хранилище
      * @param client - объект клиента
      */
-    public void isAuthorized(TCPClient client){
+    public void isAuthorized(TCPClient client, AuthMessage authMessage){
         //FIXME что здесь делать?//чтото изменить в GUI?
         // Вывести список файлов в директории в сетевом хранилище, например
         client.printMsg("(Client)ServiceCommandHandler.isAuthorized: true! - authMessage.getLogin(): " +
                 authMessage.getLogin() + ". authMessage.getPassword(): " + authMessage.getPassword());
 
+        //TODO temporarily
+        //сбрасываем защелку
+        client.getCountDownLatch().countDown();
+
+//        client.setStorageDir(client.getStorageDir().concat("/").concat(authMessage.getLogin()));//TODO
+//        client.printMsg("(Client)ServiceCommandHandler.isAuthorized - new client.getStorageDir():" + client.getStorageDir());
     }
 }

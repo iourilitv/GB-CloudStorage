@@ -9,6 +9,7 @@ import utils.handlers.ObjectHandler;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintStream;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * The class is responded for connecting with the server app.
@@ -22,10 +23,25 @@ public class TCPClient implements TCPConnectionListener {
     private final PrintStream log = System.out;
     //объявляем переменную сетевого соединения
     private TCPConnection connection;
+
+    //TODO temporarily
+    //объявляем объект защелки
+    private CountDownLatch countDownLatch;
+
     //инициируем строку названия директории облачного хранилища(сервера) для хранения файлов клиента
-    private final String storageDir = "storage/server_storage";
+//    private String storageDir = "storage/server_storage";//FIXME
+    //инициируем переменную для директории, заданной относительно userStorageRoot в сетевом хранилище
+    private String storageDir = "";
+
     //инициируем строку названия директории клиента для хранения файлов
-    private final String clientDir = "storage/client_storage";
+//    private final String clientDir = "storage/client_storage";
+    //инициируем строку названия директории облачного хранилища(сервера) для хранения файлов клиента
+    private final String clientDefaultRoot = "storage/client_storage";
+    //инициируем переменную для директории, заданной относительно clientRoot
+    private String clientDir = "";
+    //объявляем переменную для текущей директории клиента
+    private String currentClientDir;
+
     //объявляем объект сообщения(команды)
     private CommandMessage messageObject;
     //объявляем объект обработчика сообщений(команд)
@@ -34,6 +50,8 @@ public class TCPClient implements TCPConnectionListener {
     public TCPClient() {
         //инициируем объект обработчика сообщений(команд)
         objectHandler = new ObjectHandler(this);
+        //инициируем переменную для текущей директории клиента
+        currentClientDir = clientDefaultRoot;
         try {
             //инициируем переменную сетевого соединения
             //устанавливаем соединение при открытии окна
@@ -44,15 +62,29 @@ public class TCPClient implements TCPConnectionListener {
     }
 
     //FIXME удалить, когда будет реализован интерфейс
-    public void send () {
+    public void send() {
+        //инициируем объект защелки на один сброс
+        countDownLatch = new CountDownLatch(1);
         //отправляем на сервер запрос на авторизацию в облачное хранилище
         requestAuthorization("login1", "pass1");
 
-//        //отправляем на сервер запрос на загрузку файла в облачное хранилище
-//        uploadFile(clientDir, storageDir, "file1.txt");
-//
-//        //отправляем на сервер запрос на скачивание файла из облачного хранилища
-//        downloadFile(storageDir, clientDir, "acmp_ru.png");
+        try {
+            //ждем сброса защелки
+            countDownLatch.await();
+            //отправляем на сервер запрос на загрузку файла в облачное хранилище
+            uploadFile(clientDir, storageDir, "file1.txt");
+
+            //ждем сброса защелки//TODO
+            //инициируем объект защелки на один сброс
+            countDownLatch = new CountDownLatch(1);
+            printMsg("TCPClient.send() - countDownLatch.getCount(): " + countDownLatch.getCount());
+            countDownLatch.await();
+
+            //отправляем на сервер запрос на скачивание файла из облачного хранилища
+            downloadFile(storageDir, clientDir, "acmp_ru.png");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     //отправляем на сервер запрос на авторизацию в облачное хранилище
@@ -73,7 +105,8 @@ public class TCPClient implements TCPConnectionListener {
         FileMessage fileMessage = new FileMessage(fromDir, toDir, filename);
         try {
             //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
-            fileMessage.readFileData();
+            fileMessage.readFileData(currentClientDir);//TODO
+
         } catch (IOException e) {
             //печатаем в консоль сообщение об ошибке считывания файла
             printMsg("There is no file in the directory!");
@@ -124,6 +157,22 @@ public class TCPClient implements TCPConnectionListener {
     public TCPConnection getConnection() {
         return connection;
     }
+
+    public String getClientDefaultRoot() {
+        return clientDefaultRoot;
+    }
+
+    public CountDownLatch getCountDownLatch() {
+        return countDownLatch;
+    }
+
+    //    public String getStorageDir() {//TODO
+//        return storageDir;
+//    }
+//
+//    public void setStorageDir(String storageDir) {
+//        this.storageDir = storageDir;
+//    }
 
     public synchronized void printMsg(String msg){
         log.append(msg).append("\n");
