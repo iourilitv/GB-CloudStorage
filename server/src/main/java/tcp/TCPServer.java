@@ -99,35 +99,12 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
         }
     }
 
-    //TODO
-    public boolean checkLoginAndPassword(String login, String password) {
-        //FIXME запросить jdbс проверить логин и пароль
-        //если порт соединения совпадает с портом полученного объекта авторизационного запроса
-        if(login.equals("login1") && password.equals("pass1")){//FIXME
-            return true;
-        }
-        return false;
-    }
-
-    public boolean determineClient(int port, String login) {
-        //листаем список активных соединений
-        for (int i = 0; i < connections.size(); i++) {
-
-            printMsg("TCPServer.determineClient() - connections.get(i).getSocket().getLocalPort(): " +
-                    connections.get(i).getSocket().getPort());
-
-            //если порт соединения совпадает с портом полученного объекта авторизационного запроса
-            if(connections.get(i).getSocket().getPort() == port){//FIXME
-                //записываем логин клиента как идентификатор клиента
-                connections.get(i).setClientID(login);
-                return true;
-            }
-        }
-        return false;
-    }
-
     public String getStorageRoot() {
         return storageRoot;
+    }
+
+    public ArrayList<TCPConnection> getConnections() {
+        return connections;
     }
 
     public synchronized void printMsg(String msg){
