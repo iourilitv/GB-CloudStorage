@@ -21,7 +21,7 @@ public class DirectoryCommandHandler extends CommandHandler{
      * @param directory - заданная пользовательская директория в сетевом хранилище
      * @param fileNamesList - список названий файлов и папок в заданной директории
      */
-    public void updateStorageFilesListInGUI(String directory, String[] fileNamesList){
+    public void updateStorageFilesAndFoldersListInGUI(String directory, String[] fileNamesList){
         //FIXME передать в GUI
 
         //TODO temporarily

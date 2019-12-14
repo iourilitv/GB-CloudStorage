@@ -86,8 +86,8 @@ public class ObjectHandler {
         //инициируем объект хендлера для операций с директориями
         directoryCommandHandler = new DirectoryCommandHandler(directoryMessage);
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
-        directoryCommandHandler.updateStorageFilesListInGUI(directoryMessage.getDirectory(),
-                directoryMessage.getFileNamesList());
+        directoryCommandHandler.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
+                directoryMessage.getNamesList());
 
         //TODO temporarily
         //сбрасываем защелку
@@ -117,8 +117,8 @@ public class ObjectHandler {
         //инициируем объект хендлера для операций с директориями
         directoryCommandHandler = new DirectoryCommandHandler(directoryMessage);
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
-        directoryCommandHandler.updateStorageFilesListInGUI(directoryMessage.getDirectory(),
-                directoryMessage.getFileNamesList());
+        directoryCommandHandler.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
+                directoryMessage.getNamesList());
 
         //TODO temporarily
         //сбрасываем защелку

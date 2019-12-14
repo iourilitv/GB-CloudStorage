@@ -121,8 +121,8 @@ public class ObjectHandler {
         }
         //инициируем объект сообщения о директории
         directoryMessage = new DirectoryMessage();
-        //формируем список файлов в корневой директории клиента по умолчанию
-        directoryMessage.composeFileNamesList(userStorageRoot);
+        //формируем список файлов и папок в корневой директории клиента по умолчанию
+        directoryMessage.composeFilesAndFoldersNamesList(userStorageRoot);
         //отправляем объект сообщения(команды) клиенту
         server.sendToClient(tcpConnection, new CommandMessage(command, directoryMessage));
     }
@@ -157,8 +157,8 @@ public class ObjectHandler {
         }
         //инициируем объект сообщения о директории
         directoryMessage = new DirectoryMessage();
-        //формируем список файлов в корневой директории клиента по умолчанию
-        directoryMessage.composeFileNamesList(userStorageRoot);
+        //формируем список файлов и папок в корневой директории клиента по умолчанию
+        directoryMessage.composeFilesAndFoldersNamesList(userStorageRoot);
         //отправляем объект сообщения(команды) клиенту
         server.sendToClient(tcpConnection, new CommandMessage(command, directoryMessage));
     }
