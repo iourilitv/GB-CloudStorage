@@ -2,6 +2,7 @@ package utils.handlers;
 
 import messages.AuthMessage;
 import messages.Commands;
+import messages.DirectoryMessage;
 import messages.FileMessage;
 import tcp.TCPConnection;
 import tcp.TCPServer;
@@ -13,6 +14,10 @@ import utils.CommandMessage;
 public class ObjectHandler {
     //принимаем объект сервера
     private TCPServer server;
+    //объявляем объект авторизационного сообщения
+    private AuthMessage authMessage;
+    //объявляем объект сервисного хендлера
+    private ServiceCommandHandler serviceCommandHandler;
     //объявляем объект файлового сообщения для полного файла
     private FileMessage fileMessage;
     //объявляем объект файлового хендлера
@@ -23,10 +28,10 @@ public class ObjectHandler {
     private String userStorageRoot;
     //объявляем переменную для директории, заданной относительно userStorageRoot в сетевом хранилище
     private String storageDir;
-    //объявляем объект авторизационного сообщения
-    private AuthMessage authMessage;
-    //объявляем объект сервисного хендлера
-    private ServiceCommandHandler serviceCommandHandler;
+    //объявляем объект сообщения о директории
+    DirectoryMessage directoryMessage;
+    //объявляем объект хендлера для операций с директориями
+    DirectoryCommandHandler directoryCommandHandler;
 
     public ObjectHandler(TCPServer server) {
         this.server = server;
@@ -114,12 +119,13 @@ public class ObjectHandler {
             // к корневой директории клиента по умолчанию
             userStorageRoot = userStorageRoot.concat("/").concat(authMessage.getLogin());
         }
-        //FIXME? Можно отправить список фалов в директории
-//        //создаем объект авторизационного сообщения
-//        authMessage = new AuthMessage();
-
+        //TODO check
+        //инициируем объект сообщения о директории
+        directoryMessage = new DirectoryMessage();
+        //формируем список файлов в корневой директории клиента по умолчанию
+        directoryMessage.composeFilesList(userStorageRoot);
         //отправляем объект сообщения(команды) клиенту
-        server.sendToClient(tcpConnection, new CommandMessage(command, authMessage));
+        server.sendToClient(tcpConnection, new CommandMessage(command, directoryMessage));
     }
 
     /**
@@ -150,10 +156,17 @@ public class ObjectHandler {
                 command = Commands.SERVER_RESPONSE_FILE_UPLOAD_OK;
             }
         }
-        //создаем объект файлового сообщения
-        fileMessage = new FileMessage(storageDir, clientDir, fileMessage.getFilename());
-        //отправляем объект сообщения(команды) клиенту//FIXME где брать логин?
-        server.sendToClient(tcpConnection, new CommandMessage(command, fileMessage));
+//        //создаем объект файлового сообщения
+//        fileMessage = new FileMessage(storageDir, clientDir, fileMessage.getFilename());
+//        //отправляем объект сообщения(команды) клиенту
+//        server.sendToClient(tcpConnection, new CommandMessage(command, fileMessage));
+        //TODO check
+        //инициируем объект сообщения о директории
+        directoryMessage = new DirectoryMessage();
+        //формируем список файлов в корневой директории клиента по умолчанию
+        directoryMessage.composeFilesList(userStorageRoot);
+        //отправляем объект сообщения(команды) клиенту
+        server.sendToClient(tcpConnection, new CommandMessage(command, directoryMessage));
     }
 
     /**
@@ -164,7 +177,7 @@ public class ObjectHandler {
      */
     private void onUploadFileOkClientResponse(TCPConnection tcpConnection, CommandMessage messageObject) {
         //FIXME fill me!
-        server.printMsg("Server.respondOnUploadFileOK command: " + messageObject.getCommand());
+        server.printMsg("(Server)ObjectHandler.onUploadFileOkClientResponse() command: " + messageObject.getCommand());
     }
 
     /**
@@ -175,7 +188,7 @@ public class ObjectHandler {
      */
     private void onUploadFileErrorClientResponse(TCPConnection tcpConnection, CommandMessage messageObject) {
         //FIXME fill me!
-        server.printMsg("Server.respondOnUploadFileError command: " + messageObject.getCommand());
+        server.printMsg("(Server)ObjectHandler.onUploadFileErrorClientResponse() command: " + messageObject.getCommand());
     }
 
     /**
@@ -220,7 +233,7 @@ public class ObjectHandler {
      */
     private void onDownloadFileOkClientResponse(TCPConnection tcpConnection, CommandMessage messageObject) {
         //FIXME fill me!
-        server.printMsg("Server.respondOnDownloadFileOK command: " + messageObject.getCommand());
+        server.printMsg("(Server)ObjectHandler.onDownloadFileOkClientResponse() command: " + messageObject.getCommand());
     }
 
     /**
@@ -231,6 +244,6 @@ public class ObjectHandler {
      */
     private void onDownloadFileErrorClientResponse(TCPConnection tcpConnection, CommandMessage messageObject) {
         //FIXME fill me!
-        server.printMsg("Server.respondOnDownloadFileError command: " + messageObject.getCommand());
+        server.printMsg("(Server)ObjectHandler.onDownloadFileErrorClientResponse() command: " + messageObject.getCommand());
     }
 }

@@ -63,21 +63,21 @@ public class TCPClient implements TCPConnectionListener {
         //отправляем на сервер запрос на авторизацию в облачное хранилище
         requestAuthorization("login1", "pass1");
 
-        try {
-            //ждем сброса защелки
-            countDownLatch.await();
-            //отправляем на сервер запрос на загрузку файла в облачное хранилище
-            uploadFile(clientDir, storageDir, "file1.txt");
-
-            //инициируем объект защелки на один сброс
-            countDownLatch = new CountDownLatch(1);
-            //ждем сброса защелки
-            countDownLatch.await();
-            //отправляем на сервер запрос на скачивание файла из облачного хранилища
-            downloadFile(storageDir, clientDir, "acmp_ru.png");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            //ждем сброса защелки
+//            countDownLatch.await();
+//            //отправляем на сервер запрос на загрузку файла в облачное хранилище
+//            uploadFile(clientDir, storageDir, "file1.txt");
+//
+//            //инициируем объект защелки на один сброс
+//            countDownLatch = new CountDownLatch(1);
+//            //ждем сброса защелки
+//            countDownLatch.await();
+//            //отправляем на сервер запрос на скачивание файла из облачного хранилища
+//            downloadFile(storageDir, clientDir, "acmp_ru.png");
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
     //отправляем на сервер запрос на авторизацию в облачное хранилище

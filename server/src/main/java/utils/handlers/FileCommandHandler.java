@@ -8,10 +8,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 
 /**
- * The server class for operating with the command message "upload() a file".
+ * The server class for operating with fileMessages and fileFragmentMessages.
  */
 public class FileCommandHandler extends CommandHandler{
     //принимаем объект файлового сообщения для полного файла

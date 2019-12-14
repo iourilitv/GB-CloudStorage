@@ -11,7 +11,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 
 /**
- * The client class for operating with the command message "upload() a file".
+ * The client class for operating with fileMessages and fileFragmentMessages.
  */
 public class FileCommandHandler extends CommandHandler{
     //принимаем объект файлового сообщения для полного файла

@@ -2,9 +2,12 @@ package utils.handlers;
 
 import messages.AuthMessage;
 import messages.Commands;
+import messages.DirectoryMessage;
 import messages.FileMessage;
 import tcp.TCPClient;
 import utils.CommandMessage;
+
+import java.util.Arrays;
 
 /**
  * The client class for recognizing command messages and control command handlers.
@@ -12,6 +15,10 @@ import utils.CommandMessage;
 public class ObjectHandler {
     //принимаем объект клиента
     private TCPClient client;
+    //объявляем объект авторизационного сообщения
+    private AuthMessage authMessage;
+    //объявляем объект сервисного хендлера
+    private ServiceCommandHandler serviceCommandHandler;
     //объявляем объект файлового сообщения для полного файла
     private FileMessage fileMessage;
     //объявляем объект файлового хендлера
@@ -20,11 +27,10 @@ public class ObjectHandler {
     private String clientDir;
     //объявляем переменную для заданной относительно userStorageRoot директории в сетевом хранилище
     private String storageDir;
-
-    //объявляем объект авторизационного сообщения
-    private AuthMessage authMessage;
-    //объявляем объект сервисного хендлера
-    private ServiceCommandHandler serviceCommandHandler;
+    //объявляем объект сообщения о директории
+    DirectoryMessage directoryMessage;
+    //объявляем объект хендлера для операций с директориями
+    DirectoryCommandHandler directoryCommandHandler;
 
     public ObjectHandler(TCPClient client) {
         this.client = client;
@@ -77,12 +83,24 @@ public class ObjectHandler {
      * @param messageObject - объект сообщения(команды)
      */
     private void onAuthOkServerResponse(CommandMessage messageObject) {
-        //вынимаем объект авторизационного сообщения из объекта сообщения(команды)
-        authMessage = (AuthMessage) messageObject.getMessageObject();
-        //инициируем объект сервисного хендлера
-        serviceCommandHandler = new ServiceCommandHandler(authMessage);
-        //вызываем метод обработки события успешной авторизации в облачном хранилище
-        serviceCommandHandler.isAuthorized(client, authMessage);
+//        //вынимаем объект авторизационного сообщения из объекта сообщения(команды)
+//        authMessage = (AuthMessage) messageObject.getMessageObject();
+//        //инициируем объект сервисного хендлера
+//        serviceCommandHandler = new ServiceCommandHandler(authMessage);
+//        //вызываем метод обработки события успешной авторизации в облачном хранилище
+//        serviceCommandHandler.isAuthorized(client, authMessage);//FIXME что делать?
+
+        //вынимаем объект сообщения о директории из объекта сообщения(команды)
+        directoryMessage = (DirectoryMessage) messageObject.getMessageObject();
+        //инициируем объект хендлера для операций с директориями
+        directoryCommandHandler = new DirectoryCommandHandler(directoryMessage);
+
+        //TODO temporarily
+        client.printMsg("(Client)ObjectHandler.onAuthOkServerResponse() command: " + messageObject.getCommand());
+
+        //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
+        directoryCommandHandler.updateStorageFilesListInGUI(directoryMessage.getDirectory(),
+                directoryMessage.getFilesList());
     }
 
     /**
@@ -94,7 +112,7 @@ public class ObjectHandler {
         // вывести в GUI сообщение об ошибке
         // повторить запрос на авторизацию с новыми данными логина и пароля
 
-        client.printMsg("ObjectHandler.respondOnAuthError() - Something wrong with your login and password!");
+        client.printMsg("(Client)ObjectHandler.onAuthErrorServerResponse() - Something wrong with your login and password!");
     }
 
     /**
@@ -103,8 +121,17 @@ public class ObjectHandler {
      * @param messageObject - объект сообщения(команды)
      */
     private void onUploadFileOkServerResponse(CommandMessage messageObject) {
-        //FIXME fill me!
-        client.printMsg("Client.respondOnUploadFileOK command: " + messageObject.getCommand());
+        //вынимаем объект сообщения о директории из объекта сообщения(команды)
+        directoryMessage = (DirectoryMessage) messageObject.getMessageObject();
+        //инициируем объект хендлера для операций с директориями
+        directoryCommandHandler = new DirectoryCommandHandler(directoryMessage);
+
+        //TODO temporarily
+        client.printMsg("(Client)ObjectHandler.onUploadFileOkServerResponse() command: " + messageObject.getCommand());
+
+        //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
+        directoryCommandHandler.updateStorageFilesListInGUI(directoryMessage.getDirectory(),
+                directoryMessage.getFilesList());
 
         //TODO temporarily
         //сбрасываем защелку
@@ -118,7 +145,7 @@ public class ObjectHandler {
      */
     private void onUploadFileErrorServerResponse(CommandMessage messageObject) {
         //FIXME fill me!
-        client.printMsg("Client.respondOnUploadFileError command: " + messageObject.getCommand());
+        client.printMsg("(Client)ObjectHandler.onUploadFileErrorServerResponse() command: " + messageObject.getCommand());
     }
 
     /**
@@ -162,6 +189,6 @@ public class ObjectHandler {
      */
     private void onDownloadFileErrorServerResponse(CommandMessage messageObject) {
         //FIXME fill me!
-        client.printMsg("Client.respondOnDownloadFileError command: " + messageObject.getCommand());
+        client.printMsg("Client.onDownloadFileErrorServerResponse() command: " + messageObject.getCommand());
     }
 }
