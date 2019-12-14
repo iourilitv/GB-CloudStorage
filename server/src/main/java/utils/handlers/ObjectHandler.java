@@ -119,11 +119,10 @@ public class ObjectHandler {
             // к корневой директории клиента по умолчанию
             userStorageRoot = userStorageRoot.concat("/").concat(authMessage.getLogin());
         }
-        //TODO check
         //инициируем объект сообщения о директории
         directoryMessage = new DirectoryMessage();
         //формируем список файлов в корневой директории клиента по умолчанию
-        directoryMessage.composeFilesList(userStorageRoot);
+        directoryMessage.composeFileNamesList(userStorageRoot);
         //отправляем объект сообщения(команды) клиенту
         server.sendToClient(tcpConnection, new CommandMessage(command, directoryMessage));
     }
@@ -156,15 +155,10 @@ public class ObjectHandler {
                 command = Commands.SERVER_RESPONSE_FILE_UPLOAD_OK;
             }
         }
-//        //создаем объект файлового сообщения
-//        fileMessage = new FileMessage(storageDir, clientDir, fileMessage.getFilename());
-//        //отправляем объект сообщения(команды) клиенту
-//        server.sendToClient(tcpConnection, new CommandMessage(command, fileMessage));
-        //TODO check
         //инициируем объект сообщения о директории
         directoryMessage = new DirectoryMessage();
         //формируем список файлов в корневой директории клиента по умолчанию
-        directoryMessage.composeFilesList(userStorageRoot);
+        directoryMessage.composeFileNamesList(userStorageRoot);
         //отправляем объект сообщения(команды) клиенту
         server.sendToClient(tcpConnection, new CommandMessage(command, directoryMessage));
     }

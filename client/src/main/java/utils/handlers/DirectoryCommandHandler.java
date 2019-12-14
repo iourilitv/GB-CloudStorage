@@ -2,7 +2,6 @@ package utils.handlers;
 
 import messages.DirectoryMessage;
 
-import java.io.File;
 import java.util.Arrays;
 
 /**
@@ -20,15 +19,15 @@ public class DirectoryCommandHandler extends CommandHandler{
      * Метод выводит в GUI список файлов и папок в корневой пользовательской директории
      * в сетевом хранилище.
      * @param directory - заданная пользовательская директория в сетевом хранилище
-     * @param filesList - список файлов и папок в заданной директории
+     * @param fileNamesList - список названий файлов и папок в заданной директории
      */
-    public void updateStorageFilesListInGUI(String directory, File[] filesList){
+    public void updateStorageFilesListInGUI(String directory, String[] fileNamesList){
         //FIXME передать в GUI
 
         //TODO temporarily
         System.out.println("(Client)DirectoryCommandHandler.updateStorageFilesListInGUI directory: " +
                 directory +
-                ". filesList: " + Arrays.toString(filesList));
+                ". filesList: " + Arrays.toString(fileNamesList));
     }
 
 }

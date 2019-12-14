@@ -7,8 +7,6 @@ import messages.FileMessage;
 import tcp.TCPClient;
 import utils.CommandMessage;
 
-import java.util.Arrays;
-
 /**
  * The client class for recognizing command messages and control command handlers.
  */
@@ -83,24 +81,17 @@ public class ObjectHandler {
      * @param messageObject - объект сообщения(команды)
      */
     private void onAuthOkServerResponse(CommandMessage messageObject) {
-//        //вынимаем объект авторизационного сообщения из объекта сообщения(команды)
-//        authMessage = (AuthMessage) messageObject.getMessageObject();
-//        //инициируем объект сервисного хендлера
-//        serviceCommandHandler = new ServiceCommandHandler(authMessage);
-//        //вызываем метод обработки события успешной авторизации в облачном хранилище
-//        serviceCommandHandler.isAuthorized(client, authMessage);//FIXME что делать?
-
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
         directoryMessage = (DirectoryMessage) messageObject.getMessageObject();
         //инициируем объект хендлера для операций с директориями
         directoryCommandHandler = new DirectoryCommandHandler(directoryMessage);
-
-        //TODO temporarily
-        client.printMsg("(Client)ObjectHandler.onAuthOkServerResponse() command: " + messageObject.getCommand());
-
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
         directoryCommandHandler.updateStorageFilesListInGUI(directoryMessage.getDirectory(),
-                directoryMessage.getFilesList());
+                directoryMessage.getFileNamesList());
+
+        //TODO temporarily
+        //сбрасываем защелку
+        client.getCountDownLatch().countDown();
     }
 
     /**
@@ -125,13 +116,9 @@ public class ObjectHandler {
         directoryMessage = (DirectoryMessage) messageObject.getMessageObject();
         //инициируем объект хендлера для операций с директориями
         directoryCommandHandler = new DirectoryCommandHandler(directoryMessage);
-
-        //TODO temporarily
-        client.printMsg("(Client)ObjectHandler.onUploadFileOkServerResponse() command: " + messageObject.getCommand());
-
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
         directoryCommandHandler.updateStorageFilesListInGUI(directoryMessage.getDirectory(),
-                directoryMessage.getFilesList());
+                directoryMessage.getFileNamesList());
 
         //TODO temporarily
         //сбрасываем защелку

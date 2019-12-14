@@ -63,37 +63,42 @@ public class TCPClient implements TCPConnectionListener {
         //отправляем на сервер запрос на авторизацию в облачное хранилище
         requestAuthorization("login1", "pass1");
 
-//        try {
-//            //ждем сброса защелки
-//            countDownLatch.await();
-//            //отправляем на сервер запрос на загрузку файла в облачное хранилище
-//            uploadFile(clientDir, storageDir, "file1.txt");
-//
-//            //инициируем объект защелки на один сброс
-//            countDownLatch = new CountDownLatch(1);
-//            //ждем сброса защелки
-//            countDownLatch.await();
-//            //отправляем на сервер запрос на скачивание файла из облачного хранилища
-//            downloadFile(storageDir, clientDir, "acmp_ru.png");
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            //ждем сброса защелки
+            countDownLatch.await();
+            //отправляем на сервер запрос на загрузку файла в облачное хранилище
+            uploadFile(clientDir, storageDir, "file1.txt");
+
+            //инициируем объект защелки на один сброс
+            countDownLatch = new CountDownLatch(1);
+            //ждем сброса защелки
+            countDownLatch.await();
+            //отправляем на сервер запрос на скачивание файла из облачного хранилища
+            downloadFile(storageDir, clientDir, "acmp_ru.png");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     //отправляем на сервер запрос на авторизацию в облачное хранилище
     private void requestAuthorization(String login, String password) {
+        //TODO temporarily
+        printMsg("***TCPClient.requestAuthorization() - has started***");
+
         //отправляем на сервер объект сообщения(команды)
         connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
                 new AuthMessage(login, password)));
 
         //TODO temporarily
-        printMsg("TCPClient.requestAuthorization() - connection.getSocket().getPort(): " +
-                connection.getSocket().getLocalPort());
+        printMsg("***TCPClient.requestAuthorization() - has finished***");
     }
 
     //отправляем на сервер запрос на загрузку файла в облачное хранилище
     //FIXME перенести в контроллер интерфейса
     public void uploadFile(String fromDir, String toDir, String filename){
+        //TODO temporarily
+        printMsg("***TCPClient.uploadFile() - has started***");
+
         //инициируем объект файлового сообщения
         FileMessage fileMessage = new FileMessage(fromDir, toDir, filename);
         try {
@@ -108,16 +113,25 @@ public class TCPClient implements TCPConnectionListener {
         //отправляем на сервер объект сообщения(команды)
         connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
                 fileMessage));
+
+        //TODO temporarily
+        printMsg("***TCPClient.uploadFile() - has finished***");
     }
 
     //отправляем на сервер запрос на скачивание файла из облачного хранилища
     //FIXME перенести в контроллер интерфейса
     public void downloadFile(String fromDir, String toDir, String filename){
+        //TODO temporarily
+        printMsg("***TCPClient.downloadFile() - has started***");
+
         //инициируем объект файлового сообщения
         FileMessage fileMessage = new FileMessage(fromDir, toDir, filename);
         //отправляем на сервер объект сообщения(команды)
         connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_DOWNLOAD,
                 fileMessage));
+
+        //TODO temporarily
+        printMsg("***TCPClient.downloadFile() - has finished***");
     }
 
     @Override
