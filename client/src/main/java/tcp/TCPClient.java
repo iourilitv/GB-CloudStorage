@@ -67,14 +67,14 @@ public class TCPClient implements TCPConnectionListener {
             //ждем сброса защелки
             countDownLatch.await();
             //отправляем на сервер запрос на загрузку файла в облачное хранилище
-            uploadFile(clientDir, storageDir, "file1.txt");
+            uploadFile(clientDir, storageDir, "toUpload.txt");
 
             //инициируем объект защелки на один сброс
             countDownLatch = new CountDownLatch(1);
             //ждем сброса защелки
             countDownLatch.await();
             //отправляем на сервер запрос на скачивание файла из облачного хранилища
-            downloadFile(storageDir, clientDir, "acmp_ru.png");
+            downloadFile(storageDir, clientDir, "toDownload.png");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
