@@ -1,39 +1,27 @@
-package utils.handlers;
+package utils;
 
 import messages.AuthMessage;
-import utils.Commands;
 import messages.DirectoryMessage;
 import messages.FileMessage;
 import tcp.TCPConnection;
 import tcp.TCPServer;
-import utils.CommandMessage;
+import utils.handlers.FileCommandHandler;
+import utils.handlers.ServiceCommandHandler;
 
 /**
  * The server class for recognizing command messages and control command handlers.
  */
-public class ObjectHandler {
+public class commandMessageManager {
     //принимаем объект сервера
     private TCPServer server;
-    //объявляем объект авторизационного сообщения
-    private AuthMessage authMessage;
     //объявляем объект сервисного хендлера
     private ServiceCommandHandler serviceCommandHandler;
-    //объявляем объект файлового сообщения для полного файла
-    private FileMessage fileMessage;
     //объявляем объект файлового хендлера
     private FileCommandHandler fileCommandHandler;
-    //объявляем переменную для клиентской директории
-    private String clientDir;
     //объявляем переменную для корневой директории пользователя в сетевом хранилище
     private String userStorageRoot;
-    //объявляем переменную для директории, заданной относительно userStorageRoot в сетевом хранилище
-    private String storageDir;
-    //объявляем объект сообщения о директории
-    DirectoryMessage directoryMessage;
-    //объявляем объект хендлера для операций с директориями
-    DirectoryCommandHandler directoryCommandHandler;
 
-    public ObjectHandler(TCPServer server) {
+    public commandMessageManager(TCPServer server) {
         this.server = server;
         //инициируем переменную для корневой директории пользователя в сетевом хранилище
         userStorageRoot = server.getStorageRoot();//FIXME не будет ли юзер видеть все хранилище?
@@ -42,16 +30,16 @@ public class ObjectHandler {
     /**
      * Метод распознает тип команды и обрабатывает ее.
      * @param tcpConnection - объект соединения, установленного с клиентом
-     * @param messageObject - объект сообщения(команды)
+     * @param commandMessage - объект сообщения(команды)
      */
-    public void recognizeAndArrangeMessageObject(TCPConnection tcpConnection, CommandMessage messageObject) {
+    public void recognizeAndArrangeMessageObject(TCPConnection tcpConnection, CommandMessage commandMessage) {
         //***блок обработки объектов сервисных сообщений(команд), полученных от клиента***
         //если подсоединившийся клиент еще не распознан
         if(tcpConnection.getClientID().equals("unknownID")){
             //если полученное от клиента сообщение это запрос на авторизацию в облачное хранилище
-            if(messageObject.getCommand() == Commands.REQUEST_SERVER_AUTH){
+            if(commandMessage.getCommand() == Commands.REQUEST_SERVER_AUTH){
                 //вызываем метод обработки запроса от клиента
-                onAuthClientRequest(tcpConnection, messageObject);
+                onAuthClientRequest(tcpConnection, commandMessage);
                 return;
             }
         }
@@ -59,42 +47,42 @@ public class ObjectHandler {
         //если сюда прошли, значит клиент авторизован
         //***блок обработки объектов НЕсервисных сообщений(команд), полученных от клиента***
         //выполняем операции в зависимости от типа полученного не сервисного сообщения(команды)
-        switch (messageObject.getCommand()) {
+        switch (commandMessage.getCommand()) {
             //обрабатываем полученный от клиента запрос на загрузку(сохранение) файла в облачное хранилище
             case Commands.REQUEST_SERVER_FILE_UPLOAD:
                 //вызываем метод обработки запроса от клиента на загрузку целого файла клиента
                 // в директорию в сетевом хранилище.
-                onUploadFileClientRequest(tcpConnection, messageObject);
+                onUploadFileClientRequest(tcpConnection, commandMessage);
                 break;
             //обрабатываем полученное от клиента подтверждение успешного получения обновленного
             // списка файлов клиента в облачном хранилище
             case Commands.CLIENT_RESPONSE_FILE_UPLOAD_OK:
                 //вызываем метод обработки ответа клиента
-                onUploadFileOkClientResponse(tcpConnection, messageObject);
+                onUploadFileOkClientResponse(tcpConnection, commandMessage);
                 break;
             //обрабатываем полученное от клиента сообщение об ошибке получения обновленного
             // списка файлов клиента в облачном хранилище
             case Commands.CLIENT_RESPONSE_FILE_UPLOAD_ERROR:
                 //вызываем метод обработки ответа клиента
-                onUploadFileErrorClientResponse(tcpConnection, messageObject);
+                onUploadFileErrorClientResponse(tcpConnection, commandMessage);
                 break;
             //обрабатываем полученный от клиента запрос на скачивание целого файла из облачного хранилища
             case Commands.REQUEST_SERVER_FILE_DOWNLOAD:
                 //вызываем метод обработки запроса от клиента на скачивание целого файла клиента
                 // из директории в сетевом хранилище
-                onDownloadFileClientRequest(tcpConnection, messageObject);
+                onDownloadFileClientRequest(tcpConnection, commandMessage);
                 break;
             //обрабатываем полученное от клиента подтверждение успешного сохранения целого файла,
             // скачанного из облачного хранилища
             case Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_OK:
                 //вызываем метод обработки ответа клиента
-                onDownloadFileOkClientResponse(tcpConnection, messageObject);
+                onDownloadFileOkClientResponse(tcpConnection, commandMessage);
                 break;
             //обрабатываем полученное от клиента сообщение об ошибке сохранения целого файла,
             // скачанного из облачного хранилища
             case Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_ERROR:
                 //вызываем метод обработки ответа клиента
-                onDownloadFileErrorClientResponse(tcpConnection, messageObject);
+                onDownloadFileErrorClientResponse(tcpConnection, commandMessage);
                 break;
         }
     }
@@ -102,13 +90,13 @@ public class ObjectHandler {
     /**
      * Метод обрабатывает полученный от клиента запрос на авторизацию в облачное хранилище
      * @param tcpConnection - объект соединения, установленного с клиентом
-     * @param messageObject - объект сообщения(команды)
+     * @param commandMessage - объект сообщения(команды)
      */
-    private void onAuthClientRequest(TCPConnection tcpConnection, CommandMessage messageObject) {
+    private void onAuthClientRequest(TCPConnection tcpConnection, CommandMessage commandMessage) {
         //вынимаем объект авторизационного сообщения из объекта сообщения(команды)
-        authMessage = (AuthMessage) messageObject.getMessageObject();
+        AuthMessage authMessage = (AuthMessage) commandMessage.getMessageObject();
         //инициируем объект сервисного хендлера
-        serviceCommandHandler = new ServiceCommandHandler(authMessage);
+        serviceCommandHandler = new ServiceCommandHandler();
         //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
         int command = Commands.SERVER_RESPONSE_AUTH_ERROR;
         //если авторизации клиента в облачном хранилище прошла удачно
@@ -120,7 +108,7 @@ public class ObjectHandler {
             userStorageRoot = userStorageRoot.concat("/").concat(authMessage.getLogin());
         }
         //инициируем объект сообщения о директории
-        directoryMessage = new DirectoryMessage();
+        DirectoryMessage directoryMessage = new DirectoryMessage();
         //формируем список файлов и папок в корневой директории клиента по умолчанию
         directoryMessage.composeFilesAndFoldersNamesList(userStorageRoot);
         //отправляем объект сообщения(команды) клиенту
@@ -131,17 +119,17 @@ public class ObjectHandler {
      * Метод обработки запроса от клиента на загрузку целого файла клиента в директорию в
      * сетевом хранилище.
      * @param tcpConnection - объект соединения, установленного с клиентом
-     * @param messageObject - объект сообщения(команды)
+     * @param commandMessage - объект сообщения(команды)
      */
-    private void onUploadFileClientRequest(TCPConnection tcpConnection, CommandMessage messageObject) {
+    private void onUploadFileClientRequest(TCPConnection tcpConnection, CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
-        fileMessage = (FileMessage) messageObject.getMessageObject();
+        FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
         //инициируем объект файлового хендлера
-        fileCommandHandler = new FileCommandHandler(fileMessage);
+        fileCommandHandler = new FileCommandHandler();
         //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
-        clientDir = fileMessage.getFromDir();
+        String clientDir = fileMessage.getFromDir();
         //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
-        storageDir = fileMessage.getToDir();
+        String storageDir = fileMessage.getToDir();
         //собираем целевую директорию пользователя в сетевом хранилище
         String toDir = userStorageRoot;//сбрасываем до корневой папки пользователя в сетевом хранилище
         toDir = toDir.concat("/").concat(storageDir);//добавляем значение подпапки
@@ -156,7 +144,7 @@ public class ObjectHandler {
             }
         }
         //инициируем объект сообщения о директории
-        directoryMessage = new DirectoryMessage();
+        DirectoryMessage directoryMessage = new DirectoryMessage();
         //формируем список файлов и папок в корневой директории клиента по умолчанию
         directoryMessage.composeFilesAndFoldersNamesList(userStorageRoot);
         //отправляем объект сообщения(команды) клиенту
@@ -167,39 +155,39 @@ public class ObjectHandler {
      * Метод обрабатывает полученное от клиента подтверждение успешного получения
      * обновленного списка файлов клиента в облачном хранилище
      * @param tcpConnection - объект соединения, установленного с клиентом
-     * @param messageObject - объект сообщения(команды)
+     * @param commandMessage - объект сообщения(команды)
      */
-    private void onUploadFileOkClientResponse(TCPConnection tcpConnection, CommandMessage messageObject) {
+    private void onUploadFileOkClientResponse(TCPConnection tcpConnection, CommandMessage commandMessage) {
         //FIXME fill me!
-        server.printMsg("(Server)ObjectHandler.onUploadFileOkClientResponse() command: " + messageObject.getCommand());
+        server.printMsg("(Server)ObjectHandler.onUploadFileOkClientResponse() command: " + commandMessage.getCommand());
     }
 
     /**
      * Метод обрабатывает полученное от клиента сообщение об ошибке получения обновленного
      * списка файлов клиента в облачном хранилище
      * @param tcpConnection - объект соединения, установленного с клиентом
-     * @param messageObject - объект сообщения(команды)
+     * @param commandMessage - объект сообщения(команды)
      */
-    private void onUploadFileErrorClientResponse(TCPConnection tcpConnection, CommandMessage messageObject) {
+    private void onUploadFileErrorClientResponse(TCPConnection tcpConnection, CommandMessage commandMessage) {
         //FIXME fill me!
-        server.printMsg("(Server)ObjectHandler.onUploadFileErrorClientResponse() command: " + messageObject.getCommand());
+        server.printMsg("(Server)ObjectHandler.onUploadFileErrorClientResponse() command: " + commandMessage.getCommand());
     }
 
     /**
      * Метод обработки запроса от клиента на скачивание целого файла клиента из директории в
      * сетевом хранилище.
      * @param tcpConnection - объект соединения, установленного с клиентом
-     * @param messageObject - объект сообщения(команды)
+     * @param commandMessage - объект сообщения(команды)
      */
-    private void onDownloadFileClientRequest(TCPConnection tcpConnection, CommandMessage messageObject) {
+    private void onDownloadFileClientRequest(TCPConnection tcpConnection, CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
-        fileMessage = (FileMessage) messageObject.getMessageObject();
+        FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
         //инициируем объект файлового хендлера
-        fileCommandHandler = new FileCommandHandler(fileMessage);
+        fileCommandHandler = new FileCommandHandler();
         //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
-        storageDir = fileMessage.getFromDir();
+        String storageDir = fileMessage.getFromDir();
         //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
-        clientDir = fileMessage.getToDir();
+        String clientDir = fileMessage.getToDir();
         //собираем целевую директорию пользователя в сетевом хранилище
         String fromDir = userStorageRoot;//сбрасываем до корневой папки пользователя в сетевом хранилище
         fromDir = fromDir.concat("/").concat(storageDir);//добавляем значение подпапки
@@ -208,7 +196,7 @@ public class ObjectHandler {
         //создаем объект файлового сообщения
         fileMessage = new FileMessage(storageDir, clientDir, fileMessage.getFilename());
         //если скачивание прошло удачно
-        if(fileCommandHandler.downloadFile(server, fileMessage, fromDir)){
+        if(fileCommandHandler.downloadFile(server, fromDir, fileMessage)){
             //проверяем сохраненный файл по контрольной сумме//FIXME
             if(true){
                 //отправляем сообщение на сервер: подтверждение, что все прошло успешно
@@ -223,21 +211,21 @@ public class ObjectHandler {
      * Метод обрабатывает полученное от клиента подтверждение успешного сохранения целого файла,
      * скачанного из облачного хранилища
      * @param tcpConnection - объект соединения, установленного с клиентом
-     * @param messageObject - объект сообщения(команды)
+     * @param commandMessage - объект сообщения(команды)
      */
-    private void onDownloadFileOkClientResponse(TCPConnection tcpConnection, CommandMessage messageObject) {
+    private void onDownloadFileOkClientResponse(TCPConnection tcpConnection, CommandMessage commandMessage) {
         //FIXME fill me!
-        server.printMsg("(Server)ObjectHandler.onDownloadFileOkClientResponse() command: " + messageObject.getCommand());
+        server.printMsg("(Server)ObjectHandler.onDownloadFileOkClientResponse() command: " + commandMessage.getCommand());
     }
 
     /**
      * Метод обрабатывает полученное от клиента сообщение об ошибке сохранения целого файла,
      * скачанного из облачного хранилища
      * @param tcpConnection - объект соединения, установленного с клиентом
-     * @param messageObject - объект сообщения(команды)
+     * @param commandMessage - объект сообщения(команды)
      */
-    private void onDownloadFileErrorClientResponse(TCPConnection tcpConnection, CommandMessage messageObject) {
+    private void onDownloadFileErrorClientResponse(TCPConnection tcpConnection, CommandMessage commandMessage) {
         //FIXME fill me!
-        server.printMsg("(Server)ObjectHandler.onDownloadFileErrorClientResponse() command: " + messageObject.getCommand());
+        server.printMsg("(Server)ObjectHandler.onDownloadFileErrorClientResponse() command: " + commandMessage.getCommand());
     }
 }

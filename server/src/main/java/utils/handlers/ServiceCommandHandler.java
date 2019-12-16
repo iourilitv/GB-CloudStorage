@@ -8,17 +8,7 @@ import tcp.TCPServer;
 /**
  * The server class for operating with service command messages.
  */
-public class ServiceCommandHandler extends CommandHandler{
-    //принимаем объект авторизационного сообщения
-    private AuthMessage authMessage;
-
-    public ServiceCommandHandler(AuthMessage authMessage) {
-        this.authMessage = authMessage;
-    }
-
-    public AuthMessage getAuthMessage() {
-        return authMessage;
-    }
+public class ServiceCommandHandler extends AbstractCommandHandler {
 
     /**
      * Метод обработки авторизации клиента в сетевом хранилище

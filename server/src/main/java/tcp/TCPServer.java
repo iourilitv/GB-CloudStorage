@@ -1,7 +1,7 @@
 package tcp;
 
 import utils.CommandMessage;
-import utils.handlers.ObjectHandler;
+import utils.commandMessageManager;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -24,12 +24,12 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
     //объявляем объект сообщения(команды)
     private CommandMessage messageObject;
     //объявляем объект обработчика сообщений(команд)
-    private ObjectHandler objectHandler;
+    private commandMessageManager commandMessageManager;
 
     public TCPServer() {
         printMsg("Server running...");
         //инициируем объект обработчика сообщений(команд)
-        objectHandler = new ObjectHandler(this);
+        commandMessageManager = new commandMessageManager(this);
         //создаем серверсокет, который слушает порт TCP:8189
         try(ServerSocket serverSocket = new ServerSocket(8189)){//это "try с ресурсом"
             //сервер слушает входящие соединения
@@ -83,7 +83,7 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
             e.printStackTrace();
         }
         //распознаем и обрабатываем полученный объект сообщения(команды)
-        objectHandler.recognizeAndArrangeMessageObject(tcpConnection, messageObject);
+        commandMessageManager.recognizeAndArrangeMessageObject(tcpConnection, messageObject);
     }
 
     /**
