@@ -8,6 +8,9 @@ import tcp.TCPServer;
 import utils.handlers.FileCommandHandler;
 import utils.handlers.ServiceCommandHandler;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 /**
  * The server class for recognizing command messages and control command handlers.
  */
@@ -126,8 +129,10 @@ public class commandMessageManager {
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
         //инициируем объект файлового хендлера
         fileCommandHandler = new FileCommandHandler();
-        //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
-        String clientDir = fileMessage.getFromDir();
+
+//        //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
+//        String clientDir = fileMessage.getFromDir();
+
         //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
         String storageDir = fileMessage.getToDir();
         //собираем целевую директорию пользователя в сетевом хранилище
@@ -194,7 +199,7 @@ public class commandMessageManager {
         //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
         int command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_ERROR;
         //создаем объект файлового сообщения
-        fileMessage = new FileMessage(storageDir, clientDir, fileMessage.getFilename());
+        fileMessage = new FileMessage(fromDir, clientDir, fileMessage.getFilename());
         //если скачивание прошло удачно
         if(fileCommandHandler.downloadFile(server, fromDir, fileMessage)){
             //проверяем сохраненный файл по контрольной сумме//FIXME

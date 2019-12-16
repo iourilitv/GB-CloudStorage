@@ -9,6 +9,8 @@ import utils.Commands;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -94,20 +96,29 @@ public class StorageTest {
         //TODO temporarily
         printMsg("***TCPClient.uploadFile() - has started***");
 
-        //инициируем объект файлового сообщения
-        FileMessage fileMessage = new FileMessage(fromDir, toDir, filename);
         try {
+            //вычисляем размер файла
+            long fileSize = Files.size(Paths.get(currentClientDir, filename));
+
+            //инициируем объект файлового сообщения
+            FileMessage fileMessage = new FileMessage(fromDir, toDir, filename, fileSize);
             //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
             fileMessage.readFileData(currentClientDir);//FIXME Разобраться с абсолютными папкими клиента
 
+            //если длина считанного файла отличается от длины исходного файла в хранилище
+            if(fileMessage.getFileSize() != fileMessage.getData().length){
+                printMsg("(Client)StorageTest.uploadFile() - Wrong the read file size!");
+                return;
+            }
+
+            //отправляем на сервер объект сообщения(команды)
+            connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
+                    fileMessage));
         } catch (IOException e) {
             //печатаем в консоль сообщение об ошибке считывания файла
             printMsg("TCPClient.uploadFile() - There is no file in the directory!");
             e.printStackTrace();
         }
-        //отправляем на сервер объект сообщения(команды)
-        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
-                fileMessage));
 
         //TODO temporarily
         printMsg("***TCPClient.uploadFile() - has finished***");

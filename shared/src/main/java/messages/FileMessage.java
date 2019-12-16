@@ -15,6 +15,8 @@ public class FileMessage extends AbstractMessage {
     private String toDir;
     //объявляем переменную имени файла
     private String filename;
+    //объявляем переменную размера файла(в байтах)
+    private long fileSize;
     //объявляем байтовый массив с данными из файла
     private byte[] data;
 
@@ -22,6 +24,13 @@ public class FileMessage extends AbstractMessage {
         this.fromDir = fromDir;
         this.toDir = toDir;
         this.filename = filename;
+    }
+
+    public FileMessage(String fromDir, String toDir, String filename, long fileSize) {
+        this.fromDir = fromDir;
+        this.toDir = toDir;
+        this.filename = filename;
+        this.fileSize = fileSize;
     }
 
     /**
@@ -49,6 +58,14 @@ public class FileMessage extends AbstractMessage {
 
     public String getFilename() {
         return filename;
+    }
+
+    public long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
     }
 
     public byte[] getData() {
