@@ -42,14 +42,9 @@ public class StorageTest {
     private final PrintStream log = System.out;
     //объявляем переменную сетевого соединения
     private TCPConnection connection;
-    //объявляем объект обработчика сообщений(команд)
-    private ObjectHandler objectHandler;
 
     //FIXME удалить, когда будет реализован интерфейс
     public void startTest(TCPConnection connection) {
-        //инициируем объект обработчика сообщений(команд)
-        objectHandler = new ObjectHandler(this);
-
         //инициируем переменную для текущей директории клиента
         currentClientDir = clientDefaultRoot;
         //инициируем объект защелки на один сброс
@@ -133,11 +128,6 @@ public class StorageTest {
 
         //TODO temporarily
         printMsg("***TCPClient.downloadFile() - has finished***");
-    }
-
-    public void onReceiveCommandMessage(TCPConnection tcpConnection, CommandMessage commandMessage) {
-        //распознаем и обрабатываем полученный объект сообщения(команды)
-        objectHandler.recognizeAndArrangeMessageObject(commandMessage);
     }
 
     public TCPConnection getConnection() {
