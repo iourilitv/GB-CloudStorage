@@ -1,14 +1,21 @@
+import control.StorageTest;
 import tcp.TCPClient;
 
 import java.io.*;
 
 /**
- * The main class of client cloudstorage applet.
+ * The main class of client cloudStorage applet.
  */
 public class Client {
 
-    public static void main(String[] args) throws IOException {
-        new TCPClient().send();
+//    public static void main(String[] args) throws IOException {
+//        new TCPClient().send();
+//    }
+//    public static void main(String[] args) {
+//        new TCPClient();
+//    }
+    public static void main(String[] args) {
+        new StorageTest();
     }
 }
 

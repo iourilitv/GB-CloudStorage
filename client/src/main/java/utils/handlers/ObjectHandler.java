@@ -1,5 +1,6 @@
 package utils.handlers;
 
+import control.StorageTest;
 import messages.AuthMessage;
 import utils.Commands;
 import messages.DirectoryMessage;
@@ -11,8 +12,11 @@ import utils.CommandMessage;
  * The client class for recognizing command messages and control command handlers.
  */
 public class ObjectHandler {
-    //принимаем объект клиента
-    private TCPClient client;
+//    //принимаем объект клиента
+//    private TCPClient client;
+    //принимаем объект тестера
+    private StorageTest client;
+
     //объявляем объект авторизационного сообщения
     private AuthMessage authMessage;
     //объявляем объект сервисного хендлера
@@ -30,8 +34,11 @@ public class ObjectHandler {
     //объявляем объект хендлера для операций с директориями
     DirectoryCommandHandler directoryCommandHandler;
 
-    public ObjectHandler(TCPClient client) {
-        this.client = client;
+//    public ObjectHandler(TCPClient client) {
+//        this.client = client;
+//    }
+    public ObjectHandler(StorageTest tester) {
+        this.client = tester;
     }
 
     /**
