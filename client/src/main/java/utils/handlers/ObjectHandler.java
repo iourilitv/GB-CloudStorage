@@ -1,7 +1,7 @@
 package utils.handlers;
 
 import messages.AuthMessage;
-import messages.Commands;
+import utils.Commands;
 import messages.DirectoryMessage;
 import messages.FileMessage;
 import tcp.TCPClient;
@@ -152,7 +152,8 @@ public class ObjectHandler {
         //FIXME придется указывать абсолютный путь, если будет выбор папки клиента
         //собираем текущую директорию на клиенте
         String toDir = client.getClientDefaultRoot();
-        toDir = toDir.concat("/").concat(storageDir);
+        toDir = toDir.concat("/").concat(clientDir);
+
         //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
         int command = Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_ERROR;
         //если сохранение прошло удачно

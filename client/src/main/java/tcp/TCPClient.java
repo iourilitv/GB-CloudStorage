@@ -1,7 +1,7 @@
 package tcp;
 
 import messages.AuthMessage;
-import messages.Commands;
+import utils.Commands;
 import messages.FileMessage;
 import utils.CommandMessage;
 import utils.handlers.ObjectHandler;
@@ -66,6 +66,9 @@ public class TCPClient implements TCPConnectionListener {
         try {
             //ждем сброса защелки
             countDownLatch.await();
+            //добавляем к корневой директории пользователя в сетевом хранилище
+            // имя подпапки назначения
+            storageDir = storageDir.concat("folderToUploadFile");
             //отправляем на сервер запрос на загрузку файла в облачное хранилище
             uploadFile(clientDir, storageDir, "toUpload.txt");
 
@@ -73,6 +76,13 @@ public class TCPClient implements TCPConnectionListener {
             countDownLatch = new CountDownLatch(1);
             //ждем сброса защелки
             countDownLatch.await();
+            //восстанавливаем начальное значение директории в сетевом хранилище//TODO temporarily
+            storageDir = "";
+            //добавляем к корневой директории клиента имя подпапки назначения на клиенте
+            clientDir = clientDir.concat("folderToDownloadFile");
+
+            System.out.println("clientDir: " + clientDir);
+
             //отправляем на сервер запрос на скачивание файла из облачного хранилища
             downloadFile(storageDir, clientDir, "toDownload.png");
         } catch (InterruptedException e) {

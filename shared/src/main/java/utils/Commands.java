@@ -1,4 +1,4 @@
-package messages;
+package utils;
 
 /**
  * The class is a public storage of command types.

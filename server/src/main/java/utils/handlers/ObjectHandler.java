@@ -1,7 +1,7 @@
 package utils.handlers;
 
 import messages.AuthMessage;
-import messages.Commands;
+import utils.Commands;
 import messages.DirectoryMessage;
 import messages.FileMessage;
 import tcp.TCPConnection;
@@ -215,7 +215,7 @@ public class ObjectHandler {
                 command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK;
             }
         }
-        //отправляем объект сообщения(команды) клиенту//FIXME где брать логин?
+        //отправляем объект сообщения(команды) клиенту
         server.sendToClient(tcpConnection, new CommandMessage(command, fileMessage));
     }
 
