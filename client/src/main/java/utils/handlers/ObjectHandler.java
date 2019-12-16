@@ -1,7 +1,6 @@
 package utils.handlers;
 
 import control.StorageTest;
-import messages.AuthMessage;
 import utils.Commands;
 import messages.DirectoryMessage;
 import messages.FileMessage;
@@ -13,26 +12,17 @@ import utils.CommandMessage;
 public class ObjectHandler {
     //принимаем объект тестера
     private StorageTest tester;
-
-    //объявляем объект авторизационного сообщения
-    private AuthMessage authMessage;
-    //объявляем объект сервисного хендлера
-    private ServiceCommandHandler serviceCommandHandler;
-    //объявляем объект файлового сообщения для полного файла
-    private FileMessage fileMessage;
     //объявляем объект файлового хендлера
     private FileCommandHandler fileCommandHandler;
-    //объявляем переменную для клиентской директории
-    private String clientDir;
-    //объявляем переменную для заданной относительно userStorageRoot директории в сетевом хранилище
-    private String storageDir;
-    //объявляем объект сообщения о директории
-    DirectoryMessage directoryMessage;
     //объявляем объект хендлера для операций с директориями
-    DirectoryCommandHandler directoryCommandHandler;
+    private DirectoryCommandHandler directoryCommandHandler;
 
     public ObjectHandler(StorageTest tester) {
         this.tester = tester;
+        //инициируем объект хендлера для операций с директориями
+        directoryCommandHandler = new DirectoryCommandHandler();
+        //инициируем объект файлового хендлера
+        fileCommandHandler = new FileCommandHandler();
     }
 
     /**
@@ -83,9 +73,7 @@ public class ObjectHandler {
      */
     private void onAuthOkServerResponse(CommandMessage messageObject) {
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
-        directoryMessage = (DirectoryMessage) messageObject.getMessageObject();
-        //инициируем объект хендлера для операций с директориями
-        directoryCommandHandler = new DirectoryCommandHandler(directoryMessage);
+        DirectoryMessage directoryMessage = (DirectoryMessage) messageObject.getMessageObject();
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
         directoryCommandHandler.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
                 directoryMessage.getNamesList());
@@ -114,9 +102,7 @@ public class ObjectHandler {
      */
     private void onUploadFileOkServerResponse(CommandMessage messageObject) {
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
-        directoryMessage = (DirectoryMessage) messageObject.getMessageObject();
-        //инициируем объект хендлера для операций с директориями
-        directoryCommandHandler = new DirectoryCommandHandler(directoryMessage);
+        DirectoryMessage directoryMessage = (DirectoryMessage) messageObject.getMessageObject();
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
         directoryCommandHandler.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
                 directoryMessage.getNamesList());
@@ -142,13 +128,11 @@ public class ObjectHandler {
      */
     private void onDownloadFileOkServerResponse(CommandMessage messageObject) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
-        fileMessage = (FileMessage) messageObject.getMessageObject();
-        //инициируем объект файлового хендлера
-        fileCommandHandler = new FileCommandHandler(fileMessage);
-        //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
-        storageDir = fileMessage.getFromDir();
+        FileMessage fileMessage = (FileMessage) messageObject.getMessageObject();
+        //вынимаем директорию заданную относительно userStorageRoot в сетевом хранилище из объекта сообщения(команды)
+        String storageDir = fileMessage.getFromDir();
         //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
-        clientDir = fileMessage.getToDir();
+        String clientDir = fileMessage.getToDir();
 
         //FIXME придется указывать абсолютный путь, если будет выбор папки клиента
         //собираем текущую директорию на клиенте
