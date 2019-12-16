@@ -2,7 +2,7 @@ package tcp;
 
 import control.StorageTest;
 import utils.CommandMessage;
-import utils.handlers.ObjectHandler;
+import utils.commandMessageManager;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -23,12 +23,12 @@ public class TCPClient implements TCPConnectionListener {
     //принимаем объект тестера
     private StorageTest storageTest;
     //объявляем объект обработчика сообщений(команд)
-    private ObjectHandler objectHandler;
+    private commandMessageManager commandMessageManager;
 
     public TCPClient(StorageTest storageTest) {
         this.storageTest = storageTest;
         //инициируем объект обработчика сообщений(команд)
-        objectHandler = new ObjectHandler(storageTest);
+        commandMessageManager = new commandMessageManager(storageTest);
         try {
             //инициируем переменную сетевого соединения
             //устанавливаем соединение при открытии окна
@@ -64,7 +64,7 @@ public class TCPClient implements TCPConnectionListener {
             //инициируем объект сообщения(команды)
             CommandMessage commandMessage = (CommandMessage) ois.readObject();
             //распознаем и обрабатываем полученный объект сообщения(команды)
-            objectHandler.recognizeAndArrangeMessageObject(commandMessage);
+            commandMessageManager.recognizeAndArrangeMessageObject(commandMessage);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

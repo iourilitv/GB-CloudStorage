@@ -1,7 +1,6 @@
 package utils.handlers;
 
 import control.StorageTest;
-import messages.FileFragmentMessage;
 import messages.FileMessage;
 
 import java.io.IOException;
@@ -12,7 +11,7 @@ import java.nio.file.StandardOpenOption;
 /**
  * The client class for operating with fileMessages and fileFragmentMessages.
  */
-public class FileCommandHandler extends CommandHandler{
+public class FileCommandHandler extends AbstractCommandHandler {
 
     /**
      * Метод сохраняет скачанный из сетевого хранилища(полученный от сервера) целый файл

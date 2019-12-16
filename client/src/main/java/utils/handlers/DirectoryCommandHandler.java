@@ -5,7 +5,7 @@ import java.util.Arrays;
 /**
  * The client class for operating with directoryMessages.
  */
-public class DirectoryCommandHandler extends CommandHandler{
+public class DirectoryCommandHandler extends AbstractCommandHandler {
 
     /**
      * Метод выводит в GUI список файлов и папок в корневой пользовательской директории

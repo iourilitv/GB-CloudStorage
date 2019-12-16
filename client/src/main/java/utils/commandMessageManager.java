@@ -1,15 +1,15 @@
-package utils.handlers;
+package utils;
 
 import control.StorageTest;
-import utils.Commands;
 import messages.DirectoryMessage;
 import messages.FileMessage;
-import utils.CommandMessage;
+import utils.handlers.DirectoryCommandHandler;
+import utils.handlers.FileCommandHandler;
 
 /**
  * The client class for recognizing command messages and control command handlers.
  */
-public class ObjectHandler {
+public class commandMessageManager {
     //принимаем объект тестера
     private StorageTest tester;
     //объявляем объект файлового хендлера
@@ -17,7 +17,7 @@ public class ObjectHandler {
     //объявляем объект хендлера для операций с директориями
     private DirectoryCommandHandler directoryCommandHandler;
 
-    public ObjectHandler(StorageTest tester) {
+    public commandMessageManager(StorageTest tester) {
         this.tester = tester;
         //инициируем объект хендлера для операций с директориями
         directoryCommandHandler = new DirectoryCommandHandler();
@@ -27,53 +27,53 @@ public class ObjectHandler {
 
     /**
      * Метот распознает тип команды и обрабатывает ее.
-     * @param messageObject - объект сообщения(команды)
+     * @param commandMessage - объект сообщения(команды)
      */
-    public void recognizeAndArrangeMessageObject(CommandMessage messageObject) {
+    public void recognizeAndArrangeMessageObject(CommandMessage commandMessage) {
         //выполняем операции в зависимости от типа полученного сообщения(команды)
-        switch (messageObject.getCommand()) {
+        switch (commandMessage.getCommand()) {
             //обрабатываем полученное от сервера подтверждение успешной загрузки(сохранения)
             // файла в облачное хранилище
             case Commands.SERVER_RESPONSE_FILE_UPLOAD_OK:
                 //вызываем метод обработки ответа сервера
-                onUploadFileOkServerResponse(messageObject);
+                onUploadFileOkServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке загрузки(сохранения)
             // файла в облачное хранилище
             case Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR:
                 //вызываем метод обработки ответа сервера
-                onUploadFileErrorServerResponse(messageObject);
+                onUploadFileErrorServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера подтверждение успешного скачивания файла из облачного хранилища
             case Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK:
                 //вызываем метод обработки ответа сервера со скачанным целым файлом внутри
-                onDownloadFileOkServerResponse(messageObject);
+                onDownloadFileOkServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке скачивания файла из облачного хранилища
             case Commands.SERVER_RESPONSE_FILE_DOWNLOAD_ERROR:
                 //вызываем метод обработки ответа сервера
-                onDownloadFileErrorServerResponse(messageObject);
+                onDownloadFileErrorServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера подтверждение успешной авторизации в облачное хранилище
             case Commands.SERVER_RESPONSE_AUTH_OK:
                 //вызываем метод обработки ответа сервера
-                onAuthOkServerResponse(messageObject);
+                onAuthOkServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке авторизации в облачное хранилище
             case Commands.SERVER_RESPONSE_AUTH_ERROR:
                 //вызываем метод обработки ответа сервера
-                onAuthErrorServerResponse(messageObject);
+                onAuthErrorServerResponse(commandMessage);
                 break;
         }
     }
 
     /**
      * Метод обрабатывает полученное от сервера подтверждение успешной авторизации в облачное хранилище
-     * @param messageObject - объект сообщения(команды)
+     * @param commandMessage - объект сообщения(команды)
      */
-    private void onAuthOkServerResponse(CommandMessage messageObject) {
+    private void onAuthOkServerResponse(CommandMessage commandMessage) {
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
-        DirectoryMessage directoryMessage = (DirectoryMessage) messageObject.getMessageObject();
+        DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
         directoryCommandHandler.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
                 directoryMessage.getNamesList());
@@ -85,9 +85,9 @@ public class ObjectHandler {
 
     /**
      * Метод обрабатывает полученное от сервера сообщение об ошибке авторизации в облачное хранилище
-     * @param messageObject - объект сообщения(команды)
+     * @param commandMessage - объект сообщения(команды)
      */
-    private void onAuthErrorServerResponse(CommandMessage messageObject) {
+    private void onAuthErrorServerResponse(CommandMessage commandMessage) {
         //FIXME
         // вывести в GUI сообщение об ошибке
         // повторить запрос на авторизацию с новыми данными логина и пароля
@@ -98,11 +98,11 @@ public class ObjectHandler {
     /**
      * Метод обрабатывает полученное от сервера подтверждение успешной загрузки(сохранения)
      * файла в облачное хранилище
-     * @param messageObject - объект сообщения(команды)
+     * @param commandMessage - объект сообщения(команды)
      */
-    private void onUploadFileOkServerResponse(CommandMessage messageObject) {
+    private void onUploadFileOkServerResponse(CommandMessage commandMessage) {
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
-        DirectoryMessage directoryMessage = (DirectoryMessage) messageObject.getMessageObject();
+        DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
         directoryCommandHandler.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
                 directoryMessage.getNamesList());
@@ -115,20 +115,20 @@ public class ObjectHandler {
     /**
      * Метод обрабатывает полученное от сервера сообщение об ошибке загрузки(сохранения)
      * файла в облачное хранилище
-     * @param messageObject - объект сообщения(команды)
+     * @param commandMessage - объект сообщения(команды)
      */
-    private void onUploadFileErrorServerResponse(CommandMessage messageObject) {
+    private void onUploadFileErrorServerResponse(CommandMessage commandMessage) {
         //FIXME fill me!
-        tester.printMsg("(Client)ObjectHandler.onUploadFileErrorServerResponse() command: " + messageObject.getCommand());
+        tester.printMsg("(Client)ObjectHandler.onUploadFileErrorServerResponse() command: " + commandMessage.getCommand());
     }
 
     /**
      * Метод обработки ответа сервера со скачанным целым файлом внутри
-     * @param messageObject - объект сообщения(команды)
+     * @param commandMessage - объект сообщения(команды)
      */
-    private void onDownloadFileOkServerResponse(CommandMessage messageObject) {
+    private void onDownloadFileOkServerResponse(CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
-        FileMessage fileMessage = (FileMessage) messageObject.getMessageObject();
+        FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
         //вынимаем директорию заданную относительно userStorageRoot в сетевом хранилище из объекта сообщения(команды)
         String storageDir = fileMessage.getFromDir();
         //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
@@ -158,10 +158,10 @@ public class ObjectHandler {
     /**
      * Метод обрабатывает полученное от сервера сообщение об ошибке
      * скачивания файла из облачного хранилища
-     * @param messageObject - объект сообщения(команды)
+     * @param commandMessage - объект сообщения(команды)
      */
-    private void onDownloadFileErrorServerResponse(CommandMessage messageObject) {
+    private void onDownloadFileErrorServerResponse(CommandMessage commandMessage) {
         //FIXME fill me!
-        tester.printMsg("Client.onDownloadFileErrorServerResponse() command: " + messageObject.getCommand());
+        tester.printMsg("Client.onDownloadFileErrorServerResponse() command: " + commandMessage.getCommand());
     }
 }
