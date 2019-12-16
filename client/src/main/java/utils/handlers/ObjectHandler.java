@@ -5,17 +5,14 @@ import messages.AuthMessage;
 import utils.Commands;
 import messages.DirectoryMessage;
 import messages.FileMessage;
-import tcp.TCPClient;
 import utils.CommandMessage;
 
 /**
  * The client class for recognizing command messages and control command handlers.
  */
 public class ObjectHandler {
-//    //принимаем объект клиента
-//    private TCPClient client;
     //принимаем объект тестера
-    private StorageTest client;
+    private StorageTest tester;
 
     //объявляем объект авторизационного сообщения
     private AuthMessage authMessage;
@@ -34,11 +31,8 @@ public class ObjectHandler {
     //объявляем объект хендлера для операций с директориями
     DirectoryCommandHandler directoryCommandHandler;
 
-//    public ObjectHandler(TCPClient client) {
-//        this.client = client;
-//    }
     public ObjectHandler(StorageTest tester) {
-        this.client = tester;
+        this.tester = tester;
     }
 
     /**
@@ -98,7 +92,7 @@ public class ObjectHandler {
 
         //TODO temporarily
         //сбрасываем защелку
-        client.getCountDownLatch().countDown();
+        tester.getCountDownLatch().countDown();
     }
 
     /**
@@ -110,7 +104,7 @@ public class ObjectHandler {
         // вывести в GUI сообщение об ошибке
         // повторить запрос на авторизацию с новыми данными логина и пароля
 
-        client.printMsg("(Client)ObjectHandler.onAuthErrorServerResponse() - Something wrong with your login and password!");
+        tester.printMsg("(Client)ObjectHandler.onAuthErrorServerResponse() - Something wrong with your login and password!");
     }
 
     /**
@@ -129,7 +123,7 @@ public class ObjectHandler {
 
         //TODO temporarily
         //сбрасываем защелку
-        client.getCountDownLatch().countDown();
+        tester.getCountDownLatch().countDown();
     }
 
     /**
@@ -139,7 +133,7 @@ public class ObjectHandler {
      */
     private void onUploadFileErrorServerResponse(CommandMessage messageObject) {
         //FIXME fill me!
-        client.printMsg("(Client)ObjectHandler.onUploadFileErrorServerResponse() command: " + messageObject.getCommand());
+        tester.printMsg("(Client)ObjectHandler.onUploadFileErrorServerResponse() command: " + messageObject.getCommand());
     }
 
     /**
@@ -158,13 +152,13 @@ public class ObjectHandler {
 
         //FIXME придется указывать абсолютный путь, если будет выбор папки клиента
         //собираем текущую директорию на клиенте
-        String toDir = client.getClientDefaultRoot();
+        String toDir = tester.getClientDefaultRoot();
         toDir = toDir.concat("/").concat(clientDir);
 
         //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
         int command = Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_ERROR;
         //если сохранение прошло удачно
-        if(fileCommandHandler.saveDownloadedFile(client, toDir, fileMessage)){//FIXME см.выше
+        if(fileCommandHandler.saveDownloadedFile(tester, toDir, fileMessage)){//FIXME см.выше
             //проверяем сохраненный файл по контрольной сумме//FIXME
             if(true){
                 //отправляем сообщение на сервер: подтверждение, что все прошло успешно
@@ -174,7 +168,7 @@ public class ObjectHandler {
         //создаем объект файлового сообщения
         fileMessage = new FileMessage(storageDir, clientDir, fileMessage.getFilename());
         //отправляем объект сообщения(команды) на сервер
-        client.getConnection().sendMessageObject(new CommandMessage(command, fileMessage));
+        tester.getConnection().sendMessageObject(new CommandMessage(command, fileMessage));
     }
 
     /**
@@ -184,6 +178,6 @@ public class ObjectHandler {
      */
     private void onDownloadFileErrorServerResponse(CommandMessage messageObject) {
         //FIXME fill me!
-        client.printMsg("Client.onDownloadFileErrorServerResponse() command: " + messageObject.getCommand());
+        tester.printMsg("Client.onDownloadFileErrorServerResponse() command: " + messageObject.getCommand());
     }
 }

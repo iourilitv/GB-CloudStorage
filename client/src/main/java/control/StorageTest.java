@@ -16,11 +16,6 @@ import java.util.concurrent.CountDownLatch;
  * The class is responded for operation with storage by communication with command handlers.
  */
 public class StorageTest {
-//    public static final StorageTest ownInstance = new StorageTest();
-//
-//    public static StorageTest getOwnInstance() {
-//        return ownInstance;
-//    }
 
     public StorageTest() {
         //инициируем объект сетевого соединения с сервером
@@ -47,15 +42,13 @@ public class StorageTest {
     private final PrintStream log = System.out;
     //объявляем переменную сетевого соединения
     private TCPConnection connection;
-    //объявляем объект сообщения(команды)
-    private CommandMessage messageObject;
     //объявляем объект обработчика сообщений(команд)
     private ObjectHandler objectHandler;
 
     //FIXME удалить, когда будет реализован интерфейс
     public void startTest(TCPConnection connection) {
-//        //инициируем объект обработчика сообщений(команд)
-//        objectHandler = new ObjectHandler(this);
+        //инициируем объект обработчика сообщений(команд)
+        objectHandler = new ObjectHandler(this);
 
         //инициируем переменную для текущей директории клиента
         currentClientDir = clientDefaultRoot;
@@ -81,9 +74,6 @@ public class StorageTest {
             storageDir = "";
             //добавляем к корневой директории клиента имя подпапки назначения на клиенте
             clientDir = clientDir.concat("folderToDownloadFile");
-
-            System.out.println("clientDir: " + clientDir);
-
             //отправляем на сервер запрос на скачивание файла из облачного хранилища
             downloadFile(storageDir, clientDir, "toDownload.png");
         } catch (InterruptedException e) {
@@ -146,8 +136,6 @@ public class StorageTest {
     }
 
     public void onReceiveCommandMessage(TCPConnection tcpConnection, CommandMessage commandMessage) {
-        //инициируем объект обработчика сообщений(команд)
-        ObjectHandler objectHandler = new ObjectHandler(this);
         //распознаем и обрабатываем полученный объект сообщения(команды)
         objectHandler.recognizeAndArrangeMessageObject(commandMessage);
     }
