@@ -11,6 +11,7 @@ public class Commands {
     public static final int SERVER_RESPONSE_AUTH_OK = 911202;
     //ответ сервера, что авторизация прошла успешно
     public static final int SERVER_RESPONSE_AUTH_ERROR = 911209;
+
     //запрос на сервер загрузить(сохранить) файл
     public static final int REQUEST_SERVER_FILE_UPLOAD = 101101;
     //ответ клиента - подтверждение успешного получения обновленного списка, файлов в облачном хранилище
@@ -21,6 +22,7 @@ public class Commands {
     public static final int SERVER_RESPONSE_FILE_UPLOAD_OK = 101202;
     //ответ сервера, что при загрузки(сохранении) файла произошла ошибка
     public static final int SERVER_RESPONSE_FILE_UPLOAD_ERROR = 101209;
+
     //запрос на сервер скачать файл
     public static final int REQUEST_SERVER_FILE_DOWNLOAD = 202101;
     //ответ сервера с файлом, если нет ошибок
@@ -31,6 +33,7 @@ public class Commands {
     public static final int SERVER_RESPONSE_FILE_DOWNLOAD_OK = 202202;
     //ответ сервера, что при скачивании файла произошла ошибка
     public static final int SERVER_RESPONSE_FILE_DOWNLOAD_ERROR = 202209;
+
     //запрос на сервер предоставить список файлов в папке
     public static final int REQUEST_SERVER_FILES_LIST = 303101;
     //переименовать файл на сервере
@@ -39,4 +42,8 @@ public class Commands {
     public static final int REQUEST_SERVER_DELETE_FILE = 505101;
     //переместить файл в другую папку
     public static final int REQUEST_SERVER_MOVE_FILE = 606101;
+
+    //запрос на сервер загрузить(сохранить) не последний фрагмент файла
+    public static final int REQUEST_SERVER_FILE_FRAG_UPLOAD = 111101;
+
 }

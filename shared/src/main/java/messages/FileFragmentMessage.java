@@ -1,15 +1,10 @@
 package messages;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * A Class of message objects for a files of a size more than
@@ -17,7 +12,7 @@ import java.util.Collections;
  */
 public class FileFragmentMessage extends AbstractMessage {
     //инициируем константу размера фрагментов файла в байтах
-    public static final int CONST_FRAG_SIZE = 1024 * 1024;
+    public static final int CONST_FRAG_SIZE = 1024 * 1024 * 10;
     //объявляем переменную директории источника
     private String fromDir;
     //объявляем переменную директории назначения
@@ -32,7 +27,6 @@ public class FileFragmentMessage extends AbstractMessage {
     private int fileFragmentSize;
     //объявляем байтовый массив с данными из файла
     private byte[] data;
-    private Byte[] dataObj;
 
     //объявляем переменную текущего фрагмента файла
     private int currentFragNumber;
@@ -41,38 +35,9 @@ public class FileFragmentMessage extends AbstractMessage {
     //объявляем переменную имени временной папки для хранения фрагментов в директории назначения
     private String toTempDir;
 
-    //конструктор для фрагментов(полных) с первого по предпоследнего включительно
-    public FileFragmentMessage(
-            String fromDir, String toDir, String filename, long fullFileSize,
-                               int currentFragNumber, int totalFragsNumber) {
-        //инициируем переменные объекта
-        init(fromDir, toDir, filename, fullFileSize,
-        currentFragNumber, totalFragsNumber, -1);
-    }
-
-    //конструктор для последнего(не полного) фрагмента
-//    public FileFragmentMessage(String filename, int fileFragmentSize, int currentFragNumber, int totalFragsNumber) {
-//        this.filename = filename;
-//        this.fileFragmentSize = fileFragmentSize;
-//        this.currentFragNumber = currentFragNumber;
-//        this.totalFragsNumber = totalFragsNumber;
-//        //составляем имя фрагмента файла(для сохранения в директории)
-//        fileFragmentName = filename;
-//        fileFragmentName = fileFragmentName.concat(".frg")
-//                .concat(String.valueOf(currentFragNumber))
-//                .concat("-").concat(String.valueOf(totalFragsNumber));
-//        //Пример: toUpload.txt.frg1024-1024
-//    }
     public FileFragmentMessage(
             String fromDir, String toDir, String filename, long fullFileSize,
             int currentFragNumber, int totalFragsNumber, int fileFragmentSize) {
-        //инициируем переменные объекта
-        init(fromDir, toDir, filename, fullFileSize,
-                currentFragNumber, totalFragsNumber, fileFragmentSize);
-    }
-
-    private void init(String fromDir, String toDir, String filename, long fullFileSize,
-                      int currentFragNumber, int totalFragsNumber, int fileFragmentSize){
         this.fromDir = fromDir;
         this.toDir = toDir;
         this.filename = filename;
@@ -99,14 +64,15 @@ public class FileFragmentMessage extends AbstractMessage {
         //Пример: .../toUpload.txt-temp-102425820//FIXME допускаются ли точки в имени папки?
     }
 
-    //читаем данные файла из определенного места
-//    public void readFileDataToFragmentData(String fromDir, String filename, long startByte) throws IOException {
-//        //читаем все данные из файла побайтно в байтовый массив
-//        this.data = Files.readAllBytes(Paths.get(fromDir, filename));
-//        //инициируем объект
-//        RandomAccessFile raf = new RandomAccessFile(filename, "r");
-//    }
-    public void readFileDataToFragmentData(String fromDir, String filename, long startByte) throws IOException {
+    /**
+     * Метод чтения данных из определенного места файла в файтовый массив.
+     * @param fromDir - директория файла источника
+     * @param filename - имя файла источника
+     * @param startByte - индекс байта начала считывания
+     * @param fileFragmentSize - размер фрагмента файла
+     * @throws IOException - исключение ввода-вывода
+     */
+    public void readFileDataToFragment(String fromDir, String filename, long startByte, int fileFragmentSize) throws IOException {
         //собираем полное название файла(с директорией)
         String path = fromDir;
         path = path.concat("/").concat(filename);
@@ -114,21 +80,20 @@ public class FileFragmentMessage extends AbstractMessage {
         RandomAccessFile raf = new RandomAccessFile(path, "r");
         // ставим указатель на нужный вам символ
         raf.seek(startByte);
-        byte b;
-        int count = 0;
-        ArrayList<Byte> arrayList = new ArrayList<>(CONST_FRAG_SIZE);
-        // ***побитово читаем и добавляем символы в строку***
-        //пока есть что читать и количество считанного не превысило константу размера фрагментов файла в байтах
-        while(count++ < CONST_FRAG_SIZE && (int) (b = (byte) raf.read()) != -1){
-            //добавляем считанный байт в коллекцию
-            arrayList.add(b);
+        //инициируем байтовый массив
+        data = new byte[fileFragmentSize];
+        //вычитываем данные из файла
+        for (int i = 0; i < fileFragmentSize; i++) {
+            data[i] = (byte) raf.read();
         }
-        //переписываем данные из коллекции в байтовый массив
-        dataObj = (Byte[])arrayList.toArray();
 
         //TODO temporarily
-        System.out.println("FileFragmentMessage.readFileDataToFragmentData() - data.length: " + data.length +
-                ", Arrays.toString(data): " + Arrays.toString(data));
+        System.out.println("FileFragmentMessage.readFileDataToFragmentData() - " +
+                "Arrays.toString(data): " + Arrays.toString(data));
+
+        System.out.println("FileFragmentMessage.readFileDataToFragmentData() - data.length: " + data.length);
+        System.out.println("FileFragmentMessage.readFileDataToFragmentData() - startByte: " + startByte);
+        System.out.println("FileFragmentMessage.readFileDataToFragmentData() - fileFragmentSize: " + fileFragmentSize);
 
         raf.close();
     }

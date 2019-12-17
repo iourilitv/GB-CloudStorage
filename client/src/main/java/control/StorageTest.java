@@ -60,8 +60,13 @@ public class StorageTest {
             //добавляем к корневой директории пользователя в сетевом хранилище
             // имя подпапки назначения
             storageDir = storageDir.concat("folderToUploadFile");
-            //отправляем на сервер запрос на загрузку файла в облачное хранилище
-            uploadFile(clientDir, storageDir, "toUpload.txt");
+            //инициируем переменную для текущей директории клиента
+            currentClientDir = clientDefaultRoot;
+            //отправляем на сервер запрос на загрузку маленького файла в облачное хранилище
+//            uploadFile(clientDir, storageDir, "toUpload.txt");//TODO delete
+//            uploadFile(currentClientDir, storageDir, "toUpload.txt");
+            //отправляем на сервер запрос на загрузку большого файла в облачное хранилище
+            uploadFile(currentClientDir, storageDir, "toUploadBIG.mp4");
 
             //инициируем объект защелки на один сброс
             countDownLatch = new CountDownLatch(100000);//TODO
@@ -131,21 +136,85 @@ public class StorageTest {
         printMsg("***TCPClient.uploadFile() - has started***");
 
         //вычисляем размер файла
-        long fileSize = Files.size(Paths.get(currentClientDir, filename));
+//        long fileSize = Files.size(Paths.get(currentClientDir, filename));
+        long fileSize = Files.size(Paths.get(fromDir, filename));
 
         if(fileSize > FileFragmentMessage.CONST_FRAG_SIZE){
             //запускаем метод отправки файла по частям
-//            uploadFileByFrags();
+            uploadFileByFrags(fromDir, toDir, filename, fileSize);
         } else {
             //запускаем метод отправки целого файла
             uploadEntireFile(fromDir, toDir, filename, fileSize);
         }
 
-
         //TODO temporarily
         printMsg("***TCPClient.uploadFile() - has finished***");
     }
 
+    private void uploadFileByFrags(String fromDir, String toDir, String filename, long fullFileSize) throws IOException {
+        long start = System.currentTimeMillis();
+
+        //***разбиваем файл на фрагменты***
+        //рассчитываем количество полных фрагментов файла
+        int totalEntireFragsNumber = (int) fullFileSize / FileFragmentMessage.CONST_FRAG_SIZE;
+        //рассчитываем размер последнего фрагмента файла
+        int finalFileFragmentSize = (int) fullFileSize - FileFragmentMessage.CONST_FRAG_SIZE * totalEntireFragsNumber;
+        //рассчитываем общее количество фрагментов файла
+        //если есть последний фрагмент, добавляем 1 к количеству полных фрагментов файла
+        int totalFragsNumber = (finalFileFragmentSize == 0) ?
+                totalEntireFragsNumber : totalEntireFragsNumber + 1;
+
+//        System.out.println("StorageTest.uploadFileByFrags() - fullFileSize: " + fullFileSize);
+//        System.out.println("StorageTest.uploadFileByFrags() - totalFragsNumber: " + totalFragsNumber);
+//        System.out.println("StorageTest.uploadFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
+        //устанавливаем началные значения номера текущего фрагмента и стартового байта
+        int currentFragNumber = 1;
+        long startByte = 0;
+        //***в цикле создаем целые фрагменты, читаем в них данные и отправляем***
+        while(currentFragNumber <= totalEntireFragsNumber){
+            //инициируем объект фрагмента файлового сообщения
+            FileFragmentMessage fileFragmentMessage =
+                    new FileFragmentMessage(fromDir, toDir, filename, fullFileSize,
+                            currentFragNumber++, totalFragsNumber, FileFragmentMessage.CONST_FRAG_SIZE);
+
+            //читаем данные во фрагмент с определенного места файла
+            fileFragmentMessage.readFileDataToFragment(fromDir, filename, startByte, FileFragmentMessage.CONST_FRAG_SIZE);
+            //увеличиваем указатель стартового байта на размер фрагмента
+            startByte += FileFragmentMessage.CONST_FRAG_SIZE;
+
+            //отправляем на сервер объект сообщения(команды)
+            connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_FRAG_UPLOAD,
+                    fileFragmentMessage));
+        }
+
+//        currentFragNumber = totalEntireFragsNumber;
+//        System.out.println("StorageTest.uploadFileByFrags() - currentFragNumber: " + currentFragNumber);
+//        System.out.println("StorageTest.uploadFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
+
+        //***отправляем последний фрагмент, если он есть***
+        if(totalFragsNumber > totalEntireFragsNumber){
+            //инициируем объект фрагмента файлового сообщения
+            FileFragmentMessage fileFragmentMessage =
+                    new FileFragmentMessage(fromDir, toDir, filename, fullFileSize,
+                            currentFragNumber, totalFragsNumber, finalFileFragmentSize);
+            //читаем данные во фрагмент с определенного места файла
+            fileFragmentMessage.readFileDataToFragment(fromDir, filename, startByte, finalFileFragmentSize);
+            //отправляем на сервер объект сообщения(команды)
+            connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_FRAG_UPLOAD,
+                    fileFragmentMessage));
+        }
+
+        long finish = System.currentTimeMillis() - start;
+        System.out.println("StorageTest.uploadFileByFrags() - duration(mc): " + finish);
+    }
+
+    /**
+     * Метод отправки целого файла размером менее константы максмальго размера фрагмента файла
+     * @param fromDir - директория(относительно корня) клиента где хранится файл источник
+     * @param toDir - директория(относительно корня) в сетевом хранилище
+     * @param filename - строковое имя файла
+     * @param fileSize - размер файла в байтах
+     */
     private void uploadEntireFile(String fromDir, String toDir, String filename, long fileSize) {
         try {
             //инициируем объект файлового сообщения
