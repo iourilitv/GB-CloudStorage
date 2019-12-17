@@ -1,8 +1,10 @@
 package utils.handlers;
 
+import messages.FileFragmentMessage;
 import messages.FileMessage;
 import tcp.TCPServer;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,6 +66,46 @@ public class FileCommandHandler extends AbstractCommandHandler {
             }
         } catch (IOException e) {
             server.printMsg("(Server)FileCommandHandler.downloadFile() - Something wrong with the directory or the file!");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Метод создает временную директорию, если нет, создает в ней временные файлы-фрагменты,
+     * куда сохраняет данные из сообщения фрагмента файла.
+     * @param server - объект сервера
+     * @param toTempDir - временная папка для файлов-фрагментов
+     * @param fileFragmentMessage - объект сообщения фрагмента файла
+     * @return true, если файл-фрагмент сохранен без ошибок
+     */
+    public boolean saveUploadedFileFragment(TCPServer server, String toTempDir, FileFragmentMessage fileFragmentMessage) {
+        try {
+            //инициируем объект пути к фрагменту файла
+            Path path = Paths.get(toTempDir, fileFragmentMessage.getFileFragmentName());
+            //инициируем объект временной директории
+            File dir = new File(toTempDir);//TODO возможно можно упростить?
+            //если временной директории нет
+            if(!dir.exists()){
+                //создаем временную директорию
+                dir.mkdir();
+            }
+            //создаем новый файл-фрагмент и записываем в него данные из объекта файлового сообщения
+            Files.write(path, fileFragmentMessage.getData(), StandardOpenOption.CREATE);
+
+            System.out.println("(Server)FileCommandHandler.saveUploadedFile() - " +
+                    "Files.size(path): " + Files.size(path) +
+                    ". fileFragmentMessage.getFileFragmentSize(): " +
+                    fileFragmentMessage.getFileFragmentSize());
+
+            //если длина сохраненного файла-фрагмента отличается от длины принятого фрагмента файла
+            if(Files.size(path) != fileFragmentMessage.getFileFragmentSize()){
+                server.printMsg("(Server)FileCommandHandler.saveUploadedFileFragment() - Wrong the saved file fragment size!");
+                return false;
+            }
+        } catch (IOException e) {
+            server.printMsg("(Server)FileCommandHandler.saveUploadedFile() - Something wrong with the directory or the file!");
             e.printStackTrace();
             return false;
         }

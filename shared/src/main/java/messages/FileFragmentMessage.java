@@ -12,7 +12,7 @@ import java.util.Arrays;
  */
 public class FileFragmentMessage extends AbstractMessage {
     //инициируем константу размера фрагментов файла в байтах
-    public static final int CONST_FRAG_SIZE = 1024 * 1024 * 10;
+    public static final int CONST_FRAG_SIZE = 1024 * 1024 * 1;
     //объявляем переменную директории источника
     private String fromDir;
     //объявляем переменную директории назначения
@@ -52,6 +52,7 @@ public class FileFragmentMessage extends AbstractMessage {
         }
         //составляем имя фрагмента файла(для сохранения в директории)
         fileFragmentName = filename;
+
         fileFragmentName = fileFragmentName.concat(".frg")
                 .concat(String.valueOf(currentFragNumber))
                 .concat("-").concat(String.valueOf(totalFragsNumber));
@@ -104,6 +105,10 @@ public class FileFragmentMessage extends AbstractMessage {
         this.data = Files.readAllBytes(Paths.get(fromTempDir, fileFragmentName));
     }
 
+    public String getToDir() {
+        return toDir;
+    }
+
     public String getFilename() {
         return filename;
     }
@@ -111,5 +116,18 @@ public class FileFragmentMessage extends AbstractMessage {
     public byte[] getData() {
         return data;
     }
+
+    public String getToTempDir() {
+        return toTempDir;
+    }
+
+    public String getFileFragmentName() {
+        return fileFragmentName;
+    }
+
+    public int getFileFragmentSize() {
+        return fileFragmentSize;
+    }
+
 
 }

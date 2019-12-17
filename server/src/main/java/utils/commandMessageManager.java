@@ -2,6 +2,7 @@ package utils;
 
 import messages.AuthMessage;
 import messages.DirectoryMessage;
+import messages.FileFragmentMessage;
 import messages.FileMessage;
 import tcp.TCPConnection;
 import tcp.TCPServer;
@@ -87,6 +88,12 @@ public class commandMessageManager {
                 //вызываем метод обработки ответа клиента
                 onDownloadFileErrorClientResponse(tcpConnection, commandMessage);
                 break;
+            //обрабатываем полученный от клиента запрос на загрузку(сохранение) фрагмента файла в облачное хранилище
+            case Commands.REQUEST_SERVER_FILE_FRAG_UPLOAD:
+                //вызываем метод обработки запроса от клиента на загрузку файла-фрагмента
+                //в директорию в сетевом хранилище.
+                onUploadFileFragClientRequest(tcpConnection, commandMessage);
+                break;
         }
     }
 
@@ -129,10 +136,6 @@ public class commandMessageManager {
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
         //инициируем объект файлового хендлера
         fileCommandHandler = new FileCommandHandler();
-
-//        //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
-//        String clientDir = fileMessage.getFromDir();
-
         //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
         String storageDir = fileMessage.getToDir();
         //собираем целевую директорию пользователя в сетевом хранилище
@@ -232,5 +235,45 @@ public class commandMessageManager {
     private void onDownloadFileErrorClientResponse(TCPConnection tcpConnection, CommandMessage commandMessage) {
         //FIXME fill me!
         server.printMsg("(Server)ObjectHandler.onDownloadFileErrorClientResponse() command: " + commandMessage.getCommand());
+    }
+
+    /**
+     * Метод обработки запроса от клиента на загрузку файла-фрагмента
+     * в директорию в сетевом хранилище.
+     * @param tcpConnection - объект соединения, установленного с клиентом
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onUploadFileFragClientRequest(TCPConnection tcpConnection, CommandMessage commandMessage) {
+        //вынимаем объект файлового сообщения из объекта сообщения(команды)
+        FileFragmentMessage fileFragmentMessage = (FileFragmentMessage) commandMessage.getMessageObject();
+        //инициируем объект файлового хендлера
+        fileCommandHandler = new FileCommandHandler();
+
+        //вынимаем временную директорию сетевого хранилища из объекта сообщения(команды)
+        String storageTempDir = fileFragmentMessage.getToTempDir();
+        //собираем целевую директорию пользователя в сетевом хранилище
+        String toDir = userStorageRoot;//сбрасываем до корневой папки пользователя в сетевом хранилище
+        toDir = toDir.concat("/").concat(storageTempDir);//добавляем значение подпапки
+
+        //вызываем метод сохранения полученного фрагмента файла во временную папку сетевого хранилища
+        fileCommandHandler.saveUploadedFileFragment(server, toDir, fileFragmentMessage);
+
+        //FIXME
+//        //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+//        int command = Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR;
+//        //если сохранение прошло удачно
+//        if(fileCommandHandler.saveUploadedFile(server, toDir, fileMessage)){
+//            //проверяем сохраненный файл по контрольной сумме//FIXME
+//            if(true){
+//                //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+//                command = Commands.SERVER_RESPONSE_FILE_UPLOAD_OK;
+//            }
+//        }
+//        //инициируем объект сообщения о директории
+//        DirectoryMessage directoryMessage = new DirectoryMessage();
+//        //формируем список файлов и папок в корневой директории клиента по умолчанию
+//        directoryMessage.composeFilesAndFoldersNamesList(userStorageRoot);
+//        //отправляем объект сообщения(команды) клиенту
+//        server.sendToClient(tcpConnection, new CommandMessage(command, directoryMessage));
     }
 }
