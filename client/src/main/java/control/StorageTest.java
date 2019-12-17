@@ -1,6 +1,7 @@
 package control;
 
 import messages.AuthMessage;
+import messages.FileFragmentMessage;
 import messages.FileMessage;
 import tcp.TCPClient;
 import tcp.TCPConnection;
@@ -63,7 +64,7 @@ public class StorageTest {
             uploadFile(clientDir, storageDir, "toUpload.txt");
 
             //инициируем объект защелки на один сброс
-            countDownLatch = new CountDownLatch(1);
+            countDownLatch = new CountDownLatch(100000);//TODO
             //ждем сброса защелки
             countDownLatch.await();
             //восстанавливаем начальное значение директории в сетевом хранилище//TODO temporarily
@@ -72,7 +73,7 @@ public class StorageTest {
             clientDir = clientDir.concat("folderToDownloadFile");
             //отправляем на сервер запрос на скачивание файла из облачного хранилища
             downloadFile(storageDir, clientDir, "toDownload.png");
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -90,16 +91,63 @@ public class StorageTest {
         printMsg("***TCPClient.requestAuthorization() - has finished***");
     }
 
+//    //отправляем на сервер запрос на загрузку файла в облачное хранилище
+//    //FIXME перенести в контроллер интерфейса
+//    public void uploadFile(String fromDir, String toDir, String filename){
+//        //TODO temporarily
+//        printMsg("***TCPClient.uploadFile() - has started***");
+//
+//        try {
+//            //вычисляем размер файла
+//            long fileSize = Files.size(Paths.get(currentClientDir, filename));
+//
+//            //инициируем объект файлового сообщения
+//            FileMessage fileMessage = new FileMessage(fromDir, toDir, filename, fileSize);
+//            //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
+//            fileMessage.readFileData(currentClientDir);//FIXME Разобраться с абсолютными папкими клиента
+//
+//            //если длина считанного файла отличается от длины исходного файла в хранилище
+//            if(fileMessage.getFileSize() != fileMessage.getData().length){
+//                printMsg("(Client)StorageTest.uploadFile() - Wrong the read file size!");
+//                return;
+//            }
+//
+//            //отправляем на сервер объект сообщения(команды)
+//            connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
+//                    fileMessage));
+//        } catch (IOException e) {
+//            //печатаем в консоль сообщение об ошибке считывания файла
+//            printMsg("TCPClient.uploadFile() - There is no file in the directory!");
+//            e.printStackTrace();
+//        }
+//
+//        //TODO temporarily
+//        printMsg("***TCPClient.uploadFile() - has finished***");
+//    }
     //отправляем на сервер запрос на загрузку файла в облачное хранилище
     //FIXME перенести в контроллер интерфейса
-    public void uploadFile(String fromDir, String toDir, String filename){
+    public void uploadFile(String fromDir, String toDir, String filename) throws IOException {
         //TODO temporarily
         printMsg("***TCPClient.uploadFile() - has started***");
 
-        try {
-            //вычисляем размер файла
-            long fileSize = Files.size(Paths.get(currentClientDir, filename));
+        //вычисляем размер файла
+        long fileSize = Files.size(Paths.get(currentClientDir, filename));
 
+        if(fileSize > FileFragmentMessage.CONST_FRAG_SIZE){
+            //запускаем метод отправки файла по частям
+//            uploadFileByFrags();
+        } else {
+            //запускаем метод отправки целого файла
+            uploadEntireFile(fromDir, toDir, filename, fileSize);
+        }
+
+
+        //TODO temporarily
+        printMsg("***TCPClient.uploadFile() - has finished***");
+    }
+
+    private void uploadEntireFile(String fromDir, String toDir, String filename, long fileSize) {
+        try {
             //инициируем объект файлового сообщения
             FileMessage fileMessage = new FileMessage(fromDir, toDir, filename, fileSize);
             //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
@@ -119,9 +167,6 @@ public class StorageTest {
             printMsg("TCPClient.uploadFile() - There is no file in the directory!");
             e.printStackTrace();
         }
-
-        //TODO temporarily
-        printMsg("***TCPClient.uploadFile() - has finished***");
     }
 
     //отправляем на сервер запрос на скачивание файла из облачного хранилища
