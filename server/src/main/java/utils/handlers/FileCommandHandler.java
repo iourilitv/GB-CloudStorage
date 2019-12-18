@@ -112,29 +112,39 @@ public class FileCommandHandler extends AbstractCommandHandler {
         return true;
     }
 
+    /**
+     * Метод собирает целый файл из файлов-фрагментов, сохраненных во временной папке,
+     * сохраняет его в директорию назначения и удаляет временную папку с файлами-фрагментами
+     * @param server - объект сервера
+     * @param toTempDir - временная папка для файлов-фрагментов
+     * @param toDir - заданная директория для загрузки целого файла
+     * @param fileFragmentMessage - объект сообщения фрагмента файла
+     * @return true, если целый файл собран и сохранен без ошибок
+     */
     public boolean compileUploadedFileFragments(
             TCPServer server, String toTempDir, String toDir,
             FileFragmentMessage fileFragmentMessage
     ) {
         try {
             //инициируем объект пути к временной папке с фрагментами файла
-            Path pathToTempDir = Paths.get(toTempDir, fileFragmentMessage.getFileFragmentName());
-            //инициируем объект пути к временной папке с фрагментами файла
             Path pathToFile = Paths.get(toDir, fileFragmentMessage.getFilename());
             //создаем новый файл для сборки загруженных фрагментов файла
             Files.createFile(pathToFile);
-            //инициируем массив путей к файлам фрагментам отсортированных во временной папке
-            Path[] tempPaths = (Path[])Files.list(pathToTempDir).sorted().toArray();
+            //инициируем массив названий файлов-фрагментов(сами уже отсортированны во временной папке)
+            String[] fragsNames = new File(toTempDir).list();
+            //добавлено по требованию IDEA
+            assert fragsNames != null;
             //если количество файлов-фрагментов не совпадает с требуемым
-            if(tempPaths.length == fileFragmentMessage.getTotalFragsNumber()){
+            if(fragsNames.length != fileFragmentMessage.getTotalFragsNumber()){
                 server.printMsg("(Server)FileCommandHandler.compileUploadedFileFragments() - " +
                         "Wrong the saved file fragments count!");
                 return false;
             }
             //читаем последовательно список фрагментов и записываем данные из них в файл
-            for (Path tempPath : tempPaths) {
+            for (String fragName : fragsNames) {
                 //записываем в файл данные из фрагмента
-                Files.write(pathToFile, Files.readAllBytes(tempPath), StandardOpenOption.APPEND);
+                Files.write(pathToFile, Files.readAllBytes(Paths.get(toTempDir, fragName)),
+                        StandardOpenOption.APPEND);
             }
             //если длина сохраненного файла-фрагмента отличается от длины принятого фрагмента файла
             if(Files.size(pathToFile) != fileFragmentMessage.getFullFileSize()){
@@ -143,8 +153,14 @@ public class FileCommandHandler extends AbstractCommandHandler {
                 return false;
             //если файл собран без ошибок
             } else {
-                //удаляем временную папку
-                Files.delete(pathToTempDir);
+                //***удаляем временную папку***
+                //в цикле листаем впеменную папку и удаляем все файлы-фрагменты
+                for (String fragName : fragsNames) {
+                    //удаляем файл-фрагмент
+                    Files.delete(Paths.get(toTempDir, fragName));
+                }
+                //теперь можем удалить пустую папку
+                Files.delete(Paths.get(toTempDir));
             }
         } catch (IOException e) {
             server.printMsg("(Server)FileCommandHandler.compileUploadedFileFragments() - " +
@@ -155,19 +171,3 @@ public class FileCommandHandler extends AbstractCommandHandler {
         return true;
     }
 }
-
-//        System.out.println("(Server)FileCommandHandler.saveDownloadedFile - fileMessage.getFilename(): " +
-//                fileMessage.getFilename() +
-//                ". Arrays.toString(fileMessage.getData()): " +
-//                Arrays.toString(fileMessage.getData()));
-
-
-//        System.out.println("(Server)FileCommandHandler.downloadFile - fileMessage.getFilename(): " +
-//                fileMessage.getFilename() +
-//                ". Arrays.toString(fileMessage.getData()): " +
-//                Arrays.toString(fileMessage.getData()));
-
-
-//            //TODO temporarily
-//            System.out.println("savedFileSize: " + Files.size(path) +
-//                    ", fileMessage.getFileSize(): " + fileMessage.getFileSize());

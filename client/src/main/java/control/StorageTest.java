@@ -63,13 +63,13 @@ public class StorageTest {
             //инициируем переменную для текущей директории клиента
             currentClientDir = clientDefaultRoot;
             //отправляем на сервер запрос на загрузку маленького файла в облачное хранилище
-//            uploadFile(currentClientDir, storageDir, "toUpload.txt");
+//            uploadFile(currentClientDir, storageDir, "toUpload.txt");//TODO for test
             //отправляем на сервер запрос на загрузку большого файла в облачное хранилище
-//            uploadFile(currentClientDir, storageDir, "toUploadBIG.mp4");
-            uploadFile(currentClientDir, storageDir, "toUploadMedium.png");
+            uploadFile(currentClientDir, storageDir, "toUploadBIG.mp4");//TODO for test
+//            uploadFile(currentClientDir, storageDir, "toUploadMedium.png");//TODO for test
 
             //инициируем объект защелки на один сброс
-            countDownLatch = new CountDownLatch(100000);//TODO
+            countDownLatch = new CountDownLatch(1);
             //ждем сброса защелки
             countDownLatch.await();
             //восстанавливаем начальное значение директории в сетевом хранилище//TODO temporarily
@@ -96,39 +96,6 @@ public class StorageTest {
         printMsg("***TCPClient.requestAuthorization() - has finished***");
     }
 
-//    //отправляем на сервер запрос на загрузку файла в облачное хранилище
-//    //FIXME перенести в контроллер интерфейса
-//    public void uploadFile(String fromDir, String toDir, String filename){
-//        //TODO temporarily
-//        printMsg("***TCPClient.uploadFile() - has started***");
-//
-//        try {
-//            //вычисляем размер файла
-//            long fileSize = Files.size(Paths.get(currentClientDir, filename));
-//
-//            //инициируем объект файлового сообщения
-//            FileMessage fileMessage = new FileMessage(fromDir, toDir, filename, fileSize);
-//            //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
-//            fileMessage.readFileData(currentClientDir);//FIXME Разобраться с абсолютными папкими клиента
-//
-//            //если длина считанного файла отличается от длины исходного файла в хранилище
-//            if(fileMessage.getFileSize() != fileMessage.getData().length){
-//                printMsg("(Client)StorageTest.uploadFile() - Wrong the read file size!");
-//                return;
-//            }
-//
-//            //отправляем на сервер объект сообщения(команды)
-//            connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
-//                    fileMessage));
-//        } catch (IOException e) {
-//            //печатаем в консоль сообщение об ошибке считывания файла
-//            printMsg("TCPClient.uploadFile() - There is no file in the directory!");
-//            e.printStackTrace();
-//        }
-//
-//        //TODO temporarily
-//        printMsg("***TCPClient.uploadFile() - has finished***");
-//    }
     //отправляем на сервер запрос на загрузку файла в облачное хранилище
     //FIXME перенести в контроллер интерфейса
     public void uploadFile(String fromDir, String toDir, String filename) throws IOException {
@@ -136,12 +103,12 @@ public class StorageTest {
         printMsg("***TCPClient.uploadFile() - has started***");
 
         //вычисляем размер файла
-//        long fileSize = Files.size(Paths.get(currentClientDir, filename));
         long fileSize = Files.size(Paths.get(fromDir, filename));
-
+        //если размер файла больше константы размера фрагмента
         if(fileSize > FileFragmentMessage.CONST_FRAG_SIZE){
             //запускаем метод отправки файла по частям
             uploadFileByFrags(fromDir, toDir, filename, fileSize);
+        //если файл меньше
         } else {
             //запускаем метод отправки целого файла
             uploadEntireFile(fromDir, toDir, filename, fileSize);
@@ -152,6 +119,7 @@ public class StorageTest {
     }
 
     private void uploadFileByFrags(String fromDir, String toDir, String filename, long fullFileSize) throws IOException {
+        //TODO temporarily
         long start = System.currentTimeMillis();
 
         //***разбиваем файл на фрагменты***
@@ -164,9 +132,11 @@ public class StorageTest {
         int totalFragsNumber = (finalFileFragmentSize == 0) ?
                 totalEntireFragsNumber : totalEntireFragsNumber + 1;
 
-//        System.out.println("StorageTest.uploadFileByFrags() - fullFileSize: " + fullFileSize);
-//        System.out.println("StorageTest.uploadFileByFrags() - totalFragsNumber: " + totalFragsNumber);
-//        System.out.println("StorageTest.uploadFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
+        //TODO temporarily
+        System.out.println("StorageTest.uploadFileByFrags() - fullFileSize: " + fullFileSize);
+        System.out.println("StorageTest.uploadFileByFrags() - totalFragsNumber: " + totalFragsNumber);
+        System.out.println("StorageTest.uploadFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
+
         //устанавливаем началные значения номера текущего фрагмента и стартового байта
         int currentFragNumber = 1;
         long startByte = 0;
@@ -187,9 +157,9 @@ public class StorageTest {
                     fileFragmentMessage));
         }
 
-//        currentFragNumber = totalEntireFragsNumber;
-//        System.out.println("StorageTest.uploadFileByFrags() - currentFragNumber: " + currentFragNumber);
-//        System.out.println("StorageTest.uploadFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
+        //TODO temporarily
+        System.out.println("StorageTest.uploadFileByFrags() - currentFragNumber: " + currentFragNumber);
+        System.out.println("StorageTest.uploadFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
 
         //***отправляем последний фрагмент, если он есть***
         if(totalFragsNumber > totalEntireFragsNumber){
@@ -204,6 +174,7 @@ public class StorageTest {
                     fileFragmentMessage));
         }
 
+        //TODO temporarily
         long finish = System.currentTimeMillis() - start;
         System.out.println("StorageTest.uploadFileByFrags() - duration(mc): " + finish);
     }

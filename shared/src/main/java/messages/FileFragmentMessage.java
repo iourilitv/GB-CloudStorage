@@ -1,8 +1,9 @@
 package messages;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Arrays;
+import java.nio.channels.Channels;
 
 /**
  * A Class of message objects for a files of a size more than
@@ -77,24 +78,17 @@ public class FileFragmentMessage extends AbstractMessage {
         path = path.concat("/").concat(filename);
         // открываем файл для чтения
         RandomAccessFile raf = new RandomAccessFile(path, "r");
+        //инициируем объект входного буферезированного потока с преобразованием raf в поток
+        BufferedInputStream bis = new BufferedInputStream(Channels.newInputStream(raf.getChannel()));
         // ставим указатель на нужный вам символ
         raf.seek(startByte);
         //инициируем байтовый массив
         data = new byte[fileFragmentSize];
         //вычитываем данные из файла
-        for (int i = 0; i < fileFragmentSize; i++) {
-            data[i] = (byte) raf.read();
-        }
-
-        //TODO temporarily
-        System.out.println("FileFragmentMessage.readFileDataToFragmentData() - " +
-                "Arrays.toString(data): " + Arrays.toString(data));
-
-        System.out.println("FileFragmentMessage.readFileDataToFragmentData() - data.length: " + data.length);
-        System.out.println("FileFragmentMessage.readFileDataToFragmentData() - startByte: " + startByte);
-        System.out.println("FileFragmentMessage.readFileDataToFragmentData() - fileFragmentSize: " + fileFragmentSize);
-
+        //считывает байты данных длиной до b.length из этого файла в массив байтов.
+        bis.read(data);
         raf.close();
+        bis.close();
     }
 
     public String getToDir() {
