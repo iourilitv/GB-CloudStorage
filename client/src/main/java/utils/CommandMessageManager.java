@@ -9,7 +9,7 @@ import utils.handlers.FileCommandHandler;
 /**
  * The client class for recognizing command messages and control command handlers.
  */
-public class commandMessageManager {
+public class CommandMessageManager {
     //принимаем объект тестера
     private StorageTest tester;
     //объявляем объект файлового хендлера
@@ -17,7 +17,7 @@ public class commandMessageManager {
     //объявляем объект хендлера для операций с директориями
     private DirectoryCommandHandler directoryCommandHandler;
 
-    public commandMessageManager(StorageTest tester) {
+    public CommandMessageManager(StorageTest tester) {
         this.tester = tester;
         //инициируем объект хендлера для операций с директориями
         directoryCommandHandler = new DirectoryCommandHandler();

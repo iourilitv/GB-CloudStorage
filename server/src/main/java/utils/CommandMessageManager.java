@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 /**
  * The server class for recognizing command messages and control command handlers.
  */
-public class commandMessageManager {
+public class CommandMessageManager {
     //принимаем объект сервера
     private TCPServer server;
     //объявляем объект сервисного хендлера
@@ -24,8 +24,12 @@ public class commandMessageManager {
     //объявляем переменную для корневой директории пользователя в сетевом хранилище
     private String userStorageRoot;
 
-    public commandMessageManager(TCPServer server) {
+    public CommandMessageManager(TCPServer server) {
         this.server = server;
+        //инициируем объект сервисного хендлера
+        serviceCommandHandler = new ServiceCommandHandler();
+        //инициируем объект файлового хендлера
+        fileCommandHandler = new FileCommandHandler();
         //инициируем переменную для корневой директории пользователя в сетевом хранилище
         userStorageRoot = server.getStorageRoot();//FIXME не будет ли юзер видеть все хранилище?
     }
@@ -104,8 +108,6 @@ public class commandMessageManager {
     private void onAuthClientRequest(TCPConnection tcpConnection, CommandMessage commandMessage) {
         //вынимаем объект авторизационного сообщения из объекта сообщения(команды)
         AuthMessage authMessage = (AuthMessage) commandMessage.getMessageObject();
-        //инициируем объект сервисного хендлера
-        serviceCommandHandler = new ServiceCommandHandler();
         //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
         int command = Commands.SERVER_RESPONSE_AUTH_ERROR;
         //если авторизации клиента в облачном хранилище прошла удачно
@@ -133,8 +135,6 @@ public class commandMessageManager {
     private void onUploadFileClientRequest(TCPConnection tcpConnection, CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
-        //инициируем объект файлового хендлера
-        fileCommandHandler = new FileCommandHandler();
         //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
         String storageDir = fileMessage.getToDir();
         //собираем целевую директорию пользователя в сетевом хранилище
@@ -189,8 +189,6 @@ public class commandMessageManager {
     private void onDownloadFileClientRequest(TCPConnection tcpConnection, CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
-        //инициируем объект файлового хендлера
-        fileCommandHandler = new FileCommandHandler();
         //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
         String storageDir = fileMessage.getFromDir();
         //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
@@ -245,9 +243,6 @@ public class commandMessageManager {
     private void onUploadFileFragClientRequest(TCPConnection tcpConnection, CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileFragmentMessage fileFragmentMessage = (FileFragmentMessage) commandMessage.getMessageObject();
-        //инициируем объект файлового хендлера
-        fileCommandHandler = new FileCommandHandler();
-
         //собираем целевую директорию пользователя в сетевом хранилище
         //сбрасываем до корневой папки пользователя в сетевом хранилище
         String toTempDir = userStorageRoot;
@@ -267,7 +262,6 @@ public class commandMessageManager {
                 command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_OK;
             }
         }
-
         //если это последний фрагмент
         if(fileFragmentMessage.isFinalFileFragment()){
             //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
