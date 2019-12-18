@@ -2,8 +2,6 @@ package messages;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 
 /**
@@ -12,7 +10,7 @@ import java.util.Arrays;
  */
 public class FileFragmentMessage extends AbstractMessage {
     //инициируем константу размера фрагментов файла в байтах
-    public static final int CONST_FRAG_SIZE = 1024 * 1024 * 1;
+    public static final int CONST_FRAG_SIZE = 1024 * 1024 * 10;
     //объявляем переменную директории источника
     private String fromDir;
     //объявляем переменную директории назначения
@@ -99,18 +97,16 @@ public class FileFragmentMessage extends AbstractMessage {
         raf.close();
     }
 
-    //читаем данные из сохраненного фрагмента во временной папке
-    public void readFileFragmentData(String fromTempDir, String fileFragmentName) throws IOException {
-        //читаем все данные из файла побайтно в байтовый массив
-        this.data = Files.readAllBytes(Paths.get(fromTempDir, fileFragmentName));
-    }
-
     public String getToDir() {
         return toDir;
     }
 
     public String getFilename() {
         return filename;
+    }
+
+    public long getFullFileSize() {
+        return fullFileSize;
     }
 
     public byte[] getData() {
@@ -129,5 +125,11 @@ public class FileFragmentMessage extends AbstractMessage {
         return fileFragmentSize;
     }
 
+    public boolean isFinalFileFragment(){
+        return currentFragNumber == totalFragsNumber;
+    }
 
+    public int getTotalFragsNumber() {
+        return totalFragsNumber;
+    }
 }

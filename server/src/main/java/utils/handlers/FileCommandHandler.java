@@ -112,6 +112,48 @@ public class FileCommandHandler extends AbstractCommandHandler {
         return true;
     }
 
+    public boolean compileUploadedFileFragments(
+            TCPServer server, String toTempDir, String toDir,
+            FileFragmentMessage fileFragmentMessage
+    ) {
+        try {
+            //инициируем объект пути к временной папке с фрагментами файла
+            Path pathToTempDir = Paths.get(toTempDir, fileFragmentMessage.getFileFragmentName());
+            //инициируем объект пути к временной папке с фрагментами файла
+            Path pathToFile = Paths.get(toDir, fileFragmentMessage.getFilename());
+            //создаем новый файл для сборки загруженных фрагментов файла
+            Files.createFile(pathToFile);
+            //инициируем массив путей к файлам фрагментам отсортированных во временной папке
+            Path[] tempPaths = (Path[])Files.list(pathToTempDir).sorted().toArray();
+            //если количество файлов-фрагментов не совпадает с требуемым
+            if(tempPaths.length == fileFragmentMessage.getTotalFragsNumber()){
+                server.printMsg("(Server)FileCommandHandler.compileUploadedFileFragments() - " +
+                        "Wrong the saved file fragments count!");
+                return false;
+            }
+            //читаем последовательно список фрагментов и записываем данные из них в файл
+            for (Path tempPath : tempPaths) {
+                //записываем в файл данные из фрагмента
+                Files.write(pathToFile, Files.readAllBytes(tempPath), StandardOpenOption.APPEND);
+            }
+            //если длина сохраненного файла-фрагмента отличается от длины принятого фрагмента файла
+            if(Files.size(pathToFile) != fileFragmentMessage.getFullFileSize()){
+                server.printMsg("(Server)FileCommandHandler.compileUploadedFileFragments() - " +
+                        "Wrong the saved entire file size!");
+                return false;
+            //если файл собран без ошибок
+            } else {
+                //удаляем временную папку
+                Files.delete(pathToTempDir);
+            }
+        } catch (IOException e) {
+            server.printMsg("(Server)FileCommandHandler.compileUploadedFileFragments() - " +
+                    "Something wrong with the directory or the file!");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
 }
 
 //        System.out.println("(Server)FileCommandHandler.saveDownloadedFile - fileMessage.getFilename(): " +

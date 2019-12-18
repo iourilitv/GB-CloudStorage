@@ -9,7 +9,6 @@ import tcp.TCPServer;
 import utils.handlers.FileCommandHandler;
 import utils.handlers.ServiceCommandHandler;
 
-import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
@@ -249,31 +248,44 @@ public class commandMessageManager {
         //инициируем объект файлового хендлера
         fileCommandHandler = new FileCommandHandler();
 
-        //вынимаем временную директорию сетевого хранилища из объекта сообщения(команды)
-        String storageTempDir = fileFragmentMessage.getToTempDir();
         //собираем целевую директорию пользователя в сетевом хранилище
-        String toDir = userStorageRoot;//сбрасываем до корневой папки пользователя в сетевом хранилище
-        toDir = toDir.concat("/").concat(storageTempDir);//добавляем значение подпапки
+        //сбрасываем до корневой папки пользователя в сетевом хранилище
+        String toTempDir = userStorageRoot;
+        // добавляем временную директорию сетевого хранилища из объекта сообщения(команды)
+        toTempDir = toTempDir.concat("/").concat(fileFragmentMessage.getToTempDir());
+        //создаем объект пути к папке с загруженным файлом
+        String toDir = Paths.get(toTempDir).getParent().toString();//FIXME переделать на Path?
+        //инициируем директорию для показа списка загруженных фрагментов или файла
+        String directory = toTempDir;
+        //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+        int command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_ERROR;
+        //если сохранение полученного фрагмента файла во временную папку сетевого хранилища прошло удачно
+        if(fileCommandHandler.saveUploadedFileFragment(server, toTempDir, fileFragmentMessage)){
+            //проверяем сохраненный файл по контрольной сумме//FIXME
+            if(true){
+                //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+                command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_OK;
+            }
+        }
 
-        //вызываем метод сохранения полученного фрагмента файла во временную папку сетевого хранилища
-        fileCommandHandler.saveUploadedFileFragment(server, toDir, fileFragmentMessage);
+        //если это последний фрагмент
+        if(fileFragmentMessage.isFinalFileFragment()){
+            //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+            command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_ERROR;
+            //если корректно собран файл из фрагментов сохраненных во временную папку
+            if(fileCommandHandler.compileUploadedFileFragments(server, toTempDir, toDir, fileFragmentMessage)){
+                //ответ сервера, что сборка файла из загруженных фрагментов прошла успешно
+                command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_OK;
+                //устанавливаем финальное значение папки для показа загруженного файла
+                directory = toDir;
+            }
+        }
 
-        //FIXME
-//        //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
-//        int command = Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR;
-//        //если сохранение прошло удачно
-//        if(fileCommandHandler.saveUploadedFile(server, toDir, fileMessage)){
-//            //проверяем сохраненный файл по контрольной сумме//FIXME
-//            if(true){
-//                //отправляем сообщение на сервер: подтверждение, что все прошло успешно
-//                command = Commands.SERVER_RESPONSE_FILE_UPLOAD_OK;
-//            }
-//        }
-//        //инициируем объект сообщения о директории
-//        DirectoryMessage directoryMessage = new DirectoryMessage();
-//        //формируем список файлов и папок в корневой директории клиента по умолчанию
-//        directoryMessage.composeFilesAndFoldersNamesList(userStorageRoot);
-//        //отправляем объект сообщения(команды) клиенту
-//        server.sendToClient(tcpConnection, new CommandMessage(command, directoryMessage));
+        //инициируем объект сообщения о директории
+        DirectoryMessage directoryMessage = new DirectoryMessage();
+        //формируем список файлов и папок в корневой директории клиента по умолчанию
+        directoryMessage.composeFilesAndFoldersNamesList(directory);
+        //отправляем объект сообщения(команды) клиенту
+        server.sendToClient(tcpConnection, new CommandMessage(command, directoryMessage));
     }
 }

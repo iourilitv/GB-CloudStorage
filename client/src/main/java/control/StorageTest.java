@@ -63,10 +63,10 @@ public class StorageTest {
             //инициируем переменную для текущей директории клиента
             currentClientDir = clientDefaultRoot;
             //отправляем на сервер запрос на загрузку маленького файла в облачное хранилище
-//            uploadFile(clientDir, storageDir, "toUpload.txt");//TODO delete
 //            uploadFile(currentClientDir, storageDir, "toUpload.txt");
             //отправляем на сервер запрос на загрузку большого файла в облачное хранилище
-            uploadFile(currentClientDir, storageDir, "toUploadBIG.mp4");
+//            uploadFile(currentClientDir, storageDir, "toUploadBIG.mp4");
+            uploadFile(currentClientDir, storageDir, "toUploadMedium.png");
 
             //инициируем объект защелки на один сброс
             countDownLatch = new CountDownLatch(100000);//TODO
