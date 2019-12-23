@@ -83,7 +83,7 @@ public class FileCommandHandler extends AbstractCommandHandler {
     public boolean saveUploadedFileFragment(TCPServer server, String toTempDir, FileFragmentMessage fileFragmentMessage) {
         try {
             //инициируем объект пути к фрагменту файла
-//            Path path = Paths.get(toTempDir, fileFragmentMessage.getFileFragmentName());//TODO
+            //-1 из-за разницы начала нумерации фрагментов(с 1) и элементов массива(с 0)
             Path path = Paths.get(toTempDir,
                     fileFragmentMessage.getFragsNames()[fileFragmentMessage.getCurrentFragNumber() - 1]);
 
@@ -128,23 +128,19 @@ public class FileCommandHandler extends AbstractCommandHandler {
             TCPServer server, String toTempDir, String toDir,
             FileFragmentMessage fileFragmentMessage
     ) {
+        //TODO temporarily
+        long start = System.currentTimeMillis();
+
         try {
             //инициируем объект пути к временной папке с фрагментами файла
             Path pathToFile = Paths.get(toDir, fileFragmentMessage.getFilename());
+            //удаляем файл, если уже существует
+            Files.deleteIfExists(pathToFile);
             //создаем новый файл для сборки загруженных фрагментов файла
             Files.createFile(pathToFile);
 
-            //TODO ERROR not write order: frg1, frg10, frg11... Deleted
-//            //инициируем массив названий файлов-фрагментов(сами уже отсортированны во временной папке)
-//            String[] fragsNames = new File(toTempDir).list();
-
             //в цикле листаем временную папку и добавляем данные из файлов-фрагментов в файл
             for (int i = 1; i <= fileFragmentMessage.getFragsNames().length; i++) {
-//                //составляем имя фрагмента файла(для сохранения в директории)
-//                fragName = fileFragmentMessage.getFilename();
-//                fragName = fragName.concat(".frg")
-//                        .concat(String.valueOf(i))
-//                        .concat("-").concat(String.valueOf(fileFragmentMessage.getTotalFragsNumber()));
                 //ищем требуемый фрагмент во временной папке
                 //записываем в файл данные из фрагмента
                 Files.write(pathToFile,
@@ -161,26 +157,6 @@ public class FileCommandHandler extends AbstractCommandHandler {
 //                return false;
 //            }
 
-            //TODO ERROR not write order.Deleted
-//            //читаем последовательно список фрагментов и записываем данные из них в файл
-//            for (String fragName : fragsNames) {
-//                //записываем в файл данные из фрагмента
-//                Files.write(pathToFile, Files.readAllBytes(Paths.get(toTempDir, fragName)),
-//                        StandardOpenOption.APPEND);
-//            }
-//            //TODO ERROR not write order.Added
-//            //читаем последовательно список фрагментов и записываем данные из них в файл
-//            for (int i = 0; i < fragsNames.length; i++) {
-//
-//                //TODO
-////                System.out.println("(Server)FileCommandHandler.compileUploadedFileFragments() - " +
-////                        "fragName: " + fragName);
-//
-//                //записываем в файл данные из фрагмента
-//                Files.write(pathToFile, Files.readAllBytes(Paths.get(toTempDir, fragName)),
-//                        StandardOpenOption.APPEND);
-//            }
-
             //если длина сохраненного файла-фрагмента отличается от длины принятого фрагмента файла
             if(Files.size(pathToFile) != fileFragmentMessage.getFullFileSize()){
                 server.printMsg("(Server)FileCommandHandler.compileUploadedFileFragments() - " +
@@ -190,10 +166,6 @@ public class FileCommandHandler extends AbstractCommandHandler {
             } else {
                 //***удаляем временную папку***
                 //в цикле листаем временную папку и удаляем все файлы-фрагменты
-//                for (String fragName : fragsNames) {
-//                    //удаляем файл-фрагмент
-//                    Files.delete(Paths.get(toTempDir, fragName));
-//                }
                 for (String fragName : fileFragmentMessage.getFragsNames()) {
                     //удаляем файл-фрагмент
                     Files.delete(Paths.get(toTempDir, fragName));
@@ -207,6 +179,11 @@ public class FileCommandHandler extends AbstractCommandHandler {
             e.printStackTrace();
             return false;
         }
+
+        //TODO temporarily
+        long finish = System.currentTimeMillis() - start;
+        System.out.println("(Server)FileCommandHandler.compileUploadedFileFragments() - duration(mc): " + finish);
+
         return true;
     }
 }
