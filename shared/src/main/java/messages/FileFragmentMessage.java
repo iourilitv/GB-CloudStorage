@@ -24,11 +24,8 @@ public class FileFragmentMessage extends AbstractMessage {
     private String[] fragsNames;
     //объявляем переменную размера фрагмента файла(в байтах)
     private int fileFragmentSize;
-
-    ////объявляем байтовый массив с данными из файла
     //инициируем байтовый массив с данными из файла
     private byte[] data;
-
     //объявляем переменную текущего фрагмента файла
     private int currentFragNumber;
     //объявляем переменную общего количества фрагментов файла
@@ -36,32 +33,6 @@ public class FileFragmentMessage extends AbstractMessage {
     //объявляем переменную имени временной папки для хранения фрагментов в директории назначения
     private String toTempDir;
 
-//    public FileFragmentMessage(
-//            String fromDir, String toDir, String filename, long fullFileSize,
-//            int currentFragNumber, int totalFragsNumber, int fileFragmentSize,
-//            String[] fragsNames) {
-//        this.fromDir = fromDir;
-//        this.toDir = toDir;
-//        this.filename = filename;
-//        this.fullFileSize = fullFileSize;
-//        this.currentFragNumber = currentFragNumber;
-//        this.totalFragsNumber = totalFragsNumber;
-//        this.fileFragmentSize = fileFragmentSize;
-//        this.fragsNames = fragsNames;
-//        //составляем имя фрагмента файла(для сохранения в директории) и записываем его в массив имен фрагментов
-//        //-1 из-за разницы начала нумерации фрагментов(с 1) и элементов массива(с 0)
-//        fragsNames[currentFragNumber - 1] = filename;
-//        fragsNames[currentFragNumber - 1] = fragsNames[currentFragNumber - 1].concat(".frg")
-//                .concat(String.valueOf(currentFragNumber))
-//                .concat("-").concat(String.valueOf(totalFragsNumber));
-//        //Пример: toUpload.txt.frg1-1024 ... toUpload.txt.frg1024-1024
-//
-//        //составляем имя временной папки в директории назначения для хранения фрагментов файла
-//        toTempDir = toDir;
-//        toTempDir = toTempDir.concat("/").concat(filename)
-//                .concat("-temp-").concat(String.valueOf(fullFileSize));
-//        //Пример: .../toUpload.txt-temp-102425820
-//    }
     public FileFragmentMessage(
             String fromDir, String toDir, String filename, long fullFileSize,
             int currentFragNumber, int totalFragsNumber, int fileFragmentSize,
@@ -98,7 +69,7 @@ public class FileFragmentMessage extends AbstractMessage {
      * @param fileFragmentSize - размер фрагмента файла
      * @throws IOException - исключение ввода-вывода
      */
-    public void readFileDataToFragment(String fromDir, String filename, long startByte, int fileFragmentSize) throws IOException {
+    public void readFileDataToFragment(String fromDir, String filename, long startByte) throws IOException {
         //собираем полное название файла(с директорией)
         String path = fromDir;
         path = path.concat("/").concat(filename);
@@ -108,10 +79,6 @@ public class FileFragmentMessage extends AbstractMessage {
         BufferedInputStream bis = new BufferedInputStream(Channels.newInputStream(raf.getChannel()));
         // ставим указатель на нужный вам символ
         raf.seek(startByte);
-
-//        //инициируем байтовый массив
-//        data = new byte[fileFragmentSize];
-
         //вычитываем данные из файла
         //считывает байты данных длиной до b.length из этого файла в массив байтов.
         bis.read(data);
