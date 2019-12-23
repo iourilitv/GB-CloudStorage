@@ -63,9 +63,9 @@ public class StorageTest {
             //инициируем переменную для текущей директории клиента
             currentClientDir = clientDefaultRoot;
             //отправляем на сервер запрос на загрузку маленького файла в облачное хранилище
-//            uploadFile(currentClientDir, storageDir, "toUpload.txt");//TODO for test
+            uploadFile(currentClientDir, storageDir, "toUpload.txt");//TODO for test
             //отправляем на сервер запрос на загрузку большого файла в облачное хранилище
-            uploadFile(currentClientDir, storageDir, "toUploadBIG.mp4");//TODO for test
+//            uploadFile(currentClientDir, storageDir, "toUploadBIG.mp4");//TODO for test
 //            uploadFile(currentClientDir, storageDir, "toUploadMedium.png");//TODO for test
 
             //инициируем объект защелки на один сброс

@@ -106,26 +106,3 @@ public class TCPConnection {
         this.clientID = clientID;
     }
 }
-
-
-//TODO Delete at the finish
-
-//    public synchronized void sendByte(byte b){
-//        try {
-//            outCom.write(b);
-//            outCom.flush();//принудительно передаем в сеть байт из буфера
-//        } catch (IOException e) {
-//            eventListenerByte.onException(TCPConnectionByte.this, e);
-//            disconnect();
-//        }
-//    }
-
-//    public synchronized void sendMessageObject(byte [] arr/*messages.AbstractMessage message*/){
-//        try {
-//            outCom.write(arr);
-//            outCom.flush();//принудительно передаем в сеть строку их буфера
-//        } catch (IOException e) {
-//            eventListener.onException(tcp.TCPConnection.this, e);
-//            disconnect();
-//        }
-//    }
