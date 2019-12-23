@@ -83,7 +83,10 @@ public class FileCommandHandler extends AbstractCommandHandler {
     public boolean saveUploadedFileFragment(TCPServer server, String toTempDir, FileFragmentMessage fileFragmentMessage) {
         try {
             //инициируем объект пути к фрагменту файла
-            Path path = Paths.get(toTempDir, fileFragmentMessage.getFileFragmentName());
+//            Path path = Paths.get(toTempDir, fileFragmentMessage.getFileFragmentName());//TODO
+            Path path = Paths.get(toTempDir,
+                    fileFragmentMessage.getFragsNames()[fileFragmentMessage.getCurrentFragNumber() - 1]);
+
             //инициируем объект временной директории
             File dir = new File(toTempDir);//TODO возможно можно упростить?
             //если временной директории нет
@@ -130,22 +133,54 @@ public class FileCommandHandler extends AbstractCommandHandler {
             Path pathToFile = Paths.get(toDir, fileFragmentMessage.getFilename());
             //создаем новый файл для сборки загруженных фрагментов файла
             Files.createFile(pathToFile);
-            //инициируем массив названий файлов-фрагментов(сами уже отсортированны во временной папке)
-            String[] fragsNames = new File(toTempDir).list();
-            //добавлено по требованию IDEA
-            assert fragsNames != null;
-            //если количество файлов-фрагментов не совпадает с требуемым
-            if(fragsNames.length != fileFragmentMessage.getTotalFragsNumber()){
-                server.printMsg("(Server)FileCommandHandler.compileUploadedFileFragments() - " +
-                        "Wrong the saved file fragments count!");
-                return false;
-            }
-            //читаем последовательно список фрагментов и записываем данные из них в файл
-            for (String fragName : fragsNames) {
+
+            //TODO ERROR not write order: frg1, frg10, frg11... Deleted
+//            //инициируем массив названий файлов-фрагментов(сами уже отсортированны во временной папке)
+//            String[] fragsNames = new File(toTempDir).list();
+
+            //в цикле листаем временную папку и добавляем данные из файлов-фрагментов в файл
+            for (int i = 1; i <= fileFragmentMessage.getFragsNames().length; i++) {
+//                //составляем имя фрагмента файла(для сохранения в директории)
+//                fragName = fileFragmentMessage.getFilename();
+//                fragName = fragName.concat(".frg")
+//                        .concat(String.valueOf(i))
+//                        .concat("-").concat(String.valueOf(fileFragmentMessage.getTotalFragsNumber()));
+                //ищем требуемый фрагмент во временной папке
                 //записываем в файл данные из фрагмента
-                Files.write(pathToFile, Files.readAllBytes(Paths.get(toTempDir, fragName)),
+                Files.write(pathToFile,
+                        Files.readAllBytes(Paths.get(toTempDir, fileFragmentMessage.getFragsNames()[i - 1])),
                         StandardOpenOption.APPEND);
             }
+
+//            //добавлено по требованию IDEA
+//            assert fragsNames != null;
+//            //если количество файлов-фрагментов не совпадает с требуемым
+//            if(fragsNames.length != fileFragmentMessage.getTotalFragsNumber()){
+//                server.printMsg("(Server)FileCommandHandler.compileUploadedFileFragments() - " +
+//                        "Wrong the saved file fragments count!");
+//                return false;
+//            }
+
+            //TODO ERROR not write order.Deleted
+//            //читаем последовательно список фрагментов и записываем данные из них в файл
+//            for (String fragName : fragsNames) {
+//                //записываем в файл данные из фрагмента
+//                Files.write(pathToFile, Files.readAllBytes(Paths.get(toTempDir, fragName)),
+//                        StandardOpenOption.APPEND);
+//            }
+//            //TODO ERROR not write order.Added
+//            //читаем последовательно список фрагментов и записываем данные из них в файл
+//            for (int i = 0; i < fragsNames.length; i++) {
+//
+//                //TODO
+////                System.out.println("(Server)FileCommandHandler.compileUploadedFileFragments() - " +
+////                        "fragName: " + fragName);
+//
+//                //записываем в файл данные из фрагмента
+//                Files.write(pathToFile, Files.readAllBytes(Paths.get(toTempDir, fragName)),
+//                        StandardOpenOption.APPEND);
+//            }
+
             //если длина сохраненного файла-фрагмента отличается от длины принятого фрагмента файла
             if(Files.size(pathToFile) != fileFragmentMessage.getFullFileSize()){
                 server.printMsg("(Server)FileCommandHandler.compileUploadedFileFragments() - " +
@@ -154,8 +189,12 @@ public class FileCommandHandler extends AbstractCommandHandler {
             //если файл собран без ошибок
             } else {
                 //***удаляем временную папку***
-                //в цикле листаем впеменную папку и удаляем все файлы-фрагменты
-                for (String fragName : fragsNames) {
+                //в цикле листаем временную папку и удаляем все файлы-фрагменты
+//                for (String fragName : fragsNames) {
+//                    //удаляем файл-фрагмент
+//                    Files.delete(Paths.get(toTempDir, fragName));
+//                }
+                for (String fragName : fileFragmentMessage.getFragsNames()) {
                     //удаляем файл-фрагмент
                     Files.delete(Paths.get(toTempDir, fragName));
                 }

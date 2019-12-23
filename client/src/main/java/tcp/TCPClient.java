@@ -13,7 +13,7 @@ import java.io.PrintStream;
  */
 public class TCPClient implements TCPConnectionListener {
     //инициируем константу IP адреса сервера(здесь - адрес моего ноута в домашней локальной сети)
-    private static final String IP_ADDR = "192.168.1.103";//89.222.249.131(внешний белый адрес)
+    private static final String IP_ADDR = "192.168.1.102";//89.222.249.131(внешний белый адрес)
     //инициируем константу порта соединения
     private static final int PORT = 8189;
     //инициируем переменную для печати сообщений в консоль

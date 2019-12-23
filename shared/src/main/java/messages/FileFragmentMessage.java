@@ -20,8 +20,12 @@ public class FileFragmentMessage extends AbstractMessage {
     private String filename;
     //объявляем переменную размера файла(в байтах)
     private long fullFileSize;
-    //объявляем переменную имени фрагмента файла
-    private String fileFragmentName;
+
+//    //объявляем переменную имени фрагмента файла
+//    private String fileFragmentName;
+    //принимаем массив имен фрагментов файла
+    private String[] fragsNames;
+
     //объявляем переменную размера фрагмента файла(в байтах)
     private int fileFragmentSize;
     //объявляем байтовый массив с данными из файла
@@ -34,35 +38,66 @@ public class FileFragmentMessage extends AbstractMessage {
     //объявляем переменную имени временной папки для хранения фрагментов в директории назначения
     private String toTempDir;
 
-    public FileFragmentMessage(
-            String fromDir, String toDir, String filename, long fullFileSize,
-            int currentFragNumber, int totalFragsNumber, int fileFragmentSize) {
-        this.fromDir = fromDir;
-        this.toDir = toDir;
-        this.filename = filename;
-        this.fullFileSize = fullFileSize;
-        this.currentFragNumber = currentFragNumber;
-        this.totalFragsNumber = totalFragsNumber;
-        if(fileFragmentSize == -1){
-            //записываем значение размера фрагмента по константе
-            this.fileFragmentSize = CONST_FRAG_SIZE;
-        } else{
-            this.fileFragmentSize = fileFragmentSize;
-        }
-        //составляем имя фрагмента файла(для сохранения в директории)
-        fileFragmentName = filename;
+//    public FileFragmentMessage(
+//            String fromDir, String toDir, String filename, long fullFileSize,
+//            int currentFragNumber, int totalFragsNumber, int fileFragmentSize) {
+//        this.fromDir = fromDir;
+//        this.toDir = toDir;
+//        this.filename = filename;
+//        this.fullFileSize = fullFileSize;
+//        this.currentFragNumber = currentFragNumber;
+//        this.totalFragsNumber = totalFragsNumber;
+//        if(fileFragmentSize == -1){
+//            //записываем значение размера фрагмента по константе
+//            this.fileFragmentSize = CONST_FRAG_SIZE;
+//        } else{
+//            this.fileFragmentSize = fileFragmentSize;
+//        }
+//        //составляем имя фрагмента файла(для сохранения в директории)
+//        fileFragmentName = filename;
+//        fileFragmentName = fileFragmentName.concat(".frg")
+//                .concat(String.valueOf(currentFragNumber))
+//                .concat("-").concat(String.valueOf(totalFragsNumber));
+//        //Пример: toUpload.txt.frg1-1024 ... toUpload.txt.frg1024-1024
+//
+//        //составляем имя временной папки в директории назначения для хранения фрагментов файла
+//        toTempDir = toDir;
+//        toTempDir = toTempDir.concat("/").concat(filename)
+//                .concat("-temp-").concat(String.valueOf(fullFileSize));
+//        //Пример: .../toUpload.txt-temp-102425820//FIXME допускаются ли точки в имени папки?
+//    }
+public FileFragmentMessage(
+        String fromDir, String toDir, String filename, long fullFileSize,
+        int currentFragNumber, int totalFragsNumber, int fileFragmentSize,
+        String[] fragsNames) {
+    this.fromDir = fromDir;
+    this.toDir = toDir;
+    this.filename = filename;
+    this.fullFileSize = fullFileSize;
+    this.currentFragNumber = currentFragNumber;
+    this.totalFragsNumber = totalFragsNumber;
+//    if(fileFragmentSize == -1){
+//        //записываем значение размера фрагмента по константе
+//        this.fileFragmentSize = CONST_FRAG_SIZE;
+//    } else{
+//        this.fileFragmentSize = fileFragmentSize;
+//    }
+    this.fileFragmentSize = fileFragmentSize;
+    this.fragsNames = fragsNames;
+    //составляем имя фрагмента файла(для сохранения в директории) и записываем его в массив имен фрагментов
+    //-1 из-за разницы начала нумерации фрагментов(с 1) и элементов массива(с 0)
+    fragsNames[currentFragNumber - 1] = filename;
+    fragsNames[currentFragNumber - 1] = fragsNames[currentFragNumber - 1].concat(".frg")
+            .concat(String.valueOf(currentFragNumber))
+            .concat("-").concat(String.valueOf(totalFragsNumber));
+    //Пример: toUpload.txt.frg1-1024 ... toUpload.txt.frg1024-1024
 
-        fileFragmentName = fileFragmentName.concat(".frg")
-                .concat(String.valueOf(currentFragNumber))
-                .concat("-").concat(String.valueOf(totalFragsNumber));
-        //Пример: toUpload.txt.frg1-1024 ... toUpload.txt.frg1024-1024
-
-        //составляем имя временной папки в директории назначения для хранения фрагментов файла
-        toTempDir = toDir;
-        toTempDir = toTempDir.concat("/").concat(filename)
-                .concat("-temp-").concat(String.valueOf(fullFileSize));
-        //Пример: .../toUpload.txt-temp-102425820//FIXME допускаются ли точки в имени папки?
-    }
+    //составляем имя временной папки в директории назначения для хранения фрагментов файла
+    toTempDir = toDir;
+    toTempDir = toTempDir.concat("/").concat(filename)
+            .concat("-temp-").concat(String.valueOf(fullFileSize));
+    //Пример: .../toUpload.txt-temp-102425820
+}
 
     /**
      * Метод чтения данных из определенного места файла в файтовый массив.
@@ -87,6 +122,7 @@ public class FileFragmentMessage extends AbstractMessage {
         //вычитываем данные из файла
         //считывает байты данных длиной до b.length из этого файла в массив байтов.
         bis.read(data);
+        //выгружаем потоки из памяти
         raf.close();
         bis.close();
     }
@@ -111,9 +147,9 @@ public class FileFragmentMessage extends AbstractMessage {
         return toTempDir;
     }
 
-    public String getFileFragmentName() {
-        return fileFragmentName;
-    }
+//    public String getFileFragmentName() {
+//        return fileFragmentName;
+//    }
 
     public int getFileFragmentSize() {
         return fileFragmentSize;
@@ -125,5 +161,13 @@ public class FileFragmentMessage extends AbstractMessage {
 
     public int getTotalFragsNumber() {
         return totalFragsNumber;
+    }
+
+    public String[] getFragsNames() {
+        return fragsNames;
+    }
+
+    public int getCurrentFragNumber() {
+        return currentFragNumber;
     }
 }
