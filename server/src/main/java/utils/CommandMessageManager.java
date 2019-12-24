@@ -21,6 +21,8 @@ public class CommandMessageManager {
     private ServiceCommandHandler serviceCommandHandler;
     //объявляем объект файлового хендлера
     private FileCommandHandler fileCommandHandler;
+    //объявляем объект файлового обработчика
+    private FileUtils fileUtils;
     //объявляем переменную для корневой директории пользователя в сетевом хранилище
     private String userStorageRoot;
 
@@ -30,6 +32,8 @@ public class CommandMessageManager {
         serviceCommandHandler = new ServiceCommandHandler();
         //инициируем объект файлового хендлера
         fileCommandHandler = new FileCommandHandler();
+        //инициируем объект файлового обработчика
+        fileUtils = new FileUtils();
         //инициируем переменную для корневой директории пользователя в сетевом хранилище
         userStorageRoot = server.getStorageRoot();//FIXME не будет ли юзер видеть все хранилище?
     }
@@ -240,6 +244,48 @@ public class CommandMessageManager {
      * @param tcpConnection - объект соединения, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
+//    private void onUploadFileFragClientRequest(TCPConnection tcpConnection, CommandMessage commandMessage) {
+//        //вынимаем объект файлового сообщения из объекта сообщения(команды)
+//        FileFragmentMessage fileFragmentMessage = (FileFragmentMessage) commandMessage.getMessageObject();
+//        //собираем целевую директорию пользователя в сетевом хранилище
+//        //сбрасываем до корневой папки пользователя в сетевом хранилище
+//        String toTempDir = userStorageRoot;
+//        // добавляем временную директорию сетевого хранилища из объекта сообщения(команды)
+//        toTempDir = toTempDir.concat("/").concat(fileFragmentMessage.getToTempDir());
+//        //создаем объект пути к папке с загруженным файлом
+//        String toDir = Paths.get(toTempDir).getParent().toString();//FIXME переделать на Path?
+//        //инициируем директорию для показа списка загруженных фрагментов или файла
+//        String directory = toTempDir;
+//        //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+//        int command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_ERROR;
+//        //если сохранение полученного фрагмента файла во временную папку сетевого хранилища прошло удачно
+//        if(fileCommandHandler.saveUploadedFileFragment(server, toTempDir, fileFragmentMessage)){
+//            //проверяем сохраненный файл по контрольной сумме//FIXME
+//            if(true){
+//                //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+//                command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_OK;
+//            }
+//        }
+//        //если это последний фрагмент
+//        if(fileFragmentMessage.isFinalFileFragment()){
+//            //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+//            command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_ERROR;
+//            //если корректно собран файл из фрагментов сохраненных во временную папку
+//            if(fileCommandHandler.compileUploadedFileFragments(server, toTempDir, toDir, fileFragmentMessage)){
+//                //ответ сервера, что сборка файла из загруженных фрагментов прошла успешно
+//                command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_OK;
+//                //устанавливаем финальное значение папки для показа загруженного файла
+//                directory = toDir;
+//            }
+//        }
+//
+//        //инициируем объект сообщения о директории
+//        DirectoryMessage directoryMessage = new DirectoryMessage();
+//        //формируем список файлов и папок в корневой директории клиента по умолчанию
+//        directoryMessage.composeFilesAndFoldersNamesList(directory);
+//        //отправляем объект сообщения(команды) клиенту
+//        server.sendToClient(tcpConnection, new CommandMessage(command, directoryMessage));
+//    }
     private void onUploadFileFragClientRequest(TCPConnection tcpConnection, CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileFragmentMessage fileFragmentMessage = (FileFragmentMessage) commandMessage.getMessageObject();
@@ -255,23 +301,31 @@ public class CommandMessageManager {
         //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
         int command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_ERROR;
         //если сохранение полученного фрагмента файла во временную папку сетевого хранилища прошло удачно
-        if(fileCommandHandler.saveUploadedFileFragment(server, toTempDir, fileFragmentMessage)){
+        if(fileUtils.saveUploadedFileFragment(toTempDir, fileFragmentMessage)){
             //проверяем сохраненный файл по контрольной сумме//FIXME
             if(true){
                 //отправляем сообщение на сервер: подтверждение, что все прошло успешно
                 command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_OK;
             }
+        //если что-то пошло не так
+        } else {
+            //выводим сообщение
+            server.printMsg("(Server)" + fileUtils.getMsg());
         }
         //если это последний фрагмент
         if(fileFragmentMessage.isFinalFileFragment()){
             //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
             command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_ERROR;
             //если корректно собран файл из фрагментов сохраненных во временную папку
-            if(fileCommandHandler.compileUploadedFileFragments(server, toTempDir, toDir, fileFragmentMessage)){
+            if(fileUtils.compileUploadedFileFragments(toTempDir, toDir, fileFragmentMessage)){
                 //ответ сервера, что сборка файла из загруженных фрагментов прошла успешно
                 command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_OK;
                 //устанавливаем финальное значение папки для показа загруженного файла
                 directory = toDir;
+            //если что-то пошло не так
+            } else {
+                //выводим сообщение
+                server.printMsg("(Server)" + fileUtils.getMsg());
             }
         }
 
