@@ -256,26 +256,24 @@ public class CommandMessageManager {
         String toDir = Paths.get(toTempDir).getParent().toString();//FIXME переделать на Path?
         //инициируем директорию для показа списка загруженных фрагментов или файла
         String directory = toTempDir;
-        //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
-        int command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_ERROR;
+        //объявляем переменную типа команды
+        int command;
+
         //если сохранение полученного фрагмента файла во временную папку сетевого хранилища прошло удачно
-        if(fileUtils.saveUploadedFileFragment(toTempDir, fileFragmentMessage)){
-            //проверяем сохраненный файл по контрольной сумме//FIXME
-            if(true){
-                //отправляем сообщение на сервер: подтверждение, что все прошло успешно
-                command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_OK;
-            }
+        if(fileUtils.saveFileFragment(toTempDir, fileFragmentMessage)){
+            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+            command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_OK;
         //если что-то пошло не так
         } else {
             //выводим сообщение
             server.printMsg("(Server)" + fileUtils.getMsg());
+            //инициируем переменную типа команды - ответ об ошибке
+            command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_ERROR;
         }
         //если это последний фрагмент
         if(fileFragmentMessage.isFinalFileFragment()){
-            //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
-            command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_ERROR;
             //если корректно собран файл из фрагментов сохраненных во временную папку
-            if(fileUtils.compileUploadedFileFragments(toTempDir, toDir, fileFragmentMessage)){
+            if(fileUtils.compileFileFragments(toTempDir, toDir, fileFragmentMessage)){
                 //ответ сервера, что сборка файла из загруженных фрагментов прошла успешно
                 command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_OK;
                 //устанавливаем финальное значение папки для показа загруженного файла
@@ -284,6 +282,8 @@ public class CommandMessageManager {
             } else {
                 //выводим сообщение
                 server.printMsg("(Server)" + fileUtils.getMsg());
+                //инициируем переменную типа команды - ответ об ошибке
+                command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_ERROR;
             }
         }
 

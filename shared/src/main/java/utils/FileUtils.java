@@ -24,7 +24,7 @@ public class FileUtils {
      * @param fileFragmentMessage - объект сообщения фрагмента файла
      * @return true, если файл-фрагмент сохранен без ошибок
      */
-    public boolean saveUploadedFileFragment(String toTempDir, FileFragmentMessage fileFragmentMessage) {
+    public boolean saveFileFragment(String toTempDir, FileFragmentMessage fileFragmentMessage) {
         try {
             //инициируем объект пути к фрагменту файла
             //-1 из-за разницы начала нумерации фрагментов(с 1) и элементов массива(с 0)
@@ -47,6 +47,7 @@ public class FileUtils {
                     fileFragmentMessage.getFileFragmentSize());
 
             //если длина сохраненного файла-фрагмента отличается от длины принятого фрагмента файла
+            //проверяем сохраненный файл по контрольной сумме//FIXME добавить
             if(Files.size(path) != fileFragmentMessage.getFileFragmentSize()){
                 msg = "FileUtils.saveUploadedFileFragment() - " +
                         "Wrong the saved file fragment size!";
@@ -69,7 +70,7 @@ public class FileUtils {
      * @param fileFragmentMessage - объект сообщения фрагмента файла
      * @return true, если целый файл собран и сохранен без ошибок
      */
-    public boolean compileUploadedFileFragments(
+    public boolean compileFileFragments(
             String toTempDir, String toDir, FileFragmentMessage fileFragmentMessage
     ) {
         //TODO temporarily
