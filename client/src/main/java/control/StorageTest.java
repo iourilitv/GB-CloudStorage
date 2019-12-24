@@ -25,9 +25,7 @@ public class StorageTest {
         TCPClient tcpClient = new TCPClient(this);
         //принимаем объект соединения
         connection = tcpClient.getConnection();
-
         //запускаем тестирование
-//        startTest(connection);
         startTest();
     }
 
@@ -52,7 +50,6 @@ public class StorageTest {
     private FileUtils fileUtils;
 
     //FIXME удалить, когда будет реализован интерфейс
-//    public void startTest(connection) {
     public void startTest() {
         //инициируем объект файлового обработчика
         fileUtils = new FileUtils();
@@ -207,56 +204,21 @@ public class StorageTest {
      * @param filename - строковое имя файла
      * @param fileSize - размер файла в байтах
      */
-//    private void uploadEntireFile(String fromDir, String toDir, String filename, long fileSize) {
-//        try {
-//            //инициируем объект файлового сообщения
-//            FileMessage fileMessage = new FileMessage(fromDir, toDir, filename, fileSize);
-//            //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
-//            fileMessage.readFileData(currentClientDir);//FIXME Разобраться с абсолютными папкими клиента
-//
-//            //если длина считанного файла отличается от длины исходного файла в хранилище
-//            if(fileMessage.getFileSize() != fileMessage.getData().length){
-//                printMsg("(Client)StorageTest.uploadFile() - Wrong the read file size!");
-//                return;
-//            }
-//
-//            //отправляем на сервер объект сообщения(команды)
-//            connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
-//                    fileMessage));
-//        } catch (IOException e) {
-//            //печатаем в консоль сообщение об ошибке считывания файла
-//            printMsg("TCPClient.uploadFile() - There is no file in the directory!");
-//            e.printStackTrace();
-//        }
-//    }
     private void uploadEntireFile(String fromDir, String toDir, String filename, long fileSize) {
-//        try {
-            //инициируем объект файлового сообщения
-            FileMessage fileMessage = new FileMessage(fromDir, toDir, filename, fileSize);
-            //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
-//            fileMessage.readFileData(currentClientDir);//FIXME Разобраться с абсолютными папкими клиента
-            //если скачивание прошло удачно
-            if(fileUtils.readFile(currentClientDir, fileMessage)){
-                //отправляем на сервер объект сообщения(команды)
-                connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
-                        fileMessage));
+        //инициируем объект файлового сообщения
+        FileMessage fileMessage = new FileMessage(fromDir, toDir, filename, fileSize);
+        //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
+        //FIXME Разобраться с абсолютными папкими клиента
+        //если скачивание прошло удачно
+        if(fileUtils.readFile(currentClientDir, fileMessage)){
+            //отправляем на сервер объект сообщения(команды)
+            connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
+                    fileMessage));
             //если что-то пошло не так
-            } else {
-                //выводим сообщение
-                printMsg("(Client)" + fileUtils.getMsg());
-            }
-
-//            //если длина считанного файла отличается от длины исходного файла в хранилище
-//            if(fileMessage.getFileSize() != fileMessage.getData().length){
-//                printMsg("(Client)StorageTest.uploadFile() - Wrong the read file size!");
-//                return;
-//            }
-
-//        } catch (IOException e) {
-//            //печатаем в консоль сообщение об ошибке считывания файла
-//            printMsg("TCPClient.uploadFile() - There is no file in the directory!");
-//            e.printStackTrace();
-//        }
+        } else {
+            //выводим сообщение
+            printMsg("(Client)" + fileUtils.getMsg());
+        }
     }
 
     //отправляем на сервер запрос на скачивание файла из облачного хранилища
