@@ -14,8 +14,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 public class FileUtils {
-//    //инициируем объект строкового билдера для сборки сообщений
-//    private StringBuilder msg = new StringBuilder();
     //инициируем строковую переменную для вывода сообщений
     private String msg;
 
@@ -50,15 +48,11 @@ public class FileUtils {
 
             //если длина сохраненного файла-фрагмента отличается от длины принятого фрагмента файла
             if(Files.size(path) != fileFragmentMessage.getFileFragmentSize()){
-//                msg.append("FileCommandHandler.saveUploadedFileFragment() - " +
-//                        "Wrong the saved file fragment size!");//TODO
                 msg = "FileUtils.saveUploadedFileFragment() - " +
                         "Wrong the saved file fragment size!";
                 return false;
             }
         } catch (IOException e) {
-//            msg.append("FileCommandHandler.saveUploadedFile() - " +
-//                    "Something wrong with the directory or the file!");//TODO
             msg = "FileUtils.saveUploadedFileFragment() - " +
                     "Something wrong with the directory or the file!";
             e.printStackTrace();
@@ -115,8 +109,6 @@ public class FileUtils {
 
             //если длина сохраненного файла-фрагмента отличается от длины принятого фрагмента файла
             if(Files.size(pathToFile) != fileFragmentMessage.getFullFileSize()){
-//                msg.append("FileCommandHandler.compileUploadedFileFragments() - " +
-//                        "Wrong the saved entire file size!");//TODO
                 msg = "FileUtils.compileUploadedFileFragments() - " +
                         "Wrong the saved entire file size!";
                 return false;
@@ -132,8 +124,6 @@ public class FileUtils {
                 Files.delete(Paths.get(toTempDir));
             }
         } catch (IOException e) {
-//            msg.append("FileCommandHandler.compileUploadedFileFragments() - " +
-//                    "Something wrong with the directory or the file!");//TODO
             msg = "FileUtils.compileUploadedFileFragments() - " +
                     "Something wrong with the directory or the file!";
             e.printStackTrace();
