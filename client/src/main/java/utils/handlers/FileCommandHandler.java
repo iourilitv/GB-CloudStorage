@@ -12,7 +12,7 @@ import java.nio.file.StandardOpenOption;
 /**
  * The client class for operating with fileMessages and fileFragmentMessages.
  */
-public class FileCommandHandler extends AbstractCommandHandler {
+public class FileCommandHandler {
 
     /**
      * Метод сохраняет скачанный из сетевого хранилища(полученный от сервера) целый файл
