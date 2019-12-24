@@ -48,12 +48,12 @@ public class FileUtils {
     }
 
     /**
-     * Метод читает данные из целого файла в заданной директорию сетевого хранилища и
-     * отправляет клиенту объект сообщения с данными файла.
+     * Метод читает данные из целого файла в заданной директорию сетевого хранилища
+     * и добавляем в объект файлового сообщения.
      * @param fileMessage - объект файлового сообщения с данными файла
      * @return true, если файл скачан без ошибок
      */
-    public boolean downloadFile(String fromDir, FileMessage fileMessage) {
+    public boolean readFile(String fromDir, FileMessage fileMessage) {
         try {
             //считываем данные из файла и записываем их в объект файлового сообщения
             fileMessage.readFileData(fromDir);

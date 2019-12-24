@@ -7,6 +7,7 @@ import tcp.TCPClient;
 import tcp.TCPConnection;
 import utils.CommandMessage;
 import utils.Commands;
+import utils.FileUtils;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -24,8 +25,10 @@ public class StorageTest {
         TCPClient tcpClient = new TCPClient(this);
         //принимаем объект соединения
         connection = tcpClient.getConnection();
+
         //запускаем тестирование
-        startTest(connection);
+//        startTest(connection);
+        startTest();
     }
 
     //TODO temporarily
@@ -45,8 +48,15 @@ public class StorageTest {
     //объявляем переменную сетевого соединения
     private TCPConnection connection;
 
+    //объявляем объект файлового обработчика
+    private FileUtils fileUtils;
+
     //FIXME удалить, когда будет реализован интерфейс
-    public void startTest(TCPConnection connection) {
+//    public void startTest(connection) {
+    public void startTest() {
+        //инициируем объект файлового обработчика
+        fileUtils = new FileUtils();
+
         //инициируем переменную для текущей директории клиента
         currentClientDir = clientDefaultRoot;
         //инициируем объект защелки на один сброс
@@ -86,21 +96,21 @@ public class StorageTest {
     //отправляем на сервер запрос на авторизацию в облачное хранилище
     private void requestAuthorization(String login, String password) {
         //TODO temporarily
-        printMsg("***TCPClient.requestAuthorization() - has started***");
+        printMsg("***StorageTest.requestAuthorization() - has started***");
 
         //отправляем на сервер объект сообщения(команды)
         connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
                 new AuthMessage(login, password)));
 
         //TODO temporarily
-        printMsg("***TCPClient.requestAuthorization() - has finished***");
+        printMsg("***StorageTest.requestAuthorization() - has finished***");
     }
 
     //отправляем на сервер запрос на загрузку файла в облачное хранилище
     //FIXME перенести в контроллер интерфейса
     public void uploadFile(String fromDir, String toDir, String filename) throws IOException {
         //TODO temporarily
-        printMsg("***TCPClient.uploadFile() - has started***");
+        printMsg("***StorageTest.uploadFile() - has started***");
 
         //вычисляем размер файла
         long fileSize = Files.size(Paths.get(fromDir, filename));
@@ -115,7 +125,7 @@ public class StorageTest {
         }
 
         //TODO temporarily
-        printMsg("***TCPClient.uploadFile() - has finished***");
+        printMsg("***StorageTest.uploadFile() - has finished***");
     }
 
     /**
@@ -197,34 +207,63 @@ public class StorageTest {
      * @param filename - строковое имя файла
      * @param fileSize - размер файла в байтах
      */
+//    private void uploadEntireFile(String fromDir, String toDir, String filename, long fileSize) {
+//        try {
+//            //инициируем объект файлового сообщения
+//            FileMessage fileMessage = new FileMessage(fromDir, toDir, filename, fileSize);
+//            //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
+//            fileMessage.readFileData(currentClientDir);//FIXME Разобраться с абсолютными папкими клиента
+//
+//            //если длина считанного файла отличается от длины исходного файла в хранилище
+//            if(fileMessage.getFileSize() != fileMessage.getData().length){
+//                printMsg("(Client)StorageTest.uploadFile() - Wrong the read file size!");
+//                return;
+//            }
+//
+//            //отправляем на сервер объект сообщения(команды)
+//            connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
+//                    fileMessage));
+//        } catch (IOException e) {
+//            //печатаем в консоль сообщение об ошибке считывания файла
+//            printMsg("TCPClient.uploadFile() - There is no file in the directory!");
+//            e.printStackTrace();
+//        }
+//    }
     private void uploadEntireFile(String fromDir, String toDir, String filename, long fileSize) {
-        try {
+//        try {
             //инициируем объект файлового сообщения
             FileMessage fileMessage = new FileMessage(fromDir, toDir, filename, fileSize);
             //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
-            fileMessage.readFileData(currentClientDir);//FIXME Разобраться с абсолютными папкими клиента
-
-            //если длина считанного файла отличается от длины исходного файла в хранилище
-            if(fileMessage.getFileSize() != fileMessage.getData().length){
-                printMsg("(Client)StorageTest.uploadFile() - Wrong the read file size!");
-                return;
+//            fileMessage.readFileData(currentClientDir);//FIXME Разобраться с абсолютными папкими клиента
+            //если скачивание прошло удачно
+            if(fileUtils.readFile(currentClientDir, fileMessage)){
+                //отправляем на сервер объект сообщения(команды)
+                connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
+                        fileMessage));
+            //если что-то пошло не так
+            } else {
+                //выводим сообщение
+                printMsg("(Client)" + fileUtils.getMsg());
             }
 
-            //отправляем на сервер объект сообщения(команды)
-            connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
-                    fileMessage));
-        } catch (IOException e) {
-            //печатаем в консоль сообщение об ошибке считывания файла
-            printMsg("TCPClient.uploadFile() - There is no file in the directory!");
-            e.printStackTrace();
-        }
+//            //если длина считанного файла отличается от длины исходного файла в хранилище
+//            if(fileMessage.getFileSize() != fileMessage.getData().length){
+//                printMsg("(Client)StorageTest.uploadFile() - Wrong the read file size!");
+//                return;
+//            }
+
+//        } catch (IOException e) {
+//            //печатаем в консоль сообщение об ошибке считывания файла
+//            printMsg("TCPClient.uploadFile() - There is no file in the directory!");
+//            e.printStackTrace();
+//        }
     }
 
     //отправляем на сервер запрос на скачивание файла из облачного хранилища
     //FIXME перенести в контроллер интерфейса
     public void downloadFile(String fromDir, String toDir, String filename){
         //TODO temporarily
-        printMsg("***TCPClient.downloadFile() - has started***");
+        printMsg("***StorageTest.downloadFile() - has started***");
 
         //инициируем объект файлового сообщения
         FileMessage fileMessage = new FileMessage(fromDir, toDir, filename);
@@ -233,7 +272,7 @@ public class StorageTest {
                 fileMessage));
 
         //TODO temporarily
-        printMsg("***TCPClient.downloadFile() - has finished***");
+        printMsg("***StorageTest.downloadFile() - has finished***");
     }
 
     public TCPConnection getConnection() {

@@ -201,7 +201,7 @@ public class CommandMessageManager {
         //создаем объект файлового сообщения
         fileMessage = new FileMessage(fromDir, clientDir, fileMessage.getFilename());
         //если скачивание прошло удачно
-        if(fileUtils.downloadFile(fromDir, fileMessage)){
+        if(fileUtils.readFile(fromDir, fileMessage)){
             //отправляем сообщение на сервер: подтверждение, что все прошло успешно
             command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK;
         //если что-то пошло не так
