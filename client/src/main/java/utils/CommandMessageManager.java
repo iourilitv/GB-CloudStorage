@@ -4,7 +4,6 @@ import control.StorageTest;
 import messages.DirectoryMessage;
 import messages.FileMessage;
 import utils.handlers.DirectoryCommandHandler;
-//import utils.handlers.FileCommandHandler;
 
 /**
  * The client class for recognizing command messages and control command handlers.
@@ -12,9 +11,6 @@ import utils.handlers.DirectoryCommandHandler;
 public class CommandMessageManager {
     //принимаем объект тестера
     private StorageTest tester;
-
-//    //объявляем объект файлового хендлера
-//    private FileCommandHandler fileCommandHandler;
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
 
@@ -28,9 +24,6 @@ public class CommandMessageManager {
         this.tester = tester;
         //инициируем объект хендлера для операций с директориями
         directoryCommandHandler = new DirectoryCommandHandler();
-
-//        //инициируем объект файлового хендлера
-//        fileCommandHandler = new FileCommandHandler();
         //инициируем объект файлового обработчика
         fileUtils = new FileUtils();
     }
@@ -136,34 +129,6 @@ public class CommandMessageManager {
      * Метод обработки ответа сервера со скачанным целым файлом внутри
      * @param commandMessage - объект сообщения(команды)
      */
-//    private void onDownloadFileOkServerResponse(CommandMessage commandMessage) {
-//        //вынимаем объект файлового сообщения из объекта сообщения(команды)
-//        FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
-//        //вынимаем директорию заданную относительно userStorageRoot в сетевом хранилище из объекта сообщения(команды)
-//        String storageDir = fileMessage.getFromDir();
-//        //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
-//        String clientDir = fileMessage.getToDir();
-//
-//        //FIXME придется указывать абсолютный путь, если будет выбор папки клиента
-//        //собираем текущую директорию на клиенте
-//        String toDir = tester.getClientDefaultRoot();
-//        toDir = toDir.concat("/").concat(clientDir);
-//
-//        //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
-//        int command = Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_ERROR;
-//        //если сохранение прошло удачно
-//        if(fileCommandHandler.saveDownloadedFile(tester, toDir, fileMessage)){//FIXME см.выше
-//            //проверяем сохраненный файл по контрольной сумме//FIXME
-//            if(true){
-//                //отправляем сообщение на сервер: подтверждение, что все прошло успешно
-//                command = Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_OK;
-//            }
-//        }
-//        //создаем объект файлового сообщения
-//        fileMessage = new FileMessage(storageDir, clientDir, fileMessage.getFilename());
-//        //отправляем объект сообщения(команды) на сервер
-//        tester.getConnection().sendMessageObject(new CommandMessage(command, fileMessage));
-//    }
     private void onDownloadFileOkServerResponse(CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
