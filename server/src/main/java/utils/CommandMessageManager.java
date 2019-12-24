@@ -19,19 +19,25 @@ public class CommandMessageManager {
     private TCPServer server;
     //объявляем объект сервисного хендлера
     private ServiceCommandHandler serviceCommandHandler;
-    //объявляем объект файлового хендлера
-    private FileCommandHandler fileCommandHandler;
+
+//    //объявляем объект файлового хендлера
+//    private FileCommandHandler fileCommandHandler;
+
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
     //объявляем переменную для корневой директории пользователя в сетевом хранилище
     private String userStorageRoot;
+    //объявляем переменную типа команды
+    private int command;
 
     public CommandMessageManager(TCPServer server) {
         this.server = server;
         //инициируем объект сервисного хендлера
         serviceCommandHandler = new ServiceCommandHandler();
-        //инициируем объект файлового хендлера
-        fileCommandHandler = new FileCommandHandler();
+
+//        //инициируем объект файлового хендлера
+//        fileCommandHandler = new FileCommandHandler();
+
         //инициируем объект файлового обработчика
         fileUtils = new FileUtils();
         //инициируем переменную для корневой директории пользователя в сетевом хранилище
@@ -136,6 +142,31 @@ public class CommandMessageManager {
      * @param tcpConnection - объект соединения, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
+//    private void onUploadFileClientRequest(TCPConnection tcpConnection, CommandMessage commandMessage) {
+//        //вынимаем объект файлового сообщения из объекта сообщения(команды)
+//        FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
+//        //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
+//        String storageDir = fileMessage.getToDir();
+//        //собираем целевую директорию пользователя в сетевом хранилище
+//        String toDir = userStorageRoot;//сбрасываем до корневой папки пользователя в сетевом хранилище
+//        toDir = toDir.concat("/").concat(storageDir);//добавляем значение подпапки
+//        //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+//        int command = Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR;
+//        //если сохранение прошло удачно
+//        if(fileCommandHandler.saveUploadedFile(server, toDir, fileMessage)){
+//            //проверяем сохраненный файл по контрольной сумме//FIXME
+//            if(true){
+//                //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+//                command = Commands.SERVER_RESPONSE_FILE_UPLOAD_OK;
+//            }
+//        }
+//        //инициируем объект сообщения о директории
+//        DirectoryMessage directoryMessage = new DirectoryMessage();
+//        //формируем список файлов и папок в корневой директории клиента по умолчанию
+//        directoryMessage.composeFilesAndFoldersNamesList(userStorageRoot);
+//        //отправляем объект сообщения(команды) клиенту
+//        server.sendToClient(tcpConnection, new CommandMessage(command, directoryMessage));
+//    }
     private void onUploadFileClientRequest(TCPConnection tcpConnection, CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
@@ -144,20 +175,21 @@ public class CommandMessageManager {
         //собираем целевую директорию пользователя в сетевом хранилище
         String toDir = userStorageRoot;//сбрасываем до корневой папки пользователя в сетевом хранилище
         toDir = toDir.concat("/").concat(storageDir);//добавляем значение подпапки
-        //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
-        int command = Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR;
         //если сохранение прошло удачно
-        if(fileCommandHandler.saveUploadedFile(server, toDir, fileMessage)){
-            //проверяем сохраненный файл по контрольной сумме//FIXME
-            if(true){
-                //отправляем сообщение на сервер: подтверждение, что все прошло успешно
-                command = Commands.SERVER_RESPONSE_FILE_UPLOAD_OK;
-            }
+        if(fileUtils.saveFile(toDir, fileMessage)){
+            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+            command = Commands.SERVER_RESPONSE_FILE_UPLOAD_OK;
+        //если что-то пошло не так
+        } else {
+            //выводим сообщение
+            server.printMsg("(Server)" + fileUtils.getMsg());
+            //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+            command = Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR;
         }
         //инициируем объект сообщения о директории
         DirectoryMessage directoryMessage = new DirectoryMessage();
-        //формируем список файлов и папок в корневой директории клиента по умолчанию
-        directoryMessage.composeFilesAndFoldersNamesList(userStorageRoot);
+        //формируем список файлов и папок в заданной директории клиента в сетевом хранилище
+        directoryMessage.composeFilesAndFoldersNamesList(toDir);
         //отправляем объект сообщения(команды) клиенту
         server.sendToClient(tcpConnection, new CommandMessage(command, directoryMessage));
     }
@@ -190,6 +222,31 @@ public class CommandMessageManager {
      * @param tcpConnection - объект соединения, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
+//    private void onDownloadFileClientRequest(TCPConnection tcpConnection, CommandMessage commandMessage) {
+//        //вынимаем объект файлового сообщения из объекта сообщения(команды)
+//        FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
+//        //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
+//        String storageDir = fileMessage.getFromDir();
+//        //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
+//        String clientDir = fileMessage.getToDir();
+//        //собираем целевую директорию пользователя в сетевом хранилище
+//        String fromDir = userStorageRoot;//сбрасываем до корневой папки пользователя в сетевом хранилище
+//        fromDir = fromDir.concat("/").concat(storageDir);//добавляем значение подпапки
+//        //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+//        int command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_ERROR;
+//        //создаем объект файлового сообщения
+//        fileMessage = new FileMessage(fromDir, clientDir, fileMessage.getFilename());
+//        //если скачивание прошло удачно
+//        if(fileCommandHandler.downloadFile(server, fromDir, fileMessage)){
+//            //проверяем сохраненный файл по контрольной сумме//FIXME
+//            if(true){
+//                //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+//                command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK;
+//            }
+//        }
+//        //отправляем объект сообщения(команды) клиенту
+//        server.sendToClient(tcpConnection, new CommandMessage(command, fileMessage));
+//    }
     private void onDownloadFileClientRequest(TCPConnection tcpConnection, CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
@@ -200,17 +257,18 @@ public class CommandMessageManager {
         //собираем целевую директорию пользователя в сетевом хранилище
         String fromDir = userStorageRoot;//сбрасываем до корневой папки пользователя в сетевом хранилище
         fromDir = fromDir.concat("/").concat(storageDir);//добавляем значение подпапки
-        //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
-        int command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_ERROR;
         //создаем объект файлового сообщения
         fileMessage = new FileMessage(fromDir, clientDir, fileMessage.getFilename());
         //если скачивание прошло удачно
-        if(fileCommandHandler.downloadFile(server, fromDir, fileMessage)){
-            //проверяем сохраненный файл по контрольной сумме//FIXME
-            if(true){
-                //отправляем сообщение на сервер: подтверждение, что все прошло успешно
-                command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK;
-            }
+        if(fileUtils.downloadFile(fromDir, fileMessage)){
+            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+            command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK;
+        //если что-то пошло не так
+        } else {
+            //выводим сообщение
+            server.printMsg("(Server)" + fileUtils.getMsg());
+            //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+            command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_ERROR;
         }
         //отправляем объект сообщения(команды) клиенту
         server.sendToClient(tcpConnection, new CommandMessage(command, fileMessage));
@@ -256,8 +314,9 @@ public class CommandMessageManager {
         String toDir = Paths.get(toTempDir).getParent().toString();//FIXME переделать на Path?
         //инициируем директорию для показа списка загруженных фрагментов или файла
         String directory = toTempDir;
-        //объявляем переменную типа команды
-        int command;
+
+//        //объявляем переменную типа команды//TODO
+//        int command;
 
         //если сохранение полученного фрагмента файла во временную папку сетевого хранилища прошло удачно
         if(fileUtils.saveFileFragment(toTempDir, fileFragmentMessage)){

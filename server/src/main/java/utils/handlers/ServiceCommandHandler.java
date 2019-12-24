@@ -8,7 +8,7 @@ import tcp.TCPServer;
 /**
  * The server class for operating with service command messages.
  */
-public class ServiceCommandHandler extends AbstractCommandHandler {
+public class ServiceCommandHandler/* extends AbstractCommandHandler*/ {
 
     /**
      * Метод обработки авторизации клиента в сетевом хранилище
