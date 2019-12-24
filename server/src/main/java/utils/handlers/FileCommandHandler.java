@@ -4,10 +4,7 @@ import messages.FileFragmentMessage;
 import messages.FileMessage;
 import tcp.TCPServer;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -16,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Optional;
 
 /**
  * The server class for operating with fileMessages and fileFragmentMessages.
@@ -158,19 +156,24 @@ public class FileCommandHandler extends AbstractCommandHandler {
                 //ищем требуемый фрагмент во временной папке
                 //записываем в файл данные из фрагмента
                 // Path Of The Input File
-                FileInputStream input = new FileInputStream (
-                        Paths.get(toTempDir, fileFragmentMessage.getFragsNames()[i - 1]).toString());
-                ReadableByteChannel source = input.getChannel();
+//                FileInputStream input = new FileInputStream (
+//                        Paths.get(toTempDir, fileFragmentMessage.getFragsNames()[i - 1]).toString());
+//                ReadableByteChannel source = input.getChannel();
+                ReadableByteChannel source = Channels.newChannel(
+                        Files.newInputStream(Paths.get(toTempDir, fileFragmentMessage.getFragsNames()[i - 1])));
+
                 // Path Of The Output File//TODO вынести из цикла!!!
-                FileOutputStream output = new FileOutputStream(pathToFile.toString(), true);
-                WritableByteChannel destination = output.getChannel();
-                //переписываем данные из файла фрагмента в файл-назначения через канал
+//                FileOutputStream output = new FileOutputStream(pathToFile.toString(), true);
+//                WritableByteChannel destination = output.getChannel();
+                WritableByteChannel destination = Channels.newChannel(
+                        Files.newOutputStream(pathToFile, StandardOpenOption.APPEND));
+                        //переписываем данные из файла фрагмента в файл-назначения через канал
                 copyData(source, destination);
 //                System.out.println("(Server)FileCommandHandler.compileUploadedFileFragments() - ! File Successfully Copied From Source To Destination !");
                 //закрываем потоки и каналы
-                input.close();
+//                input.close();
                 source.close();
-                output.close();
+//                output.close();
                 destination.close();
             }
 
@@ -214,7 +217,7 @@ public class FileCommandHandler extends AbstractCommandHandler {
     }
 
     //TODO
-    private /*static*/ void copyData(ReadableByteChannel source, WritableByteChannel destination) throws IOException {
+    private void copyData(ReadableByteChannel source, WritableByteChannel destination) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocateDirect(1024);
         while (source.read(buffer) != -1) {
             // The Buffer Is Used To Be Drained
