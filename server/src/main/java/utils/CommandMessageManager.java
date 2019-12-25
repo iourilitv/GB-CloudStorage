@@ -10,6 +10,7 @@ import utils.handlers.ServiceCommandHandler;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -197,9 +198,15 @@ public class CommandMessageManager {
         String storageDir = fileMessage.getFromDir();
         //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
         String clientDir = fileMessage.getToDir();
+
+        //FIXME переделать после ответа препадователя
         //собираем целевую директорию пользователя в сетевом хранилище
-        String fromDir = userStorageRoot;//сбрасываем до корневой папки пользователя в сетевом хранилище
-        fromDir = fromDir.concat("/").concat(storageDir);//добавляем значение подпапки
+//        String fromDir = userStorageRoot;//сбрасываем до корневой папки пользователя в сетевом хранилище
+//        fromDir = fromDir.concat("/").concat(storageDir);//добавляем значение подпапки
+//        String fromDir = userStorageRoot + "/" + storageDir;//TODO проба
+        Path fromDirPath = Paths.get(userStorageRoot, storageDir);
+        String fromDir = fromDirPath.toString();
+
         //вычисляем размер файла
         long fileSize = Files.size(Paths.get(fromDir, fileMessage.getFilename()));
         //если размер запрашиваемого файла больше константы размера фрагмента
