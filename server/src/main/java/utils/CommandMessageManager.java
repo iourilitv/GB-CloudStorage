@@ -212,22 +212,6 @@ public class CommandMessageManager {
             //запускаем метод отправки целого файла
             downloadEntireFile(tcpConnection, fromDir, clientDir, fileMessage.getFilename());
         }
-
-//        //создаем объект файлового сообщения
-//        fileMessage = new FileMessage(fromDir, clientDir, fileMessage.getFilename());
-//        //если скачивание прошло удачно
-//        if(fileUtils.readFile(fromDir, fileMessage)){
-//            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
-//            command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK;
-//        //если что-то пошло не так
-//        } else {
-//            //выводим сообщение
-//            server.printMsg("(Server)" + fileUtils.getMsg());
-//            //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
-//            command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_ERROR;
-//        }
-//        //отправляем объект сообщения(команды) клиенту
-//        server.sendToClient(tcpConnection, new CommandMessage(command, fileMessage));
     }
 
     /**
@@ -306,7 +290,9 @@ public class CommandMessageManager {
     }
 
     /**
-     * Метод отправки по частям большого файла размером более константы максмального размера фрагмента файла
+     * Метод скачивания и отправки по частям большого файла размером более
+     * константы максмального размера фрагмента файла
+     * @param tcpConnection- объект соединения, установленного с клиентом
      * @param fromDir - директория(относительно корня) клиента где хранится файл источник
      * @param toDir - директория(относительно корня) в сетевом хранилище
      * @param filename - строковое имя файла
@@ -329,9 +315,9 @@ public class CommandMessageManager {
                 totalEntireFragsNumber : totalEntireFragsNumber + 1;
 
         //TODO temporarily
-        System.out.println("CommandMessageManager.downloadFileByFrags() - fullFileSize: " + fullFileSize);
-        System.out.println("CommandMessageManager.downloadFileByFrags() - totalFragsNumber: " + totalFragsNumber);
-        System.out.println("CommandMessageManager.downloadFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
+        System.out.println("[server]CommandMessageManager.downloadFileByFrags() - fullFileSize: " + fullFileSize);
+        System.out.println("[server]CommandMessageManager.downloadFileByFrags() - totalFragsNumber: " + totalFragsNumber);
+        System.out.println("[server]CommandMessageManager.downloadFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
 
         //устанавливаем начальные значения номера текущего фрагмента и стартового байта
         long startByte = 0;
@@ -355,8 +341,8 @@ public class CommandMessageManager {
         }
 
         //TODO temporarily
-        System.out.println("CommandMessageManager.downloadFileByFrags() - currentFragNumber: " + totalFragsNumber);
-        System.out.println("CommandMessageManager.downloadFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
+        System.out.println("[server]CommandMessageManager.downloadFileByFrags() - currentFragNumber: " + totalFragsNumber);
+        System.out.println("[server]CommandMessageManager.downloadFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
 
         //***отправляем последний фрагмент, если он есть***
         if(totalFragsNumber > totalEntireFragsNumber){
@@ -375,9 +361,17 @@ public class CommandMessageManager {
 
         //TODO temporarily
         long finish = System.currentTimeMillis() - start;
-        System.out.println("StorageTest.uploadFileByFrags() - duration(mc): " + finish);
+        System.out.println("[server]CommandMessageManager.downloadFileByFrags() - duration(mc): " + finish);
     }
 
+    /**
+     * Метод скачивания и отправки целого небольшого файла размером менее
+     * константы максмального размера фрагмента файла
+     * @param tcpConnection - объект соединения, установленного с клиентом
+     * @param fromDir - директория(относительно корня) клиента где хранится файл источник
+     * @param clientDir - директория(относительно корня) в сетевом хранилище
+     * @param filename - строковое имя файла
+     */
     private void downloadEntireFile(TCPConnection tcpConnection, String fromDir, String clientDir, String filename){
         //создаем объект файлового сообщения
         FileMessage fileMessage = new FileMessage(fromDir, clientDir, filename);

@@ -73,7 +73,7 @@ public class CommandMessageManager {
                 break;
             //обрабатываем полученный от сервера ответ на запрос на скачивание с фрагментом файла из облачного хранилища
             case Commands.SERVER_RESPONSE_FILE_FRAGS_DOWNLOAD_OK:
-                //вызываем метод обработки запроса от клиента на загрузку файла-фрагмента
+                //вызываем метод обработки ответа от сервера с файлом-фрагментом
                 //в директорию клиента
                 onDownloadFileFragOkServerResponse(commandMessage);
                 break;
@@ -178,6 +178,10 @@ public class CommandMessageManager {
         tester.printMsg("Client.onDownloadFileErrorServerResponse() command: " + commandMessage.getCommand());
     }
 
+    /**
+     * Метод обработки полученного от сервера ответа на запрос на скачивание с фрагментом файла из облачного хранилища
+     * @param commandMessage - объект сообщения(команды)
+     */
     private void onDownloadFileFragOkServerResponse(CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileFragmentMessage fileFragmentMessage = (FileFragmentMessage) commandMessage.getMessageObject();
