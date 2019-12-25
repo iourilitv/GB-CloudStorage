@@ -8,6 +8,8 @@ import tcp.TCPConnection;
 import tcp.TCPServer;
 import utils.handlers.ServiceCommandHandler;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
@@ -40,7 +42,7 @@ public class CommandMessageManager {
      * @param tcpConnection - объект соединения, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
-    public void recognizeAndArrangeMessageObject(TCPConnection tcpConnection, CommandMessage commandMessage) {
+    public void recognizeAndArrangeMessageObject(TCPConnection tcpConnection, CommandMessage commandMessage) throws IOException {
         //***блок обработки объектов сервисных сообщений(команд), полученных от клиента***
         //если подсоединившийся клиент еще не распознан
         if(tcpConnection.getClientID().equals("unknownID")){
@@ -188,7 +190,7 @@ public class CommandMessageManager {
      * @param tcpConnection - объект соединения, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
-    private void onDownloadFileClientRequest(TCPConnection tcpConnection, CommandMessage commandMessage) {
+    private void onDownloadFileClientRequest(TCPConnection tcpConnection, CommandMessage commandMessage) throws IOException {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
         //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
@@ -198,21 +200,34 @@ public class CommandMessageManager {
         //собираем целевую директорию пользователя в сетевом хранилище
         String fromDir = userStorageRoot;//сбрасываем до корневой папки пользователя в сетевом хранилище
         fromDir = fromDir.concat("/").concat(storageDir);//добавляем значение подпапки
-        //создаем объект файлового сообщения
-        fileMessage = new FileMessage(fromDir, clientDir, fileMessage.getFilename());
-        //если скачивание прошло удачно
-        if(fileUtils.readFile(fromDir, fileMessage)){
-            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
-            command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK;
-        //если что-то пошло не так
+        //вычисляем размер файла
+        long fileSize = Files.size(Paths.get(fromDir, fileMessage.getFilename()));
+        //если размер запрашиваемого файла больше константы размера фрагмента
+        if(fileSize > FileFragmentMessage.CONST_FRAG_SIZE){
+            //запускаем метод отправки файла по частям
+            downloadFileByFrags(tcpConnection, fromDir, clientDir,
+                    fileMessage.getFilename(), fileSize);
+            //если файл меньше
         } else {
-            //выводим сообщение
-            server.printMsg("(Server)" + fileUtils.getMsg());
-            //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
-            command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_ERROR;
+            //запускаем метод отправки целого файла
+            downloadEntireFile(tcpConnection, fromDir, clientDir, fileMessage.getFilename());
         }
-        //отправляем объект сообщения(команды) клиенту
-        server.sendToClient(tcpConnection, new CommandMessage(command, fileMessage));
+
+//        //создаем объект файлового сообщения
+//        fileMessage = new FileMessage(fromDir, clientDir, fileMessage.getFilename());
+//        //если скачивание прошло удачно
+//        if(fileUtils.readFile(fromDir, fileMessage)){
+//            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+//            command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK;
+//        //если что-то пошло не так
+//        } else {
+//            //выводим сообщение
+//            server.printMsg("(Server)" + fileUtils.getMsg());
+//            //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+//            command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_ERROR;
+//        }
+//        //отправляем объект сообщения(команды) клиенту
+//        server.sendToClient(tcpConnection, new CommandMessage(command, fileMessage));
     }
 
     /**
@@ -288,5 +303,96 @@ public class CommandMessageManager {
         directoryMessage.composeFilesAndFoldersNamesList(directory);
         //отправляем объект сообщения(команды) клиенту
         server.sendToClient(tcpConnection, new CommandMessage(command, directoryMessage));
+    }
+
+    /**
+     * Метод отправки по частям большого файла размером более константы максмального размера фрагмента файла
+     * @param fromDir - директория(относительно корня) клиента где хранится файл источник
+     * @param toDir - директория(относительно корня) в сетевом хранилище
+     * @param filename - строковое имя файла
+     * @param fullFileSize - размер целого файла в байтах
+     * @throws IOException - исключение
+     */
+    private void downloadFileByFrags(TCPConnection tcpConnection, String fromDir, String toDir,
+                                     String filename, long fullFileSize) throws IOException {
+        //TODO temporarily
+        long start = System.currentTimeMillis();
+
+        //***разбиваем файл на фрагменты***
+        //рассчитываем количество полных фрагментов файла
+        int totalEntireFragsNumber = (int) fullFileSize / FileFragmentMessage.CONST_FRAG_SIZE;
+        //рассчитываем размер последнего фрагмента файла
+        int finalFileFragmentSize = (int) fullFileSize - FileFragmentMessage.CONST_FRAG_SIZE * totalEntireFragsNumber;
+        //рассчитываем общее количество фрагментов файла
+        //если есть последний фрагмент, добавляем 1 к количеству полных фрагментов файла
+        int totalFragsNumber = (finalFileFragmentSize == 0) ?
+                totalEntireFragsNumber : totalEntireFragsNumber + 1;
+
+        //TODO temporarily
+        System.out.println("CommandMessageManager.downloadFileByFrags() - fullFileSize: " + fullFileSize);
+        System.out.println("CommandMessageManager.downloadFileByFrags() - totalFragsNumber: " + totalFragsNumber);
+        System.out.println("CommandMessageManager.downloadFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
+
+        //устанавливаем начальные значения номера текущего фрагмента и стартового байта
+        long startByte = 0;
+        //инициируем байтовый массив для чтения данных для полных фрагментов
+        byte[] data = new byte[FileFragmentMessage.CONST_FRAG_SIZE];
+        //инициируем массив имен фрагментов файла
+        String[] fragsNames = new String[totalFragsNumber];
+        //***в цикле создаем целые фрагменты, читаем в них данные и отправляем***
+        for (int i = 1; i <= totalEntireFragsNumber; i++) {
+            //инициируем объект фрагмента файлового сообщения
+            FileFragmentMessage fileFragmentMessage =
+                    new FileFragmentMessage(fromDir, toDir, filename, fullFileSize,
+                            i, totalFragsNumber, FileFragmentMessage.CONST_FRAG_SIZE, fragsNames, data);
+            //читаем данные во фрагмент с определенного места файла
+            fileFragmentMessage.readFileDataToFragment(fromDir, filename, startByte);
+            //увеличиваем указатель стартового байта на размер фрагмента
+            startByte += FileFragmentMessage.CONST_FRAG_SIZE;
+            //отправляем объект сообщения(команды) клиенту
+            server.sendToClient(tcpConnection, new CommandMessage(Commands.SERVER_RESPONSE_FILE_FRAGS_DOWNLOAD_OK,
+                    fileFragmentMessage));
+        }
+
+        //TODO temporarily
+        System.out.println("CommandMessageManager.downloadFileByFrags() - currentFragNumber: " + totalFragsNumber);
+        System.out.println("CommandMessageManager.downloadFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
+
+        //***отправляем последний фрагмент, если он есть***
+        if(totalFragsNumber > totalEntireFragsNumber){
+            //инициируем байтовый массив для чтения данных для последнего фрагмента
+            byte[] dataFinal = new byte[finalFileFragmentSize];
+            //инициируем объект фрагмента файлового сообщения
+            FileFragmentMessage fileFragmentMessage =
+                    new FileFragmentMessage(fromDir, toDir, filename, fullFileSize,
+                            totalFragsNumber, totalFragsNumber, finalFileFragmentSize, fragsNames, dataFinal);
+            //читаем данные во фрагмент с определенного места файла
+            fileFragmentMessage.readFileDataToFragment(fromDir, filename, startByte);
+            //отправляем объект сообщения(команды) клиенту
+            server.sendToClient(tcpConnection, new CommandMessage(Commands.SERVER_RESPONSE_FILE_FRAGS_DOWNLOAD_OK,
+                    fileFragmentMessage));
+        }
+
+        //TODO temporarily
+        long finish = System.currentTimeMillis() - start;
+        System.out.println("StorageTest.uploadFileByFrags() - duration(mc): " + finish);
+    }
+
+    private void downloadEntireFile(TCPConnection tcpConnection, String fromDir, String clientDir, String filename){
+        //создаем объект файлового сообщения
+        FileMessage fileMessage = new FileMessage(fromDir, clientDir, filename);
+        //если скачивание прошло удачно
+        if(fileUtils.readFile(fromDir, fileMessage)){
+            //инициируем переменную типа команды - ответ cо скачанным файлом
+            command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK;
+        //если что-то пошло не так
+        } else {
+            //выводим сообщение
+            server.printMsg("(Server)" + fileUtils.getMsg());
+            //инициируем переменную типа команды - ответ об ошибке скачивания
+            command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_ERROR;
+        }
+        //отправляем объект сообщения(команды) клиенту
+        server.sendToClient(tcpConnection, new CommandMessage(command, fileMessage));
     }
 }

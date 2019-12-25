@@ -60,4 +60,9 @@ public class Commands {
     public static final int SERVER_RESPONSE_FILE_FRAGS_UPLOAD_OK = 111222;
     //ответ сервера, что при сборке файла из загруженных фрагментов произошла ошибка
     public static final int SERVER_RESPONSE_FILE_FRAGS_UPLOAD_ERROR = 111299;
+
+    //ответ сервера с файлом-фрагментом, если нет ошибок
+    public static final int SERVER_RESPONSE_FILE_FRAGS_DOWNLOAD_OK = 222202;
+    //ответ сервера, что при скачивании файла-фрагмента произошла ошибка
+    public static final int SERVER_RESPONSE_FILE_FRAGS_DOWNLOAD_ERROR = 222209;//TODO надо ли?
 }

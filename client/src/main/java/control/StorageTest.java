@@ -70,22 +70,25 @@ public class StorageTest {
             //инициируем переменную для текущей директории клиента
             currentClientDir = clientDefaultRoot;
             //отправляем на сервер запрос на загрузку маленького файла в облачное хранилище
-            uploadFile(currentClientDir, storageDir, "toUpload.txt");//TODO for test
+//            uploadFile(currentClientDir, storageDir, "toUpload.txt");//TODO for test
             //отправляем на сервер запрос на загрузку большого файла в облачное хранилище
 //            uploadFile(currentClientDir, storageDir, "toUploadBIG.mp4");//TODO for test
 //            uploadFile(currentClientDir, storageDir, "toUploadMedium.png");//TODO for test
 
-            //инициируем объект защелки на один сброс
-            countDownLatch = new CountDownLatch(1);//TODO
-            //ждем сброса защелки
-            countDownLatch.await();
+//            //инициируем объект защелки на один сброс//TODO see "toUpload.txt"
+//            countDownLatch = new CountDownLatch(1);//TODO
+//            //ждем сброса защелки
+//            countDownLatch.await();
+
             //восстанавливаем начальное значение директории в сетевом хранилище//TODO temporarily
             storageDir = "";
             //добавляем к корневой директории клиента имя подпапки назначения на клиенте
             clientDir = clientDir.concat("folderToDownloadFile");
-            //отправляем на сервер запрос на скачивание файла из облачного хранилища
-            downloadFile(storageDir, clientDir, "toDownload.png");
-        } catch (InterruptedException | IOException e) {
+            //отправляем на сервер запрос на скачивание маленького файла из облачного хранилища
+//            downloadFile(storageDir, clientDir, "toDownload.png");//TODO for test
+            //отправляем на сервер запрос на скачивание большого файла из облачного хранилища
+            downloadFile(storageDir, clientDir, "toDownloadBIG.mp4");//TODO for test
+        } catch (InterruptedException /*| IOException*/ e) {//TODO see "toUpload.txt"
             e.printStackTrace();
         }
     }

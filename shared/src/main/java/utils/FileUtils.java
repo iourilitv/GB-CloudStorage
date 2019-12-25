@@ -75,7 +75,6 @@ public class FileUtils {
         return true;
     }
 
-
     /**
      * Метод создает временную директорию, если нет, создает в ней временные файлы-фрагменты,
      * куда сохраняет данные из сообщения фрагмента файла.
@@ -100,7 +99,7 @@ public class FileUtils {
             //создаем новый файл-фрагмент и записываем в него данные из объекта файлового сообщения
             Files.write(path, fileFragmentMessage.getData(), StandardOpenOption.CREATE);
 
-            System.out.println("(Server)FileCommandHandler.saveUploadedFile() - " +
+            System.out.println("FileUtils.saveUploadedFileFragment() - " +
                     "Files.size(path): " + Files.size(path) +
                     ". fileFragmentMessage.getFileFragmentSize(): " +
                     fileFragmentMessage.getFileFragmentSize());
@@ -192,7 +191,7 @@ public class FileUtils {
 
         //TODO temporarily
         long finish = System.currentTimeMillis() - start;
-        System.out.println("(Server)FileUtils.compileUploadedFileFragments() - duration(mc): " + finish);
+        System.out.println("FileUtils.compileUploadedFileFragments() - duration(mc): " + finish);
 
         return true;
     }

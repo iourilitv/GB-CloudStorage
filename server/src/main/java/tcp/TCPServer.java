@@ -79,11 +79,11 @@ public class TCPServer implements TCPConnectionListener {//создаем слу
         //десериализуем объект сообщения(команды)
         try {
             messageObject = (CommandMessage) ois.readObject();
+            //распознаем и обрабатываем полученный объект сообщения(команды)
+            commandMessageManager.recognizeAndArrangeMessageObject(tcpConnection, messageObject);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        //распознаем и обрабатываем полученный объект сообщения(команды)
-        commandMessageManager.recognizeAndArrangeMessageObject(tcpConnection, messageObject);
     }
 
     /**
