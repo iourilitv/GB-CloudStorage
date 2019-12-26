@@ -18,9 +18,49 @@ public class ServerInboundHandler extends ChannelInboundHandlerAdapter {
 
     public ServerInboundHandler(NettyServer server) {
         this.server = server;
-        server.printMsg("Server running...");
         //инициируем объект обработчика сообщений(команд)
         commandMessageManager = new CommandMessageManager1(server);
+    }
+
+//    @Override
+//    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+//        super.channelRegistered(ctx);
+//        //TODO temporarily
+//        server.printMsg("ServerInboundHandler.channelRegistered() - ctx: " + ctx);
+//    }
+//
+//    @Override
+//    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+//        super.channelUnregistered(ctx);
+//        //TODO temporarily
+//        server.printMsg("ServerInboundHandler.channelUnregistered() - ctx: " + ctx);
+//    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
+
+        //если соединение установлено, то добавляем его в список
+        server.getConnections().add(new TCPConnection1(ctx));
+
+        //TODO temporarily
+        server.printMsg("Client has connected. \nServerInboundHandler.channelActive() - ctx: " + ctx +
+                ", connections.size(): " + server.getConnections().size()
+                + ", connections.toString(): " + server.getConnections().toString());
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
+
+        //если соединение отвалилось, ищем в коллекции его объект по соединению
+        //удаляем объект соединения из коллекции
+        server.getConnections().removeIf(c -> c.getCtx().equals(ctx));
+
+        //TODO temporarily
+        server.printMsg("Client has disconnected. \nServerInboundHandler.channelInactive() - ctx: " + ctx +
+                ", connections.size(): " + server.getConnections().size()
+                + ", connections.toString(): " + server.getConnections().toString());
     }
 
     @Override

@@ -59,7 +59,7 @@ public class StorageTest {
         //инициируем объект защелки на один сброс
         countDownLatch = new CountDownLatch(1);
         //отправляем на сервер запрос на авторизацию в облачное хранилище
-        requestAuthorization("login1", "pass1");
+//        requestAuthorization("login1", "pass1");//TODO
 
         try {
             //ждем сброса защелки

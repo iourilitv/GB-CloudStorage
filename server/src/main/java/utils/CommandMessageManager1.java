@@ -165,7 +165,7 @@ public class CommandMessageManager1 {
         //формируем список файлов и папок в заданной директории клиента в сетевом хранилище
         directoryMessage.composeFilesAndFoldersNamesList(toDir);
 
-        //отправляем объект сообщения(команды) клиенту
+        //отправляем объект сообщения(команды) клиенту, используя буферизированную запись в канал
 //        server.sendToClient(ctx, new CommandMessage(command, directoryMessage));//TODO
         ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
     }
