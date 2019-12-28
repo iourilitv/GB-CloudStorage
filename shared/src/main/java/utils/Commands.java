@@ -5,6 +5,9 @@ package utils;
  */
 public class Commands {
     //***инициируем константы команд:***
+    //оповещение от сервера, что клиент подключился
+    public static final int SERVER_NOTIFICATION_CLIENT_CONNECTED = 911000;
+
     //запрос на сервер на авторизацию пользователя с таким логином и паролем
     public static final int REQUEST_SERVER_AUTH = 911101;
     //ответ сервера, что авторизация прошла успешно
