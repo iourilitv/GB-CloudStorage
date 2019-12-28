@@ -32,22 +32,43 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
         usersAuthController = storageServer.getUsersAuthController();
     }
 
+     /**
+     * Метот обрабатывает событие - установление соединения с клиентом.
+     * По событию отправляет сообщение-уведомление клиенту.
+     * @param ctx - объект соединения netty, установленного с клиентом
+     */
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         //если соединение установлено, отправляем клиенту сообщение
         ctx.writeAndFlush(new CommandMessage(Commands.SERVER_NOTIFICATION_CLIENT_CONNECTED));
     }
 
+    /**
+     * Метот обрабатывает событие - разрыв соединения с клиентом
+     * @param ctx - объект соединения netty, установленного с клиентом
+     */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        //FIXME разобрать код внизу
+        //если соединение отвалилось, удаляем объект соединения из коллекции
+        printMsg("[server]AuthGateway.channelInactive() - removed client(login): " +
+                storageServer.getAuthorizedUsers().remove(ctx));
+
+        //TODO temporarily
+        printMsg("[server]UsersAuthController.authorizeUser - authorizedUsers: " +
+                storageServer.getAuthorizedUsers().toString());
     }
 
+    /**
+     * Метод обрабатывает событие - получение десериализованного объекта.
+     * Инициирует объект команды из объекта сообщения и обрабатывает только
+     * запрос от клиента на авторизацию.
+     * @param ctx - объект соединения netty, установленного с клиентом
+     * @param msgObject - десериализованный объект сообщения
+     */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msgObject) {
-        //десериализуем объект сообщения(команды)
         try {
-            //инициируем из объекта сообщения объект команды
+            //инициируем объект команды из объекта сообщения
             CommandMessage commandMessage = (CommandMessage) msgObject;
             //если это не команда на авторизацию
             if(commandMessage.getCommand() != Commands.REQUEST_SERVER_AUTH){
@@ -74,7 +95,7 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
                 "login: " + authMessage.getLogin() + ", password: " + authMessage.getPassword());
 
         //если авторизации клиента в облачном хранилище прошла удачно
-        if(usersAuthController.authorizeUser(authMessage)){
+        if(usersAuthController.authorizeUser(ctx, authMessage)){
             //меняем команду на успешную
             command = Commands.SERVER_RESPONSE_AUTH_OK;
 
@@ -111,18 +132,3 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
         storageServer.printMsg(msg);
     }
 }
-
-//TODO DELETE!
-//    @Override
-//    public void channelInactive(ChannelHandlerContext ctx) {
-//
-//        //FIXME разобрать
-////        //если соединение отвалилось, ищем в коллекции его объект по соединению
-////        //удаляем объект соединения из коллекции
-////        server.getConnections().removeIf(c -> c.getCtx().equals(ctx));
-////
-////        //TODO temporarily
-////        server.printMsg("Client has disconnected. \nServerInboundHandler.channelInactive() - ctx: " + ctx +
-////                ", connections.size(): " + server.getConnections().size()
-////                + ", connections.toString(): " + server.getConnections().toString());
-//    }

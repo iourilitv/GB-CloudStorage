@@ -19,7 +19,7 @@ import java.util.Arrays;
 /**
  * The server's class for recognizing command messages and control command handlers.
  */
-public class CommandMessageManager1 extends ChannelInboundHandlerAdapter {
+public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     //принимаем объект контроллера сетевого хранилища
     private final CloudStorageServer storageServer;
     //принимаем объект сервера
@@ -33,7 +33,7 @@ public class CommandMessageManager1 extends ChannelInboundHandlerAdapter {
     //объявляем переменную типа команды
     private int command;
 
-    public CommandMessageManager1(CloudStorageServer storageServer, NettyServer server) {
+    public CommandMessageManager(CloudStorageServer storageServer, NettyServer server) {
         this.storageServer = storageServer;
         this.server = server;
         //инициируем объект файлового обработчика
@@ -108,7 +108,7 @@ public class CommandMessageManager1 extends ChannelInboundHandlerAdapter {
     /**
      * Метод обработки запроса от клиента на загрузку целого файла клиента в директорию в
      * сетевом хранилище.
-//     * @param tcpConnection - объект соединения, установленного с клиентом
+     * @param ctx - объект соединения netty, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
     private void onUploadFileClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) {
@@ -144,7 +144,7 @@ public class CommandMessageManager1 extends ChannelInboundHandlerAdapter {
     /**
      * Метод обрабатывает полученное от клиента подтверждение успешного получения
      * обновленного списка файлов клиента в облачном хранилище
-//     * @param tcpConnection - объект соединения, установленного с клиентом
+     * @param ctx - объект соединения netty, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
     private void onUploadFileOkClientResponse(ChannelHandlerContext ctx, CommandMessage commandMessage) {
@@ -155,7 +155,7 @@ public class CommandMessageManager1 extends ChannelInboundHandlerAdapter {
     /**
      * Метод обрабатывает полученное от клиента сообщение об ошибке получения обновленного
      * списка файлов клиента в облачном хранилище
-//     * @param tcpConnection - объект соединения, установленного с клиентом
+     * @param ctx - объект соединения netty, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
     private void onUploadFileErrorClientResponse(ChannelHandlerContext ctx, CommandMessage commandMessage) {
@@ -166,7 +166,7 @@ public class CommandMessageManager1 extends ChannelInboundHandlerAdapter {
     /**
      * Метод обработки запроса от клиента на скачивание целого файла клиента из директории в
      * сетевом хранилище.
-//     * @param tcpConnection - объект соединения, установленного с клиентом
+     * @param ctx - объект соединения netty, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
     private void onDownloadFileClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) throws IOException {
@@ -202,7 +202,7 @@ public class CommandMessageManager1 extends ChannelInboundHandlerAdapter {
     /**
      * Метод обрабатывает полученное от клиента подтверждение успешного сохранения целого файла,
      * скачанного из облачного хранилища
-//     * @param tcpConnection - объект соединения, установленного с клиентом
+     * @param ctx - объект соединения netty, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
     private void onDownloadFileOkClientResponse(ChannelHandlerContext ctx, CommandMessage commandMessage) {
@@ -213,7 +213,7 @@ public class CommandMessageManager1 extends ChannelInboundHandlerAdapter {
     /**
      * Метод обрабатывает полученное от клиента сообщение об ошибке сохранения целого файла,
      * скачанного из облачного хранилища
-//     * @param tcpConnection - объект соединения, установленного с клиентом
+     * @param ctx - объект соединения netty, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
     private void onDownloadFileErrorClientResponse(ChannelHandlerContext ctx, CommandMessage commandMessage) {
@@ -224,7 +224,7 @@ public class CommandMessageManager1 extends ChannelInboundHandlerAdapter {
     /**
      * Метод обработки запроса от клиента на загрузку файла-фрагмента
      * в директорию в сетевом хранилище.
-//     * @param tcpConnection - объект соединения, установленного с клиентом
+     * @param ctx - объект соединения netty, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
     private void onUploadFileFragClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) {
@@ -278,7 +278,7 @@ public class CommandMessageManager1 extends ChannelInboundHandlerAdapter {
     /**
      * Метод скачивания и отправки по частям большого файла размером более
      * константы максмального размера фрагмента файла
-//     * @param tcpConnection- объект соединения, установленного с клиентом
+     * @param ctx - объект соединения netty, установленного с клиентом
      * @param fromDir - директория(относительно корня) клиента где хранится файл источник
      * @param toDir - директория(относительно корня) в сетевом хранилище
      * @param filename - строковое имя файла
@@ -355,7 +355,7 @@ public class CommandMessageManager1 extends ChannelInboundHandlerAdapter {
     /**
      * Метод скачивания и отправки целого небольшого файла размером менее
      * константы максмального размера фрагмента файла
-//     * @param tcpConnection - объект соединения, установленного с клиентом
+     * @param ctx - объект соединения netty, установленного с клиентом
      * @param fromDir - директория(относительно корня) клиента где хранится файл источник
      * @param clientDir - директория(относительно корня) в сетевом хранилище
      * @param filename - строковое имя файла

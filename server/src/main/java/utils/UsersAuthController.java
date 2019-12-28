@@ -1,5 +1,6 @@
 package utils;
 
+import io.netty.channel.ChannelHandlerContext;
 import jdbc.UsersDB;
 import messages.AuthMessage;
 
@@ -7,12 +8,6 @@ import messages.AuthMessage;
  * This server's class for operating with client registration and authentication.
  */
 public class UsersAuthController {
-
-    public enum Enum {
-        //инициируем константу неавторизованного подключившегося пользователя
-        UNKNOWN_USER;
-    }
-
     //принимаем объект сервера
     private CloudStorageServer storageServer;
 
@@ -25,13 +20,35 @@ public class UsersAuthController {
      * @param authMessage - объект авторизационного сообщения
      * @return true, если авторизация прошла успешно
      */
-    public boolean authorizeUser(AuthMessage authMessage){
+    public boolean authorizeUser(ChannelHandlerContext ctx, AuthMessage authMessage){
+        //если пользователь уже авторизован
+        if(isUserAuthorized(ctx, authMessage.getLogin())){
+            //выводим сообщение в консоль
+            printMsg("[server]UsersAuthController.authorizeUser - This user has been authorised already!");
+            //и выходим с false
+            return false;
+        }
 
-        //FIXME fill me!
-        //добавить проверку не авторизован ли уже этот юзер
+        //если пара логина и пароля релевантна
+        if(checkLoginAndPassword(authMessage.getLogin(), authMessage.getPassword())){
+            //регистрируем пользователя, если он еще не зарегистрирован
+            storageServer.getAuthorizedUsers().put(ctx, authMessage.getLogin());
 
-        //возвращаем результат проверки релевантности пары логина и пароля
-        return checkLoginAndPassword(authMessage.getLogin(), authMessage.getPassword());
+            //TODO temporarily
+            printMsg("[server]UsersAuthController.authorizeUser - authorizedUsers: " +
+                    storageServer.getAuthorizedUsers().toString());
+
+            //возвращаем true, чтобы завершить процесс регистрации пользователя
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isUserAuthorized(ChannelHandlerContext ctx, String login) {
+        //возвращаем результат проверки есть ли уже элемент в списке авторизованных с такими
+        // объектом соединения или логином
+        return storageServer.getAuthorizedUsers().containsKey(ctx) ||
+                storageServer.getAuthorizedUsers().containsValue(login);
     }
 
     /** //FIXME
@@ -58,34 +75,3 @@ public class UsersAuthController {
     }
 
 }
-
-//    public boolean authorizeUser(AuthMessage authMessage){
-//
-//        //FIXME fill me!
-////        server.printMsg("[Server]ClientController.authorizeUser - authMessage.getLogin(): " +
-////                authMessage.getLogin() + ". authMessage.getPassword(): " + authMessage.getPassword());
-//
-////        //проверяем релевантность пары логина и пароля
-////        if(checkLoginAndPassword(authMessage.getLogin(), authMessage.getPassword())){
-////            //если такой логин еще не подключен
-////            if(clientID.equals(Enum.UNKNOWN_USER.name())){
-////                //записываем логин пользователя как идентификатор клиента
-////                setClientID(authMessage.getLogin());
-////
-////                //TODO temporarily
-////                printMsg("[Server]ClientController.authorizeUser - clientID: " + clientID);
-////
-////                //устанавливаем корневую директорию пользователя в сетевом хранилище
-////                //добавляем логин пользователя к корневой директории сетевого хранилища
-////                userStorageRoot = userStorageRoot.resolve(clientID);
-////
-////                //TODO temporarily
-////                printMsg("[Server]ClientController.authorizeUser - new userStorageRoot: " + userStorageRoot);
-////
-////                return true;
-////            }
-////        }
-////        return false;
-//        //возвращаем результат проверки релевантности пары логина и пароля
-//        return checkLoginAndPassword(authMessage.getLogin(), authMessage.getPassword());
-//    }
