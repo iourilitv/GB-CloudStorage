@@ -402,9 +402,25 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         printMsg("[server]CommandMessageManager1.onAuthClientRequest() - " +
                 "command: " + commandMessage.getCommand() +
                 ", namesList: " + Arrays.toString(directoryMessage1.getNamesList()));
+        //TODO temporarily
+        printMsg("[server]CommandMessageManager1.onAuthClientRequest() - " +
+                "pipeline: " + ctx.channel().pipeline().toString());
 
         //отправляем объект сообщения(команды) клиенту
         ctx.writeAndFlush(commandMessage);
+
+        //удаляем входящий хэндлер AuthGateway, т.к. после авторизации он больше не нужен
+        //FIXME
+        // дек 28, 2019 7:20:29 PM io.netty.channel.DefaultChannelPipeline onUnhandledInboundException
+        // WARNING: An exceptionCaught() event was fired, and it reached at the tail of the pipeline.
+        // It usually means the last handler in the pipeline did not handle the exception.
+        printMsg("[server]CommandMessageManager1.onAuthClientRequest() - " +
+                "removed pipeline: " + ctx.channel().pipeline().remove(AuthGateway.class));
+
+        //TODO temporarily
+        printMsg("[server]CommandMessageManager1.onAuthClientRequest() - " +
+                "updated pipeline: " + ctx.channel().pipeline().toString());
+
     }
 
     public void printMsg(String msg){
