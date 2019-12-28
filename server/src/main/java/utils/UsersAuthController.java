@@ -1,12 +1,7 @@
-package utils.handlers;
+package utils;
 
 import jdbc.UsersDB;
 import messages.AuthMessage;
-import tcp.NettyServer;
-import tcp.TCPConnection1;
-import utils.CloudStorageServer;
-
-import java.nio.file.Path;
 
 /**
  * This server's class for operating with client registration and authentication.
@@ -21,16 +16,8 @@ public class UsersAuthController {
     //принимаем объект сервера
     private CloudStorageServer storageServer;
 
-//    //инициируем переменную идентификатора подсоединенного клиента
-//    private String clientID = Enum.UNKNOWN_USER.name();
-//    //объявляем переменную для корневой директории пользователя в сетевом хранилище
-//    private Path userStorageRoot;
-
     public UsersAuthController(CloudStorageServer storageServer) {
         this.storageServer = storageServer;
-
-//        //инициируем переменную для корневой директории пользователя в сетевом хранилище
-//        userStorageRoot = server.getStorageRoot();
     }
 
     /**
@@ -41,30 +28,8 @@ public class UsersAuthController {
     public boolean authorizeUser(AuthMessage authMessage){
 
         //FIXME fill me!
-//        server.printMsg("[Server]ClientController.authorizeUser - authMessage.getLogin(): " +
-//                authMessage.getLogin() + ". authMessage.getPassword(): " + authMessage.getPassword());
+        //добавить проверку не авторизован ли уже этот юзер
 
-//        //проверяем релевантность пары логина и пароля
-//        if(checkLoginAndPassword(authMessage.getLogin(), authMessage.getPassword())){
-//            //если такой логин еще не подключен
-//            if(clientID.equals(Enum.UNKNOWN_USER.name())){
-//                //записываем логин пользователя как идентификатор клиента
-//                setClientID(authMessage.getLogin());
-//
-//                //TODO temporarily
-//                printMsg("[Server]ClientController.authorizeUser - clientID: " + clientID);
-//
-//                //устанавливаем корневую директорию пользователя в сетевом хранилище
-//                //добавляем логин пользователя к корневой директории сетевого хранилища
-//                userStorageRoot = userStorageRoot.resolve(clientID);
-//
-//                //TODO temporarily
-//                printMsg("[Server]ClientController.authorizeUser - new userStorageRoot: " + userStorageRoot);
-//
-//                return true;
-//            }
-//        }
-//        return false;
         //возвращаем результат проверки релевантности пары логина и пароля
         return checkLoginAndPassword(authMessage.getLogin(), authMessage.getPassword());
     }
@@ -92,15 +57,35 @@ public class UsersAuthController {
         storageServer.printMsg(msg);
     }
 
-//    public String getClientID() {
-//        return clientID;
-//    }
-
-//    public Path getUserStorageRoot() {
-//        return userStorageRoot;
-//    }
-
-//    public void setClientID(String clientID) {
-//        this.clientID = clientID;
-//    }
 }
+
+//    public boolean authorizeUser(AuthMessage authMessage){
+//
+//        //FIXME fill me!
+////        server.printMsg("[Server]ClientController.authorizeUser - authMessage.getLogin(): " +
+////                authMessage.getLogin() + ". authMessage.getPassword(): " + authMessage.getPassword());
+//
+////        //проверяем релевантность пары логина и пароля
+////        if(checkLoginAndPassword(authMessage.getLogin(), authMessage.getPassword())){
+////            //если такой логин еще не подключен
+////            if(clientID.equals(Enum.UNKNOWN_USER.name())){
+////                //записываем логин пользователя как идентификатор клиента
+////                setClientID(authMessage.getLogin());
+////
+////                //TODO temporarily
+////                printMsg("[Server]ClientController.authorizeUser - clientID: " + clientID);
+////
+////                //устанавливаем корневую директорию пользователя в сетевом хранилище
+////                //добавляем логин пользователя к корневой директории сетевого хранилища
+////                userStorageRoot = userStorageRoot.resolve(clientID);
+////
+////                //TODO temporarily
+////                printMsg("[Server]ClientController.authorizeUser - new userStorageRoot: " + userStorageRoot);
+////
+////                return true;
+////            }
+////        }
+////        return false;
+//        //возвращаем результат проверки релевантности пары логина и пароля
+//        return checkLoginAndPassword(authMessage.getLogin(), authMessage.getPassword());
+//    }

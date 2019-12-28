@@ -1,7 +1,6 @@
 package utils;
 
-import tcp.NettyServer;
-import utils.handlers.UsersAuthController;
+import netty.NettyServer;
 
 import java.io.PrintStream;
 import java.nio.file.Path;

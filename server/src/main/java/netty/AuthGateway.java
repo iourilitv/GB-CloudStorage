@@ -1,17 +1,15 @@
-package tcp;
+package netty;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import messages.AuthMessage;
-import messages.DirectoryMessage;
 import utils.CloudStorageServer;
 import utils.CommandMessage;
 import utils.Commands;
-import utils.handlers.UsersAuthController;
+import utils.UsersAuthController;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * This server's class responds for client authentication.
@@ -24,13 +22,6 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
     private NettyServer server;//TODO не нужен?
     //принимаем объект контроллера авторизации клиента
     private UsersAuthController usersAuthController;
-
-//    //объявляем объект обработчика сообщений(команд)
-//    private CommandMessageManager1 commandMessageManager;
-
-//    //объявляем объект сервисного хендлера
-//    private UsersAuthController usersAuthController;
-
     //объявляем переменную типа команды
     private int command;
 
@@ -39,43 +30,17 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
         this.server = server;
         //принимаем объект контроллера авторизации пользователей
         usersAuthController = storageServer.getUsersAuthController();
-
-//        //инициируем объект контроллера клиента
-//        usersAuthController = new UsersAuthController(server);
-
-//        //инициируем объект обработчика сообщений(команд)
-//        commandMessageManager = new CommandMessageManager1(server);
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-//        super.channelActive(ctx);
-
-//        //если соединение установлено, то добавляем его в список
-//        server.getConnections().add(new TCPConnection1(ctx));
-
-//        //TODO temporarily
-//        server.printMsg("Client has connected. \nServerInboundHandler.channelActive() - ctx: " + ctx +
-//                ", connections.size(): " + server.getConnections().size()
-//                + ", connections.toString(): " + server.getConnections().toString());
-
+    public void channelActive(ChannelHandlerContext ctx) {
         //если соединение установлено, отправляем клиенту сообщение
         ctx.writeAndFlush(new CommandMessage(Commands.SERVER_NOTIFICATION_CLIENT_CONNECTED));
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-//        super.channelInactive(ctx);
-
-        //FIXME разобрать
-//        //если соединение отвалилось, ищем в коллекции его объект по соединению
-//        //удаляем объект соединения из коллекции
-//        server.getConnections().removeIf(c -> c.getCtx().equals(ctx));
-//
-//        //TODO temporarily
-//        server.printMsg("Client has disconnected. \nServerInboundHandler.channelInactive() - ctx: " + ctx +
-//                ", connections.size(): " + server.getConnections().size()
-//                + ", connections.toString(): " + server.getConnections().toString());
+    public void channelInactive(ChannelHandlerContext ctx) {
+        //FIXME разобрать код внизу
     }
 
     @Override
@@ -118,19 +83,8 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
             // к корневой директории клиента по умолчанию
             Path userStorageRoot = storageServer.getStorageRoot();
             userStorageRoot = userStorageRoot.resolve(authMessage.getLogin());
-
-//            //инициируем объект сообщения о директории
-//            DirectoryMessage directoryMessage = new DirectoryMessage();
-//
-//            //формируем список файлов и папок в корневой директории клиента по умолчанию//TODO turn String into Path
-//            directoryMessage.composeFilesAndFoldersNamesList(usersAuthController.getUserStorageRoot().toString());
-//            //инициируем новый объект сообщения(команды)
-//            commandMessage = new CommandMessage(command, directoryMessage);
-//
-//            //удаляем этот хэндлер из конвеера//TODO check!
-//            ctx.channel().pipeline().remove(this);
+            //пробрасываем дальше объект сообщения об успешной авторизации клиента
             ctx.fireChannelRead(new CommandMessage(command, userStorageRoot));
-
         //если авторизации клиента в облачном хранилище не прошла
         } else {
             //инициируем переменную типа команды - ответ об ошибке
@@ -138,15 +92,13 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
             command = Commands.SERVER_RESPONSE_AUTH_ERROR;
             //инициируем новый объект сообщения(команды)
             commandMessage = new CommandMessage(command, authMessage);
+            //отправляем объект сообщения(команды) клиенту
+            ctx.writeAndFlush(commandMessage);
+
+            //TODO temporarily
+            printMsg("[server]AuthGateway.onAuthClientRequest() - ctx: " + ctx +
+                    ", command: " + commandMessage.getCommand());
         }
-
-        //отправляем объект сообщения(команды) клиенту
-//        server.sendToClient(tcpConnection, new CommandMessage(command, directoryMessage));//TODO
-        ctx.writeAndFlush(commandMessage);
-
-        //TODO temporarily
-        printMsg("[server]AuthGateway.onAuthClientRequest() - ctx: " + ctx +
-                ", command: " + commandMessage.getCommand());
     }
 
     @Override
@@ -162,26 +114,15 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
 
 //TODO DELETE!
 //    @Override
-//    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-//        super.channelRegistered(ctx);
-//        //TODO temporarily
-//        server.printMsg("ServerInboundHandler.channelRegistered() - ctx: " + ctx);
-//    }
+//    public void channelInactive(ChannelHandlerContext ctx) {
 //
-//    @Override
-//    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-//        super.channelUnregistered(ctx);
-//        //TODO temporarily
-//        server.printMsg("ServerInboundHandler.channelUnregistered() - ctx: " + ctx);
+//        //FIXME разобрать
+////        //если соединение отвалилось, ищем в коллекции его объект по соединению
+////        //удаляем объект соединения из коллекции
+////        server.getConnections().removeIf(c -> c.getCtx().equals(ctx));
+////
+////        //TODO temporarily
+////        server.printMsg("Client has disconnected. \nServerInboundHandler.channelInactive() - ctx: " + ctx +
+////                ", connections.size(): " + server.getConnections().size()
+////                + ", connections.toString(): " + server.getConnections().toString());
 //    }
-
-//            if(clientID.equals(NettyServer.Enum.UNKNOWN_USER.name())){
-//                //если полученное от клиента сообщение это запрос на авторизацию в облачное хранилище
-//                if(commandMessage.getCommand() == Commands.REQUEST_SERVER_AUTH){
-//                    //вызываем метод обработки запроса от клиента
-//                    onAuthClientRequest(ctx, tcpConnection, commandMessage);
-//                }
-//            }
-
-//            //распознаем и обрабатываем полученный объект сообщения(команды)
-//            commandMessageManager.recognizeAndArrangeMessageObject(ctx, commandMessage);
