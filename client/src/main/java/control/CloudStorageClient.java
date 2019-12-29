@@ -1,6 +1,7 @@
 package control;
 
 import io.netty.channel.ChannelHandlerContext;
+import javafx.GUIController;
 import messages.AuthMessage;
 import messages.FileFragmentMessage;
 import messages.FileMessage;
@@ -39,6 +40,8 @@ public class CloudStorageClient {
 
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
+    //объявляем объект хендлера для операций с директориями
+    private GUIController GUIController;
 
     //FIXME temporarily - будет получать из GUI
     //инициируем константы логина и пароля пользователя
@@ -51,7 +54,9 @@ public class CloudStorageClient {
 
     public void run() throws Exception {
         //инициируем объект файлового обработчика
-        fileUtils = new FileUtils();//TODO здесь ли инициализировать или в CommandMessageManager
+        fileUtils = new FileUtils();
+        //инициируем объект контроллера GUI
+        GUIController = new GUIController();
         //инициируем объект соединения
         new NettyClient(this, IP_ADDR, PORT).run();
     }
@@ -250,6 +255,10 @@ public class CloudStorageClient {
 
     public FileUtils getFileUtils() {
         return fileUtils;
+    }
+
+    public javafx.GUIController getGUIController() {
+        return GUIController;
     }
 
     public void printMsg(String msg){

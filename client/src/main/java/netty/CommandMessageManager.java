@@ -22,13 +22,11 @@ import java.util.Arrays;
 public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     //принимаем объект исходящего хэндлера
     private CloudStorageClient storageClient;
-    //объявляем объект файлового обработчика
+    //принимаем объект файлового обработчика
     private FileUtils fileUtils;
-
     //принимаем объект соединения
     ChannelHandlerContext ctx;
-
-    //объявляем объект хендлера для операций с директориями
+    //принимаем объект контроллера GUI
     private GUIController GUIController;
 
     //объявляем переменную типа команды
@@ -36,10 +34,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 
     public CommandMessageManager(CloudStorageClient storageClient) {
         this.storageClient = storageClient;
-        //инициируем объект хендлера для вывода в GUI
-        GUIController = new GUIController();//TODO точно НЕ здесь надо инициализировать?
-        //инициируем объект файлового обработчика
+        //принимаем объект файлового обработчика
         fileUtils = storageClient.getFileUtils();
+        //принимаем объект контроллера GUI
+        GUIController = storageClient.getGUIController();
     }
 
     @Override
