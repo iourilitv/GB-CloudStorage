@@ -41,6 +41,10 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx) {
         //если соединение установлено, отправляем клиенту сообщение
         ctx.writeAndFlush(new CommandMessage(Commands.SERVER_NOTIFICATION_CLIENT_CONNECTED));
+
+        //TODO temporarily
+        printMsg("[server]AuthGateway.channelActive() - ctx: " + ctx +
+                ", command: " + Commands.SERVER_NOTIFICATION_CLIENT_CONNECTED);
     }
 
     /**

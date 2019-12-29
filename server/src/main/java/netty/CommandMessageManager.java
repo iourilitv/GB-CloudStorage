@@ -149,7 +149,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      */
     private void onUploadFileOkClientResponse(ChannelHandlerContext ctx, CommandMessage commandMessage) {
         //FIXME fill me!
-        printMsg("[server]CommandMessageManager1.onUploadFileOkClientResponse() command: " + commandMessage.getCommand());
+        printMsg("[server]CommandMessageManager.onUploadFileOkClientResponse() command: " + commandMessage.getCommand());
     }
 
     /**
@@ -160,7 +160,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      */
     private void onUploadFileErrorClientResponse(ChannelHandlerContext ctx, CommandMessage commandMessage) {
         //FIXME fill me!
-        printMsg("[server]CommandMessageManager1.onUploadFileErrorClientResponse() command: " + commandMessage.getCommand());
+        printMsg("[server]CommandMessageManager.onUploadFileErrorClientResponse() command: " + commandMessage.getCommand());
     }
 
     /**
@@ -207,7 +207,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      */
     private void onDownloadFileOkClientResponse(ChannelHandlerContext ctx, CommandMessage commandMessage) {
         //FIXME fill me!
-        printMsg("[server]CommandMessageManager1.onDownloadFileOkClientResponse() command: " + commandMessage.getCommand());
+        printMsg("[server]CommandMessageManager.onDownloadFileOkClientResponse() command: " + commandMessage.getCommand());
     }
 
     /**
@@ -218,7 +218,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      */
     private void onDownloadFileErrorClientResponse(ChannelHandlerContext ctx, CommandMessage commandMessage) {
         //FIXME fill me!
-        printMsg("[server]CommandMessageManager1.onDownloadFileErrorClientResponse() command: " + commandMessage.getCommand());
+        printMsg("[server]CommandMessageManager.onDownloadFileErrorClientResponse() command: " + commandMessage.getCommand());
     }
 
     /**
@@ -246,7 +246,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //если что-то пошло не так
         } else {
             //выводим сообщение
-            printMsg("[Server]" + fileUtils.getMsg());
+            printMsg("[server]" + fileUtils.getMsg());
             //инициируем переменную типа команды - ответ об ошибке
             command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_ERROR;
         }
@@ -261,7 +261,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             //если что-то пошло не так
             } else {
                 //выводим сообщение
-                printMsg("[Server]" + fileUtils.getMsg());
+                printMsg("[server]" + fileUtils.getMsg());
                 //инициируем переменную типа команды - ответ об ошибке
                 command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_ERROR;
             }
@@ -301,9 +301,9 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 totalEntireFragsNumber : totalEntireFragsNumber + 1;
 
         //TODO temporarily
-        printMsg("[server]CommandMessageManager1.downloadFileByFrags() - fullFileSize: " + fullFileSize);
-        printMsg("[server]CommandMessageManager1.downloadFileByFrags() - totalFragsNumber: " + totalFragsNumber);
-        printMsg("[server]CommandMessageManager1.downloadFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
+        printMsg("[server]CommandMessageManager.downloadFileByFrags() - fullFileSize: " + fullFileSize);
+        printMsg("[server]CommandMessageManager.downloadFileByFrags() - totalFragsNumber: " + totalFragsNumber);
+        printMsg("[server]CommandMessageManager.downloadFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
 
         //устанавливаем начальные значения номера текущего фрагмента и стартового байта
         long startByte = 0;
@@ -328,8 +328,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         }
 
         //TODO temporarily
-        printMsg("[server]CommandMessageManager1.downloadFileByFrags() - currentFragNumber: " + totalFragsNumber);
-        printMsg("[server]CommandMessageManager1.downloadFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
+        printMsg("[server]CommandMessageManager.downloadFileByFrags() - currentFragNumber: " + totalFragsNumber);
+        printMsg("[server]CommandMessageManager.downloadFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
 
         //***отправляем последний фрагмент, если он есть***
         if(totalFragsNumber > totalEntireFragsNumber){
@@ -349,7 +349,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 
         //TODO temporarily
         long finish = System.currentTimeMillis() - start;
-        printMsg("[server]CommandMessageManager1.downloadFileByFrags() - duration(mc): " + finish);
+        printMsg("[server]CommandMessageManager.downloadFileByFrags() - duration(mc): " + finish);
     }
 
     /**
@@ -370,7 +370,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //если что-то пошло не так
         } else {
             //выводим сообщение
-            printMsg("[Server]" + fileUtils.getMsg());
+            printMsg("[server]" + fileUtils.getMsg());
             //инициируем переменную типа команды - ответ об ошибке скачивания
             command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_ERROR;
         }
@@ -397,30 +397,31 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //инициируем новый объект сообщения(команды)
         commandMessage = new CommandMessage(command, directoryMessage);
 
-        //TODO temporarily
-        DirectoryMessage directoryMessage1 = (DirectoryMessage)commandMessage.getMessageObject();
-        printMsg("[server]CommandMessageManager1.onAuthClientRequest() - " +
-                "command: " + commandMessage.getCommand() +
-                ", namesList: " + Arrays.toString(directoryMessage1.getNamesList()));
-        //TODO temporarily
-        printMsg("[server]CommandMessageManager1.onAuthClientRequest() - " +
-                "pipeline: " + ctx.channel().pipeline().toString());
+//        //TODO temporarily
+//        DirectoryMessage directoryMessage1 = (DirectoryMessage)commandMessage.getMessageObject();
+//        printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
+//                "ctx: " + ctx +
+//                ", command: " + commandMessage.getCommand() +
+//                ", namesList: " + Arrays.toString(directoryMessage1.getNamesList()));
+//        printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
+//                "pipeline: " + ctx.channel().pipeline().toString());
 
         //отправляем объект сообщения(команды) клиенту
         ctx.writeAndFlush(commandMessage);
 
-        //удаляем входящий хэндлер AuthGateway, т.к. после авторизации он больше не нужен
-        //FIXME
-        // дек 28, 2019 7:20:29 PM io.netty.channel.DefaultChannelPipeline onUnhandledInboundException
-        // WARNING: An exceptionCaught() event was fired, and it reached at the tail of the pipeline.
-        // It usually means the last handler in the pipeline did not handle the exception.
-        printMsg("[server]CommandMessageManager1.onAuthClientRequest() - " +
-                "removed pipeline: " + ctx.channel().pipeline().remove(AuthGateway.class));
-
         //TODO temporarily
-        printMsg("[server]CommandMessageManager1.onAuthClientRequest() - " +
+        //удаляем входящий хэндлер AuthGateway, т.к. после авторизации он больше не нужен
+        printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
+                "removed pipeline: " + ctx.channel().pipeline().remove(AuthGateway.class));
+        printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
                 "updated pipeline: " + ctx.channel().pipeline().toString());
 
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+        ctx.close();
     }
 
     public void printMsg(String msg){
