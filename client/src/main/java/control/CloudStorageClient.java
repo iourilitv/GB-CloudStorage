@@ -1,6 +1,5 @@
 package control;
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import messages.AuthMessage;
 import messages.FileFragmentMessage;
@@ -22,11 +21,6 @@ import java.util.concurrent.CountDownLatch;
 public class CloudStorageClient {
     //принимаем объект соединения
     ChannelHandlerContext ctx;
-
-    //TODO temporarily
-    //объявляем объект защелки
-    private CountDownLatch countDownLatch;
-
     //инициируем константу IP адреса сервера(здесь - адрес моего ноута в домашней локальной сети)
     private static final String IP_ADDR = "192.168.1.102";//89.222.249.131(внешний белый адрес)
     //инициируем константу порта соединения
@@ -58,74 +52,37 @@ public class CloudStorageClient {
     public void run() throws Exception {
         //инициируем объект файлового обработчика
         fileUtils = new FileUtils();//TODO здесь ли инициализировать или в CommandMessageManager
-
         //инициируем объект соединения
         new NettyClient(this, IP_ADDR, PORT).run();
-
-//        //инициируем объект защелки на один сброс//TODO чтобы дождаться авторизации
-//        countDownLatch = new CountDownLatch(1);
     }
-
-//    @Override
-//    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-//        super.handlerAdded(ctx);
-//        this.ctx = ctx;
-//
-//        //TODO temporarily
-//        printMsg("Client has connected. \nClientOutboundHandler.handlerAdded() - ctx: " + ctx);
-//
-//    }
 
     //FIXME удалить, когда будет реализован интерфейс
     public void startTest(ChannelHandlerContext ctx) throws IOException {
+        //принимаем переменную четевого подключения
         this.ctx = ctx;
-
         //инициируем переменную для текущей директории клиента
         currentClientDir = clientDefaultRoot;
-//        //инициируем объект защелки на один сброс
-//        countDownLatch = new CountDownLatch(1);
+        //отправляем на сервер запрос на авторизацию в облачное хранилище
+        requestAuthorization(ctx, login, password);
+        //добавляем к корневой директории пользователя в сетевом хранилище
+        // имя подпапки назначения
+        storageDir = storageDir.concat("folderToUploadFile");
+        //инициируем переменную для текущей директории клиента
+        currentClientDir = clientDefaultRoot;
+        //отправляем на сервер запрос на загрузку маленького файла в облачное хранилище
+        uploadFile(currentClientDir, storageDir, "toUpload.txt");//TODO for test
+        //отправляем на сервер запрос на загрузку большого файла в облачное хранилище
+        uploadFile(currentClientDir, storageDir, "toUploadBIG.mp4");//TODO for test
+//        uploadFile(currentClientDir, storageDir, "toUploadMedium.png");//TODO for test
 
-//        try {
-
-//            //ждем сброса защелки по подключению к серверу
-//            countDownLatch.await();
-            //отправляем на сервер запрос на авторизацию в облачное хранилище
-            requestAuthorization(ctx, login, password);
-
-//            //инициируем объект защелки на один сброс
-//            countDownLatch = new CountDownLatch(1);
-//            //ждем сброса защелки(после авторизации)
-//            countDownLatch.await();
-
-            //добавляем к корневой директории пользователя в сетевом хранилище
-            // имя подпапки назначения
-            storageDir = storageDir.concat("folderToUploadFile");
-            //инициируем переменную для текущей директории клиента
-            currentClientDir = clientDefaultRoot;
-            //отправляем на сервер запрос на загрузку маленького файла в облачное хранилище
-            uploadFile(currentClientDir, storageDir, "toUpload.txt");//TODO for test
-            //отправляем на сервер запрос на загрузку большого файла в облачное хранилище
-            uploadFile(currentClientDir, storageDir, "toUploadBIG.mp4");//TODO for test
-//            uploadFile(currentClientDir, storageDir, "toUploadMedium.png");//TODO for test
-
-//            //инициируем объект защелки на один сброс//TODO see "toUpload.txt"
-//            countDownLatch = new CountDownLatch(1);//TODO
-//            //ждем сброса защелки
-//            countDownLatch.await();
-
-            //восстанавливаем начальное значение директории в сетевом хранилище//TODO temporarily
-            storageDir = "";
-            //добавляем к корневой директории клиента имя подпапки назначения на клиенте
-            clientDir = clientDir.concat("folderToDownloadFile");
-            //отправляем на сервер запрос на скачивание маленького файла из облачного хранилища
-            downloadFile(storageDir, clientDir, "toDownload.png");//TODO for test
-            //отправляем на сервер запрос на скачивание большого файла из облачного хранилища
-            downloadFile(storageDir, clientDir, "toDownloadBIG.mp4");//TODO for test
-
-//        }
-//        catch (InterruptedException /*| IOException*/ e) {//TODO see "toUpload.txt"
-//            e.printStackTrace();
-//        }
+        //восстанавливаем начальное значение директории в сетевом хранилище//TODO temporarily
+        storageDir = "";
+        //добавляем к корневой директории клиента имя подпапки назначения на клиенте
+        clientDir = clientDir.concat("folderToDownloadFile");
+        //отправляем на сервер запрос на скачивание маленького файла из облачного хранилища
+        downloadFile(storageDir, clientDir, "toDownload.png");//TODO for test
+        //отправляем на сервер запрос на скачивание большого файла из облачного хранилища
+        downloadFile(storageDir, clientDir, "toDownloadBIG.mp4");//TODO for test
     }
 
     //отправляем на сервер запрос на авторизацию в облачное хранилище
@@ -140,19 +97,6 @@ public class CloudStorageClient {
         //TODO temporarily
         printMsg("***CloudStorageClient.requestAuthorization() - has finished***");
     }
-
-//    //отправляем на сервер запрос на авторизацию в облачное хранилище//TODO
-//    public void requestAuthorization(Channel channel, String login, String password) {
-//        //TODO temporarily
-//        printMsg("***CloudStorageClient.requestAuthorization() - has started***");
-//
-//        //отправляем на сервер объект сообщения(команды)
-//        channel.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
-//                new AuthMessage(login, password)));
-//
-//        //TODO temporarily
-//        printMsg("***CloudStorageClient.requestAuthorization() - has finished***");
-//    }
 
     //отправляем на сервер запрос на загрузку файла в облачное хранилище
     //FIXME перенести в контроллер интерфейса
@@ -302,11 +246,6 @@ public class CloudStorageClient {
 
     public String getClientDefaultRoot() {
         return clientDefaultRoot;
-    }
-
-    //TODO temporarily
-    public CountDownLatch getCountDownLatch() {
-        return countDownLatch;
     }
 
     public FileUtils getFileUtils() {

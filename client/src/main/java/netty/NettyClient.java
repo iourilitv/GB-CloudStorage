@@ -21,11 +21,6 @@ public class NettyClient {
     //принимаем константу порта соединения
     private final int PORT;
 
-//    //FIXME temporarily - будет получать из GUI
-//    //инициируем константы логина и пароля пользователя
-//    private final String login = "login1";
-//    private final String password = "pass1";
-
     public NettyClient(CloudStorageClient storageClient, String IP_ADDR, int PORT) {
         this.storageClient = storageClient;
         this.IP_ADDR = IP_ADDR;
@@ -76,9 +71,6 @@ public class NettyClient {
 
     public void onConnectionReady(ChannelFuture future) {
         printMsg("Waiting for the server answer...");
-
-//        //отправляем на сервер запрос на авторизацию в облачное хранилище
-//        storageClient.requestAuthorization(future.channel(), login, password);
     }
 
     public void printMsg(String msg){

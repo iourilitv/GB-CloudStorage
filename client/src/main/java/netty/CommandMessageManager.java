@@ -36,16 +36,15 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 
     public CommandMessageManager(CloudStorageClient storageClient) {
         this.storageClient = storageClient;
-
         //инициируем объект хендлера для вывода в GUI
         GUIController = new GUIController();//TODO точно НЕ здесь надо инициализировать?
         //инициируем объект файлового обработчика
-//        fileUtils = new FileUtils();//TODO здесь ли инициализировать или в CloudStorageClient?
         fileUtils = storageClient.getFileUtils();
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx){
+        //принимаем объект соединения
         this.ctx = ctx;
     }
 
@@ -124,8 +123,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //TODO temporarily
         printMsg("[client]CommandMessageManager.onServerConnectedResponse() - command: "
                 + commandMessage.getCommand());
-//        //сбрасываем защелку
-//        storageClient.getCountDownLatch().countDown();
 
         //TODO temporarily
         //запускаем тест
@@ -149,9 +146,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         GUIController.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
                 directoryMessage.getNamesList());
 
-        //TODO temporarily
-        //сбрасываем защелку
-//        storageClient.getCountDownLatch().countDown();
     }
 
     /**
@@ -182,8 +176,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //TODO temporarily
         printMsg("[client]CommandMessageManager.onUploadFileOkServerResponse() - command: "
                 + commandMessage.getCommand() + ". namesList: " + Arrays.toString(directoryMessage.getNamesList()));
-        //сбрасываем защелку
-//        storageClient.getCountDownLatch().countDown();
+
     }
 
     /**
