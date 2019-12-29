@@ -1,11 +1,11 @@
-package utils.handlers;
+package javafx;
 
 import java.util.Arrays;
 
 /**
  * The client class for operating with directoryMessages.
  */
-public class DirectoryCommandHandler {
+public class GUIController {
 
     /**
      * Метод выводит в GUI список файлов и папок в корневой пользовательской директории
@@ -17,7 +17,7 @@ public class DirectoryCommandHandler {
         //FIXME передать в GUI
 
         //TODO temporarily
-        System.out.println("(Client)DirectoryCommandHandler.updateStorageFilesListInGUI directory: " +
+        System.out.println("[client]GUIController.updateStorageFilesListInGUI directory: " +
                 directory +
                 ". filesList: " + Arrays.toString(fileNamesList));
     }

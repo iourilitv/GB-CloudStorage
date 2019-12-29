@@ -1,10 +1,11 @@
 package control;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import messages.AuthMessage;
 import messages.FileFragmentMessage;
 import messages.FileMessage;
-import tcp.TCPClient;
-import tcp.TCPConnection;
+import netty.NettyClient;
 import utils.CommandMessage;
 import utils.Commands;
 import utils.FileUtils;
@@ -16,22 +17,22 @@ import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * The class is responded for operation with storage by communication with command handlers.
+ * This client's class is responded for operation with storage by communication with command handlers.
  */
-public class StorageTest {
-
-    public StorageTest() {
-        //инициируем объект сетевого соединения с сервером
-        TCPClient tcpClient = new TCPClient(this);
-        //принимаем объект соединения
-        connection = tcpClient.getConnection();
-        //запускаем тестирование
-        startTest();
-    }
+public class CloudStorageClient {
+    //принимаем объект соединения
+    ChannelHandlerContext ctx;
 
     //TODO temporarily
     //объявляем объект защелки
     private CountDownLatch countDownLatch;
+
+    //инициируем константу IP адреса сервера(здесь - адрес моего ноута в домашней локальной сети)
+    private static final String IP_ADDR = "192.168.1.102";//89.222.249.131(внешний белый адрес)
+    //инициируем константу порта соединения
+    private static final int PORT = 8189;
+    //инициируем переменную для печати сообщений в консоль
+    private final PrintStream log = System.out;
 
     //инициируем переменную для директории, заданной относительно userStorageRoot в сетевом хранилище
     private String storageDir = "";
@@ -41,38 +42,70 @@ public class StorageTest {
     private String clientDir = "";
     //объявляем переменную для текущей директории клиента
     private String currentClientDir;
-    //инициируем переменную для печати сообщений в консоль
-    private final PrintStream log = System.out;
-    //объявляем переменную сетевого соединения
-    private TCPConnection connection;
 
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
 
-    //FIXME удалить, когда будет реализован интерфейс
-    public void startTest() {
+    //FIXME temporarily - будет получать из GUI
+    //инициируем константы логина и пароля пользователя
+    private final String login = "login1";
+    private final String password = "pass1";
+
+    public CloudStorageClient() {
+
+    }
+
+    public void run() throws Exception {
         //инициируем объект файлового обработчика
-        fileUtils = new FileUtils();
+        fileUtils = new FileUtils();//TODO здесь ли инициализировать или в CommandMessageManager
+
+        //инициируем объект соединения
+        new NettyClient(this, IP_ADDR, PORT).run();
+
+//        //инициируем объект защелки на один сброс//TODO чтобы дождаться авторизации
+//        countDownLatch = new CountDownLatch(1);
+    }
+
+//    @Override
+//    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+//        super.handlerAdded(ctx);
+//        this.ctx = ctx;
+//
+//        //TODO temporarily
+//        printMsg("Client has connected. \nClientOutboundHandler.handlerAdded() - ctx: " + ctx);
+//
+//    }
+
+    //FIXME удалить, когда будет реализован интерфейс
+    public void startTest(ChannelHandlerContext ctx) throws IOException {
+        this.ctx = ctx;
 
         //инициируем переменную для текущей директории клиента
         currentClientDir = clientDefaultRoot;
-        //инициируем объект защелки на один сброс
-        countDownLatch = new CountDownLatch(1);
-        //отправляем на сервер запрос на авторизацию в облачное хранилище
-//        requestAuthorization("login1", "pass1");//TODO
+//        //инициируем объект защелки на один сброс
+//        countDownLatch = new CountDownLatch(1);
 
-        try {
-            //ждем сброса защелки
-            countDownLatch.await();
+//        try {
+
+//            //ждем сброса защелки по подключению к серверу
+//            countDownLatch.await();
+            //отправляем на сервер запрос на авторизацию в облачное хранилище
+            requestAuthorization(ctx, login, password);
+
+//            //инициируем объект защелки на один сброс
+//            countDownLatch = new CountDownLatch(1);
+//            //ждем сброса защелки(после авторизации)
+//            countDownLatch.await();
+
             //добавляем к корневой директории пользователя в сетевом хранилище
             // имя подпапки назначения
             storageDir = storageDir.concat("folderToUploadFile");
             //инициируем переменную для текущей директории клиента
             currentClientDir = clientDefaultRoot;
             //отправляем на сервер запрос на загрузку маленького файла в облачное хранилище
-//            uploadFile(currentClientDir, storageDir, "toUpload.txt");//TODO for test
+            uploadFile(currentClientDir, storageDir, "toUpload.txt");//TODO for test
             //отправляем на сервер запрос на загрузку большого файла в облачное хранилище
-//            uploadFile(currentClientDir, storageDir, "toUploadBIG.mp4");//TODO for test
+            uploadFile(currentClientDir, storageDir, "toUploadBIG.mp4");//TODO for test
 //            uploadFile(currentClientDir, storageDir, "toUploadMedium.png");//TODO for test
 
 //            //инициируем объект защелки на один сброс//TODO see "toUpload.txt"
@@ -85,32 +118,47 @@ public class StorageTest {
             //добавляем к корневой директории клиента имя подпапки назначения на клиенте
             clientDir = clientDir.concat("folderToDownloadFile");
             //отправляем на сервер запрос на скачивание маленького файла из облачного хранилища
-//            downloadFile(storageDir, clientDir, "toDownload.png");//TODO for test
+            downloadFile(storageDir, clientDir, "toDownload.png");//TODO for test
             //отправляем на сервер запрос на скачивание большого файла из облачного хранилища
             downloadFile(storageDir, clientDir, "toDownloadBIG.mp4");//TODO for test
-        } catch (InterruptedException /*| IOException*/ e) {//TODO see "toUpload.txt"
-            e.printStackTrace();
-        }
+
+//        }
+//        catch (InterruptedException /*| IOException*/ e) {//TODO see "toUpload.txt"
+//            e.printStackTrace();
+//        }
     }
 
     //отправляем на сервер запрос на авторизацию в облачное хранилище
-    private void requestAuthorization(String login, String password) {
+    private void requestAuthorization(ChannelHandlerContext ctx, String login, String password) {
         //TODO temporarily
-        printMsg("***StorageTest.requestAuthorization() - has started***");
+        printMsg("***CloudStorageClient.requestAuthorization() - has started***");
 
         //отправляем на сервер объект сообщения(команды)
-        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
+        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
                 new AuthMessage(login, password)));
 
         //TODO temporarily
-        printMsg("***StorageTest.requestAuthorization() - has finished***");
+        printMsg("***CloudStorageClient.requestAuthorization() - has finished***");
     }
+
+//    //отправляем на сервер запрос на авторизацию в облачное хранилище//TODO
+//    public void requestAuthorization(Channel channel, String login, String password) {
+//        //TODO temporarily
+//        printMsg("***CloudStorageClient.requestAuthorization() - has started***");
+//
+//        //отправляем на сервер объект сообщения(команды)
+//        channel.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
+//                new AuthMessage(login, password)));
+//
+//        //TODO temporarily
+//        printMsg("***CloudStorageClient.requestAuthorization() - has finished***");
+//    }
 
     //отправляем на сервер запрос на загрузку файла в облачное хранилище
     //FIXME перенести в контроллер интерфейса
     public void uploadFile(String fromDir, String toDir, String filename) throws IOException {
         //TODO temporarily
-        printMsg("***StorageTest.uploadFile() - has started***");
+        printMsg("***CloudStorageClient.uploadFile() - has started***");
 
         //вычисляем размер файла
         long fileSize = Files.size(Paths.get(fromDir, filename));
@@ -125,7 +173,7 @@ public class StorageTest {
         }
 
         //TODO temporarily
-        printMsg("***StorageTest.uploadFile() - has finished***");
+        printMsg("***CloudStorageClient.uploadFile() - has finished***");
     }
 
     /**
@@ -151,9 +199,9 @@ public class StorageTest {
                 totalEntireFragsNumber : totalEntireFragsNumber + 1;
 
         //TODO temporarily
-        System.out.println("StorageTest.uploadFileByFrags() - fullFileSize: " + fullFileSize);
-        System.out.println("StorageTest.uploadFileByFrags() - totalFragsNumber: " + totalFragsNumber);
-        System.out.println("StorageTest.uploadFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
+        System.out.println("CloudStorageClient.uploadFileByFrags() - fullFileSize: " + fullFileSize);
+        System.out.println("CloudStorageClient.uploadFileByFrags() - totalFragsNumber: " + totalFragsNumber);
+        System.out.println("CloudStorageClient.uploadFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
 
         //устанавливаем началные значения номера текущего фрагмента и стартового байта
         long startByte = 0;
@@ -171,14 +219,16 @@ public class StorageTest {
             fileFragmentMessage.readFileDataToFragment(fromDir, filename, startByte);
             //увеличиваем указатель стартового байта на размер фрагмента
             startByte += FileFragmentMessage.CONST_FRAG_SIZE;
+
             //отправляем на сервер объект сообщения(команды)
-            connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_FRAG_UPLOAD,
+            ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_FRAG_UPLOAD,
                     fileFragmentMessage));
+
         }
 
         //TODO temporarily
-        System.out.println("StorageTest.uploadFileByFrags() - currentFragNumber: " + totalFragsNumber);
-        System.out.println("StorageTest.uploadFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
+        System.out.println("CloudStorageClient.uploadFileByFrags() - currentFragNumber: " + totalFragsNumber);
+        System.out.println("CloudStorageClient.uploadFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
 
         //***отправляем последний фрагмент, если он есть***
         if(totalFragsNumber > totalEntireFragsNumber){
@@ -190,14 +240,15 @@ public class StorageTest {
                             totalFragsNumber, totalFragsNumber, finalFileFragmentSize, fragsNames, dataFinal);
             //читаем данные во фрагмент с определенного места файла
             fileFragmentMessage.readFileDataToFragment(fromDir, filename, startByte);
+
             //отправляем на сервер объект сообщения(команды)
-            connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_FRAG_UPLOAD,
+            ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_FRAG_UPLOAD,
                     fileFragmentMessage));
         }
 
         //TODO temporarily
         long finish = System.currentTimeMillis() - start;
-        System.out.println("StorageTest.uploadFileByFrags() - duration(mc): " + finish);
+        System.out.println("CloudStorageClient.uploadFileByFrags() - duration(mc): " + finish);
     }
 
     /**
@@ -210,17 +261,25 @@ public class StorageTest {
     private void uploadEntireFile(String fromDir, String toDir, String filename, long fileSize) {
         //инициируем объект файлового сообщения
         FileMessage fileMessage = new FileMessage(fromDir, toDir, filename, fileSize);
+
+        //TODO temporarily
+        System.out.println("CloudStorageClient.uploadEntireFile() - fileUtils: " + fileUtils +
+                ", currentClientDir: " + currentClientDir +
+                ", fileMessage: " + fileMessage);
+
         //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
         //FIXME Разобраться с абсолютными папкими клиента
         //если скачивание прошло удачно
         if(fileUtils.readFile(currentClientDir, fileMessage)){
+
             //отправляем на сервер объект сообщения(команды)
-            connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
+            ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
                     fileMessage));
+
             //если что-то пошло не так
         } else {
             //выводим сообщение
-            printMsg("(Client)" + fileUtils.getMsg());
+            printMsg("[client]" + fileUtils.getMsg());
         }
     }
 
@@ -228,20 +287,17 @@ public class StorageTest {
     //FIXME перенести в контроллер интерфейса
     public void downloadFile(String fromDir, String toDir, String filename){
         //TODO temporarily
-        printMsg("***StorageTest.downloadFile() - has started***");
+        printMsg("***CloudStorageClient.downloadFile() - has started***");
 
         //инициируем объект файлового сообщения
         FileMessage fileMessage = new FileMessage(fromDir, toDir, filename);
+
         //отправляем на сервер объект сообщения(команды)
-        connection.sendMessageObject(new CommandMessage(Commands.REQUEST_SERVER_FILE_DOWNLOAD,
+        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_DOWNLOAD,
                 fileMessage));
 
         //TODO temporarily
-        printMsg("***StorageTest.downloadFile() - has finished***");
-    }
-
-    public TCPConnection getConnection() {
-        return connection;
+        printMsg("***CloudStorageClient.downloadFile() - has finished***");
     }
 
     public String getClientDefaultRoot() {
@@ -253,7 +309,11 @@ public class StorageTest {
         return countDownLatch;
     }
 
-    public synchronized void printMsg(String msg){
+    public FileUtils getFileUtils() {
+        return fileUtils;
+    }
+
+    public void printMsg(String msg){
         log.append(msg).append("\n");
     }
 

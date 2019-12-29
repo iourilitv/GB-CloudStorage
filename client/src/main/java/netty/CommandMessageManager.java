@@ -1,44 +1,84 @@
-package utils;
+package netty;
 
-import control.StorageTest;
+import control.CloudStorageClient;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.ReferenceCountUtil;
 import messages.DirectoryMessage;
 import messages.FileFragmentMessage;
 import messages.FileMessage;
-import tcp.TCPConnection;
-import utils.handlers.DirectoryCommandHandler;
+import utils.CommandMessage;
+import utils.Commands;
+import utils.FileUtils;
+import javafx.GUIController;
 
+import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 /**
  * The client class for recognizing command messages and control command handlers.
  */
-public class CommandMessageManager {
-    //принимаем объект тестера
-    private StorageTest tester;
+public class CommandMessageManager extends ChannelInboundHandlerAdapter {
+    //принимаем объект исходящего хэндлера
+    private CloudStorageClient storageClient;
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
 
+    //принимаем объект соединения
+    ChannelHandlerContext ctx;
+
     //объявляем объект хендлера для операций с директориями
-    private DirectoryCommandHandler directoryCommandHandler;
+    private GUIController GUIController;
 
     //объявляем переменную типа команды
     private int command;
 
-    public CommandMessageManager(StorageTest tester) {
-        this.tester = tester;
-        //инициируем объект хендлера для операций с директориями
-        directoryCommandHandler = new DirectoryCommandHandler();
+    public CommandMessageManager(CloudStorageClient storageClient) {
+        this.storageClient = storageClient;
+
+        //инициируем объект хендлера для вывода в GUI
+        GUIController = new GUIController();//TODO точно НЕ здесь надо инициализировать?
         //инициируем объект файлового обработчика
-        fileUtils = new FileUtils();
+//        fileUtils = new FileUtils();//TODO здесь ли инициализировать или в CloudStorageClient?
+        fileUtils = storageClient.getFileUtils();
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx){
+        this.ctx = ctx;
+    }
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msgObject) throws IOException {
+        try {
+            //десериализуем объект сообщения(команды)
+            CommandMessage commandMessage = (CommandMessage) msgObject;
+
+            //TODO temporarily
+            printMsg("[client]CommandMessageManager.channelRead() - command: "
+                    + commandMessage.getCommand());
+
+            //распознаем и обрабатываем полученный объект сообщения(команды)
+            recognizeAndArrangeMessageObject(commandMessage);
+        }
+        finally {
+            ReferenceCountUtil.release(msgObject);
+        }
     }
 
     /**
      * Метот распознает тип команды и обрабатывает ее.
      * @param commandMessage - объект сообщения(команды)
      */
-    public void recognizeAndArrangeMessageObject(CommandMessage commandMessage) {
+    public void recognizeAndArrangeMessageObject(CommandMessage commandMessage) throws IOException {
         //выполняем операции в зависимости от типа полученного сообщения(команды)
         switch (commandMessage.getCommand()) {
+            //обрабатываем полученное от сервера подтверждение успешного подключения клиента
+            case Commands.SERVER_NOTIFICATION_CLIENT_CONNECTED:
+                //вызываем метод обработки ответа сервера
+                onServerConnectedResponse(commandMessage);
+                break;
             //обрабатываем полученное от сервера подтверждение успешной авторизации в облачное хранилище
             case Commands.SERVER_RESPONSE_AUTH_OK:
                 //вызываем метод обработки ответа сервера
@@ -80,6 +120,18 @@ public class CommandMessageManager {
         }
     }
 
+    private void onServerConnectedResponse(CommandMessage commandMessage) throws IOException {
+        //TODO temporarily
+        printMsg("[client]CommandMessageManager.onServerConnectedResponse() - command: "
+                + commandMessage.getCommand());
+//        //сбрасываем защелку
+//        storageClient.getCountDownLatch().countDown();
+
+        //TODO temporarily
+        //запускаем тест
+        storageClient.startTest(ctx);
+    }
+
     /**
      * Метод обрабатывает полученное от сервера подтверждение успешной авторизации в облачное хранилище
      * @param commandMessage - объект сообщения(команды)
@@ -87,13 +139,19 @@ public class CommandMessageManager {
     private void onAuthOkServerResponse(CommandMessage commandMessage) {
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
         DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
+
+        //TODO temporarily
+        printMsg("[client]CommandMessageManager.onAuthOkServerResponse() - command: "
+                + commandMessage.getCommand() + ". namesList: " + Arrays.toString(directoryMessage.getNamesList()));
+
+        //FIXME нужно передавать в контроллер GUI
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
-        directoryCommandHandler.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
+        GUIController.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
                 directoryMessage.getNamesList());
 
         //TODO temporarily
         //сбрасываем защелку
-        tester.getCountDownLatch().countDown();
+//        storageClient.getCountDownLatch().countDown();
     }
 
     /**
@@ -104,8 +162,7 @@ public class CommandMessageManager {
         //FIXME
         // вывести в GUI сообщение об ошибке
         // повторить запрос на авторизацию с новыми данными логина и пароля
-
-        tester.printMsg("(Client)ObjectHandler.onAuthErrorServerResponse() - Something wrong with your login and password!");
+        printMsg("[client]CommandMessageManager.onAuthErrorServerResponse() - Something wrong with your login and password!");
     }
 
     /**
@@ -116,13 +173,17 @@ public class CommandMessageManager {
     private void onUploadFileOkServerResponse(CommandMessage commandMessage) {
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
         DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
+
+        //FIXME нужно передавать в контроллер GUI
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
-        directoryCommandHandler.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
+        GUIController.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
                 directoryMessage.getNamesList());
 
         //TODO temporarily
+        printMsg("[client]CommandMessageManager.onUploadFileOkServerResponse() - command: "
+                + commandMessage.getCommand() + ". namesList: " + Arrays.toString(directoryMessage.getNamesList()));
         //сбрасываем защелку
-        tester.getCountDownLatch().countDown();
+//        storageClient.getCountDownLatch().countDown();
     }
 
     /**
@@ -132,7 +193,7 @@ public class CommandMessageManager {
      */
     private void onUploadFileErrorServerResponse(CommandMessage commandMessage) {
         //FIXME fill me!
-        tester.printMsg("(Client)ObjectHandler.onUploadFileErrorServerResponse() command: " + commandMessage.getCommand());
+        printMsg("[client]CommandMessageManager.onUploadFileErrorServerResponse() command: " + commandMessage.getCommand());
     }
 
     /**
@@ -149,7 +210,7 @@ public class CommandMessageManager {
 
         //FIXME придется указывать абсолютный путь, если будет выбор папки клиента
         //собираем текущую директорию на клиенте
-        String toDir = tester.getClientDefaultRoot();
+        String toDir = storageClient.getClientDefaultRoot();
         toDir = toDir.concat("/").concat(clientDir);
         //если сохранение прошло удачно
         if(fileUtils.saveFile(toDir, fileMessage)){//FIXME см.выше
@@ -158,14 +219,15 @@ public class CommandMessageManager {
         //если что-то пошло не так
         } else {
             //выводим сообщение
-            tester.printMsg("(Client)" + fileUtils.getMsg());
+            printMsg("[client]" + fileUtils.getMsg());
             //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
             command = Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_ERROR;
         }
         //создаем объект файлового сообщения
         fileMessage = new FileMessage(storageDir, clientDir, fileMessage.getFilename());
+
         //отправляем объект сообщения(команды) на сервер
-        tester.getConnection().sendMessageObject(new CommandMessage(command, fileMessage));
+        ctx.writeAndFlush(new CommandMessage(command, fileMessage));
     }
 
     /**
@@ -175,7 +237,7 @@ public class CommandMessageManager {
      */
     private void onDownloadFileErrorServerResponse(CommandMessage commandMessage) {
         //FIXME fill me!
-        tester.printMsg("Client.onDownloadFileErrorServerResponse() command: " + commandMessage.getCommand());
+        printMsg("[client]CommandMessageManager.onDownloadFileErrorServerResponse() command: " + commandMessage.getCommand());
     }
 
     /**
@@ -188,7 +250,7 @@ public class CommandMessageManager {
 
         //собираем целевую директорию на клиенте
         //сбрасываем до корневой папки
-        String toTempDir = tester.getClientDefaultRoot();
+        String toTempDir = storageClient.getClientDefaultRoot();
         // добавляем временную директорию клиента из объекта сообщения(команды)
         toTempDir = toTempDir.concat("/").concat(fileFragmentMessage.getToTempDir());
         //создаем объект пути к папке с загруженным файлом
@@ -203,7 +265,7 @@ public class CommandMessageManager {
             //если что-то пошло не так
         } else {
             //выводим сообщение
-            tester.printMsg("(Client)" + fileUtils.getMsg());
+            printMsg("[client]" + fileUtils.getMsg());
 
             //FIXME продумать, что отравлять серверу в ответ на присланный фрагмент и как это обрабатывать на сервере
 //            //инициируем переменную типа команды - ответ об ошибке
@@ -221,7 +283,7 @@ public class CommandMessageManager {
                 //если что-то пошло не так
             } else {
                 //выводим сообщение
-                tester.printMsg("(Client)" + fileUtils.getMsg());
+                printMsg("[client]" + fileUtils.getMsg());
 
                 //FIXME продумать, что отравлять серверу в ответ на присланный фрагмент и как это обрабатывать на сервере
 //                //инициируем переменную типа команды - ответ об ошибке
@@ -233,5 +295,15 @@ public class CommandMessageManager {
 //        fileFragmentMessage = new FileFragmentMessage(storageDir, clientDir, fileMessage.getFilename());
 //        //отправляем объект сообщения(команды) на сервер
 //        tester.getConnection().sendMessageObject(new CommandMessage(command, fileFragmentMessage));
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
+    }
+
+    public void printMsg(String msg){
+        storageClient.printMsg(msg);
     }
 }
