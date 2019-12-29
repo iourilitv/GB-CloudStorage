@@ -18,16 +18,13 @@ import java.nio.file.Path;
 public class AuthGateway extends ChannelInboundHandlerAdapter {
     //принимаем объект контроллера сетевого хранилища
     private final CloudStorageServer storageServer;
-    //принимаем объект сервера
-    private NettyServer server;//TODO не нужен?
     //принимаем объект контроллера авторизации клиента
     private UsersAuthController usersAuthController;
     //объявляем переменную типа команды
     private int command;
 
-    public AuthGateway(CloudStorageServer storageServer, NettyServer server) {
+    public AuthGateway(CloudStorageServer storageServer) {
         this.storageServer = storageServer;
-        this.server = server;
         //принимаем объект контроллера авторизации пользователей
         usersAuthController = storageServer.getUsersAuthController();
     }
@@ -109,7 +106,7 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
             Path userStorageRoot = storageServer.getStorageRoot();
             userStorageRoot = userStorageRoot.resolve(authMessage.getLogin());
             //пробрасываем дальше объект сообщения об успешной авторизации клиента
-            ctx.fireChannelRead(new CommandMessage(command, userStorageRoot));
+            ctx.fireChannelRead(new CommandMessage(command, userStorageRoot.toString()));
         //если авторизации клиента в облачном хранилище не прошла
         } else {
             //инициируем переменную типа команды - ответ об ошибке

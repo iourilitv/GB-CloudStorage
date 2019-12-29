@@ -23,12 +23,16 @@ public class CloudStorageServer {
     private Map<ChannelHandlerContext, String> authorizedUsers;
     //объявляем объект контроллера авторизации клиента
     private UsersAuthController usersAuthController;
+    //объявляем объект файлового обработчика
+    private FileUtils fileUtils;
 
     public void run() throws Exception {
         //инициируем множество авторизованных клиентов
         authorizedUsers = new HashMap<>();
         //инициируем объект контроллера авторизации пользователей
         usersAuthController = new UsersAuthController(this);
+        //инициируем объект файлового обработчика
+        fileUtils = new FileUtils();
         //инициируем объект сетевого подключения
         new NettyServer(this, PORT).run();
     }
@@ -43,6 +47,10 @@ public class CloudStorageServer {
 
     public UsersAuthController getUsersAuthController() {
         return usersAuthController;
+    }
+
+    public FileUtils getFileUtils() {
+        return fileUtils;
     }
 
     public void printMsg(String msg){

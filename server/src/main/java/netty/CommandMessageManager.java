@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 /**
  * The server's class for recognizing command messages and control command handlers.
@@ -22,8 +21,6 @@ import java.util.Arrays;
 public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     //принимаем объект контроллера сетевого хранилища
     private final CloudStorageServer storageServer;
-    //принимаем объект сервера
-    private NettyServer server;//TODO не нужен?
 
     //принимаем переменную для корневой директории пользователя в сетевом хранилище
     private Path userStorageRoot;//TODO turn String into Path
@@ -33,11 +30,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     //объявляем переменную типа команды
     private int command;
 
-    public CommandMessageManager(CloudStorageServer storageServer, NettyServer server) {
+    public CommandMessageManager(CloudStorageServer storageServer) {
         this.storageServer = storageServer;
-        this.server = server;
-        //инициируем объект файлового обработчика
-        fileUtils = new FileUtils();
+        //принимаем объект файлового обработчика
+        fileUtils = storageServer.getFileUtils();
     }
 
     /**
@@ -389,7 +385,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //вынимаем тип команды из объекта сообщения(команды)
         command = commandMessage.getCommand();
         //вынимаем объет пути к его корневой директории клиента в сетевом хранилище
-        userStorageRoot = commandMessage.getPath();
+        userStorageRoot = Paths.get(commandMessage.getDirectory());
+
         //инициируем объект сообщения о директории
         DirectoryMessage directoryMessage = new DirectoryMessage();
         //формируем список файлов и папок в корневой директории клиента по умолчанию//TODO turn String into Path

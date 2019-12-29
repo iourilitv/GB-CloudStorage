@@ -46,9 +46,9 @@ public class NettyServer {
                                     //сериализатор netty объекта сообщения в исходящии поток байтов
                                     new ObjectEncoder(),
                                     //входящий обработчик объектов-сообщений(команд) на авторизацию клиента(пользователя)
-                                    new AuthGateway(storageServer, NettyServer.this),//TODO NettyServer.this лишнее?
+                                    new AuthGateway(storageServer),
                                     //входящий обработчик объектов-сообщений(команд) по управлению сетевым хранилищем
-                                    new CommandMessageManager(storageServer, NettyServer.this)//TODO NettyServer.this лишнее?
+                                    new CommandMessageManager(storageServer)
                             );
                         }
                     })
