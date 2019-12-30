@@ -12,6 +12,7 @@ import utils.FileUtils;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
@@ -20,6 +21,10 @@ import java.util.concurrent.CountDownLatch;
  * This client's class is responded for operation with storage by communication with command handlers.
  */
 public class CloudStorageClient {
+    //TODO test
+    //принимаем объект хендлера для операций с директориями
+    private GUIController GUIController;
+
     //принимаем объект соединения
     ChannelHandlerContext ctx;
     //инициируем константу IP адреса сервера(здесь - адрес моего ноута в домашней локальной сети)
@@ -40,23 +45,32 @@ public class CloudStorageClient {
 
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
-    //объявляем объект хендлера для операций с директориями
-    private GUIController GUIController;
+
+//    //объявляем объект хендлера для операций с директориями
+//    private GUIController GUIController;
 
     //FIXME temporarily - будет получать из GUI
     //инициируем константы логина и пароля пользователя
     private final String login = "login1";
     private final String password = "pass1";
 
-    public CloudStorageClient() {
+//    public CloudStorageClient() {
+//
+//    }
 
+    //TODO test
+    public CloudStorageClient(GUIController GUIController) {
+        //принимаем объект контроллера GUI
+        this.GUIController = GUIController;
     }
 
     public void run() throws Exception {
         //инициируем объект файлового обработчика
         fileUtils = new FileUtils();
-        //инициируем объект контроллера GUI
-        GUIController = new GUIController();
+
+//        //инициируем объект контроллера GUI
+//        GUIController = new GUIController();
+
         //инициируем объект соединения
         new NettyClient(this, IP_ADDR, PORT).run();
     }
@@ -75,9 +89,9 @@ public class CloudStorageClient {
         //инициируем переменную для текущей директории клиента
         currentClientDir = clientDefaultRoot;
         //отправляем на сервер запрос на загрузку маленького файла в облачное хранилище
-        uploadFile(currentClientDir, storageDir, "toUpload.txt");//TODO for test
+//        uploadFile(currentClientDir, storageDir, "toUpload.txt");//TODO for test
         //отправляем на сервер запрос на загрузку большого файла в облачное хранилище
-        uploadFile(currentClientDir, storageDir, "toUploadBIG.mp4");//TODO for test
+//        uploadFile(currentClientDir, storageDir, "toUploadBIG.mp4");//TODO for test
 //        uploadFile(currentClientDir, storageDir, "toUploadMedium.png");//TODO for test
 
         //восстанавливаем начальное значение директории в сетевом хранилище//TODO temporarily
@@ -85,9 +99,9 @@ public class CloudStorageClient {
         //добавляем к корневой директории клиента имя подпапки назначения на клиенте
         clientDir = clientDir.concat("folderToDownloadFile");
         //отправляем на сервер запрос на скачивание маленького файла из облачного хранилища
-        downloadFile(storageDir, clientDir, "toDownload.png");//TODO for test
+//        downloadFile(storageDir, clientDir, "toDownload.png");//TODO for test
         //отправляем на сервер запрос на скачивание большого файла из облачного хранилища
-        downloadFile(storageDir, clientDir, "toDownloadBIG.mp4");//TODO for test
+//        downloadFile(storageDir, clientDir, "toDownloadBIG.mp4");//TODO for test
     }
 
     //отправляем на сервер запрос на авторизацию в облачное хранилище

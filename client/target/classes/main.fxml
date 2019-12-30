@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="center" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.2-internal" fx:controller="javafx.Controller">
+<VBox alignment="center" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.2-internal" fx:controller="javafx.GUIController">
     <HBox VBox.vgrow="ALWAYS">
         <ListView fx:id="clientFiles" HBox.hgrow="ALWAYS" />
         <ListView fx:id="serverFiles" HBox.hgrow="ALWAYS" />
