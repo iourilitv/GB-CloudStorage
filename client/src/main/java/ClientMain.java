@@ -1,5 +1,3 @@
-//import control.CloudStorageClient;
-//import javafx.JavaFXMain;
 import javafx.GUIController;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -44,41 +42,3 @@ public class ClientMain extends Application {
     }
 
 }
-
-//TODO Delete
-
-//    @Override
-//    public void start(Stage primaryStage) throws Exception{
-//        Parent root = FXMLLoader.load(getClass().getResource("/main.fxml"));
-//        primaryStage.setTitle("Brains Cloud CLient");
-//        primaryStage.setScene(new Scene(root, 400, 400));
-//        primaryStage.show();
-//    }
-//
-//    public static void main(String[] args) {
-//        launch(args);
-//    }
-
-//    public static void main(String[] args) throws Exception {
-//        new CloudStorageClient().run();
-//    }
-
-//    public static void main(String[] args) throws Exception {
-//        new JavaFXMain();
-//        Application.launch(args);
-//
-//        new CloudStorageClient().run();
-//    }
-
-//        @Override
-//    public void start(Stage primaryStage) throws Exception{
-//        new JavaFXMain().start(primaryStage);
-//
-//    }
-
-//    public static void main(String[] args) throws Exception {
-//        new JavaFXMain();
-//        Application.launch(args);
-//
-//        new CloudStorageClient().run();
-//    }

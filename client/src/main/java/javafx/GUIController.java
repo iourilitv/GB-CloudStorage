@@ -8,7 +8,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
@@ -38,14 +37,11 @@ public class GUIController implements Initializable {
     public void btnClickSelectedServerFile(ActionEvent actionEvent) {
         label.setText(serverFiles.getSelectionModel().getSelectedItem());
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    new CloudStorageClient(GUIController.this).run();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        new Thread(() -> {
+            try {
+                new CloudStorageClient(GUIController.this).run();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }).start();
 
@@ -65,21 +61,18 @@ public class GUIController implements Initializable {
                 directory +
                 ". filesList: " + Arrays.toString(fileNamesList));
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                //очищаем список элементов в директории
-                serverFiles.getItems().clear();
-                //добавляем новый список элементов в директории
-                serverFiles.getItems().addAll(fileNamesList);
-                serverFiles.refresh();
+        Platform.runLater(() -> {
+            //очищаем список элементов в директории
+            serverFiles.getItems().clear();
+            //добавляем новый список элементов в директории
+            serverFiles.getItems().addAll(fileNamesList);
+            serverFiles.refresh();
 
-                System.out.println("GUIController.updateStorageFilesAndFoldersListInGUI() - serverFiles: " +
-                        serverFiles.getItems().toString());
+            System.out.println("GUIController.updateStorageFilesAndFoldersListInGUI() - serverFiles: " +
+                    serverFiles.getItems().toString());
 
 
-                label.setText(directory);
-            }
+            label.setText(directory);
         });
     }
 

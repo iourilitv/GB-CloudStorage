@@ -12,19 +12,15 @@ import utils.FileUtils;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * This client's class is responded for operation with storage by communication with command handlers.
  */
 public class CloudStorageClient {
-    //TODO test
     //принимаем объект хендлера для операций с директориями
     private GUIController GUIController;
-
     //принимаем объект соединения
     ChannelHandlerContext ctx;
     //инициируем константу IP адреса сервера(здесь - адрес моего ноута в домашней локальной сети)
@@ -42,21 +38,12 @@ public class CloudStorageClient {
     private String clientDir = "";
     //объявляем переменную для текущей директории клиента
     private String currentClientDir;
-
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
-
-//    //объявляем объект хендлера для операций с директориями
-//    private GUIController GUIController;
-
     //FIXME temporarily - будет получать из GUI
     //инициируем константы логина и пароля пользователя
     private final String login = "login1";
     private final String password = "pass1";
-
-//    public CloudStorageClient() {
-//
-//    }
 
     //TODO test
     public CloudStorageClient(GUIController GUIController) {
@@ -67,16 +54,12 @@ public class CloudStorageClient {
     public void run() throws Exception {
         //инициируем объект файлового обработчика
         fileUtils = new FileUtils();
-
-//        //инициируем объект контроллера GUI
-//        GUIController = new GUIController();
-
         //инициируем объект соединения
         new NettyClient(this, IP_ADDR, PORT).run();
     }
 
     //FIXME удалить, когда будет реализован интерфейс
-    public void startTest(ChannelHandlerContext ctx) throws IOException {
+    public void startTest(ChannelHandlerContext ctx) {
         //принимаем переменную четевого подключения
         this.ctx = ctx;
         //инициируем переменную для текущей директории клиента
