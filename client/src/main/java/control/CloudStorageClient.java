@@ -10,10 +10,14 @@ import utils.CommandMessage;
 import utils.Commands;
 import utils.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 /**
  * This client's class is responded for operation with storage by communication with command handlers.
@@ -49,7 +53,46 @@ public class CloudStorageClient {
     public CloudStorageClient(GUIController GUIController) {
         //принимаем объект контроллера GUI
         this.GUIController = GUIController;
+//        //выводим в GUI список файлов в корневой директории на клиенте
+//        GUIController.updateClientFilesAndFoldersListInGUI(clientDefaultRoot,
+//                //собираем в строковый массив названия файлов и папок в заданной директории
+//                new File(clientDefaultRoot).list());
+//        updateGUIClientList(Paths.get(clientDefaultRoot));
     }
+
+//    public void updateGUIClientList(Path pathToDir) {
+//        //инициируем временные коллекции названий директорий и файлов
+//        ArrayList<String> foldersNames = new ArrayList<>();
+//        ArrayList<String> filesNames = new ArrayList<>();
+//        try {
+//            //инициируем массив файловых объектов в заданной директории
+//            File[] filesArray = (File[])Files.list(pathToDir).toArray();
+//
+//            //в цикле распределяем файловые объекты в заданной директории по коллекциям
+//            for (File f: filesArray) {
+//                //если файловый объект - директория
+//                if(f.isDirectory()){
+//                    //добавляем в коллекцию имен папок
+//                    foldersNames.add(f.toString());
+//                //если - не директория
+//                } else {
+//                    //добавляем в коллекцию имен файлов
+//                    filesNames.add(f.toString());
+//                }
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+////        //выводим в GUI список файлов в корневой директории на клиенте
+////        GUIController.updateClientFilesAndFoldersListInGUI(clientDefaultRoot,
+////                //собираем в строковый массив названия файлов и папок в заданной директории
+////                new File(clientDefaultRoot).list());
+////        GUIController.updateClientFilesAndFoldersListInGUI(clientDefaultRoot,
+////                foldersNames, filesNames);
+//        GUIController.updateClientFilesAndFoldersListInGUI(clientDefaultRoot,
+//                new File(clientDefaultRoot).list());//TODO может list File[]?
+//
+//    }
 
     public void run() throws Exception {
         //инициируем объект файлового обработчика
