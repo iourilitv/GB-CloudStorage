@@ -21,11 +21,11 @@ public class ClientMain extends Application {
         FXMLLoader loader = new FXMLLoader();
         //с помощью метода getResourceAsStream извлекаем данные из лоадера, чтобы
         //вызвать метод getController для получения контроллера
-        Parent root = loader.load(getClass().getResourceAsStream("main.fxml"));
+        Parent root = loader.load(getClass().getResourceAsStream("/MainClient.fxml"));
         contr = loader.getController();
 
         primaryStage.setTitle("The Cloud Storage by LYS");
-        Scene scene = new Scene(root, 350, 350);
+        Scene scene = new Scene(root, 600, 400);
         primaryStage.setScene(scene);
         primaryStage.show();
 

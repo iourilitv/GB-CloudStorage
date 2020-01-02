@@ -3,20 +3,13 @@ package javafx;
 import control.CloudStorageClient;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 
 import java.io.File;
 import java.net.URL;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
@@ -24,18 +17,26 @@ import java.util.ResourceBundle;
  * The client class for operating with directoryMessages.
  */
 public class GUIController implements Initializable {
+    private enum Types{
+        FOLDER,
+        FILE
+    }
 
     @FXML
     Label clientDirLabel, storageDirLabel;
 
     @FXML
-    VBox clientDirsVBox;
+//    ListView<Item> ClientItemListView;
+    ListView<File> ClientItemListView;
 
-    @FXML
-    Button clientDirBtn;
+//    @FXML
+//    VBox clientDirsVBox;
 
-    @FXML
-    ListView<String> clientFiles, serverFiles;
+//    @FXML
+//    Button clientDirBtn;
+
+//    @FXML
+//    ListView<String> clientFiles, serverFiles;
 
     @FXML
     Label label;
@@ -44,26 +45,36 @@ public class GUIController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        //инициируем объект клиента облачного хранилища
         storageClient = new CloudStorageClient(GUIController.this);
-//        storageClient.updateGUIClientList(Paths.get(storageClient.getClientDefaultRoot()));
+
+        //инициируем в клиентской части интерфейса список объектов в директории по умолчанию
+        initializeClientItemListView();
+
+//        //выводим в клиентской части интерфейса список объектов в директории по умолчанию
 //        updateClientFilesAndFoldersListInGUI(storageClient.getClientDefaultRoot(),
-//                new File(storageClient.getClientDefaultRoot()).list());//TODO может list File[]?
+//                new File(storageClient.getClientDefaultRoot()).listFiles());
+//        //запрашиваем у сервера список объектов в директории по умолчанию в сетевом хранилище
+//        serverFiles.getItems().addAll("S_File 1", "S_File 2", "S_File 3");
+    }
+
+    public void initializeClientItemListView() {
+        //выводим в клиентской части интерфейса список объектов в директории по умолчанию
         updateClientFilesAndFoldersListInGUI(storageClient.getClientDefaultRoot(),
                 new File(storageClient.getClientDefaultRoot()).listFiles());
 
-//        clientFiles.getItems().addAll("C_File 1", "C_File 2", "C_File 3");
-        serverFiles.getItems().addAll("S_File 1", "S_File 2", "S_File 3");
+//        ClientItemListView.getItems().addAll(new Item("folder"), new Item("file"));
+//        ClientItemListView.setCellFactory(itemListView -> new FileListCell());
     }
 
     @FXML
     public void btnClickSelectedClientFile(ActionEvent actionEvent) {
-        label.setText(clientFiles.getSelectionModel().getSelectedItem());
+//        label.setText(clientFiles.getSelectionModel().getSelectedItem());
     }
 
     @FXML
     public void btnClickSelectedServerFile(ActionEvent actionEvent) {
-        label.setText(serverFiles.getSelectionModel().getSelectedItem());
+//        label.setText(serverFiles.getSelectionModel().getSelectedItem());
 
         new Thread(() -> {
             try {
@@ -79,60 +90,18 @@ public class GUIController implements Initializable {
 
     }
 
-//    public void updateClientFilesAndFoldersListInGUI(
-//            String directory, ArrayList<String> foldersNames, ArrayList<String> filesNames
-//            ){
+    //FIXME
+    private void onFolderBtnEvent(ActionEvent event, Button btn) {
+
+        System.out.println("GUIController.onFolderBtnEvent() - btn.getText(): " + btn.getText());
+        clientDirLabel.setText(btn.getText());
+    }
+
+//    public void updateClientFilesAndFoldersListInGUI(String directory, File[] fileObjs){
 //
 //        //TODO temporarily
 //        System.out.println("[client]GUIController.updateClientFilesAndFoldersListInGUI directory: " +
-//                directory +
-//                ". foldersNames.toString(): " + foldersNames.toString() +
-//                ". filesNames.toString(): " + filesNames.toString());
-//
-//        Platform.runLater(() -> {
-//            //записываем в метку текущую директорию
-//            clientDirLabel.setText(directory);
-//
-//            //в цикле распределяем файловые объекты в заданной директории по коллекциям
-//            for (File f: filesArray) {
-//                //если файловый объект - директория
-//                if(f.isDirectory()){
-//                    //добавляем в коллекцию имен папок
-//                    foldersNames.add(f.toString());
-//                    //если - не директория
-//                } else {
-//                    //добавляем в коллекцию имен файлов
-//                    filesNames.add(f.toString());
-//                }
-//            }
-//            //создаем коллекцию объектов кнопок
-//            Button[] foldersBtns = new Button[foldersNames.size()];//TODO может массив и не нужен
-//            //пробегаем список имен папок
-//            for (int i = 0; i < foldersNames.size(); i++) {
-//                //создаем объект кнопки с названием папки
-//                foldersBtns[i] = new Button(foldersNames.get(i));
-//                //задаем всем кнопкам одинаковый идентификатор для события
-//                foldersBtns[i].setId("clientDirBtn");
-//                //добавляем объект кнопки в VBox
-//                clientDirsVBox.getChildren().add(foldersBtns[i]);
-//            }
-//
-//            //очищаем список элементов в директории
-//            clientFiles.getItems().clear();
-//            //добавляем новый список элементов в директории
-//            clientFiles.getItems().addAll(filesNames);
-//            clientFiles.refresh();
-//
-//            System.out.println("GUIController.updateStorageFilesAndFoldersListInGUI() - serverFiles: " +
-//                    clientFiles.getItems().toString());
-//
-//        });
-//    }
-//    public void updateClientFilesAndFoldersListInGUI(String directory, String[] namesList){
-//
-//        //TODO temporarily
-//        System.out.println("[client]GUIController.updateClientFilesAndFoldersListInGUI directory: " +
-//                directory + ". namesList.toString(): " + Arrays.toString(namesList));
+//                directory + ". fileObjs.toString(): " + Arrays.toString(fileObjs));
 //
 //        Platform.runLater(() -> {
 //            //записываем в метку текущую директорию
@@ -143,51 +112,35 @@ public class GUIController implements Initializable {
 //            clientFiles.getItems().clear();
 //
 //            //в цикле распределяем файловые объекты в заданной директории по коллекциям
-//            for (String n: namesList) {
+//            for (File f: fileObjs) {
 //                //если файловый объект - директория
-//                if(new File(n).isDirectory()){
+//                if(f.isDirectory()){
 //                    //создаем объект кнопки с названием папки
-//                    Button btn = new Button(n);
+//                    Button btn = new Button(f.getName());
 //                    //задаем всем кнопкам одинаковый идентификатор для события
 //                    btn.setId("clientDirBtn");
+//
+//                    //FIXME установить на всю ширину бокса
+////                    btn.setMaxWidth(HBox.setHgrow();
+//                    //TODO check
+//                    //устанавливаем обработчика события нажатие кнопки
+//                    btn.setOnAction(event -> onFolderBtnEvent(event, btn));
+//
 //                    //добавляем объект кнопки в VBox
 //                    clientDirsVBox.getChildren().add(btn);
 //
 //                    //TODO temporarily
 //                    System.out.println("GUIController.updateStorageFilesAndFoldersListInGUI() - " +
-//                            "clientDirBtn.getText(): " + clientDirBtn.getText());
+//                            "btn.getText(): " + btn.getText());
 //                    System.out.println("GUIController.updateStorageFilesAndFoldersListInGUI() - " +
 //                            "clientDirsVBox.getChildren().toString(): " +
 //                            clientDirsVBox.getChildren().toString());
-////                    //добавляем в коллекцию имен папок
-////                    foldersNames.add(f.toString());
-//
-//                //если - не директория
 //                } else {
 //                    //добавляем новый список элементов в директории
-//                    clientFiles.getItems().add(n);
+//                    clientFiles.getItems().add(f.getName());
 //                    clientFiles.refresh();
-////                    //добавляем в коллекцию имен файлов
-////                    filesNames.add(f.toString());
 //                }
 //            }
-////            //создаем коллекцию объектов кнопок
-////            Button[] foldersBtns = new Button[foldersNames.size()];//TODO может массив и не нужен
-////            //пробегаем список имен папок
-////            for (int i = 0; i < foldersNames.size(); i++) {
-////                //создаем объект кнопки с названием папки
-////                foldersBtns[i] = new Button(foldersNames.get(i));
-////                //задаем всем кнопкам одинаковый идентификатор для события
-////                foldersBtns[i].setId("clientDirBtn");
-////                //добавляем объект кнопки в VBox
-////                clientDirsVBox.getChildren().add(foldersBtns[i]);
-////            }
-//
-//            //очищаем список элементов в директории
-////            clientFiles.getItems().clear();
-////            //добавляем новый список элементов в директории
-////            clientFiles.getItems().addAll(filesNames);
-////            clientFiles.refresh();
 //
 //            System.out.println("GUIController.updateStorageFilesAndFoldersListInGUI() - clientFiles: " +
 //                    clientFiles.getItems().toString());
@@ -203,81 +156,89 @@ public class GUIController implements Initializable {
         Platform.runLater(() -> {
             //записываем в метку текущую директорию
             clientDirLabel.setText(directory);
-            //очищаем бокс кнопок
-            clientDirsVBox.getChildren().removeAll();
-            //очищаем список элементов в директории
-            clientFiles.getItems().clear();
+            //обновляем спи
+            ClientItemListView.getItems().addAll(fileObjs);
+            ClientItemListView.setCellFactory(itemListView -> new FileListCell());
 
-            //в цикле распределяем файловые объекты в заданной директории по коллекциям
-            for (File f: fileObjs) {
-                //если файловый объект - директория
-                if(f.isDirectory()){
-                    //создаем объект кнопки с названием папки
-                    Button btn = new Button(f.getName());
-                    //задаем всем кнопкам одинаковый идентификатор для события
-                    btn.setId("clientDirBtn");
+//            //в цикле распределяем файловые объекты в заданной директории по коллекциям
+//            for (File f: fileObjs) {
+//                //если файловый объект - директория
+//                if(f.isDirectory()){
+//
+//
+//                    //TODO temporarily
+//                    System.out.println("GUIController.updateStorageFilesAndFoldersListInGUI() - " +
+//                            "btn.getText(): " + btn.getText());
+//                    System.out.println("GUIController.updateStorageFilesAndFoldersListInGUI() - " +
+//                            "clientDirsVBox.getChildren().toString(): " +
+//                            clientDirsVBox.getChildren().toString());
+//                } else {
+//                    //добавляем новый список элементов в директории
+//                    clientFiles.getItems().add(f.getName());
+//                    clientFiles.refresh();
+//                }
+//            }
 
-                    //FIXME установить на всю ширину бокса
-//                    btn.setMaxWidth(HBox.setHgrow();
-                    //TODO check
-                    //устанавливаем обработчика события нажатие кнопки
-                    btn.setOnAction(event -> onFolderBtnEvent(event, btn));
-
-                    //добавляем объект кнопки в VBox
-                    clientDirsVBox.getChildren().add(btn);
-
-                    //TODO temporarily
-                    System.out.println("GUIController.updateStorageFilesAndFoldersListInGUI() - " +
-                            "btn.getText(): " + btn.getText());
-                    System.out.println("GUIController.updateStorageFilesAndFoldersListInGUI() - " +
-                            "clientDirsVBox.getChildren().toString(): " +
-                            clientDirsVBox.getChildren().toString());
-                } else {
-                    //добавляем новый список элементов в директории
-                    clientFiles.getItems().add(f.getName());
-                    clientFiles.refresh();
-                }
-            }
-
-            System.out.println("GUIController.updateStorageFilesAndFoldersListInGUI() - clientFiles: " +
-                    clientFiles.getItems().toString());
+//            System.out.println("GUIController.updateStorageFilesAndFoldersListInGUI() - clientFiles: " +
+//                    clientFiles.getItems().toString());
 
         });
     }
 
-    //FIXME
-    private void onFolderBtnEvent(ActionEvent event, Button btn) {
-
-        System.out.println("GUIController.onFolderBtnEvent() - btn.getText(): " + btn.getText());
-        label.setText(btn.getText());
-    }
-
+//    /**
+//     * Метод выводит в GUI список файлов и папок в корневой пользовательской директории
+//     * в сетевом хранилище.
+//     * @param directory - заданная пользовательская директория в сетевом хранилище
+//     * @param namesList - список названий файлов и папок в заданной директории
+//     */
+//    public void updateStorageFilesAndFoldersListInGUI(String directory, String[] namesList){
+//        //FIXME передать в GUI
+//
+//        //TODO temporarily
+//        System.out.println("[client]GUIController.updateStorageFilesListInGUI directory: " +
+//                directory +
+//                ". filesList: " + Arrays.toString(namesList));
+//
+//        Platform.runLater(() -> {
+//            //очищаем список элементов в директории
+//            serverFiles.getItems().clear();
+//            //добавляем новый список элементов в директории
+//            serverFiles.getItems().addAll(namesList);
+//            serverFiles.refresh();
+//
+//            System.out.println("GUIController.updateStorageFilesAndFoldersListInGUI() - serverFiles: " +
+//                    serverFiles.getItems().toString());
+//
+//            //выводим текущую директорию в метку серверной части
+//            storageDirLabel.setText(directory);
+//        });
+//    }
     /**
      * Метод выводит в GUI список файлов и папок в корневой пользовательской директории
      * в сетевом хранилище.
      * @param directory - заданная пользовательская директория в сетевом хранилище
-     * @param fileNamesList - список названий файлов и папок в заданной директории
+     * @param namesList - список названий файлов и папок в заданной директории
      */
-    public void updateStorageFilesAndFoldersListInGUI(String directory, String[] fileNamesList){
+    public void updateStorageFilesAndFoldersListInGUI(String directory, String[] namesList){
         //FIXME передать в GUI
 
         //TODO temporarily
         System.out.println("[client]GUIController.updateStorageFilesListInGUI directory: " +
                 directory +
-                ". filesList: " + Arrays.toString(fileNamesList));
+                ". filesList: " + Arrays.toString(namesList));
 
         Platform.runLater(() -> {
-            //очищаем список элементов в директории
-            serverFiles.getItems().clear();
-            //добавляем новый список элементов в директории
-            serverFiles.getItems().addAll(fileNamesList);
-            serverFiles.refresh();
+//            //очищаем список элементов в директории
+//            serverFiles.getItems().clear();
+//            //добавляем новый список элементов в директории
+//            serverFiles.getItems().addAll(namesList);
+//            serverFiles.refresh();
 
-            System.out.println("GUIController.updateStorageFilesAndFoldersListInGUI() - serverFiles: " +
-                    serverFiles.getItems().toString());
+//            System.out.println("GUIController.updateStorageFilesAndFoldersListInGUI() - serverFiles: " +
+//                    serverFiles.getItems().toString());
 
-
-            label.setText(directory);
+            //выводим текущую директорию в метку серверной части
+            storageDirLabel.setText(directory);
         });
     }
 
@@ -297,8 +258,12 @@ public class GUIController implements Initializable {
     @FXML
     public void btnClickDirectory(ActionEvent actionEvent) {
 
-        System.out.println("GUIController.btnClickDirectory() - clientDirBtn.getText(): " +
-                clientDirBtn.getText());
+//        System.out.println("GUIController.btnClickDirectory() - clientDirBtn.getText(): " +
+//                clientDirBtn.getText());
 
+    }
+
+    public ListView<File> getClientItemListView() {
+        return ClientItemListView;
     }
 }

@@ -4,7 +4,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="center" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.2-internal" fx:controller="javafx.GUIController">
+<VBox alignment="center" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.2-internal"
+      fx:controller="javafx.GUIController">
+
     <HBox VBox.vgrow="ALWAYS">
         <VBox HBox.hgrow="ALWAYS">
             <VBox HBox.hgrow="ALWAYS">
@@ -13,14 +15,15 @@
                         <Font size="10.0" />
                     </font>
                 </Label>
-                <VBox fx:id="clientDirsVBox" HBox.hgrow="ALWAYS">
+                <ListView fx:id="ClientItemListView"/>
+<!--                <VBox fx:id="clientDirsVBox" HBox.hgrow="ALWAYS">-->
 
-                    <!-- directories buttons -->
-<!--                    <Button fx:id="clientDirBtn" maxWidth="Infinity" onAction="#btnClickDirectory" HBox.hgrow="ALWAYS" text="a directory" />-->
+<!--                    &lt;!&ndash; directories buttons &ndash;&gt;-->
+<!--&lt;!&ndash;                    <Button fx:id="clientDirBtn" maxWidth="Infinity" onAction="#btnClickDirectory" HBox.hgrow="ALWAYS" text="a directory" />&ndash;&gt;-->
 
-                </VBox>
+<!--                </VBox>-->
             </VBox>
-            <ListView fx:id="clientFiles" HBox.hgrow="ALWAYS" />
+<!--            <ListView fx:id="clientFiles" HBox.hgrow="ALWAYS" />-->
         </VBox>
         <VBox HBox.hgrow="ALWAYS">
             <Label fx:id="storageDirLabel" alignment="CENTER_LEFT" contentDisplay="LEFT" maxWidth="Infinity" style="-fx-background-color: #48d1cc;" text="../" textAlignment="LEFT">

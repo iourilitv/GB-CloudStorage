@@ -1,0 +1,18 @@
+
+.stu {
+    -fx-font-size: 18 px;
+    -fx-font-weigth: bold;
+    -fx-font-family: "Arial";
+    -fx-shadow-highlight-color: transparent;
+    -fx-inner-color: transparent;
+    -fx-background-radius: 0;
+    //-fx-background-color: linear-gradient(#ffff00 0%, #aaffaa 50%, #00ff00 100%);
+    -fx-body-color: linear-gradient(#ffffff 0%, #dddddd 20%, #dddddd 50%, #cccccc 55%, #eeeeee 100%);
+    -fx-background-radius: 4;
+    -fx-border-color: #000000;
+    -fx-border-radius: 4;
+
+
+   -fx-focus-color: transparent;
+   -fx-faint-focus-color: transparent;
+}
