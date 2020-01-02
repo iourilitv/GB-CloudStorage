@@ -131,7 +131,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //инициируем объект сообщения о директории
         DirectoryMessage directoryMessage = new DirectoryMessage();
         //формируем список файлов и папок в заданной директории клиента в сетевом хранилище
-        directoryMessage.composeFilesAndFoldersNamesList(toDir);
+//        directoryMessage.composeFilesAndFoldersNamesList(toDir);//TODO
+        directoryMessage.takeFileObjectsList(toDir);
 
         //отправляем объект сообщения(команды) клиенту
         ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
@@ -265,7 +266,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //инициируем объект сообщения о директории
         DirectoryMessage directoryMessage = new DirectoryMessage();
         //формируем список файлов и папок в корневой директории клиента по умолчанию
-        directoryMessage.composeFilesAndFoldersNamesList(directory);
+//        directoryMessage.composeFilesAndFoldersNamesList(directory);
+        directoryMessage.takeFileObjectsList(directory);
 
         //отправляем объект сообщения(команды) клиенту
         ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
@@ -390,7 +392,9 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //инициируем объект сообщения о директории
         DirectoryMessage directoryMessage = new DirectoryMessage();
         //формируем список файлов и папок в корневой директории клиента по умолчанию//TODO turn String into Path
-        directoryMessage.composeFilesAndFoldersNamesList(userStorageRoot.toString());
+//        directoryMessage.composeFilesAndFoldersNamesList(userStorageRoot.toString());
+        directoryMessage.takeFileObjectsList(userStorageRoot.toString());
+
         //инициируем новый объект сообщения(команды)
         commandMessage = new CommandMessage(command, directoryMessage);
 
@@ -406,10 +410,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //отправляем объект сообщения(команды) клиенту
         ctx.writeAndFlush(commandMessage);
 
-        //TODO temporarily
         //удаляем входящий хэндлер AuthGateway, т.к. после авторизации он больше не нужен
         printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
                 "removed pipeline: " + ctx.channel().pipeline().remove(AuthGateway.class));
+        //TODO temporarily
         printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
                 "updated pipeline: " + ctx.channel().pipeline().toString());
 

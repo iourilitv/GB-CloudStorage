@@ -135,14 +135,16 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
         DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
 
-        //TODO temporarily
-        printMsg("[client]CommandMessageManager.onAuthOkServerResponse() - command: "
-                + commandMessage.getCommand() + ". namesList: " + Arrays.toString(directoryMessage.getNamesList()));
+//        //TODO temporarily
+//        printMsg("[client]CommandMessageManager.onAuthOkServerResponse() - command: "
+//                + commandMessage.getCommand() + ". namesList: " + Arrays.toString(directoryMessage.getNamesList()));
 
         //FIXME нужно передавать в контроллер GUI
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
+//        GUIController.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
+//                directoryMessage.getNamesList());
         GUIController.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
-                directoryMessage.getNamesList());
+                directoryMessage.getFileObjectsList());
 
     }
 
@@ -168,12 +170,14 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 
         //FIXME нужно передавать в контроллер GUI
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
+//        GUIController.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
+//                directoryMessage.getNamesList());
         GUIController.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
-                directoryMessage.getNamesList());
+                directoryMessage.getFileObjectsList());
 
         //TODO temporarily
-        printMsg("[client]CommandMessageManager.onUploadFileOkServerResponse() - command: "
-                + commandMessage.getCommand() + ". namesList: " + Arrays.toString(directoryMessage.getNamesList()));
+//        printMsg("[client]CommandMessageManager.onUploadFileOkServerResponse() - command: "
+//                + commandMessage.getCommand() + ". namesList: " + Arrays.toString(directoryMessage.getNamesList()));
 
     }
 

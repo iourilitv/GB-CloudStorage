@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <?import javafx.scene.image.ImageView?>
@@ -19,17 +18,5 @@
                 <Font name="Arial Bold" size="12.0"/>
             </font>
         </Label>
-<!--        <VBox>-->
-<!--            <Label fx:id="label1" prefHeight="17.0" prefWidth="187.0" text="Label" textAlignment="CENTER">-->
-<!--                <font>-->
-<!--                    <Font name="Arial Bold" size="18.0"/>-->
-<!--                </font>-->
-<!--            </Label>-->
-<!--            <Label fx:id="labelDescription" alignment="TOP_LEFT" text="Label" wrapText="true" VBox.vgrow="ALWAYS">-->
-<!--                <font>-->
-<!--                    <Font size="14.0"/>-->
-<!--                </font>-->
-<!--            </Label>-->
-<!--        </VBox>-->
     </children>
 </HBox>

@@ -15,15 +15,8 @@
                         <Font size="10.0" />
                     </font>
                 </Label>
-                <ListView fx:id="ClientItemListView"/>
-<!--                <VBox fx:id="clientDirsVBox" HBox.hgrow="ALWAYS">-->
-
-<!--                    &lt;!&ndash; directories buttons &ndash;&gt;-->
-<!--&lt;!&ndash;                    <Button fx:id="clientDirBtn" maxWidth="Infinity" onAction="#btnClickDirectory" HBox.hgrow="ALWAYS" text="a directory" />&ndash;&gt;-->
-
-<!--                </VBox>-->
+                <ListView fx:id="clientItemListView"/>
             </VBox>
-<!--            <ListView fx:id="clientFiles" HBox.hgrow="ALWAYS" />-->
         </VBox>
         <VBox HBox.hgrow="ALWAYS">
             <Label fx:id="storageDirLabel" alignment="CENTER_LEFT" contentDisplay="LEFT" maxWidth="Infinity" style="-fx-background-color: #48d1cc;" text="../" textAlignment="LEFT">
@@ -31,7 +24,7 @@
                     <Font size="10.0" />
                 </font>
             </Label>
-            <ListView fx:id="serverFiles" HBox.hgrow="ALWAYS" />
+            <ListView fx:id="storageItemListView"/>
         </VBox>
     </HBox>
     <HBox>
