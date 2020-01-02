@@ -37,8 +37,12 @@ public class Commands {
     //ответ сервера, что при скачивании файла произошла ошибка
     public static final int SERVER_RESPONSE_FILE_DOWNLOAD_ERROR = 202209;
 
-    //запрос на сервер предоставить список файлов в папке
-    public static final int REQUEST_SERVER_FILES_LIST = 303101;
+    //запрос на сервер предоставить список объектов файлов и папок в заданной директории
+    public static final int REQUEST_SERVER_FILE_OBJECTS_LIST = 303101;
+    //ответ сервера с массивом файловых объектов в заданной директории пользователя
+    // в сетевом хранилище, если нет ошибок
+    public static final int SERVER_RESPONSE_FILE_OBJECTS_LIST_OK = 303102;
+
     //переименовать файл на сервере
     public static final int REQUEST_SERVER_RENAME_FILE = 404101;
     //удалить файл на сервере

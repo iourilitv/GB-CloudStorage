@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 
 import java.io.File;
 import java.net.URL;
@@ -52,7 +53,7 @@ public class GUIController implements Initializable {
     public void initializeStorageItemListView() {
         //выводим в клиентской части интерфейса список объектов в директории по умолчанию
         updateStorageItemListInGUI("../",
-                new File[]{new File("waiting an item list from the server...")});
+                new File[]{new File("waiting for an item list from the server...")});
         //в отдельном потоке
         new Thread(() -> {
             try {
@@ -122,12 +123,75 @@ public class GUIController implements Initializable {
 //        }
     }
 
+    /**
+     * Метод обрабатывает событие клика мыши на элементе списка клиентской части
+     * @param mouseEvent - событие клика мыши на элементе списка
+     */
     @FXML
-    public void btnClickDirectory(ActionEvent actionEvent) {
+    public void onClickClientListFolderItem(MouseEvent mouseEvent) {
+        //запоминаем кликнутый элемент списка
+        File item = clientItemListView.getSelectionModel().getSelectedItem();
+        //если двойной клик левой кнопкой мыши
+        if(mouseEvent.getButton().name().equals("PRIMARY") &&
+            mouseEvent.getClickCount() == 2){
+            //если кликнутый элемент это директория
+            if(item.isDirectory()){
 
-//        System.out.println("GUIController.btnClickDirectory() - clientDirBtn.getText(): " +
-//                clientDirBtn.getText());
+                System.out.println("GUIController.onClickClientListFolderItem() - " +
+//                        "mouseEvent.getEventType(): " + mouseEvent.getEventType() +
+//                        ", mouseEvent.getButton().name(): " + mouseEvent.getButton().name() +
+                        ", clientItemListView.getSelectionModel().getSelectedItem().getName(): " +
+                        clientItemListView.getSelectionModel().getSelectedItem().getName()
+                );
+                //обновляем список элементов списка клиентской части
+                updateClientItemListInGUI(item.getName(), item.listFiles());
+            }
+        //если клик правой кнопкой мыши
+        } else if(mouseEvent.getButton().name().equals("SECONDARY")){
+            System.out.println("GUIController.btnClickDirectory() - mouseEvent.getEventType(): " +
+                    mouseEvent.getEventType() +
+                    ", mouseEvent.getButton().name(): " + mouseEvent.getButton().name());
+            //FIXME
+            //метод вызова контекстного меню
 
+        }
+    }
+
+    /**
+     * Метод обрабатывает событие клика мыши на элементе списка серверной части
+     * @param mouseEvent - событие клика мыши на элементе списка
+     */
+    @FXML
+    public void onClickStorageListFolderItem(MouseEvent mouseEvent) {
+        //запоминаем кликнутый элемент списка
+        File item = storageItemListView.getSelectionModel().getSelectedItem();
+        //если двойной клик левой кнопкой мыши
+        if(mouseEvent.getButton().name().equals("PRIMARY") &&
+                mouseEvent.getClickCount() == 2){
+            //если кликнутый элемент это директория
+            if(item.isDirectory()){
+
+                System.out.println("GUIController.onClickClientListFolderItem() - " +
+//                        "mouseEvent.getEventType(): " + mouseEvent.getEventType() +
+//                        ", mouseEvent.getButton().name(): " + mouseEvent.getButton().name() +
+                                ", storageItemListView.getSelectionModel().getSelectedItem().getName(): " +
+                                storageItemListView.getSelectionModel().getSelectedItem().getName()
+                );
+                //отправляем на сервер запрос на получение списка элементов заданной директории
+                //пользователя в сетевом хранилище
+                storageClient.demandDirectoryItemList(item.getName());
+                //выводим в клиентской части интерфейса пустой список с сообщенеем об ожидании ответа
+                updateStorageItemListInGUI(item.getName(),
+                        new File[]{new File("waiting for an item list from the server...")});
+            }
+        //если клик правой кнопкой мыши
+        } else if(mouseEvent.getButton().name().equals("SECONDARY")){
+            System.out.println("GUIController.btnClickDirectory() - mouseEvent.getEventType(): " +
+                    mouseEvent.getEventType() +
+                    ", mouseEvent.getButton().name(): " + mouseEvent.getButton().name());
+            //FIXME
+            //метод вызова контекстного меню
+        }
     }
 
     public ListView<File> getClientItemListView() {

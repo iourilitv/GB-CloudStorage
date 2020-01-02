@@ -50,6 +50,12 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //***блок обработки объектов //TODO НЕсервисных сообщений(команд), полученных от клиента***
         //выполняем операции в зависимости от типа полученного не сервисного сообщения(команды)
         switch (commandMessage.getCommand()) {
+            //обрабатываем полученный от клиента запрос на список объектов файлов и папок
+            // в заданной директории в облачном хранилище
+            case Commands.REQUEST_SERVER_FILE_OBJECTS_LIST:
+                //вызываем метод обработки запроса от клиента
+                onFileObjectsListClientRequest(ctx, commandMessage);
+                break;
             //обрабатываем полученный от клиента запрос на загрузку(сохранение) файла в облачное хранилище
             case Commands.REQUEST_SERVER_FILE_UPLOAD:
                 //вызываем метод обработки запроса от клиента на загрузку целого файла клиента
@@ -99,6 +105,27 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 onAuthClientRequest(ctx, commandMessage);
                 break;
         }
+    }
+
+    /**
+     * Метод обрабатывает полученный от клиента запрос на список объектов файлов и папок
+     * в заданной директории в облачном хранилище
+     * @param ctx - объект соединения netty, установленного с клиентом
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onFileObjectsListClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) {
+        //вынимаем объект сообщения о директории из объекта сообщения(команды)
+        DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
+        //собираем целевую директорию пользователя в сетевом хранилище
+        Path storageDir = Paths.get(userStorageRoot.toString());
+        //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
+        storageDir = storageDir.resolve(Paths.get(directoryMessage.getDirectory()));
+        //формируем список файлов и папок в заданной директории клиента в сетевом хранилище
+        directoryMessage.takeFileObjectsList(storageDir.toString());//TODO переделать на boolean
+        //устанавливаем команду: подтверждение, что все прошло успешно
+        command = Commands.SERVER_RESPONSE_FILE_OBJECTS_LIST_OK;
+        //отправляем объект сообщения(команды) клиенту
+        ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
     }
 
     /**

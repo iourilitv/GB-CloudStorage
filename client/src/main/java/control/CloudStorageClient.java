@@ -3,6 +3,7 @@ package control;
 import io.netty.channel.ChannelHandlerContext;
 import javafx.GUIController;
 import messages.AuthMessage;
+import messages.DirectoryMessage;
 import messages.FileFragmentMessage;
 import messages.FileMessage;
 import netty.NettyClient;
@@ -10,14 +11,10 @@ import utils.CommandMessage;
 import utils.Commands;
 import utils.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 
 /**
  * This client's class is responded for operation with storage by communication with command handlers.
@@ -141,6 +138,17 @@ public class CloudStorageClient {
 
         //TODO temporarily
         printMsg("***CloudStorageClient.requestAuthorization() - has finished***");
+    }
+
+    /**
+     * Метод отправляет на сервер запрос на получение списка элементов заданной директории
+     * пользователя в сетевом хранилище
+     * @param directory - заданная директория пользователя в сетевом хранилище
+     */
+    public void demandDirectoryItemList(String directory) {
+        //отправляем на сервер объект сообщения(команды)
+        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_OBJECTS_LIST,
+                new DirectoryMessage(directory)));
     }
 
     //отправляем на сервер запрос на загрузку файла в облачное хранилище
@@ -274,6 +282,7 @@ public class CloudStorageClient {
 
     //отправляем на сервер запрос на скачивание файла из облачного хранилища
     //FIXME перенести в контроллер интерфейса
+
     public void downloadFile(String fromDir, String toDir, String filename){
         //TODO temporarily
         printMsg("***CloudStorageClient.downloadFile() - has started***");
@@ -304,5 +313,4 @@ public class CloudStorageClient {
     public void printMsg(String msg){
         log.append(msg).append("\n");
     }
-
 }

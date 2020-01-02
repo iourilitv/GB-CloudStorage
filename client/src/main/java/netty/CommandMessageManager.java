@@ -85,6 +85,12 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //вызываем метод обработки ответа сервера
                 onAuthErrorServerResponse(commandMessage);
                 break;
+            //обрабатываем полученный ответ сервера с массивом файловых объектов в заданной
+            // директории пользователя в сетевом хранилище, если нет ошибок
+            case Commands.SERVER_RESPONSE_FILE_OBJECTS_LIST_OK:
+                //вызываем метод обработки ответа сервера
+                onFileObjectsListOkServerResponse(commandMessage);
+                break;
             //обрабатываем полученное от сервера подтверждение успешной загрузки(сохранения)
             // файла в облачное хранилище
             case Commands.SERVER_RESPONSE_FILE_UPLOAD_OK:
@@ -116,6 +122,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         }
     }
 
+    /**
+     * Метод обрабатывает полученное от сервера подтверждение успешного подключения клиента
+     * @param commandMessage - объект сообщения(команды)
+     */
     private void onServerConnectedResponse(CommandMessage commandMessage) {
         //TODO temporarily
         printMsg("[client]CommandMessageManager.onServerConnectedResponse() - command: "
@@ -154,6 +164,19 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         // вывести в GUI сообщение об ошибке
         // повторить запрос на авторизацию с новыми данными логина и пароля
         printMsg("[client]CommandMessageManager.onAuthErrorServerResponse() - Something wrong with your login and password!");
+    }
+
+    /**
+     * Метод обрабатывает полученный ответ сервера с массивом файловых объектов в заданной
+     * директории пользователя в сетевом хранилище, если нет ошибок
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onFileObjectsListOkServerResponse(CommandMessage commandMessage) {
+        //вынимаем объект сообщения о директории из объекта сообщения(команды)
+        DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
+        //обновляем список элементов списка серверной части
+        GUIController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
+                directoryMessage.getFileObjectsList());
     }
 
     /**

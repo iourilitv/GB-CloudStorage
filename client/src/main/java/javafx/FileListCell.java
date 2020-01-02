@@ -52,6 +52,10 @@ public class FileListCell extends ListCell<File> {
             if(item.isDirectory()){
                 //показываем картинку папки
                 folderImage.setVisible(true);
+            //если нет
+            } else {
+                //не показываем картинку папки
+                folderImage.setVisible(false);
             }
             setText(null);
             setGraphic(vbPane);

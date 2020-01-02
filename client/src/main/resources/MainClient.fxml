@@ -15,7 +15,7 @@
                         <Font size="10.0" />
                     </font>
                 </Label>
-                <ListView fx:id="clientItemListView"/>
+                <ListView fx:id="clientItemListView" onMouseClicked="#onClickClientListFolderItem"/>
             </VBox>
         </VBox>
         <VBox HBox.hgrow="ALWAYS">
@@ -24,7 +24,7 @@
                     <Font size="10.0" />
                 </font>
             </Label>
-            <ListView fx:id="storageItemListView"/>
+            <ListView fx:id="storageItemListView" onMouseClicked="#onClickStorageListFolderItem"/>
         </VBox>
     </HBox>
     <HBox>
