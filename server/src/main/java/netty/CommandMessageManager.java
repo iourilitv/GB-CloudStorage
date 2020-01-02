@@ -131,7 +131,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //инициируем объект сообщения о директории
         DirectoryMessage directoryMessage = new DirectoryMessage();
         //формируем список файлов и папок в заданной директории клиента в сетевом хранилище
-//        directoryMessage.composeFilesAndFoldersNamesList(toDir);//TODO
         directoryMessage.takeFileObjectsList(toDir);
 
         //отправляем объект сообщения(команды) клиенту
@@ -266,7 +265,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //инициируем объект сообщения о директории
         DirectoryMessage directoryMessage = new DirectoryMessage();
         //формируем список файлов и папок в корневой директории клиента по умолчанию
-//        directoryMessage.composeFilesAndFoldersNamesList(directory);
         directoryMessage.takeFileObjectsList(directory);
 
         //отправляем объект сообщения(команды) клиенту
@@ -388,39 +386,21 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         command = commandMessage.getCommand();
         //вынимаем объет пути к его корневой директории клиента в сетевом хранилище
         userStorageRoot = Paths.get(commandMessage.getDirectory());
-
         //инициируем объект сообщения о директории
         DirectoryMessage directoryMessage = new DirectoryMessage();
         //формируем список файлов и папок в корневой директории клиента по умолчанию//TODO turn String into Path
-//        directoryMessage.composeFilesAndFoldersNamesList(userStorageRoot.toString());
         directoryMessage.takeFileObjectsList(userStorageRoot.toString());
-
         //инициируем новый объект сообщения(команды)
         commandMessage = new CommandMessage(command, directoryMessage);
-
-//        //TODO temporarily
-//        DirectoryMessage directoryMessage1 = (DirectoryMessage)commandMessage.getMessageObject();
-//        printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
-//                "ctx: " + ctx +
-//                ", command: " + commandMessage.getCommand() +
-//                ", namesList: " + Arrays.toString(directoryMessage1.getNamesList()));
-//        printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
-//                "pipeline: " + ctx.channel().pipeline().toString());
-
         //отправляем объект сообщения(команды) клиенту
         ctx.writeAndFlush(commandMessage);
-
         //удаляем входящий хэндлер AuthGateway, т.к. после авторизации он больше не нужен
         printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
                 "removed pipeline: " + ctx.channel().pipeline().remove(AuthGateway.class));
-        //TODO temporarily
-        printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
-                "updated pipeline: " + ctx.channel().pipeline().toString());
-
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
         ctx.close();
     }

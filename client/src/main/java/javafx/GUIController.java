@@ -9,7 +9,6 @@ import javafx.scene.control.*;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 
 /**
@@ -23,9 +22,6 @@ public class GUIController implements Initializable {
     @FXML
     ListView<File> clientItemListView, storageItemListView;
 
-//    @FXML
-//    ListView<String> clientFiles, serverFiles;
-
     @FXML
     Label label;
 
@@ -35,18 +31,10 @@ public class GUIController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         //инициируем объект клиента облачного хранилища
         storageClient = new CloudStorageClient(GUIController.this);
-
         //инициируем в клиентской части интерфейса список объектов в директории по умолчанию
         initializeClientItemListView();
-
         //инициируем в серверной части интерфейса список объектов в директории по умолчанию
         initializeStorageItemListView();
-
-//        //выводим в клиентской части интерфейса список объектов в директории по умолчанию
-//        updateClientFilesAndFoldersListInGUI(storageClient.getClientDefaultRoot(),
-//                new File(storageClient.getClientDefaultRoot()).listFiles());
-//        //запрашиваем у сервера список объектов в директории по умолчанию в сетевом хранилище
-//        serverFiles.getItems().addAll("S_File 1", "S_File 2", "S_File 3");
     }
 
     /**
@@ -63,16 +51,13 @@ public class GUIController implements Initializable {
      */
     public void initializeStorageItemListView() {
         //выводим в клиентской части интерфейса список объектов в директории по умолчанию
-        updateStorageFilesAndFoldersListInGUI("../",
+        updateStorageItemListInGUI("../",
                 new File[]{new File("waiting an item list from the server...")});
-
+        //в отдельном потоке
         new Thread(() -> {
             try {
-
-                //TODO temporarily
-                //запускаем тест
+                //запускаем логику клиента облачного хранилища
                 storageClient.run();
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -81,33 +66,12 @@ public class GUIController implements Initializable {
 
     @FXML
     public void btnClickSelectedClientFile(ActionEvent actionEvent) {
-//        label.setText(clientFiles.getSelectionModel().getSelectedItem());
         label.setText(clientItemListView.getSelectionModel().getSelectedItem().getName());
     }
 
     @FXML
     public void btnClickSelectedServerFile(ActionEvent actionEvent) {
-//        label.setText(serverFiles.getSelectionModel().getSelectedItem());
         label.setText(storageItemListView.getSelectionModel().getSelectedItem().getName());
-//        new Thread(() -> {
-//            try {
-//
-//                //TODO temporarily
-//                //запускаем тест
-//                storageClient.run();
-//
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
-
-    }
-
-    //FIXME
-    private void onFolderBtnEvent(ActionEvent event, Button btn) {
-
-        System.out.println("GUIController.onFolderBtnEvent() - btn.getText(): " + btn.getText());
-        clientDirLabel.setText(btn.getText());
     }
 
     /**
@@ -116,11 +80,6 @@ public class GUIController implements Initializable {
      * @param fileObjs - массив объектов класса File(файлы и директории)
      */
     public void updateClientItemListInGUI(String directory, File[] fileObjs){
-
-        //TODO temporarily
-        System.out.println("[client]GUIController.updateClientFilesAndFoldersListInGUI directory: " +
-                directory + ". fileObjs.toString(): " + Arrays.toString(fileObjs));
-
         Platform.runLater(() -> {
             //записываем в метку текущую директорию
             clientDirLabel.setText(directory);
@@ -132,47 +91,13 @@ public class GUIController implements Initializable {
         });
     }
 
-//    /**
-//     * Метод выводит в GUI список файлов и папок в корневой пользовательской директории
-//     * в сетевом хранилище.
-//     * @param directory - заданная пользовательская директория в сетевом хранилище
-//     * @param namesList - список названий файлов и папок в заданной директории
-//     */
-//    public void updateStorageFilesAndFoldersListInGUI(String directory, String[] namesList){
-//        //FIXME передать в GUI
-//
-//        //TODO temporarily
-//        System.out.println("[client]GUIController.updateStorageFilesListInGUI directory: " +
-//                directory +
-//                ". filesList: " + Arrays.toString(namesList));
-//
-//        Platform.runLater(() -> {
-//            //очищаем список элементов в директории
-//            serverFiles.getItems().clear();
-//            //добавляем новый список элементов в директории
-//            serverFiles.getItems().addAll(namesList);
-//            serverFiles.refresh();
-//
-//            System.out.println("GUIController.updateStorageFilesAndFoldersListInGUI() - serverFiles: " +
-//                    serverFiles.getItems().toString());
-//
-//            //выводим текущую директорию в метку серверной части
-//            storageDirLabel.setText(directory);
-//        });
-//    }
     /**
      * Метод выводит в GUI список файлов и папок в корневой пользовательской директории
      * в сетевом хранилище.
      * @param directory - заданная пользовательская директория в сетевом хранилище
      * @param fileObjs - массив объектов класса File(файлы и директории)
      */
-    public void updateStorageFilesAndFoldersListInGUI(String directory, File[] fileObjs){
-
-        //TODO temporarily
-        System.out.println("[client]GUIController.updateStorageFilesListInGUI directory: " +
-                directory +
-                ". filesList: " + Arrays.toString(fileObjs));
-
+    public void updateStorageItemListInGUI(String directory, File[] fileObjs){
         Platform.runLater(() -> {
             //выводим текущую директорию в метку серверной части
             storageDirLabel.setText(directory);

@@ -14,7 +14,6 @@ import javafx.GUIController;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 /**
  * The client class for recognizing command messages and control command handlers.
@@ -47,7 +46,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msgObject) throws IOException {
+    public void channelRead(ChannelHandlerContext ctx, Object msgObject) {
         try {
             //десериализуем объект сообщения(команды)
             CommandMessage commandMessage = (CommandMessage) msgObject;
@@ -68,7 +67,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * Метот распознает тип команды и обрабатывает ее.
      * @param commandMessage - объект сообщения(команды)
      */
-    public void recognizeAndArrangeMessageObject(CommandMessage commandMessage) throws IOException {
+    public void recognizeAndArrangeMessageObject(CommandMessage commandMessage) {
         //выполняем операции в зависимости от типа полученного сообщения(команды)
         switch (commandMessage.getCommand()) {
             //обрабатываем полученное от сервера подтверждение успешного подключения клиента
@@ -117,7 +116,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private void onServerConnectedResponse(CommandMessage commandMessage) throws IOException {
+    private void onServerConnectedResponse(CommandMessage commandMessage) {
         //TODO temporarily
         printMsg("[client]CommandMessageManager.onServerConnectedResponse() - command: "
                 + commandMessage.getCommand());
@@ -141,9 +140,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 
         //FIXME нужно передавать в контроллер GUI
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
-//        GUIController.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
-//                directoryMessage.getNamesList());
-        GUIController.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
+        GUIController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
                 directoryMessage.getFileObjectsList());
 
     }
@@ -170,9 +167,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 
         //FIXME нужно передавать в контроллер GUI
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
-//        GUIController.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
-//                directoryMessage.getNamesList());
-        GUIController.updateStorageFilesAndFoldersListInGUI(directoryMessage.getDirectory(),
+        GUIController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
                 directoryMessage.getFileObjectsList());
 
         //TODO temporarily
