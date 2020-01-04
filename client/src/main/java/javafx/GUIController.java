@@ -14,7 +14,6 @@ import javafx.stage.Window;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
@@ -58,10 +57,6 @@ public class GUIController implements Initializable {
      * Метод инициирует в клиентской части интерфейса список объектов в директории по умолчанию
      */
     public void initializeClientItemListView() {
-
-//        updateClientItemListInGUI(storageClient.getClientDefaultRoot(),
-//                new File(storageClient.getClientDefaultRoot()).listFiles());
-
         //собираем путь к текущей папке(к директории по умолчанию) для получения списка объектов
         String directory = Paths.get(CloudStorageClient.CLIENT_ROOT, storageClient.getClientDefaultDirectory()).toString();
         //выводим в клиентской части интерфейса список объектов в директории по умолчанию
@@ -76,7 +71,6 @@ public class GUIController implements Initializable {
                         //собираем путь к текущей папке для получения списка объектов
                         Paths.get(CloudStorageClient.CLIENT_ROOT, currentClientDir).toString(),
                         //получаем выбранную директорию в сетевом хранилище
-//                        storageItemListView.getSelectionModel().getSelectedItem().getName(),
                         currentStorageDir,
                         //получаем элемент списка - источника вызова контекстного меню
                         clientItemListView.getSelectionModel().getSelectedItem().getName());
@@ -126,7 +120,6 @@ public class GUIController implements Initializable {
 
         Platform.runLater(() -> {
             //записываем в метку текущую директорию
-//            clientDirLabel.setText(directory);
             clientDirLabel.setText(currentClientDir);
 
             //очищаем список элементов
@@ -149,7 +142,6 @@ public class GUIController implements Initializable {
 
         Platform.runLater(() -> {
             //выводим текущую директорию в метку серверной части
-//            storageDirLabel.setText(directory);
             storageDirLabel.setText(currentStorageDir);
 
             //очищаем список элементов
@@ -175,8 +167,6 @@ public class GUIController implements Initializable {
             if(item.isDirectory()){
 
                 System.out.println("GUIController.onClickClientListFolderItem() - " +
-//                        "mouseEvent.getEventType(): " + mouseEvent.getEventType() +
-//                        ", mouseEvent.getButton().name(): " + mouseEvent.getButton().name() +
                         ", clientItemListView.getSelectionModel().getSelectedItem().getName(): " +
                         clientItemListView.getSelectionModel().getSelectedItem().getName()
                 );
@@ -190,9 +180,7 @@ public class GUIController implements Initializable {
                     ", mouseEvent.getButton().name(): " + mouseEvent.getButton().name());
             //FIXME
             //метод вызова контекстного меню
-//            clientItemListView.getOnMouseClicked().handle(mouseEvent);
             Node node = clientItemListView.getPlaceholder();
-//            Scene scene = node.getScene();
             Scene scene = new Scene(node.getParent());//Caused by: java.lang.NullPointerException
             Window window = scene.getWindow();
             clientItemListView.getContextMenu().show(window);
@@ -214,8 +202,6 @@ public class GUIController implements Initializable {
             if(item.isDirectory()){
 
                 System.out.println("GUIController.onClickClientListFolderItem() - " +
-//                        "mouseEvent.getEventType(): " + mouseEvent.getEventType() +
-//                        ", mouseEvent.getButton().name(): " + mouseEvent.getButton().name() +
                                 ", storageItemListView.getSelectionModel().getSelectedItem().getName(): " +
                                 storageItemListView.getSelectionModel().getSelectedItem().getName()
                 );

@@ -11,10 +11,6 @@ public class DirectoryMessage extends AbstractMessage {
     //объявляем массив со списком объектов файлов и папок в директории
     private File[] fileObjectsList;
 
-//    public DirectoryMessage() {
-//        this.directory = "";
-//    }
-
     public DirectoryMessage(String directory) {
         this.directory = directory;
     }

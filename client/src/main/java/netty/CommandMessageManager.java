@@ -45,6 +45,12 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         this.ctx = ctx;
     }
 
+    /**
+     * Метод отрабатываем событие получение объекта сообщения.
+     * Преобразует объект сообщения в объект соманды и запускает его обработку.
+     * @param ctx - объект сетевого соединения
+     * @param msgObject - объект сообщения
+     */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msgObject) {
         try {
@@ -127,13 +133,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * @param commandMessage - объект сообщения(команды)
      */
     private void onServerConnectedResponse(CommandMessage commandMessage) {
-        //TODO temporarily
-        printMsg("[client]CommandMessageManager.onServerConnectedResponse() - command: "
-                + commandMessage.getCommand());
-
-        //TODO temporarily
-//        //запускаем тест
-//        storageClient.startTest(ctx);
         //отправляем запрос на авторизацию в обланое хранилище
         storageClient.startAuthorization(ctx);
     }
@@ -145,16 +144,9 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     private void onAuthOkServerResponse(CommandMessage commandMessage) {
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
         DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
-
-//        //TODO temporarily
-//        printMsg("[client]CommandMessageManager.onAuthOkServerResponse() - command: "
-//                + commandMessage.getCommand() + ". namesList: " + Arrays.toString(directoryMessage.getNamesList()));
-
-        //FIXME нужно передавать в контроллер GUI
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
         GUIController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
                 directoryMessage.getFileObjectsList());
-
     }
 
     /**
@@ -189,8 +181,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     private void onUploadFileOkServerResponse(CommandMessage commandMessage) {
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
         DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
-
-        //FIXME нужно передавать в контроллер GUI
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
         GUIController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
                 directoryMessage.getFileObjectsList());
