@@ -5,11 +5,17 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Window;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 /**
@@ -26,12 +32,22 @@ public class GUIController implements Initializable {
     @FXML
     Label label;
 
+    //объявляем объект контроллера клиента облачного хранилища
     private CloudStorageClient storageClient;
+    //получаем текущую папку списка файловых объектов в клиентской части GUI
+    private String currentClientDir;
+    //получаем текущую папку списка файловых объектов в серверной части GUI
+    private String currentStorageDir;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //инициируем объект клиента облачного хранилища
         storageClient = new CloudStorageClient(GUIController.this);
+        //получаем текущую папку списка файловых объектов в клиентской части GUI
+        currentClientDir = storageClient.getClientDefaultDirectory();
+        //получаем текущую папку списка файловых объектов в серверной части GUI
+        currentStorageDir = storageClient.getStorageDefaultDirectory();
         //инициируем в клиентской части интерфейса список объектов в директории по умолчанию
         initializeClientItemListView();
         //инициируем в серверной части интерфейса список объектов в директории по умолчанию
@@ -42,9 +58,33 @@ public class GUIController implements Initializable {
      * Метод инициирует в клиентской части интерфейса список объектов в директории по умолчанию
      */
     public void initializeClientItemListView() {
+
+//        updateClientItemListInGUI(storageClient.getClientDefaultRoot(),
+//                new File(storageClient.getClientDefaultRoot()).listFiles());
+
+        //собираем путь к текущей папке(к директории по умолчанию) для получения списка объектов
+        String directory = Paths.get(CloudStorageClient.CLIENT_ROOT, storageClient.getClientDefaultDirectory()).toString();
         //выводим в клиентской части интерфейса список объектов в директории по умолчанию
-        updateClientItemListInGUI(storageClient.getClientDefaultRoot(),
-                new File(storageClient.getClientDefaultRoot()).listFiles());
+        updateClientItemListInGUI(storageClient.getClientDefaultDirectory(), new File(directory).listFiles());
+
+        // Create a MenuItem and place it in a ContextMenu
+        MenuItem menuItemUpload = new MenuItem("Upload");
+        ContextMenu contextMenu = new ContextMenu(menuItemUpload);
+        menuItemUpload.setOnAction(e -> {
+            try {
+                storageClient.uploadFile(
+                        //собираем путь к текущей папке для получения списка объектов
+                        Paths.get(CloudStorageClient.CLIENT_ROOT, currentClientDir).toString(),
+                        //получаем выбранную директорию в сетевом хранилище
+//                        storageItemListView.getSelectionModel().getSelectedItem().getName(),
+                        currentStorageDir,
+                        //получаем элемент списка - источника вызова контекстного меню
+                        clientItemListView.getSelectionModel().getSelectedItem().getName());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        clientItemListView.setContextMenu(contextMenu);
     }
 
     /**
@@ -81,9 +121,14 @@ public class GUIController implements Initializable {
      * @param fileObjs - массив объектов класса File(файлы и директории)
      */
     public void updateClientItemListInGUI(String directory, File[] fileObjs){
+        //обновляем текущую директорию
+        currentClientDir = directory;
+
         Platform.runLater(() -> {
             //записываем в метку текущую директорию
-            clientDirLabel.setText(directory);
+//            clientDirLabel.setText(directory);
+            clientDirLabel.setText(currentClientDir);
+
             //очищаем список элементов
             clientItemListView.getItems().clear();
             //обновляем список элементов списка
@@ -99,28 +144,20 @@ public class GUIController implements Initializable {
      * @param fileObjs - массив объектов класса File(файлы и директории)
      */
     public void updateStorageItemListInGUI(String directory, File[] fileObjs){
+        //обновляем текущую директорию
+        currentStorageDir = directory;
+
         Platform.runLater(() -> {
             //выводим текущую директорию в метку серверной части
-            storageDirLabel.setText(directory);
+//            storageDirLabel.setText(directory);
+            storageDirLabel.setText(currentStorageDir);
+
             //очищаем список элементов
             storageItemListView.getItems().clear();
             //обновляем список элементов списка
             storageItemListView.getItems().addAll(fileObjs);
             storageItemListView.setCellFactory(itemListView -> new FileListCell());
         });
-    }
-
-    //Метод отправки запроса об отключении на сервер
-    public void dispose() {
-        System.out.println("Отправляем сообщение о закрытии");
-//        try {
-//            //проверяем подключен ли клиент
-//            if (out != null && !socket.isClosed()) {
-//                out.writeUTF("/end");
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
     /**
@@ -153,7 +190,12 @@ public class GUIController implements Initializable {
                     ", mouseEvent.getButton().name(): " + mouseEvent.getButton().name());
             //FIXME
             //метод вызова контекстного меню
-
+//            clientItemListView.getOnMouseClicked().handle(mouseEvent);
+            Node node = clientItemListView.getPlaceholder();
+//            Scene scene = node.getScene();
+            Scene scene = new Scene(node.getParent());//Caused by: java.lang.NullPointerException
+            Window window = scene.getWindow();
+            clientItemListView.getContextMenu().show(window);
         }
     }
 
@@ -196,5 +238,18 @@ public class GUIController implements Initializable {
 
     public ListView<File> getClientItemListView() {
         return clientItemListView;
+    }
+
+    //Метод отправки запроса об отключении на сервер
+    public void dispose() {
+        System.out.println("Отправляем сообщение о закрытии");
+//        try {
+//            //проверяем подключен ли клиент
+//            if (out != null && !socket.isClosed()) {
+//                out.writeUTF("/end");
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 }

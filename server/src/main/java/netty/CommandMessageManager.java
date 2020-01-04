@@ -156,7 +156,9 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             command = Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR;
         }
         //инициируем объект сообщения о директории
-        DirectoryMessage directoryMessage = new DirectoryMessage();
+//        DirectoryMessage directoryMessage = new DirectoryMessage();
+        DirectoryMessage directoryMessage = new DirectoryMessage(storageDir);
+
         //формируем список файлов и папок в заданной директории клиента в сетевом хранилище
         directoryMessage.takeFileObjectsList(toDir);
 
@@ -290,7 +292,9 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             }
         }
         //инициируем объект сообщения о директории
-        DirectoryMessage directoryMessage = new DirectoryMessage();
+//        DirectoryMessage directoryMessage = new DirectoryMessage();
+        DirectoryMessage directoryMessage = new DirectoryMessage(directory);
+
         //формируем список файлов и папок в корневой директории клиента по умолчанию
         directoryMessage.takeFileObjectsList(directory);
 
@@ -414,7 +418,9 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //вынимаем объет пути к его корневой директории клиента в сетевом хранилище
         userStorageRoot = Paths.get(commandMessage.getDirectory());
         //инициируем объект сообщения о директории
-        DirectoryMessage directoryMessage = new DirectoryMessage();
+//        DirectoryMessage directoryMessage = new DirectoryMessage();
+        DirectoryMessage directoryMessage = new DirectoryMessage("");
+
         //формируем список файлов и папок в корневой директории клиента по умолчанию//TODO turn String into Path
         directoryMessage.takeFileObjectsList(userStorageRoot.toString());
         //инициируем новый объект сообщения(команды)

@@ -31,16 +31,26 @@ public class CloudStorageClient {
     //инициируем переменную для печати сообщений в консоль
     private final PrintStream log = System.out;
 
-    //инициируем переменную для директории, заданной относительно userStorageRoot в сетевом хранилище
-    private String storageDir = "";
-    //инициируем строку названия директории облачного хранилища(сервера) для хранения файлов клиента
-    private final String clientDefaultRoot = "storage/client_storage";
-    //инициируем переменную для директории, заданной относительно clientRoot
-    private String clientDir = "";
-    //объявляем переменную для текущей директории клиента
-    private String currentClientDir;
+    //инициируем константу строки названия корневой директории для списка в клиентской части GUI
+    public static final String CLIENT_ROOT = "storage/client_storage";
+    //инициируем константу строки названия директории по умолчанию относительно корневой директории
+    // для списка в клиентской части GUI
+    private final String clientDefaultDirectory = "";
+
+//    //инициируем переменную для директории, заданной относительно clientRoot
+//    private String clientDir = "";//TODO удалить - получим из GUIController
+//    //объявляем переменную для текущей директории клиента
+//    private String currentClientDir;//TODO удалить - получим из GUIController
+
+    //инициируем константу строки названия корневой директории для списка в серверной части GUI
+    private final String storageDefaultDirectory = "";
+
+//    //инициируем переменную для директории, заданной относительно storageDefaultRoot в сетевом хранилище
+//    private String storageDir = "";//TODO удалить - получим из GUIController
+
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
+
     //FIXME temporarily - будет получать из GUI
     //инициируем константы логина и пароля пользователя
     private final String login = "login1";
@@ -91,6 +101,10 @@ public class CloudStorageClient {
 //
 //    }
 
+    /**
+     * Метод начала работы клиента сетевого зранилища.
+     * @throws Exception - исключение
+     */
     public void run() throws Exception {
         //инициируем объект файлового обработчика
         fileUtils = new FileUtils();
@@ -98,46 +112,66 @@ public class CloudStorageClient {
         new NettyClient(this, IP_ADDR, PORT).run();
     }
 
-    //FIXME удалить, когда будет реализован интерфейс
-    public void startTest(ChannelHandlerContext ctx) {
-        //принимаем переменную четевого подключения
+//    //FIXME удалить, когда будет реализован интерфейс
+//    public void startTest(ChannelHandlerContext ctx) {
+////        //принимаем переменную четевого подключения
+////        this.ctx = ctx;
+//
+////        //инициируем переменную для текущей директории клиента
+////        currentClientDir = clientDefaultRoot;
+//
+////        //отправляем на сервер запрос на авторизацию в облачное хранилище
+////        requestAuthorization(ctx, login, password);
+////        //добавляем к корневой директории пользователя в сетевом хранилище
+////        // имя подпапки назначения
+////        storageDir = storageDir.concat("folderToUploadFile");
+////        //инициируем переменную для текущей директории клиента
+////        currentClientDir = clientDefaultRoot;
+//
+//        //отправляем на сервер запрос на загрузку маленького файла в облачное хранилище
+////        uploadFile(currentClientDir, storageDir, "toUpload.txt");//TODO for test
+//        //отправляем на сервер запрос на загрузку большого файла в облачное хранилище
+////        uploadFile(currentClientDir, storageDir, "toUploadBIG.mp4");//TODO for test
+////        uploadFile(currentClientDir, storageDir, "toUploadMedium.png");//TODO for test
+//
+////        //восстанавливаем начальное значение директории в сетевом хранилище//TODO temporarily
+////        storageDir = "";
+////        //добавляем к корневой директории клиента имя подпапки назначения на клиенте
+////        clientDir = clientDir.concat("folderToDownloadFile");
+//
+//        //отправляем на сервер запрос на скачивание маленького файла из облачного хранилища
+////        downloadFile(storageDir, clientDir, "toDownload.png");//TODO for test
+//        //отправляем на сервер запрос на скачивание большого файла из облачного хранилища
+////        downloadFile(storageDir, clientDir, "toDownloadBIG.mp4");//TODO for test
+//    }
+
+    /**
+     * Публичный метод отправляет на сервер запрос на авторизацию в облачное хранилище
+     * @param ctx - объект сетевого соединения
+     */
+    public void startAuthorization(ChannelHandlerContext ctx) {
+        //принимаем объект сетевого соединения
         this.ctx = ctx;
-        //инициируем переменную для текущей директории клиента
-        currentClientDir = clientDefaultRoot;
-        //отправляем на сервер запрос на авторизацию в облачное хранилище
-        requestAuthorization(ctx, login, password);
-        //добавляем к корневой директории пользователя в сетевом хранилище
-        // имя подпапки назначения
-        storageDir = storageDir.concat("folderToUploadFile");
-        //инициируем переменную для текущей директории клиента
-        currentClientDir = clientDefaultRoot;
-        //отправляем на сервер запрос на загрузку маленького файла в облачное хранилище
-//        uploadFile(currentClientDir, storageDir, "toUpload.txt");//TODO for test
-        //отправляем на сервер запрос на загрузку большого файла в облачное хранилище
-//        uploadFile(currentClientDir, storageDir, "toUploadBIG.mp4");//TODO for test
-//        uploadFile(currentClientDir, storageDir, "toUploadMedium.png");//TODO for test
 
-        //восстанавливаем начальное значение директории в сетевом хранилище//TODO temporarily
-        storageDir = "";
-        //добавляем к корневой директории клиента имя подпапки назначения на клиенте
-        clientDir = clientDir.concat("folderToDownloadFile");
-        //отправляем на сервер запрос на скачивание маленького файла из облачного хранилища
-//        downloadFile(storageDir, clientDir, "toDownload.png");//TODO for test
-        //отправляем на сервер запрос на скачивание большого файла из облачного хранилища
-//        downloadFile(storageDir, clientDir, "toDownloadBIG.mp4");//TODO for test
-    }
-
-    //отправляем на сервер запрос на авторизацию в облачное хранилище
-    private void requestAuthorization(ChannelHandlerContext ctx, String login, String password) {
         //TODO temporarily
         printMsg("***CloudStorageClient.requestAuthorization() - has started***");
 
-        //отправляем на сервер объект сообщения(команды)
-        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
-                new AuthMessage(login, password)));
+        //отправляем на сервер запрос на авторизацию в облачное хранилище
+        requestAuthorization(login, password);
 
         //TODO temporarily
         printMsg("***CloudStorageClient.requestAuthorization() - has finished***");
+    }
+
+    /**
+     * Приватный метод отправляет на сервер запрос на авторизацию в облачное хранилище
+     * @param login - логин пользователя
+     * @param password - пароль пользователя
+     */
+    private void requestAuthorization(String login, String password) {
+        //отправляем на сервер объект сообщения(команды)
+        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
+                new AuthMessage(login, password)));
     }
 
     /**
@@ -156,6 +190,10 @@ public class CloudStorageClient {
     public void uploadFile(String fromDir, String toDir, String filename) throws IOException {
         //TODO temporarily
         printMsg("***CloudStorageClient.uploadFile() - has started***");
+
+        //TODO temporarily
+        System.out.println("CloudStorageClient.uploadFile - fromDir: " + fromDir +
+                ", toDir: " + toDir + ", filename: " + filename);
 
         //вычисляем размер файла
         long fileSize = Files.size(Paths.get(fromDir, filename));
@@ -261,19 +299,18 @@ public class CloudStorageClient {
 
         //TODO temporarily
         System.out.println("CloudStorageClient.uploadEntireFile() - fileUtils: " + fileUtils +
-                ", currentClientDir: " + currentClientDir +
+                ", fromDir: " + fromDir +
+                ", toDir: " + toDir +
                 ", fileMessage: " + fileMessage);
 
         //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
         //FIXME Разобраться с абсолютными папкими клиента
         //если скачивание прошло удачно
-        if(fileUtils.readFile(currentClientDir, fileMessage)){
-
+        if(fileUtils.readFile(fromDir, fileMessage)){
             //отправляем на сервер объект сообщения(команды)
             ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
                     fileMessage));
-
-            //если что-то пошло не так
+        //если что-то пошло не так
         } else {
             //выводим сообщение
             printMsg("[client]" + fileUtils.getMsg());
@@ -298,8 +335,12 @@ public class CloudStorageClient {
         printMsg("***CloudStorageClient.downloadFile() - has finished***");
     }
 
-    public String getClientDefaultRoot() {
-        return clientDefaultRoot;
+    public String getStorageDefaultDirectory() {
+        return storageDefaultDirectory;
+    }
+
+    public String getClientDefaultDirectory() {
+        return clientDefaultDirectory;
     }
 
     public FileUtils getFileUtils() {

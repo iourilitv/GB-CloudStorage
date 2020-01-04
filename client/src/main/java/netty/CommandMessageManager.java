@@ -12,8 +12,8 @@ import utils.Commands;
 import utils.FileUtils;
 import javafx.GUIController;
 
-import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 /**
  * The client class for recognizing command messages and control command handlers.
@@ -132,8 +132,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 + commandMessage.getCommand());
 
         //TODO temporarily
-        //запускаем тест
-        storageClient.startTest(ctx);
+//        //запускаем тест
+//        storageClient.startTest(ctx);
+        //отправляем запрос на авторизацию в обланое хранилище
+        storageClient.startAuthorization(ctx);
     }
 
     /**
@@ -194,8 +196,11 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 directoryMessage.getFileObjectsList());
 
         //TODO temporarily
-//        printMsg("[client]CommandMessageManager.onUploadFileOkServerResponse() - command: "
-//                + commandMessage.getCommand() + ". namesList: " + Arrays.toString(directoryMessage.getNamesList()));
+        printMsg("[client]CommandMessageManager.onUploadFileOkServerResponse() - " +
+                "command: " + commandMessage.getCommand() +
+                ". directoryMessage.getDirectory(): " + directoryMessage.getDirectory() +
+                ". directoryMessage.getFileObjectsList(): " +
+                Arrays.toString(directoryMessage.getFileObjectsList()));
 
     }
 
@@ -223,7 +228,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 
         //FIXME придется указывать абсолютный путь, если будет выбор папки клиента
         //собираем текущую директорию на клиенте
-        String toDir = storageClient.getClientDefaultRoot();
+        String toDir = storageClient.getClientDefaultDirectory();
         toDir = toDir.concat("/").concat(clientDir);
         //если сохранение прошло удачно
         if(fileUtils.saveFile(toDir, fileMessage)){//FIXME см.выше
@@ -263,7 +268,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 
         //собираем целевую директорию на клиенте
         //сбрасываем до корневой папки
-        String toTempDir = storageClient.getClientDefaultRoot();
+        String toTempDir = storageClient.getClientDefaultDirectory();
         // добавляем временную директорию клиента из объекта сообщения(команды)
         toTempDir = toTempDir.concat("/").concat(fileFragmentMessage.getToTempDir());
         //создаем объект пути к папке с загруженным файлом
