@@ -8,7 +8,6 @@
       fx:controller="javafx.GUIController">
 
     <HBox VBox.vgrow="ALWAYS">
-<!--        <VBox HBox.hgrow="ALWAYS">-->
         <VBox HBox.hgrow="ALWAYS">
             <Label fx:id="clientDirLabel" alignment="CENTER_LEFT" contentDisplay="LEFT" maxWidth="Infinity" style="-fx-background-color: #48d1cc;" text=".../" textAlignment="LEFT">
                 <font>
@@ -17,7 +16,6 @@
             </Label>
             <ListView fx:id="clientItemListView" onMouseClicked="#onClickClientListFolderItem"/>
         </VBox>
-<!--        </VBox>-->
         <VBox HBox.hgrow="ALWAYS">
             <Label fx:id="storageDirLabel" alignment="CENTER_LEFT" contentDisplay="LEFT" maxWidth="Infinity" style="-fx-background-color: #48d1cc;" text="../" textAlignment="LEFT">
                 <font>
