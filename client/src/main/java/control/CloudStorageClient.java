@@ -11,6 +11,7 @@ import utils.CommandMessage;
 import utils.Commands;
 import utils.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
@@ -49,6 +50,8 @@ public class CloudStorageClient {
     public CloudStorageClient(GUIController GUIController) {
         //принимаем объект контроллера GUI
         this.GUIController = GUIController;
+        //инициируем объект файлового обработчика
+        fileUtils = new FileUtils();
     }
 
     /**
@@ -56,10 +59,8 @@ public class CloudStorageClient {
      * @throws Exception - исключение
      */
     public void run() throws Exception {
-        //инициируем объект файлового обработчика
-        fileUtils = new FileUtils();
         //инициируем объект соединения
-        new NettyClient(this, IP_ADDR, PORT).run();
+//        new NettyClient(this, IP_ADDR, PORT).run();//TODO
     }
 
     /**
@@ -256,6 +257,13 @@ public class CloudStorageClient {
         printMsg("***CloudStorageClient.downloadFile() - has finished***");
     }
 
+    public void deleteFolder(File origin) {
+        //FIXME
+
+        //TODO temporarily
+        printMsg("***CloudStorageClient.deleteFolder() - has finished*** - folder: " + origin);
+    }
+
     public String getStorageDefaultDirectory() {
         return storageDefaultDirectory;
     }
@@ -275,4 +283,5 @@ public class CloudStorageClient {
     public void printMsg(String msg){
         log.append(msg).append("\n");
     }
+
 }

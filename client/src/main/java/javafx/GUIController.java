@@ -3,18 +3,18 @@ package javafx;
 import control.CloudStorageClient;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Window;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 /**
@@ -37,7 +37,8 @@ public class GUIController implements Initializable {
     private String currentClientDir;
     //получаем текущую папку списка файловых объектов в серверной части GUI
     private String currentStorageDir;
-
+    //объявляем переменную контекстного меню
+    private ContextMenu contextMenu;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -57,28 +58,33 @@ public class GUIController implements Initializable {
      * Метод инициирует в клиентской части интерфейса список объектов в директории по умолчанию
      */
     public void initializeClientItemListView() {
-        //собираем путь к текущей папке(к директории по умолчанию) для получения списка объектов
-        String directory = Paths.get(CloudStorageClient.CLIENT_ROOT, storageClient.getClientDefaultDirectory()).toString();
+//        //собираем путь к текущей папке(к директории по умолчанию) для получения списка объектов
+//        String directory = Paths.get(CloudStorageClient.CLIENT_ROOT, storageClient.getClientDefaultDirectory()).toString();
         //выводим в клиентской части интерфейса список объектов в директории по умолчанию
-        updateClientItemListInGUI(storageClient.getClientDefaultDirectory(), new File(directory).listFiles());
-
-        // Create a MenuItem and place it in a ContextMenu
-        MenuItem menuItemUpload = new MenuItem("Upload");
-        ContextMenu contextMenu = new ContextMenu(menuItemUpload);
-        menuItemUpload.setOnAction(e -> {
-            try {
-                storageClient.uploadFile(
-                        //собираем путь к текущей папке для получения списка объектов
-                        Paths.get(CloudStorageClient.CLIENT_ROOT, currentClientDir).toString(),
-                        //получаем выбранную директорию в сетевом хранилище
-                        currentStorageDir,
-                        //получаем элемент списка - источника вызова контекстного меню
-                        clientItemListView.getSelectionModel().getSelectedItem().getName());
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        });
-        clientItemListView.setContextMenu(contextMenu);
+//        updateClientItemListInGUI(storageClient.getClientDefaultDirectory(), new File(directory).listFiles());
+        updateClientItemListInGUI(clientDefaultDirectory(), clientFilesList(clientDefaultDirectory()));
+//        // Create a MenuItem and place it in a ContextMenu
+//        MenuItem menuItemUpload = new MenuItem("Upload");
+//        ContextMenu contextMenu = new ContextMenu(menuItemUpload);
+//
+//        menuItemUpload.setOnAction(e -> {
+//            //получаем элемент списка - источник вызова констекстного меню
+//            File item = clientItemListView.getSelectionModel().getSelectedItem();
+//            if(item != null){
+//                try {
+//                    storageClient.uploadFile(
+//                            //собираем путь к текущей папке для получения списка объектов
+//                            Paths.get(CloudStorageClient.CLIENT_ROOT, currentClientDir).toString(),
+//                            //получаем выбранную директорию в сетевом хранилище
+//                            currentStorageDir,
+//                            //получаем элемент списка - источника вызова контекстного меню
+//                            item.getName());
+//                } catch (IOException ex) {
+//                    ex.printStackTrace();
+//                }
+//            }
+//        });
+//        clientItemListView.setContextMenu(contextMenu);
     }
 
     /**
@@ -92,7 +98,7 @@ public class GUIController implements Initializable {
         new Thread(() -> {
             try {
                 //запускаем логику клиента облачного хранилища
-                storageClient.run();
+                storageClient.run();//TODO
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -124,10 +130,317 @@ public class GUIController implements Initializable {
 
             //очищаем список элементов
             clientItemListView.getItems().clear();
+
+            System.out.println("GUIController.updateClientItemListInGUI() - " +
+                    "\nclientItemListView.getItems(): " + clientItemListView.getItems() +
+                    ", Arrays.toString(fileObjs): " + Arrays.toString(fileObjs));
+
             //обновляем список элементов списка
             clientItemListView.getItems().addAll(fileObjs);
             clientItemListView.setCellFactory(itemListView -> new FileListCell());
+
+            //вызываем контекстное меню
+            callContextMenu(currentClientDir, clientItemListView);
+//            //инициируем объект контестного меню
+//            contextMenu = new ContextMenu();
+//            MenuItem menuItemRename = new MenuItem("Rename");
+//            menuItemRename.setOnAction(new EventHandler<ActionEvent>() {
+//                @Override
+//                public void handle(ActionEvent event) {
+//                    System.out.println("GUIController.updateClientItemListInGUI().menuItemRename.setOnAction() - " +
+//                            "\nclientItemListView.getSelectionModel().getSelectedItem(): " +
+//                            clientItemListView.getSelectionModel().getSelectedItem());
+//
+//                    //сбрасываем выделение после действия
+//                    clientItemListView.getSelectionModel().clearSelection();
+//                }
+//            });
+//            MenuItem menuItemUpload = new MenuItem("Upload");
+//            menuItemUpload.setOnAction(new EventHandler<ActionEvent>() {
+//                @Override
+//                public void handle(ActionEvent event) {
+//                    System.out.println("GUIController.updateClientItemListInGUI().menuItemUpload.setOnAction() - " +
+//                            "\nclientItemListView.getSelectionModel().getSelectedItem(): " +
+//                            clientItemListView.getSelectionModel().getSelectedItem());
+//
+//                    //сбрасываем выделение после действия
+//                    clientItemListView.getSelectionModel().clearSelection();
+//                }
+//            });
+//
+//            MenuItem menuItemDownload = new MenuItem("Download");
+//            menuItemUpload.setOnAction(new EventHandler<ActionEvent>() {
+//                @Override
+//                public void handle(ActionEvent event) {
+//                    System.out.println("GUIController.updateClientItemListInGUI().menuItemUpload.setOnAction() - " +
+//                                    "\nclientItemListView.getSelectionModel().getSelectedItem(): " +
+//                                    clientItemListView.getSelectionModel().getSelectedItem());
+//
+//                    //сбрасываем выделение после действия
+//                    clientItemListView.getSelectionModel().clearSelection();
+//                }
+//            });
+//            MenuItem menuItemDelete = new MenuItem("Delete");
+//            menuItemDelete.setOnAction(new EventHandler<ActionEvent>() {
+//                @Override
+//                public void handle(ActionEvent event) {
+//                    System.out.println("GUIController.updateClientItemListInGUI().menuItemDelete.setOnAction() - " +
+//                            "\nclientItemListView.getSelectionModel().getSelectedItem(): " +
+//                            clientItemListView.getSelectionModel().getSelectedItem());
+//
+//                    //сбрасываем выделение после действия
+//                    clientItemListView.getSelectionModel().clearSelection();
+//                }
+//            });
+//
+//            //если текущий список клиентсткий
+//            if(listView.instanceOf(clientItemListView)){
+//                // добавляем скопом элементы в контестное меню
+//                contextMenu.getItems().addAll(menuItemRename, menuItemUpload, menuItemDelete);
+//            } else if(listView.instanceOf(storageItemListView)){
+//                // добавляем скопом элементы в контестное меню
+//                contextMenu.getItems().addAll(menuItemRename, menuItemDownload, menuItemDelete);
+//            }
+//
+//            // When user right-click on Circle
+//            clientItemListView.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+//
+//                @Override
+//                public void handle(ContextMenuEvent event) {
+//
+////                    System.out.println("GUIController.updateClientItemListInGUI().setOnContextMenuRequested() - " +
+////                            "clientItemListView.getSelectionModel().getSelectedItems().isEmpty(): " +
+////                            clientItemListView.getSelectionModel().getSelectedItems().isEmpty());
+//
+//                    //если кликнут не пустой элемент
+//                    if(!clientItemListView.getSelectionModel().getSelectedItems().isEmpty()){
+//                        //показываем меню в точке клика(позиция левого-верхнего угла контекстного меню)
+//                        contextMenu.show(clientItemListView, event.getScreenX(), event.getScreenY());
+//                    }
+//                }
+//            });
         });
+    }
+
+    /**
+     * Метод инициирует контекстное меню для переданной в параметре коллекции файловых объектов.
+     * @param listView - коллекция файловых объектов
+     */
+    private void callContextMenu(String currentDirectory, ListView<File> listView){
+        //инициируем объект контестного меню
+        contextMenu = new ContextMenu();
+//        //если выбранный элемент это директория
+//        if(listView.getSelectionModel().getSelectedItem().isDirectory()){
+//            // добавляем элемент в контестное меню
+//            contextMenu.getItems().add(menuItemGetList(listView));
+//        }
+        //если текущий список клиентсткий
+        if(listView.equals(clientItemListView)){
+            // добавляем скопом элементы в контестное меню
+//            contextMenu.getItems().addAll(menuItemRename, menuItemUpload, menuItemDelete);
+            contextMenu.getItems().add(menuItemUpload(listView));
+        //если текущий список облачного хранилища
+        } else if(listView.equals(storageItemListView)){
+            // добавляем скопом элементы в контестное меню
+//            contextMenu.getItems().addAll(menuItemRename, menuItemDownload, menuItemDelete);
+            contextMenu.getItems().add(menuItemDownload(listView));
+        }
+        // добавляем скопом оставщиеся элементы в контестное меню
+//        contextMenu.getItems().addAll(menuItemRename, menuItemDelete);
+        contextMenu.getItems().addAll(menuItemRename(listView), menuItemDelete(listView));
+
+        //устаналиваем событие на клик правой кнопки мыши по элементу списка
+        listView.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+            @Override
+            public void handle(ContextMenuEvent event) {
+
+//                    System.out.println("GUIController.callContextMenu().setOnContextMenuRequested() - " +
+//                            "listView.getSelectionModel().getSelectedItems().isEmpty(): " +
+//                            listView.getSelectionModel().getSelectedItems().isEmpty());
+
+                //если кликнут не пустой элемент
+                if(!listView.getSelectionModel().getSelectedItems().isEmpty()) {
+                    //если выбранный элемент это директория
+                    if(listView.getSelectionModel().getSelectedItem().isDirectory()){
+                        // добавляем элемент в контестное меню
+                        contextMenu.getItems().add(0, menuItemGetList(listView));
+                    }
+                    //показываем меню в точке клика(позиция левого-верхнего угла контекстного меню)
+                    contextMenu.show(listView, event.getScreenX(), event.getScreenY());
+                }
+
+            }
+        });
+    }
+
+    /**
+     * Метод инициирует элемент контекстного меню "Получить список файловых объектов",
+     * только для выбранной директории.
+     * @param listView - текущий список файловых объектов
+     * @return - объект элемента контекстного меню "GetList"
+     */
+    private MenuItem menuItemGetList(ListView<File> listView) {
+        //инициируем пункт контекстного меню "Получить список файловых объектов"
+        MenuItem menuItemGetList = new MenuItem("GetList");
+        //устанавливаем обработчика нажатия на этот пункт контекстного меню
+        menuItemGetList.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                //запоминаем кликнутый элемент списка
+                File item = listView.getSelectionModel().getSelectedItem();
+                //если кликнутый элемент это директория
+//                if(item.isDirectory()){
+
+                    System.out.println("GUIController.onClickClientListFolderItem() - " +
+                            ", listView.getSelectionModel().getSelectedItem().getName(): " +
+                            listView.getSelectionModel().getSelectedItem().getName()
+                    );
+                    //обновляем список элементов списка клиентской части
+                    updateClientItemListInGUI(item.getName(), item.listFiles());
+//                }
+                //сбрасываем выделение после действия
+                listView.getSelectionModel().clearSelection();
+            }
+        });
+        return menuItemGetList;
+    }
+
+    /**
+     * Метод инициирует элемент контекстного меню "Загрузить в облачное хранилище"
+     * @param listView - текущий список файловых объектов
+     * @return - объект элемента контекстного меню "Upload"
+     */
+    private MenuItem menuItemUpload(ListView<File> listView) {
+        //инициируем пункт контекстного меню "Загрузить в облачное хранилище"
+        MenuItem menuItemUpload = new MenuItem("Upload");
+        //устанавливаем обработчика нажатия на этот пункт контекстного меню
+        menuItemUpload.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("GUIController.callContextMenu().menuItemUpload.setOnAction() - " +
+                        "\nlistView.getSelectionModel().getSelectedItem(): " +
+                        listView.getSelectionModel().getSelectedItem());
+
+                //сбрасываем выделение после действия
+                listView.getSelectionModel().clearSelection();
+            }
+        });
+        return menuItemUpload;
+    }
+
+    /**
+     * Метод инициирует элемент контекстного меню "Скачать из облачного хранилища"
+     * @param listView - текущий список файловых объектов
+     * @return - объект элемента контекстного меню "Download"
+     */
+    private MenuItem menuItemDownload(ListView<File> listView) {
+        //инициируем пункт контекстного меню "Скачать из облачного хранилища"
+        MenuItem menuItemDownload = new MenuItem("Download");
+        //устанавливаем обработчика нажатия на этот пункт контекстного меню
+        menuItemDownload.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("GUIController.callContextMenu().menuItemDownload.setOnAction() - " +
+                        "\nlistView.getSelectionModel().getSelectedItem(): " +
+                        listView.getSelectionModel().getSelectedItem());
+
+                //сбрасываем выделение после действия
+                listView.getSelectionModel().clearSelection();
+            }
+        });
+        return menuItemDownload;
+    }
+
+    /**
+     * Метод инициирует элемент контекстного меню "Переименовать"
+     * @param listView - текущий список файловых объектов
+     * @return - объект элемента контекстного меню "Rename"
+     */
+    private MenuItem menuItemRename(ListView<File> listView) {
+        //инициируем пункт контекстного меню "Переименовать"
+        MenuItem menuItemRename = new MenuItem("Rename");
+        //устанавливаем обработчика нажатия на этот пункт контекстного меню
+        menuItemRename.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+                //TODO temporarily
+                System.out.println("GUIController.callContextMenu().menuItemRename.setOnAction() - " +
+                        "\nlistView.getSelectionModel().getSelectedItem(): " +
+                        listView.getSelectionModel().getSelectedItem());
+
+                //запоминаем выбранный элемент списка
+                File origin = listView.getSelectionModel().getSelectedItem();
+
+                //TODO добавить диалоговое окно - получить новое имя
+                //получаем новое имя файлового объекта
+                String newName = "Renamed" + origin.getName();
+
+                //TODO
+                System.out.println("GUIController.callContextMenu().menuItemRename.setOnAction() - " +
+                        "origin.renameTo()): " +
+//                        origin.renameTo(new File(Paths.get(realClientDirectory(currentDirectory),
+//                                "Renamed" + origin.getName()).toString())));
+                        origin.renameTo(new File(Paths.get(origin.getParent(),
+                                newName).toString())));
+
+                //сбрасываем выделение после действия
+                listView.getSelectionModel().clearSelection();
+                //обновляем список файловых объектов в текущей директории
+                updateClientItemListInGUI(origin.getParent(), new File(origin.getParent()).listFiles());
+            }
+        });
+        return menuItemRename;
+    }
+
+    /**
+     * Метод инициирует элемент контекстного меню "Удалить"
+     * @param listView - текущий список файловых объектов
+     * @return - объект элемента контекстного меню "Delete"
+     */
+    private MenuItem menuItemDelete(ListView<File> listView) {
+        //инициируем пункт контекстного меню "Удалить"
+        MenuItem menuItemDelete = new MenuItem("Delete");
+        //устанавливаем обработчика нажатия на этот пункт контекстного меню
+        menuItemDelete.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("GUIController.callContextMenu().menuItemDelete.setOnAction() - " +
+                        "\nlistView.getSelectionModel().getSelectedItem(): " +
+                        listView.getSelectionModel().getSelectedItem());
+
+                //TODO добавить диалоговое окно - предупреждение-подтверждение
+                //запоминаем выбранный элемент списка
+                File origin = listView.getSelectionModel().getSelectedItem();
+                //если это директория
+                if(origin.isDirectory()){
+                    //очищаем и удаляем папку
+                    storageClient.deleteFolder(origin);//FIXME
+                } else{
+                    //удаляем файл
+                    System.out.println("GUIController.callContextMenu().menuItemDelete.setOnAction() - " +
+                            "origin.delete(): " + origin.delete());
+                }
+
+                //сбрасываем выделение после действия
+                listView.getSelectionModel().clearSelection();
+
+//                //FIXME сделать универсальным и исправить Exception in thread "JavaFX Application Thread" java.lang.NullPointerException
+//                // 	at javafx.GUIController.lambda$updateClientItemListInGUI$2(GUIController.java:137)
+//                //обновляем список после операции
+//                String dir = realClientDirectory(currentDirectory);
+//                System.out.println("GUIController.callContextMenu().menuItemDelete.setOnAction() - " +
+//                        "\ndir: " + dir);
+//                File[] filesList = clientFilesList(dir);
+//                System.out.println("GUIController.callContextMenu().menuItemDelete.setOnAction() - " +
+//                        "\nArrays.toString(filesList): " + Arrays.toString(filesList));
+//                updateClientItemListInGUI(currentDirectory, filesList);
+
+                //обновляем список файловых объектов в текущей директории
+                updateClientItemListInGUI(origin.getParent(), new File(origin.getParent()).listFiles());
+            }
+        });
+        return menuItemDelete;
     }
 
     /**
@@ -160,6 +473,15 @@ public class GUIController implements Initializable {
     public void onClickClientListFolderItem(MouseEvent mouseEvent) {
         //запоминаем кликнутый элемент списка
         File item = clientItemListView.getSelectionModel().getSelectedItem();
+        //если контекстное меню показывается или кликнутый элемент пустой
+        if(contextMenu.isShowing() || item == null){
+            //сбрасываем выделение
+            clientItemListView.getSelectionModel().clearSelection();
+            //закрываем контекстное меню
+            contextMenu.hide();
+            //выходим без действий
+            return;
+        }
         //если двойной клик левой кнопкой мыши
         if(mouseEvent.getButton().name().equals("PRIMARY") &&
             mouseEvent.getClickCount() == 2){
@@ -174,17 +496,86 @@ public class GUIController implements Initializable {
                 updateClientItemListInGUI(item.getName(), item.listFiles());
             }
         //если клик правой кнопкой мыши
-        } else if(mouseEvent.getButton().name().equals("SECONDARY")){
-            System.out.println("GUIController.btnClickDirectory() - mouseEvent.getEventType(): " +
-                    mouseEvent.getEventType() +
-                    ", mouseEvent.getButton().name(): " + mouseEvent.getButton().name());
-            //FIXME
-            //метод вызова контекстного меню
-            Node node = clientItemListView.getPlaceholder();
-            Scene scene = new Scene(node.getParent());//Caused by: java.lang.NullPointerException
-            Window window = scene.getWindow();
-            clientItemListView.getContextMenu().show(window);
         }
+
+//        clientItemListView.getSelectionModel().clearSelection();
+
+//        else if(mouseEvent.getButton().name().equals("SECONDARY")){
+//            System.out.println("GUIController.btnClickDirectory() - mouseEvent.getEventType(): " +
+//                    mouseEvent.getEventType() +
+//                    ", mouseEvent.getButton().name(): " + mouseEvent.getButton().name());
+//
+//            //FIXME
+//            //метод вызова контекстного меню
+////            Node node = clientItemListView.getPlaceholder();
+////            Scene scene = new Scene(node.getParent());//Caused by: java.lang.NullPointerException
+////            Window window = scene.getWindow();
+////            clientItemListView.getContextMenu().show(window);
+//
+////            // Create a MenuItem and place it in a ContextMenu
+////            MenuItem menuItemUpload = new MenuItem("Upload");
+////            ContextMenu contextMenu = new ContextMenu(menuItemUpload);
+////
+////            menuItemUpload.setOnAction(new EventHandler<ActionEvent>() {
+////                @Override
+////                public void handle(ActionEvent e) {
+////                    System.out.println("GUIController.onClickClientListFolderItem() - " +
+////                            ", item: " + item);
+////
+////                    try {
+////                        storageClient.uploadFile(
+////                                //собираем путь к текущей папке для получения списка объектов
+////                                Paths.get(CloudStorageClient.CLIENT_ROOT, currentClientDir).toString(),
+////                                //получаем выбранную директорию в сетевом хранилище
+////                                currentStorageDir,
+////                                //получаем элемент списка - источника вызова контекстного меню
+////                                item.getName());
+////
+////                        clientItemListView.getSelectionModel().clearSelection();
+////                        clientItemListView.setContextMenu(null);
+////
+////                    } catch (IOException ex) {
+////                        ex.printStackTrace();
+////                    }
+////
+////                }
+////            });
+////            //привязываем контектсное меню к списку
+////            clientItemListView.setContextMenu(contextMenu);
+//
+////            clientItemListView.setCellFactory(itemListView -> {
+//////                ListCell<String> cell = new ListCell<>();
+////                ListCell<File> cell = new FileListCell();
+////                ContextMenu contextMenu = new ContextMenu();
+////                MenuItem editItem = new MenuItem();
+////                editItem.textProperty().bind(Bindings.format("Edit \"%s\"", /*cell.itemProperty()*/ item.getName()));
+////                editItem.setOnAction(event -> {
+//////                    File itemD = cell.getItem();
+////                    // code to edit item...
+////                    System.out.println("GUIController.updateClientItemListInGUI() - action editItem - " +
+////                            "item.getName(): " + item.getName());
+//////                    System.out.println("GUIController.updateClientItemListInGUI() - action editItem - " +
+//////                            "itemD.getName(): " + itemD.getName());
+////                });
+////                MenuItem deleteItem = new MenuItem();
+////                deleteItem.textProperty().bind(Bindings.format("Delete \"%s\"", /*cell.itemProperty()*/ item.getName()));
+//////                deleteItem.setOnAction(event -> clientItemListView.getItems().remove(cell.getItem()));
+////                deleteItem.setOnAction(event -> clientItemListView.getItems().remove(item));
+////                contextMenu.getItems().addAll(editItem, deleteItem);
+////                //TODO что это?
+//////                cell.textProperty().bind(cell.itemProperty());//Error
+//////                cell.textProperty().bind(cell.itemProperty().asString());
+//////                cell.itemProperty().bind(cell.itemProperty());//Error
+////                cell.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) -> {
+////                    if (isNowEmpty) {
+////                        cell.setContextMenu(null);
+////                    } else {
+////                        cell.setContextMenu(contextMenu);
+////                    }
+////                });
+////                return cell;
+////            });
+//        }
     }
 
     /**
@@ -224,6 +615,24 @@ public class GUIController implements Initializable {
 
     public ListView<File> getClientItemListView() {
         return clientItemListView;
+    }
+
+    private String clientDefaultDirectory(){
+        return storageClient.getClientDefaultDirectory();
+    }
+
+    private File[] clientFilesList(String currentDirectory) {
+        return new File(realClientDirectory(currentDirectory)).listFiles();
+    }
+
+    private String realClientDirectory(String currentDirectory){
+        //собираем путь к текущей папке(к директории по умолчанию) для получения списка объектов
+        return Paths.get(CloudStorageClient.CLIENT_ROOT, currentDirectory).toString();
+    }
+
+    private Path realClientPath(String currentDirectory){
+        //собираем путь к текущей папке(к директории по умолчанию) для получения списка объектов
+        return Paths.get(CloudStorageClient.CLIENT_ROOT, currentDirectory);
     }
 
     //Метод отправки запроса об отключении на сервер
