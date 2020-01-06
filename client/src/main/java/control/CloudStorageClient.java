@@ -60,7 +60,7 @@ public class CloudStorageClient {
      */
     public void run() throws Exception {
         //инициируем объект соединения
-//        new NettyClient(this, IP_ADDR, PORT).run();//TODO
+        new NettyClient(this, IP_ADDR, PORT).run();//TODO
     }
 
     /**

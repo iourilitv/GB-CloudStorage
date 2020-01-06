@@ -3,11 +3,9 @@ package javafx;
 import control.CloudStorageClient;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 
 import java.io.File;
@@ -19,24 +17,20 @@ import java.util.ResourceBundle;
  * The client class for operating with directoryMessages.
  */
 public class GUIController implements Initializable {
-
+    //объявляем объекты меток для коллекций файловых объектов
     @FXML
     Label clientDirLabel, storageDirLabel;
-
+    //объявляем объекты коллекций файловых объектов
     @FXML
     ListView<File> clientItemListView, storageItemListView;
-
     @FXML
-    Label label;
-
+    Label label;//TODO Зачем?
     //объявляем объект контроллера клиента облачного хранилища
     private CloudStorageClient storageClient;
     //получаем текущую папку списка файловых объектов в клиентской части GUI
     private String currentClientDir;
     //получаем текущую папку списка файловых объектов в серверной части GUI
     private String currentStorageDir;
-    //объявляем переменную контекстного меню
-    private ContextMenu contextMenu;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -71,21 +65,11 @@ public class GUIController implements Initializable {
         new Thread(() -> {
             try {
                 //запускаем логику клиента облачного хранилища
-                storageClient.run();//TODO
+                storageClient.run();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
-    }
-
-    @FXML //TODO delete?
-    public void btnClickSelectedClientFile(ActionEvent actionEvent) {
-        label.setText(clientItemListView.getSelectionModel().getSelectedItem().getName());
-    }
-
-    @FXML //TODO delete?
-    public void btnClickSelectedServerFile(ActionEvent actionEvent) {
-        label.setText(storageItemListView.getSelectionModel().getSelectedItem().getName());
     }
 
     /**
@@ -100,16 +84,6 @@ public class GUIController implements Initializable {
         Platform.runLater(() -> {
             //записываем в метку текущую директорию
             clientDirLabel.setText(currentClientDir);
-
-//            //очищаем список элементов
-//            clientItemListView.getItems().clear();
-//            //обновляем список элементов списка
-//            clientItemListView.getItems().addAll(fileObjs);
-//            //инициируем объект кастомизированного элемента списка
-//            clientItemListView.setCellFactory(itemListView -> new FileListCell());
-//            //инициируем контекстное меню
-//            setContextMenu(clientItemListView);
-
             //обновляем заданный список файловых объектов
             updateListView(clientItemListView, fileObjs);
         });
@@ -124,86 +98,13 @@ public class GUIController implements Initializable {
     public void updateStorageItemListInGUI(String directory, File[] fileObjs){
         //обновляем текущую директорию
         currentStorageDir = directory;
-
+        //в отдельном потоке запускаем обновление интерфейса
         Platform.runLater(() -> {
             //выводим текущую директорию в метку серверной части
             storageDirLabel.setText(currentStorageDir);
-
-//            //очищаем список элементов
-//            storageItemListView.getItems().clear();
-//            //обновляем список элементов списка
-//            storageItemListView.getItems().addAll(fileObjs);
-//            storageItemListView.setCellFactory(itemListView -> new FileListCell());
-//            //инициируем контекстное меню
-//            setContextMenu(storageItemListView);
-
             //обновляем заданный список файловых объектов
             updateListView(storageItemListView, fileObjs);
         });
-    }
-
-    /**
-     * Метод обрабатывает событие клика мыши на элементе списка клиентской части
-     * @param mouseEvent - событие клика мыши на элементе списка
-     */
-    @FXML
-    public void onClickClientListFolderItem(MouseEvent mouseEvent) {
-        //запоминаем кликнутый элемент списка
-        File item = clientItemListView.getSelectionModel().getSelectedItem();
-        //если контекстное меню показывается или кликнутый элемент пустой
-        if(contextMenu.isShowing() || item == null){
-            //сбрасываем выделение
-            clientItemListView.getSelectionModel().clearSelection();
-            //закрываем контекстное меню
-            contextMenu.hide();
-            return;
-        }
-        //если двойной клик левой кнопкой мыши
-        if(mouseEvent.getButton().name().equals("PRIMARY") &&
-            mouseEvent.getClickCount() == 2){
-            //если кликнутый элемент это директория
-            if(item.isDirectory()){
-                //обновляем список элементов списка клиентской части
-                updateClientItemListInGUI(item.getName(), item.listFiles());
-            }
-        }
-    }
-
-    /**
-     * Метод обрабатывает событие клика мыши на элементе списка серверной части
-     * @param mouseEvent - событие клика мыши на элементе списка
-     */
-    @FXML
-    public void onClickStorageListFolderItem(MouseEvent mouseEvent) {
-        //запоминаем кликнутый элемент списка
-        File item = storageItemListView.getSelectionModel().getSelectedItem();
-        //если двойной клик левой кнопкой мыши
-        if(mouseEvent.getButton().name().equals("PRIMARY") &&
-                mouseEvent.getClickCount() == 2){
-            //если кликнутый элемент это директория
-            if(item.isDirectory()){
-
-                System.out.println("GUIController.onClickClientListFolderItem() - " +
-                                ", storageItemListView.getSelectionModel().getSelectedItem().getName(): " +
-                                storageItemListView.getSelectionModel().getSelectedItem().getName()
-                );
-                //отправляем на сервер запрос на получение списка элементов заданной директории
-                //пользователя в сетевом хранилище
-                storageClient.demandDirectoryItemList(item.getName());
-                //выводим в клиентской части интерфейса пустой список с сообщенеем об ожидании ответа
-                updateStorageItemListInGUI(item.getName(),
-                        new File[]{new File("waiting for an item list from the server...")});
-            }
-        }
-
-        //если клик правой кнопкой мыши
-//        else if(mouseEvent.getButton().name().equals("SECONDARY")){
-//            System.out.println("GUIController.btnClickDirectory() - mouseEvent.getEventType(): " +
-//                    mouseEvent.getEventType() +
-//                    ", mouseEvent.getButton().name(): " + mouseEvent.getButton().name());
-//            //FIXME
-//            //метод вызова контекстного меню
-//        }
     }
 
     /**
@@ -228,8 +129,8 @@ public class GUIController implements Initializable {
      */
     private void setContextMenu(ListView<File> listView){
         //инициируем объект контестного меню
-        contextMenu = new ContextMenu();
-        //если текущий список клиентсткий
+        ContextMenu contextMenu = new ContextMenu();
+        //если текущий список клиентский
         if(listView.equals(clientItemListView)){
             // добавляем скопом элементы в контестное меню
             contextMenu.getItems().add(menuItemUpload(listView));
@@ -240,18 +141,33 @@ public class GUIController implements Initializable {
         }
         // добавляем скопом оставщиеся элементы в контестное меню
         contextMenu.getItems().addAll(menuItemRename(listView), menuItemDelete(listView));
+        //создаем временный элемент контекстного меню
+        MenuItem menuItem = menuItemGetList(listView);
         //устаналиваем событие на клик правой кнопки мыши по элементу списка
         listView.setOnContextMenuRequested(event -> {
-            //если кликнут не пустой элемент
-            if(!listView.getSelectionModel().getSelectedItems().isEmpty()) {
-                //если выбранный элемент это директория
-                if(listView.getSelectionModel().getSelectedItem().isDirectory()){
-                    // добавляем элемент в контестное меню
-                    contextMenu.getItems().add(0, menuItemGetList(listView));
-                }
-                //показываем меню в точке клика(позиция левого-верхнего угла контекстного меню)
-                contextMenu.show(listView, event.getScreenX(), event.getScreenY());
+            //если контекстное меню уже показывается или снова кликнуть на пустой элемент списка
+            if(contextMenu.isShowing() ||
+                    listView.getSelectionModel().getSelectedItems().isEmpty()){
+                //скрываем контекстное меню
+                contextMenu.hide();
+                //очищаем выделение
+                listView.getSelectionModel().clearSelection();
+                return;
             }
+            // и если выбранный элемент это директория
+            if(listView.getSelectionModel().getSelectedItem().isDirectory()){
+                //если контекстное меню не показывается
+                if(!contextMenu.getItems().contains(menuItem)){
+                    // добавляем элемент в контестное меню
+                    contextMenu.getItems().add(0, menuItem);
+                }
+            //если не директория
+            } else {
+                // удаляем элемент из контестного меню
+                contextMenu.getItems().remove(menuItem);
+            }
+            //показываем контекстное меню в точке клика(позиция левого-верхнего угла контекстного меню)
+            contextMenu.show(listView, event.getScreenX(), event.getScreenY());
         });
     }
 
@@ -268,16 +184,21 @@ public class GUIController implements Initializable {
         menuItemGetList.setOnAction(event -> {
             //запоминаем кликнутый элемент списка
             File item = listView.getSelectionModel().getSelectedItem();
-            //если кликнутый элемент это директория
-//                if(item.isDirectory()){
+            //если текущий список клиентский
+            if(listView.equals(clientItemListView)){
 
-            System.out.println("GUIController.onClickClientListFolderItem() - " +
-                    ", listView.getSelectionModel().getSelectedItem().getName(): " +
-                    listView.getSelectionModel().getSelectedItem().getName()
-            );
-            //обновляем список элементов списка клиентской части
-            updateClientItemListInGUI(item.getName(), item.listFiles());
-//                }
+                System.out.println("GUIController.onClickClientListFolderItem() - " +
+                        ", listView.getSelectionModel().getSelectedItem().getName(): " +
+                        listView.getSelectionModel().getSelectedItem().getName()
+                );
+                //обновляем список элементов списка клиентской части
+                updateClientItemListInGUI(item.getName(), item.listFiles());
+            //если текущий список облачного хранилища
+            } else if(listView.equals(storageItemListView)){
+                //отправляем на сервер запрос на получение списка элементов заданной директории
+                //пользователя в сетевом хранилище
+                storageClient.demandDirectoryItemList(item.getName());
+            }
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
         });
@@ -394,10 +315,6 @@ public class GUIController implements Initializable {
             updateClientItemListInGUI(origin.getParent(), new File(origin.getParent()).listFiles());
         });
         return menuItemDelete;
-    }
-
-    public ListView<File> getClientItemListView() {
-        return clientItemListView;
     }
 
     private String clientDefaultDirectory(){

@@ -14,7 +14,7 @@
                     <Font size="10.0" />
                 </font>
             </Label>
-            <ListView fx:id="clientItemListView" onMouseClicked="#onClickClientListFolderItem"/>
+            <ListView fx:id="clientItemListView"/>
         </VBox>
         <VBox HBox.hgrow="ALWAYS">
             <Label fx:id="storageDirLabel" alignment="CENTER_LEFT" contentDisplay="LEFT" maxWidth="Infinity" style="-fx-background-color: #48d1cc;" text="../" textAlignment="LEFT">
@@ -22,12 +22,8 @@
                     <Font size="10.0" />
                 </font>
             </Label>
-            <ListView fx:id="storageItemListView" onMouseClicked="#onClickStorageListFolderItem"/>
+            <ListView fx:id="storageItemListView"/>
         </VBox>
-    </HBox>
-    <HBox>
-        <Button maxWidth="Infinity" onAction="#btnClickSelectedClientFile" text="Selected Client File!" HBox.hgrow="ALWAYS" />
-        <Button maxWidth="Infinity" onAction="#btnClickSelectedServerFile" text="Selected Server File!" HBox.hgrow="ALWAYS" />
     </HBox>
     <Label fx:id="label" alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-background-color: #FFF;" text="..." textAlignment="CENTER">
         <font>
