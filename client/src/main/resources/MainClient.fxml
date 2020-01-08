@@ -37,11 +37,9 @@
                 </Button>
             <Button fx:id="clientGoUpButton" text="GoUp">
                <graphic>
-                  <ImageView fitHeight="22.0" fitWidth="22.0">
-                     <image>
-                        <Image url="images/red-go-up-md-22x22.png" />
-                     </image>
-                  </ImageView>
+                   <ImageView fitHeight="22.0" fitWidth="22.0">
+                       <Image url="images/red-go-up-md-22x22.png"/>
+                   </ImageView>
                </graphic>
                <padding>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -49,11 +47,9 @@
             </Button>
             <Button fx:id="clientNewFolderButton" text="NewFolder">
                <graphic>
-                  <ImageView fitHeight="22.0" fitWidth="22.0">
-                     <image>
-                        <Image url="images/storage-el-folder-empty-22x17.png" />
-                     </image>
-                  </ImageView>
+                   <ImageView fitHeight="22.0" fitWidth="22.0">
+                       <Image url="images/storage-el-folder-empty-22x17.png"/>
+                   </ImageView>
                </graphic>
                <padding>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -63,7 +59,7 @@
                <Insets left="2.0" right="2.0" top="2.0" />
             </VBox.margin>
             </HBox>
-            <Label fx:id="clientDirLabel" alignment="CENTER_LEFT" contentDisplay="LEFT" maxWidth="Infinity" prefWidth="220.0" style="-fx-background-color: #48d1cc;" text=".../" textAlignment="JUSTIFY" wrapText="true">
+            <Label fx:id="clientDirLabel" maxWidth="Infinity" prefWidth="220.0" style="-fx-background-color: #48d1cc;" text=".../" textAlignment="JUSTIFY" wrapText="true">
             <padding>
                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
             </padding>
@@ -88,14 +84,6 @@
                     <Font name="System Bold" size="14.0" />
                 </font>
             </Label>
-<!--            <Label alignment="CENTER_LEFT" contentDisplay="LEFT" maxWidth="Infinity" prefWidth="220.0" style="-fx-background-color: #48d1cc;" text="Cloud Storage Side" textAlignment="JUSTIFY" wrapText="true">-->
-<!--                <padding>-->
-<!--                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />-->
-<!--                </padding>-->
-<!--                <VBox.margin>-->
-<!--                    <Insets left="2.0" right="2.0" />-->
-<!--                </VBox.margin>-->
-<!--            </Label>-->
             <HBox spacing="2.0" VBox.vgrow="ALWAYS">
                 <Button fx:id="storageHomeButton" text="Home">
                     <graphic>
@@ -110,9 +98,7 @@
                 <Button fx:id="storageGoUpButton" text="GoUp">
                     <graphic>
                         <ImageView fitHeight="22.0" fitWidth="22.0">
-                            <image>
-                                <Image url="images/red-go-up-md-22x22.png" />
-                            </image>
+                            <Image url="images/red-go-up-md-22x22.png"/>
                         </ImageView>
                     </graphic>
                     <padding>
@@ -122,9 +108,7 @@
                 <Button fx:id="storageNewFolderButton" text="NewFolder">
                     <graphic>
                         <ImageView fitHeight="22.0" fitWidth="22.0">
-                            <image>
-                                <Image url="images/storage-el-folder-empty-22x17.png" />
-                            </image>
+                            <Image url="images/storage-el-folder-empty-22x17.png"/>
                         </ImageView>
                     </graphic>
                     <padding>
@@ -135,7 +119,7 @@
                     <Insets left="2.0" right="2.0" top="2.0" />
                 </VBox.margin>
             </HBox>
-            <Label fx:id="storageDirLabel" alignment="CENTER_LEFT" contentDisplay="LEFT" maxWidth="Infinity" prefWidth="220.0" style="-fx-background-color: #48d1cc;" text=".../" textAlignment="JUSTIFY" wrapText="true">
+            <Label fx:id="storageDirLabel" maxWidth="Infinity" prefWidth="220.0" style="-fx-background-color: #48d1cc;" text=".../" textAlignment="JUSTIFY" wrapText="true">
                 <padding>
                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                 </padding>
@@ -148,14 +132,6 @@
                     <Insets bottom="2.0" left="2.0" right="2.0" />
                 </VBox.margin></ListView>
         </VBox>
-<!--        <VBox HBox.hgrow="ALWAYS">-->
-<!--            <Label fx:id="storageDirLabel" alignment="CENTER_LEFT" contentDisplay="LEFT" maxWidth="Infinity" style="-fx-background-color: #48d1cc;" text="../" textAlignment="LEFT">-->
-<!--                <font>-->
-<!--                    <Font size="10.0" />-->
-<!--                </font>-->
-<!--            </Label>-->
-<!--            <ListView fx:id="storageItemListView" />-->
-<!--        </VBox>-->
     </HBox>
     <Label fx:id="label" alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-background-color: #FFF;" text="..." textAlignment="CENTER">
         <font>
