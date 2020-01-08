@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.layout.HBox?>
-<HBox fx:id="vbPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="22.0" prefWidth="300.0" stylesheets="@ItemListCellStyle.css" xmlns="http://javafx.com/javafx/8.0.111"
-      xmlns:fx="http://javafx.com/fxml/1">
+<HBox fx:id="vbPane" alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" spacing="2.0" stylesheets="@ItemListCellStyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <ImageView fx:id="folderImage" visible="false">
-            <Image url="images/storage-el-folder-empty-22x17.png"/>
+        <ImageView fx:id="folderImage" fitHeight="17.0" fitWidth="22.0" nodeOrientation="INHERIT" visible="false" HBox.hgrow="NEVER">
+            <Image url="images/storage-el-folder-empty-22x17.png" />
+         <HBox.margin>
+            <Insets bottom="1.0" left="-2.0" right="1.0" top="1.0" />
+         </HBox.margin>
         </ImageView>
-        <Label fx:id="nameLabel" prefHeight="20.0" prefWidth="187.0" textAlignment="CENTER" HBox.hgrow="ALWAYS">
+        <Label fx:id="nameLabel" prefHeight="20.0" HBox.hgrow="ALWAYS">
             <font>
-                <Font name="Arial" size="12.0"/>
+                <Font name="Arial" size="12.0" />
             </font>
+         <HBox.margin>
+            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+         </HBox.margin>
         </Label>
     </children>
 </HBox>

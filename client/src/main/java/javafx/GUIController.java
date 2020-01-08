@@ -17,6 +17,11 @@ import java.util.ResourceBundle;
  * The client class for operating with directoryMessages.
  */
 public class GUIController implements Initializable {
+    //объявляем объекты кнопок для коллекции файловых объектов клиента и сервера
+    @FXML
+    Button  clientHomeButton, storageHomeButton,//"В корневую директорию"
+            clientGoUpButton, storageGoUpButton,//"Подняться на папку выше"
+            clientNewFolderButton, storageNewFolderButton;//"Создать новую папку"
     //объявляем объекты меток для коллекций файловых объектов
     @FXML
     Label clientDirLabel, storageDirLabel;
