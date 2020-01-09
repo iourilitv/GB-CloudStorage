@@ -12,6 +12,8 @@ import utils.Commands;
 import utils.FileUtils;
 import javafx.GUIController;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
@@ -213,15 +215,32 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
         //вынимаем директорию заданную относительно userStorageRoot в сетевом хранилище из объекта сообщения(команды)
         String storageDir = fileMessage.getFromDir();
-        //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
+        //вынимаем заданную клиентскую директорию заданную относительно CLIENT_ROOT из объекта сообщения(команды)
         String clientDir = fileMessage.getToDir();
 
+//        System.out.println("GUIController.onDownloadFileOkServerResponse() - " +
+//                ", storageDir: " + storageDir +
+//                ", clientDir: " + clientDir +
+//                ", item.getFilename(): " + fileMessage.getFilename() +
+//                "\nArrays.toString(fileMessage.getData()): " + Arrays.toString(fileMessage.getData()));
+
         //FIXME придется указывать абсолютный путь, если будет выбор папки клиента
-        //собираем текущую директорию на клиенте
-        String toDir = storageClient.getClientDefaultDirectory();
-        toDir = toDir.concat("/").concat(clientDir);
+        //собираем реальную текущую директорию на клиенте
+        String realToDir = GUIController.realClientDirectory(clientDir);
+//        String toDir = storageClient.getClientDefaultDirectory();
+//        toDir = toDir.concat("/").concat(clientDir);
+//        Path toDir = Paths.get(GUIController.realClientDirectory(clientDir));
+
         //если сохранение прошло удачно
-        if(fileUtils.saveFile(toDir, fileMessage)){//FIXME см.выше
+//        if(fileUtils.saveFile(toDir, fileMessage)){//FIXME см.выше
+//        if(fileUtils.saveFile(fileMessage.getToDir(), fileMessage)){//FIXME см.выше
+        if(fileUtils.saveFile(realToDir, fileMessage)){//FIXME см.выше
+
+            //обновляем список файловых объектов на клиенте
+//            GUIController.updateClientItemListInGUI(fileMessage.getToDir(),
+//                    new File(fileMessage.getToDir()).listFiles());
+            GUIController.updateClientItemListInGUI(clientDir);
+
             //отправляем сообщение на сервер: подтверждение, что все прошло успешно
             command = Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_OK;
         //если что-то пошло не так
@@ -233,6 +252,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         }
         //создаем объект файлового сообщения
         fileMessage = new FileMessage(storageDir, clientDir, fileMessage.getFilename());
+//        fileMessage = new FileMessage(storageDir, fileMessage.getToDir(), fileMessage.getFilename());
 
         //отправляем объект сообщения(команды) на сервер
         ctx.writeAndFlush(new CommandMessage(command, fileMessage));
@@ -268,6 +288,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         if(fileUtils.saveFileFragment(toTempDir, fileFragmentMessage)){
 
             //FIXME продумать, что отравлять серверу в ответ на присланный фрагмент и как это обрабатывать на сервере
+            System.out.println();
 //            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
 //            command = Commands.CLIENT_RESPONSE_FILE_FRAG_DOWNLOAD_OK;
             //если что-то пошло не так
@@ -285,6 +306,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             if(fileUtils.compileFileFragments(toTempDir, toDir, fileFragmentMessage)){
 
                 //FIXME продумать, что отравлять серверу в ответ на присланный фрагмент и как это обрабатывать на сервере
+                System.out.println();
 //                //ответ сервера, что сборка файла из загруженных фрагментов прошла успешно
 //                command = Commands.CLIENT_RESPONSE_FILE_FRAGS_DOWNLOAD_OK;
 

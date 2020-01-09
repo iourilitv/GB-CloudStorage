@@ -110,7 +110,7 @@ public class CloudStorageClient {
      * @param filename - имя файла
      * @throws IOException - исключение
      */
-    public void uploadFile(String fromDir, String toDir, String filename) throws IOException {
+    public void demandUploadFile(String fromDir, String toDir, String filename) throws IOException {
         //TODO temporarily
         printMsg("***CloudStorageClient.uploadFile() - has started***");
 
@@ -211,7 +211,7 @@ public class CloudStorageClient {
 
     /**
      * Метод отправки целого файла размером менее константы максмального размера фрагмента файла
-     * @param fromDir - директория(относительно корня) клиента где хранится файл источник
+     * @param fromDir - директория(относительно корня) клиента, где хранится файл источник
      * @param toDir - директория(относительно корня) в сетевом хранилище
      * @param filename - строковое имя файла
      * @param fileSize - размер файла в байтах
@@ -240,9 +240,13 @@ public class CloudStorageClient {
         }
     }
 
-    //отправляем на сервер запрос на скачивание файла из облачного хранилища
-    //FIXME перенести в контроллер интерфейса
-    public void downloadFile(String fromDir, String toDir, String filename){
+    /**
+     * Метод отправляет на сервер запрос на скачивание файла из облачного хранилища
+     * @param fromDir - директория(относительно корня) в сетевом хранилище, где хранится файл источник
+     * @param toDir - директория(относительно корня) клиента
+     * @param filename - строковое имя файла
+     */
+    public void demandDownloadFile(String fromDir, String toDir, String filename){
         //TODO temporarily
         printMsg("***CloudStorageClient.downloadFile() - has started***");
 

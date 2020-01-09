@@ -2,13 +2,12 @@ package javafx;
 
 import control.CloudStorageClient;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
@@ -42,9 +41,9 @@ public class GUIController implements Initializable {
         //инициируем объект клиента облачного хранилища
         storageClient = new CloudStorageClient(GUIController.this);
         //получаем текущую папку списка файловых объектов в клиентской части GUI
-        currentClientDir = storageClient.getClientDefaultDirectory();
+        currentClientDir = storageClient.getClientDefaultDirectory();//""
         //получаем текущую папку списка файловых объектов в серверной части GUI
-        currentStorageDir = storageClient.getStorageDefaultDirectory();
+        currentStorageDir = storageClient.getStorageDefaultDirectory();//""
         //инициируем в клиентской части интерфейса список объектов в директории по умолчанию
         initializeClientItemListView();
         //инициируем в серверной части интерфейса список объектов в директории по умолчанию
@@ -56,7 +55,9 @@ public class GUIController implements Initializable {
      */
     public void initializeClientItemListView() {
         //выводим в клиентской части интерфейса список объектов в директории по умолчанию
-        updateClientItemListInGUI(clientDefaultDirectory(), clientFilesList(clientDefaultDirectory()));
+//        updateClientItemListInGUI(clientDefaultDirectory(), clientFilesList(clientDefaultDirectory()));
+        updateClientItemListInGUI(clientDefaultDirectory());
+
     }
 
     /**
@@ -78,8 +79,24 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод обновляет список элементов списка в клиентской части
-     * @param directory - заданная директория
+     * Метод обновляет список элементов списка в заданной директории клиентской части
+     * @param directory - заданная директория относительно корневой
+     */
+    public void updateClientItemListInGUI(String directory) {
+        //обновляем текущую директорию
+        currentClientDir = directory;
+        //в отдельном потоке запускаем обновление интерфейса
+        Platform.runLater(() -> {
+            //записываем в метку текущую директорию
+            clientDirLabel.setText(currentClientDir);
+            //обновляем заданный список файловых объектов
+            updateListView(clientItemListView, clientFilesList(currentClientDir));
+        });
+    }
+
+    /**
+     * Метод выводит полученный массив файловых объектов в список в заданной директории клиентской части
+     * @param directory - заданная директория относительно корневой
      * @param fileObjs - массив объектов класса File(файлы и директории)
      */
     public void updateClientItemListInGUI(String directory, File[] fileObjs){
@@ -147,7 +164,7 @@ public class GUIController implements Initializable {
         // добавляем скопом оставщиеся элементы в контестное меню
         contextMenu.getItems().addAll(menuItemRename(listView), menuItemDelete(listView));
         //создаем временный элемент контекстного меню
-        MenuItem menuItem = menuItemGetList(listView);
+        MenuItem menuItem = menuItemGetInto(listView);
         //устаналиваем событие на клик правой кнопки мыши по элементу списка
         listView.setOnContextMenuRequested(event -> {
             //если контекстное меню уже показывается или снова кликнуть на пустой элемент списка
@@ -180,11 +197,11 @@ public class GUIController implements Initializable {
      * Метод инициирует элемент контекстного меню "Получить список файловых объектов",
      * только для выбранной директории.
      * @param listView - текущий список файловых объектов
-     * @return - объект элемента контекстного меню "GetList"
+     * @return - объект элемента контекстного меню "Get into"
      */
-    private MenuItem menuItemGetList(ListView<File> listView) {
+    private MenuItem menuItemGetInto(ListView<File> listView) {
         //инициируем пункт контекстного меню "Получить список файловых объектов"
-        MenuItem menuItemGetList = new MenuItem("GetList");
+        MenuItem menuItemGetList = new MenuItem("Get into");
         //устанавливаем обработчика нажатия на этот пункт контекстного меню
         menuItemGetList.setOnAction(event -> {
             //запоминаем кликнутый элемент списка
@@ -197,7 +214,9 @@ public class GUIController implements Initializable {
                         listView.getSelectionModel().getSelectedItem().getName()
                 );
                 //обновляем список элементов списка клиентской части
-                updateClientItemListInGUI(item.getName(), item.listFiles());
+//                updateClientItemListInGUI(item.getName(), item.listFiles());
+                updateClientItemListInGUI(item.getName());
+
             //если текущий список облачного хранилища
             } else if(listView.equals(storageItemListView)){
                 //отправляем на сервер запрос на получение списка элементов заданной директории
@@ -220,10 +239,18 @@ public class GUIController implements Initializable {
         MenuItem menuItemUpload = new MenuItem("Upload");
         //устанавливаем обработчика нажатия на этот пункт контекстного меню
         menuItemUpload.setOnAction(event -> {
-            System.out.println("GUIController.callContextMenu().menuItemUpload.setOnAction() - " +
-                    "\nlistView.getSelectionModel().getSelectedItem(): " +
-                    listView.getSelectionModel().getSelectedItem());
+            //запоминаем кликнутый элемент списка
+            File item = listView.getSelectionModel().getSelectedItem();
 
+            System.out.println("GUIController.callContextMenu().menuItemUpload.setOnAction() - " +
+                    "\nitem: " + item);
+
+            try {
+                //отправляем на сервер запрос на загрузку файла в облачное хранилище
+                storageClient.demandUploadFile(item.getParent(), currentStorageDir, item.getName());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
         });
@@ -240,9 +267,20 @@ public class GUIController implements Initializable {
         MenuItem menuItemDownload = new MenuItem("Download");
         //устанавливаем обработчика нажатия на этот пункт контекстного меню
         menuItemDownload.setOnAction(event -> {
-            System.out.println("GUIController.callContextMenu().menuItemDownload.setOnAction() - " +
-                    "\nlistView.getSelectionModel().getSelectedItem(): " +
-                    listView.getSelectionModel().getSelectedItem());
+            //запоминаем кликнутый элемент списка
+            File item = listView.getSelectionModel().getSelectedItem();
+
+//            System.out.println("GUIController.callContextMenu().menuItemDownload.setOnAction() - " +
+//                    "\nitem: " + item +
+//                    ", currentStorageDir: " + currentStorageDir +
+//                    ", currentClientDir: " + currentClientDir +
+//                    ", item.getName(): " + item.getName());
+
+            //отправляем на сервер запрос на скачивание файла из облачного хранилища
+//            storageClient.demandDownloadFile(currentStorageDir,
+//                    realClientDirectory(currentClientDir), item.getName());
+            storageClient.demandDownloadFile(currentStorageDir,
+                    currentClientDir, item.getName());
 
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
@@ -282,7 +320,9 @@ public class GUIController implements Initializable {
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
             //обновляем список файловых объектов в текущей директории
-            updateClientItemListInGUI(origin.getParent(), new File(origin.getParent()).listFiles());
+//            updateClientItemListInGUI(origin.getParent(), new File(origin.getParent()).listFiles());
+            updateClientItemListInGUI(currentClientDir);
+
         });
         return menuItemRename;
     }
@@ -317,7 +357,9 @@ public class GUIController implements Initializable {
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
             //обновляем список файловых объектов в текущей директории
-            updateClientItemListInGUI(origin.getParent(), new File(origin.getParent()).listFiles());
+//            updateClientItemListInGUI(origin.getParent(), new File(origin.getParent()).listFiles());
+            updateClientItemListInGUI(currentClientDir);
+
         });
         return menuItemDelete;
     }
@@ -330,9 +372,17 @@ public class GUIController implements Initializable {
         return new File(realClientDirectory(currentDirectory)).listFiles();
     }
 
-    private String realClientDirectory(String currentDirectory){
+    public String realClientDirectory(String currentDirectory){
+
+        String dir = Paths.get(CloudStorageClient.CLIENT_ROOT, currentDirectory).toString();
+
+        System.out.println("GUIController.realClientDirectory() - " +
+                "currentDirectory: " + currentDirectory +
+                ", dir: " + dir);
+
         //собираем путь к текущей папке(к директории по умолчанию) для получения списка объектов
-        return Paths.get(CloudStorageClient.CLIENT_ROOT, currentDirectory).toString();
+//        return Paths.get(CloudStorageClient.CLIENT_ROOT, currentDirectory).toString();
+        return dir;
     }
 
     //Метод отправки запроса об отключении на сервер
@@ -347,4 +397,5 @@ public class GUIController implements Initializable {
 //            e.printStackTrace();
 //        }
     }
+
 }
