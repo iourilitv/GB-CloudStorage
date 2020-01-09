@@ -235,31 +235,28 @@ public class FileUtils {
         } else{
             //удаляем файл
             result = fileObject.delete();
-
-            //TODO temporarily
-            System.out.println("GUIController.callContextMenu().menuItemDelete.setOnAction() - " +
-                    "origin.delete(): " + result);
         }
         return result;
     }
 
+    /**
+     * Метод удаляет заданную папку и все объекты в ней.
+     * @param folder - файловый объект заданной папки
+     * @return true - удалена папка и все объекты в ней
+     */
     private boolean deleteFolder(File folder) {
-//        boolean result = true;
         //в цикле листаем временную папку и удаляем все файлы-фрагменты
         for (File f : Objects.requireNonNull(folder.listFiles())) {
             //если это директория
             if(f.isDirectory()){
                 //очищаем и удаляем папку
-//              result &= deleteFolder(f);
                 deleteFolder(f);
             } else{
                 //удаляем файл
-//              result &= f.delete();
                 f.delete();
             }
         }
         //теперь можем удалить пустую папку
-//        result &= folder.delete();
         return Objects.requireNonNull(folder.listFiles()).length == 0 && folder.delete();
     }
 }

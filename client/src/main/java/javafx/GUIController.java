@@ -93,23 +93,6 @@ public class GUIController implements Initializable {
         });
     }
 
-//    /**
-//     * Метод выводит полученный массив файловых объектов в список в заданной директории клиентской части
-//     * @param directory - заданная директория относительно корневой
-//     * @param fileObjs - массив объектов класса File(файлы и директории)
-//     */
-//    public void updateClientItemListInGUI(String directory, File[] fileObjs){
-//        //обновляем текущую директорию
-//        currentClientDir = directory;
-//        //в отдельном потоке запускаем обновление интерфейса
-//        Platform.runLater(() -> {
-//            //записываем в метку текущую директорию
-//            clientDirLabel.setText(currentClientDir);
-//            //обновляем заданный список файловых объектов
-//            updateListView(clientItemListView, fileObjs);
-//        });
-//    }
-
     /**
      * Метод выводит в GUI список файлов и папок в корневой пользовательской директории
      * в сетевом хранилище.
@@ -340,38 +323,18 @@ public class GUIController implements Initializable {
             File item = listView.getSelectionModel().getSelectedItem();
             //если текущий список клиентский
             if(listView.equals(clientItemListView)){
-
-//                //если это директория
-//                if(item.isDirectory()){
-//                    //очищаем и удаляем папку
-//                    storageClient.deleteItem(item);
-//                } else{
-//                    //удаляем файл
-//                    System.out.println("GUIController.callContextMenu().menuItemDelete.setOnAction() - " +
-//                            "origin.delete(): " + item.delete());
-//                }
-
                 //удаляем файл или папку в текущей директории на клиенте
                 storageClient.deleteItem(item);
                 //обновляем список элементов списка клиентской части
-//                updateClientItemListInGUI(item.getName());
                 updateClientItemListInGUI(currentClientDir);
-
-                //если текущий список облачного хранилища
+            //если текущий список облачного хранилища
             } else if(listView.equals(storageItemListView)){
                 //отправляем на сервер запрос на получение списка элементов заданной директории
                 //пользователя в сетевом хранилище
                 storageClient.demandDeleteItem(currentStorageDir, item.getName());
             }
-
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
-
-            //обновляем список файловых объектов в текущей директории
-//            updateClientItemListInGUI(origin.getParent(), new File(origin.getParent()).listFiles());
-//            updateClientItemListInGUI(currentClientDir);
-
-
         });
         return menuItemDelete;
     }
@@ -385,16 +348,8 @@ public class GUIController implements Initializable {
     }
 
     public String realClientDirectory(String currentDirectory){
-
-        String dir = Paths.get(CloudStorageClient.CLIENT_ROOT, currentDirectory).toString();
-
-        System.out.println("GUIController.realClientDirectory() - " +
-                "currentDirectory: " + currentDirectory +
-                ", dir: " + dir);
-
         //собираем путь к текущей папке(к директории по умолчанию) для получения списка объектов
-//        return Paths.get(CloudStorageClient.CLIENT_ROOT, currentDirectory).toString();
-        return dir;
+        return Paths.get(CloudStorageClient.CLIENT_ROOT, currentDirectory).toString();
     }
 
     //Метод отправки запроса об отключении на сервер

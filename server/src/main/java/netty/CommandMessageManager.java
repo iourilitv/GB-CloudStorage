@@ -164,10 +164,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         }
         //инициируем объект сообщения о директории
         DirectoryMessage directoryMessage = new DirectoryMessage(storageDir);
-
         //формируем список файлов и папок в заданной директории клиента в сетевом хранилище
         directoryMessage.takeFileObjectsList(toDir);
-
         //отправляем объект сообщения(команды) клиенту
         ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
     }
@@ -420,16 +418,11 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
         //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
         String storageDir = fileMessage.getDirectory();
-        //собираем реальный путь к файловому объекту
+        //собираем реальный путь к файловому объекту в реальной заданнуй директории пользователя в сетевом хранилище
         String realFileObject = Paths.get(realStorageDirectory(storageDir),
                 fileMessage.getFileObjectName()).toString();
-
-        //собираем реальную заданную директорию пользователя в сетевом хранилище
+        //инициируем реальный файловый объект
         File fileObject = new File(realFileObject);
-
-        System.out.println("[server]CommandMessageManager.onDeleteFileObjectClientRequest() - " +
-                ", fileObject: " + fileObject);
-
         //если сохранение прошло удачно
         if(fileUtils.deleteFileObject(fileObject)){
             //отправляем сообщение на сервер: подтверждение, что все прошло успешно
@@ -443,17 +436,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         }
         //инициируем объект сообщения о директории
         DirectoryMessage directoryMessage = new DirectoryMessage(storageDir);
-
         //формируем список файлов и папок в заданной директории клиента в сетевом хранилище
-        directoryMessage.takeFileObjectsList(fileObject.getParent());//TODO check!
-
+        directoryMessage.takeFileObjectsList(fileObject.getParent());
         //отправляем объект сообщения(команды) клиенту
         ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
-
-    }
-
-    private String realStorageDirectory(String storageDir) {
-        return Paths.get(userStorageRoot.toString(), storageDir).toString();
     }
 
     /**
@@ -478,6 +464,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //удаляем входящий хэндлер AuthGateway, т.к. после авторизации он больше не нужен
         printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
                 "removed pipeline: " + ctx.channel().pipeline().remove(AuthGateway.class));
+    }
+
+    private String realStorageDirectory(String storageDir) {
+        return Paths.get(userStorageRoot.toString(), storageDir).toString();
     }
 
     @Override
