@@ -45,8 +45,14 @@ public class Commands {
 
     //переименовать файл на сервере
     public static final int REQUEST_SERVER_RENAME_FILE = 404101;
-    //удалить файл на сервере
-    public static final int REQUEST_SERVER_DELETE_FILE = 505101;
+
+    //запрос на сервер удалить файл на сервере
+    public static final int REQUEST_SERVER_DELETE_FILE_OBJECT = 505101;
+    //ответ сервера - подтверждение успешного удаления файлового объекта в облачном хранилище
+    public static final int SERVER_RESPONSE_DELETE_FILE_OBJECT_OK = 505102;
+    //ответ сервера, что при удаления файлового объекта в облачном хранилище произошла ошибка
+    public static final int SERVER_RESPONSE_DELETE_FILE_OBJECT_ERROR = 505109;
+
     //переместить файл в другую папку
     public static final int REQUEST_SERVER_MOVE_FILE = 606101;
 

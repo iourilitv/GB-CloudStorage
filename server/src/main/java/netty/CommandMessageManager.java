@@ -10,6 +10,7 @@ import utils.CommandMessage;
 import utils.Commands;
 import utils.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -97,6 +98,12 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //вызываем метод обработки запроса от клиента на загрузку файла-фрагмента
                 //в директорию в сетевом хранилище.
                 onUploadFileFragClientRequest(ctx, commandMessage);
+                break;
+            //обрабатываем полученный от клиента запрос на удаление файла или папки
+            // в заданной директории в сетевом хранилище
+            case Commands.REQUEST_SERVER_DELETE_FILE_OBJECT:
+                //вызываем метод обработки запроса от клиента
+                onDeleteFileObjectClientRequest(ctx, commandMessage);
                 break;
             //обрабатываем полученный от AuthGateway проброшенный запрос на авторизацию клиента в облачное хранилище
             //возвращаем список объектов в корневой директорию пользователя в сетевом хранилище.
@@ -400,6 +407,53 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 
         //отправляем объект сообщения(команды) клиенту
         ctx.writeAndFlush(new CommandMessage(command, fileMessage));
+    }
+
+    /**
+     * Метод обрабатываем полученный от клиента запрос на удаление файла или папки
+     * в заданной директории в сетевом хранилище
+     * @param ctx - объект соединения netty, установленного с клиентом
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onDeleteFileObjectClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) {
+        //вынимаем объект файлового сообщения из объекта сообщения(команды)
+        FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
+        //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
+        String storageDir = fileMessage.getDirectory();
+        //собираем реальный путь к файловому объекту
+        String realFileObject = Paths.get(realStorageDirectory(storageDir),
+                fileMessage.getFileObjectName()).toString();
+
+        //собираем реальную заданную директорию пользователя в сетевом хранилище
+        File fileObject = new File(realFileObject);
+
+        System.out.println("[server]CommandMessageManager.onDeleteFileObjectClientRequest() - " +
+                ", fileObject: " + fileObject);
+
+        //если сохранение прошло удачно
+        if(fileUtils.deleteFileObject(fileObject)){
+            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+            command = Commands.SERVER_RESPONSE_DELETE_FILE_OBJECT_OK;
+            //если что-то пошло не так
+        } else {
+            //выводим сообщение
+            printMsg("[server]" + fileUtils.getMsg());
+            //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+            command = Commands.SERVER_RESPONSE_DELETE_FILE_OBJECT_ERROR;
+        }
+        //инициируем объект сообщения о директории
+        DirectoryMessage directoryMessage = new DirectoryMessage(storageDir);
+
+        //формируем список файлов и папок в заданной директории клиента в сетевом хранилище
+        directoryMessage.takeFileObjectsList(fileObject.getParent());//TODO check!
+
+        //отправляем объект сообщения(команды) клиенту
+        ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
+
+    }
+
+    private String realStorageDirectory(String storageDir) {
+        return Paths.get(userStorageRoot.toString(), storageDir).toString();
     }
 
     /**

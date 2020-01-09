@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Objects;
 
 /**
  * The common class for operating with fileMessages and fileFragmentMessages.
@@ -173,7 +174,7 @@ public class FileUtils {
                 return false;
             //если файл собран без ошибок
             } else {
-                //***удаляем временную папку***
+                //***удаляем временную папку***//FIXME уже есть метод (deleteFolder)
                 //в цикле листаем временную папку и удаляем все файлы-фрагменты
                 for (String fragName : fileFragmentMessage.getFragsNames()) {
                     //удаляем файл-фрагмент
@@ -218,5 +219,47 @@ public class FileUtils {
 
     public String getMsg() {
         return msg;
+    }
+
+    /**
+     * Метод удаляет файловый объект.
+     * @param fileObject - файловый объект
+     * @return true - удаление прошло успешно
+     */
+    public boolean deleteFileObject(File fileObject) {
+        boolean result;
+        //если это директория
+        if(fileObject.isDirectory()){
+            //очищаем и удаляем папку
+            result = deleteFolder(fileObject);
+        } else{
+            //удаляем файл
+            result = fileObject.delete();
+
+            //TODO temporarily
+            System.out.println("GUIController.callContextMenu().menuItemDelete.setOnAction() - " +
+                    "origin.delete(): " + result);
+        }
+        return result;
+    }
+
+    private boolean deleteFolder(File folder) {
+//        boolean result = true;
+        //в цикле листаем временную папку и удаляем все файлы-фрагменты
+        for (File f : Objects.requireNonNull(folder.listFiles())) {
+            //если это директория
+            if(f.isDirectory()){
+                //очищаем и удаляем папку
+//              result &= deleteFolder(f);
+                deleteFolder(f);
+            } else{
+                //удаляем файл
+//              result &= f.delete();
+                f.delete();
+            }
+        }
+        //теперь можем удалить пустую папку
+//        result &= folder.delete();
+        return Objects.requireNonNull(folder.listFiles()).length == 0 && folder.delete();
     }
 }

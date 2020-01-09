@@ -1,4 +1,4 @@
-To Remove folder!
+To DELETE folder!
 
 Completed the authorizing task for this stage.
 Moved two methods(for auth) from the TCPServer class into the ServiceCommandHandler class of the server module and deleted old code there. All work correctly.

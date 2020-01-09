@@ -1,5 +1,6 @@
 package messages;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -19,6 +20,16 @@ public class FileMessage extends AbstractMessage {
     private long fileSize;
     //объявляем байтовый массив с данными из файла
     private byte[] data;
+    //объявляем переменную заданной директории
+    private String directory;
+    //объявляем переменную имени файла
+    private String fileObjectName;
+
+    //для операций переименования, удаления
+    public FileMessage(String directory, String fileObjectName) {
+        this.directory = directory;
+        this.fileObjectName = fileObjectName;
+    }
 
     public FileMessage(String fromDir, String toDir, String filename) {
         this.fromDir = fromDir;
@@ -54,6 +65,14 @@ public class FileMessage extends AbstractMessage {
 
     public String getToDir() {
         return toDir;
+    }
+
+    public String getDirectory() {
+        return directory;
+    }
+
+    public String getFileObjectName() {
+        return fileObjectName;
     }
 
     public String getFilename() {

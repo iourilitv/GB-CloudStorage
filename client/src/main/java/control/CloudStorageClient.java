@@ -261,11 +261,26 @@ public class CloudStorageClient {
         printMsg("***CloudStorageClient.downloadFile() - has finished***");
     }
 
-    public void deleteFolder(File origin) {
-        //FIXME
+    /**
+     * Метод отправляет на сервер запрос на удаление файла или папки в облачном хранилище
+     * @param directory - заданная директория в облачном хранилище
+     * @param fileObjectName - файловый объект
+     */
+    public void demandDeleteItem(String directory, String fileObjectName) {
+        //инициируем объект файлового сообщения
+        FileMessage fileMessage = new FileMessage(directory, fileObjectName);
+        //отправляем на сервер объект сообщения(команды)
+        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_DELETE_FILE_OBJECT,
+                fileMessage));
+    }
 
-        //TODO temporarily
-        printMsg("***CloudStorageClient.deleteFolder() - has finished*** - folder: " + origin);
+    /**
+     * Метод удаляет файл или папку в текущей директории на клиенте
+     * @param fileObject - файловый объект
+     */
+    public void deleteItem(File fileObject) {
+        //вызываем метод удаления папки или файла
+        fileUtils.deleteFileObject(fileObject);
     }
 
     public String getStorageDefaultDirectory() {

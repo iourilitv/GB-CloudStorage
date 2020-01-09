@@ -12,8 +12,6 @@ import utils.Commands;
 import utils.FileUtils;
 import javafx.GUIController;
 
-import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
@@ -85,8 +83,16 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 break;
             //обрабатываем полученное от сервера подтверждение успешной авторизации в облачное хранилище
             case Commands.SERVER_RESPONSE_AUTH_OK:
+                //обрабатываем полученный от сервера ответ об успешном удалении файла или папки в облачном хранилище
+            case Commands.SERVER_RESPONSE_DELETE_FILE_OBJECT_OK:
+//                //вызываем метод обработки ответа от сервера со списком файловых объектов в заданной директории
+//                onDeleteFileOkServerResponse(commandMessage);
+
                 //вызываем метод обработки ответа сервера
-                onAuthOkServerResponse(commandMessage);
+//                onAuthOkServerResponse(commandMessage);
+                //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
+                updateStorageItemListInGUI(commandMessage);
+
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке авторизации в облачное хранилище
             case Commands.SERVER_RESPONSE_AUTH_ERROR:
@@ -127,6 +133,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //в директорию клиента
                 onDownloadFileFragOkServerResponse(commandMessage);
                 break;
+
         }
     }
 
@@ -139,17 +146,21 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         storageClient.startAuthorization(ctx);
     }
 
-    /**
-     * Метод обрабатывает полученное от сервера подтверждение успешной авторизации в облачное хранилище
-     * @param commandMessage - объект сообщения(команды)
-     */
-    private void onAuthOkServerResponse(CommandMessage commandMessage) {
-        //вынимаем объект сообщения о директории из объекта сообщения(команды)
-        DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
-        //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
-        GUIController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
-                directoryMessage.getFileObjectsList());
-    }
+//    /**
+//     * Метод обрабатывает полученное от сервера подтверждение успешной авторизации в облачное хранилище.
+//     * Выводит в GUI полученный от сервера список файлов и папок в корневой пользовательской директории в сетевом хранилище.
+//     * @param commandMessage - объект сообщения(команды)
+//     */
+//    private void onAuthOkServerResponse(CommandMessage commandMessage) {
+////        //вынимаем объект сообщения о директории из объекта сообщения(команды)
+////        DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
+////        //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
+////        GUIController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
+////                directoryMessage.getFileObjectsList());
+//
+//        //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
+//        updateStorageItemListInGUI(commandMessage);
+//    }
 
     /**
      * Метод обрабатывает полученное от сервера сообщение об ошибке авторизации в облачное хранилище
@@ -177,7 +188,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 
     /**
      * Метод обрабатывает полученное от сервера подтверждение успешной загрузки(сохранения)
-     * файла в облачное хранилище
+     * файла в облачное хранилище.
+     * Выводит в GUI полученный от сервера список файлов и папок в корневой пользовательской директории в сетевом хранилище.
      * @param commandMessage - объект сообщения(команды)
      */
     private void onUploadFileOkServerResponse(CommandMessage commandMessage) {
@@ -217,30 +229,12 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         String storageDir = fileMessage.getFromDir();
         //вынимаем заданную клиентскую директорию заданную относительно CLIENT_ROOT из объекта сообщения(команды)
         String clientDir = fileMessage.getToDir();
-
-//        System.out.println("GUIController.onDownloadFileOkServerResponse() - " +
-//                ", storageDir: " + storageDir +
-//                ", clientDir: " + clientDir +
-//                ", item.getFilename(): " + fileMessage.getFilename() +
-//                "\nArrays.toString(fileMessage.getData()): " + Arrays.toString(fileMessage.getData()));
-
-        //FIXME придется указывать абсолютный путь, если будет выбор папки клиента
         //собираем реальную текущую директорию на клиенте
         String realToDir = GUIController.realClientDirectory(clientDir);
-//        String toDir = storageClient.getClientDefaultDirectory();
-//        toDir = toDir.concat("/").concat(clientDir);
-//        Path toDir = Paths.get(GUIController.realClientDirectory(clientDir));
-
         //если сохранение прошло удачно
-//        if(fileUtils.saveFile(toDir, fileMessage)){//FIXME см.выше
-//        if(fileUtils.saveFile(fileMessage.getToDir(), fileMessage)){//FIXME см.выше
-        if(fileUtils.saveFile(realToDir, fileMessage)){//FIXME см.выше
-
+        if(fileUtils.saveFile(realToDir, fileMessage)){
             //обновляем список файловых объектов на клиенте
-//            GUIController.updateClientItemListInGUI(fileMessage.getToDir(),
-//                    new File(fileMessage.getToDir()).listFiles());
             GUIController.updateClientItemListInGUI(clientDir);
-
             //отправляем сообщение на сервер: подтверждение, что все прошло успешно
             command = Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_OK;
         //если что-то пошло не так
@@ -252,8 +246,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         }
         //создаем объект файлового сообщения
         fileMessage = new FileMessage(storageDir, clientDir, fileMessage.getFilename());
-//        fileMessage = new FileMessage(storageDir, fileMessage.getToDir(), fileMessage.getFilename());
-
         //отправляем объект сообщения(команды) на сервер
         ctx.writeAndFlush(new CommandMessage(command, fileMessage));
     }
@@ -325,6 +317,26 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 //        fileFragmentMessage = new FileFragmentMessage(storageDir, clientDir, fileMessage.getFilename());
 //        //отправляем объект сообщения(команды) на сервер
 //        tester.getConnection().sendMessageObject(new CommandMessage(command, fileFragmentMessage));
+    }
+
+//    /**
+//     * Метод обрабатывает полученный от сервера ответ об успешном удалении файла или папки в облачном хранилище
+//     * @param commandMessage - объект сообщения(команды)
+//     */
+//    private void onDeleteFileOkServerResponse(CommandMessage commandMessage) {
+//
+//    }
+
+    /**
+     * Метод выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void updateStorageItemListInGUI(CommandMessage commandMessage) {
+        //вынимаем объект сообщения о директории из объекта сообщения(команды)
+        DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
+        //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
+        GUIController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
+                directoryMessage.getFileObjectsList());
     }
 
     @Override
