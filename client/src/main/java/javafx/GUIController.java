@@ -3,8 +3,13 @@ package javafx;
 import control.CloudStorageClient;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +40,9 @@ public class GUIController implements Initializable {
     private String currentClientDir;
     //получаем текущую папку списка файловых объектов в серверной части GUI
     private String currentStorageDir;
+
+    //объявляем переменную введенного нового имени
+    private String newName;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -266,7 +274,7 @@ public class GUIController implements Initializable {
             //запоминаем выбранный элемент списка
             File origin = listView.getSelectionModel().getSelectedItem();
             //открываем диалоговое окно переименования файлового объекта
-            String newName = takeNewNameWindow(origin);
+            String newName = takeNewNameWindow(origin, listView);
             //если текущий список клиентский
             if(listView.equals(clientItemListView)){
                 //вызываем метод переименования файлового объекта на клиенте
@@ -308,8 +316,37 @@ public class GUIController implements Initializable {
         return menuItemRename;
     }
 
-    private String takeNewNameWindow(File origin) {
-        return "Renamed" + origin.getName();
+    private String takeNewNameWindow(File origin, ListView<File> listView) {
+//        Parent root = null;
+//        try {
+//            root = FXMLLoader.load(getClass().getResource("/Login.fxml"));
+//            Scene scene = new Scene(root);
+////            ((Stage)mainVBox.getScene().getWindow()).setScene(scene);
+//            ((Stage)listView.getScene().getWindow()).setScene(scene);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
+            Parent root = loader.load();
+            RenameController renameController = loader.getController();
+            renameController.newName.setText(origin.getName());
+            renameController.backController = this;
+
+            stage.setTitle("insert a new name");
+            stage.setScene(new Scene(root, 200, 50));
+            stage.isAlwaysOnTop();
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        return "Renamed" + origin.getName();
+        return newName;
     }
 
     /**
@@ -359,6 +396,14 @@ public class GUIController implements Initializable {
     public String realClientDirectory(String currentDirectory){
         //собираем путь к текущей папке(к директории по умолчанию) для получения списка объектов
         return Paths.get(CloudStorageClient.CLIENT_ROOT, currentDirectory).toString();
+    }
+
+    public String getNewName() {
+        return newName;
+    }
+
+    public void setNewName(String newName) {
+        this.newName = newName;
     }
 
     //Метод отправки запроса об отключении на сервер
