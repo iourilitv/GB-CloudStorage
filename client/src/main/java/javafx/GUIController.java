@@ -56,7 +56,6 @@ public class GUIController implements Initializable {
     public void initializeClientItemListView() {
         //выводим в клиентской части интерфейса список объектов в директории по умолчанию
         updateClientItemListInGUI(clientDefaultDirectory());
-
     }
 
     /**
@@ -245,19 +244,9 @@ public class GUIController implements Initializable {
         menuItemDownload.setOnAction(event -> {
             //запоминаем кликнутый элемент списка
             File item = listView.getSelectionModel().getSelectedItem();
-
-//            System.out.println("GUIController.callContextMenu().menuItemDownload.setOnAction() - " +
-//                    "\nitem: " + item +
-//                    ", currentStorageDir: " + currentStorageDir +
-//                    ", currentClientDir: " + currentClientDir +
-//                    ", item.getName(): " + item.getName());
-
             //отправляем на сервер запрос на скачивание файла из облачного хранилища
-//            storageClient.demandDownloadFile(currentStorageDir,
-//                    realClientDirectory(currentClientDir), item.getName());
             storageClient.demandDownloadFile(currentStorageDir,
                     currentClientDir, item.getName());
-
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
         });
@@ -274,33 +263,53 @@ public class GUIController implements Initializable {
         MenuItem menuItemRename = new MenuItem("Rename");
         //устанавливаем обработчика нажатия на этот пункт контекстного меню
         menuItemRename.setOnAction(event -> {
-
-            //TODO temporarily
-            System.out.println("GUIController.callContextMenu().menuItemRename.setOnAction() - " +
-                    "\nlistView.getSelectionModel().getSelectedItem(): " +
-                    listView.getSelectionModel().getSelectedItem());
-
             //запоминаем выбранный элемент списка
             File origin = listView.getSelectionModel().getSelectedItem();
+            //открываем диалоговое окно переименования файлового объекта
+            String newName = takeNewNameWindow(origin);
+            //если текущий список клиентский
+            if(listView.equals(clientItemListView)){
+                //вызываем метод переименования файлового объекта на клиенте
+                storageClient.renameItem(origin, newName);
+                //обновляем список файловых объектов в текущей директории
+                updateClientItemListInGUI(currentClientDir);
+                //если текущий список облачного хранилища
+            } else if(listView.equals(storageItemListView)){
+                //отправляем на сервер запрос на переименования файлового объекта в заданной директории
+                //пользователя в сетевом хранилище
+                storageClient.demandRenameItem(currentStorageDir, origin.getName(), newName);
+            }
 
-            //TODO добавить диалоговое окно - получить новое имя
-            //получаем новое имя файлового объекта
-            String newName = "Renamed" + origin.getName();
+//            //TODO temporarily
+//            System.out.println("GUIController.callContextMenu().menuItemRename.setOnAction() - " +
+//                    "\nlistView.getSelectionModel().getSelectedItem(): " +
+//                    listView.getSelectionModel().getSelectedItem());
 
-            //TODO
-            System.out.println("GUIController.callContextMenu().menuItemRename.setOnAction() - " +
-                    "origin.renameTo()): " +
-                    origin.renameTo(new File(Paths.get(origin.getParent(),
-                            newName).toString())));
+//            //запоминаем выбранный элемент списка
+//            File origin = listView.getSelectionModel().getSelectedItem();
+
+//            //TODO добавить диалоговое окно - получить новое имя
+//            //получаем новое имя файлового объекта
+//            String newName = "Renamed" + origin.getName();
+
+//            //TODO
+//            System.out.println("GUIController.callContextMenu().menuItemRename.setOnAction() - " +
+//                    "origin.renameTo()): " +
+//                    origin.renameTo(new File(Paths.get(origin.getParent(),
+//                            newName).toString())));
 
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
-            //обновляем список файловых объектов в текущей директории
-//            updateClientItemListInGUI(origin.getParent(), new File(origin.getParent()).listFiles());
-            updateClientItemListInGUI(currentClientDir);
+
+//            //обновляем список файловых объектов в текущей директории
+//            updateClientItemListInGUI(currentClientDir);
 
         });
         return menuItemRename;
+    }
+
+    private String takeNewNameWindow(File origin) {
+        return "Renamed" + origin.getName();
     }
 
     /**

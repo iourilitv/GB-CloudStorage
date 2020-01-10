@@ -259,4 +259,19 @@ public class FileUtils {
         //теперь можем удалить пустую папку
         return Objects.requireNonNull(folder.listFiles()).length == 0 && folder.delete();
     }
+
+    public void renameFileObject(File fileObject, String newName) {
+        //если файловый объект это директория
+        if(fileObject.isDirectory()){
+            //FIXME как переименовать папку?
+            System.out.println("FileUtils.renameFileObject() - " +
+                    "fileObject.isDirectory(): " + fileObject.isDirectory());
+
+        } else {
+            //переименовываем файл
+            fileObject.renameTo(new File(Paths.get(fileObject.getParent(),
+                    newName).toString()));
+        }
+
+    }
 }

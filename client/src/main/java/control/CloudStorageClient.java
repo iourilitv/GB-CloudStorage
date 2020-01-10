@@ -261,6 +261,35 @@ public class CloudStorageClient {
         printMsg("***CloudStorageClient.downloadFile() - has finished***");
     }
 
+    public void renameItem(File fileObject, String newName) {
+        //вызываем метод удаления папки или файла
+        fileUtils.renameFileObject(fileObject, newName);
+    }
+
+    /**
+     * Метод отправляет на сервер запрос на переименовании файла или папки в облачном хранилище
+     * @param directory - заданная директория в облачном хранилище
+     * @param fileObjectName - файловый объект
+     */
+    public void demandRenameItem(String directory, String fileObjectName, String newName) {
+        //инициируем объект файлового сообщения
+        FileMessage fileMessage = new FileMessage(directory, fileObjectName);
+        //записываем в сообщение новое имя(вынужденно, т.к. такой конструктор уже занят)
+        fileMessage.setNewName(newName);
+        //отправляем на сервер объект сообщения(команды)
+        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_RENAME_FILE_OBJECT,
+                fileMessage));
+    }
+
+    /**
+     * Метод удаляет файл или папку в текущей директории на клиенте
+     * @param fileObject - файловый объект
+     */
+    public void deleteItem(File fileObject) {
+        //вызываем метод удаления папки или файла
+        fileUtils.deleteFileObject(fileObject);
+    }
+
     /**
      * Метод отправляет на сервер запрос на удаление файла или папки в облачном хранилище
      * @param directory - заданная директория в облачном хранилище
@@ -272,15 +301,6 @@ public class CloudStorageClient {
         //отправляем на сервер объект сообщения(команды)
         ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_DELETE_FILE_OBJECT,
                 fileMessage));
-    }
-
-    /**
-     * Метод удаляет файл или папку в текущей директории на клиенте
-     * @param fileObject - файловый объект
-     */
-    public void deleteItem(File fileObject) {
-        //вызываем метод удаления папки или файла
-        fileUtils.deleteFileObject(fileObject);
     }
 
     public String getStorageDefaultDirectory() {

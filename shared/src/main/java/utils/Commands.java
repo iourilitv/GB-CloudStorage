@@ -44,7 +44,7 @@ public class Commands {
     public static final int SERVER_RESPONSE_FILE_OBJECTS_LIST_OK = 303102;
 
     //переименовать файл на сервере
-    public static final int REQUEST_SERVER_RENAME_FILE = 404101;
+    public static final int REQUEST_SERVER_RENAME_FILE_OBJECT = 404101;
 
     //запрос на сервер удалить файл на сервере
     public static final int REQUEST_SERVER_DELETE_FILE_OBJECT = 505101;

@@ -22,8 +22,10 @@ public class FileMessage extends AbstractMessage {
     private byte[] data;
     //объявляем переменную заданной директории
     private String directory;
-    //объявляем переменную имени файла
+    //объявляем переменную имени файлового объекта
     private String fileObjectName;
+    //объявляем переменную нового имени файла
+    private String newName;
 
     //для операций переименования, удаления
     public FileMessage(String directory, String fileObjectName) {
@@ -77,6 +79,14 @@ public class FileMessage extends AbstractMessage {
 
     public String getFilename() {
         return filename;
+    }
+
+    public String getNewName() {
+        return newName;
+    }
+
+    public void setNewName(String newName) {
+        this.newName = newName;
     }
 
     public long getFileSize() {
