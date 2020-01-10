@@ -20,6 +20,8 @@ import java.nio.file.Paths;
  * The server's class for recognizing command messages and control command handlers.
  */
 public class CommandMessageManager extends ChannelInboundHandlerAdapter {
+    //принимаем объект соединения
+    private ChannelHandlerContext ctx;
     //принимаем объект контроллера сетевого хранилища
     private final CloudStorageServer storageServer;
 
@@ -45,6 +47,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        //принимаем объект соединения
+        this.ctx = ctx;
         //инициируем из объекта сообщения объект команды
         CommandMessage commandMessage = (CommandMessage) msg;
         //если сюда прошли, значит клиент авторизован
@@ -99,6 +103,12 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //в директорию в сетевом хранилище.
                 onUploadFileFragClientRequest(ctx, commandMessage);
                 break;
+            //обрабатываем полученный от клиента запрос на переименование файла или папки
+            // в заданной директории в сетевом хранилище
+            case Commands.REQUEST_SERVER_RENAME_FILE_OBJECT:
+                //вызываем метод обработки запроса от клиента
+                onRenameFileObjectClientRequest(ctx, commandMessage);
+                break;
             //обрабатываем полученный от клиента запрос на удаление файла или папки
             // в заданной директории в сетевом хранилище
             case Commands.REQUEST_SERVER_DELETE_FILE_OBJECT:
@@ -127,12 +137,17 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         Path storageDir = Paths.get(userStorageRoot.toString());
         //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
         storageDir = storageDir.resolve(Paths.get(directoryMessage.getDirectory()));
+
         //формируем список файлов и папок в заданной директории клиента в сетевом хранилище
         directoryMessage.takeFileObjectsList(storageDir.toString());//TODO переделать на boolean
         //устанавливаем команду: подтверждение, что все прошло успешно
         command = Commands.SERVER_RESPONSE_FILE_OBJECTS_LIST_OK;
         //отправляем объект сообщения(команды) клиенту
         ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
+
+//        //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
+//        // заданной директории клиента в сетевом хранилище
+//        sendFileObjectsList(storageDir, toDir, command);
     }
 
     /**
@@ -162,12 +177,16 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
             command = Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR;
         }
-        //инициируем объект сообщения о директории
-        DirectoryMessage directoryMessage = new DirectoryMessage(storageDir);
-        //формируем список файлов и папок в заданной директории клиента в сетевом хранилище
-        directoryMessage.takeFileObjectsList(toDir);
-        //отправляем объект сообщения(команды) клиенту
-        ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
+        //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
+        // заданной директории клиента в сетевом хранилище
+        sendFileObjectsList(storageDir, toDir, command);
+
+//        //инициируем объект сообщения о директории
+//        DirectoryMessage directoryMessage = new DirectoryMessage(storageDir);
+//        //формируем список файлов и папок в заданной директории клиента в сетевом хранилище
+//        directoryMessage.takeFileObjectsList(toDir);
+//        //отправляем объект сообщения(команды) клиенту
+//        ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
     }
 
     /**
@@ -408,6 +427,46 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     }
 
     /**
+     * Метод обрабатываем полученный от клиента запрос на переименование файла или папки
+     * в заданной директории в сетевом хранилище
+     * @param ctx - объект соединения netty, установленного с клиентом
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onRenameFileObjectClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) {
+        //вынимаем объект файлового сообщения из объекта сообщения(команды)
+        FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
+        //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
+        String storageDir = fileMessage.getDirectory();
+        //собираем реальный путь к файловому объекту в реальной заданнуй директории пользователя в сетевом хранилище
+        String realFileObject = Paths.get(realStorageDirectory(storageDir),
+                fileMessage.getFileObjectName()).toString();
+        //инициируем реальный файловый объект
+        File fileObject = new File(realFileObject);
+        //если сохранение прошло удачно
+        if(fileObject.renameTo(new File(Paths.get(fileObject.getParent(),
+                fileMessage.getNewName()).toString()))){
+            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+            command = Commands.SERVER_RESPONSE_RENAME_FILE_OBJECT_OK;
+            //если что-то пошло не так
+        } else {
+            //выводим сообщение
+            printMsg("[server]" + fileUtils.getMsg());
+            //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+            command = Commands.SERVER_RESPONSE_RENAME_FILE_OBJECT_ERROR;
+        }
+//        //инициируем объект сообщения о директории
+//        DirectoryMessage directoryMessage = new DirectoryMessage(storageDir);
+//        //формируем список файлов и папок в заданной директории клиента в сетевом хранилище
+//        directoryMessage.takeFileObjectsList(fileObject.getParent());
+//        //отправляем объект сообщения(команды) клиенту
+//        ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
+
+        //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
+        // заданной директории клиента в сетевом хранилище
+        sendFileObjectsList(storageDir, fileObject.getParent(), command);
+    }
+
+    /**
      * Метод обрабатываем полученный от клиента запрос на удаление файла или папки
      * в заданной директории в сетевом хранилище
      * @param ctx - объект соединения netty, установленного с клиентом
@@ -464,6 +523,22 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //удаляем входящий хэндлер AuthGateway, т.к. после авторизации он больше не нужен
         printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
                 "removed pipeline: " + ctx.channel().pipeline().remove(AuthGateway.class));
+    }
+
+    /**
+     * Метод формирует и отправляет клиенту сообщение(команду) с массивом файловых объектов
+     * в заданной директории пользователя в сетевом хранилище.
+     * @param storageDir - директория, заданная относительно корневой директории пользователя в сетевом хранилище
+     * @param realStorageDir - реальный путь к файловому объекту относительно корневой директории проекта
+     * @param command - комманда об успешном или не успешном формировании списка
+     */
+    private void sendFileObjectsList(String storageDir, String realStorageDir, int command) {
+        //инициируем объект сообщения о директории
+        DirectoryMessage directoryMessage = new DirectoryMessage(storageDir);
+        //формируем список файлов и папок в заданной директории клиента в сетевом хранилище
+        directoryMessage.takeFileObjectsList(realStorageDir);
+        //отправляем объект сообщения(команды) клиенту
+        ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
     }
 
     private String realStorageDirectory(String storageDir) {

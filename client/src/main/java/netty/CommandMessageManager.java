@@ -24,7 +24,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     //принимаем объект файлового обработчика
     private FileUtils fileUtils;
     //принимаем объект соединения
-    ChannelHandlerContext ctx;
+    private ChannelHandlerContext ctx;
     //принимаем объект контроллера GUI
     private GUIController guiController;
 
@@ -83,6 +83,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 break;
             //обрабатываем полученное от сервера подтверждение успешной авторизации в облачное хранилище
             case Commands.SERVER_RESPONSE_AUTH_OK:
+            //обрабатываем полученный от сервера ответ об успешном переименовании файла или папки в облачном хранилище
+            case Commands.SERVER_RESPONSE_RENAME_FILE_OBJECT_OK:
             //обрабатываем полученный от сервера ответ об успешном удалении файла или папки в облачном хранилище
             case Commands.SERVER_RESPONSE_DELETE_FILE_OBJECT_OK:
                 //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище

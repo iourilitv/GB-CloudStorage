@@ -43,8 +43,13 @@ public class Commands {
     // в сетевом хранилище, если нет ошибок
     public static final int SERVER_RESPONSE_FILE_OBJECTS_LIST_OK = 303102;
 
-    //переименовать файл на сервере
+    //переименовать файловый объект на сервере
     public static final int REQUEST_SERVER_RENAME_FILE_OBJECT = 404101;
+    //ответ сервера с массивом файловых объектов в заданной директории пользователя
+    // в сетевом хранилище, если нет ошибок
+    public static final int SERVER_RESPONSE_RENAME_FILE_OBJECT_OK = 404102;
+    //ответ сервера, что при переименовании файлового объекта в облачном хранилище произошла ошибка
+    public static final int SERVER_RESPONSE_RENAME_FILE_OBJECT_ERROR = 404109;
 
     //запрос на сервер удалить файл на сервере
     public static final int REQUEST_SERVER_DELETE_FILE_OBJECT = 505101;
