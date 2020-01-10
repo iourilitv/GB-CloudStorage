@@ -59,89 +59,67 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             // в заданной директории в облачном хранилище
             case Commands.REQUEST_SERVER_FILE_OBJECTS_LIST:
                 //вызываем метод обработки запроса от клиента
-//                onFileObjectsListClientRequest(ctx, commandMessage);
                 onFileObjectsListClientRequest(commandMessage);
-
                 break;
             //обрабатываем полученный от клиента запрос на загрузку(сохранение) файла в облачное хранилище
             case Commands.REQUEST_SERVER_FILE_UPLOAD:
                 //вызываем метод обработки запроса от клиента на загрузку целого файла клиента
                 // в директорию в сетевом хранилище.
-//                onUploadFileClientRequest(ctx, commandMessage);
                 onUploadFileClientRequest(commandMessage);
-
                 break;
             //обрабатываем полученное от клиента подтверждение успешного получения обновленного
             // списка файлов клиента в облачном хранилище
             case Commands.CLIENT_RESPONSE_FILE_UPLOAD_OK:
                 //вызываем метод обработки ответа клиента
-//                onUploadFileOkClientResponse(ctx, commandMessage);
                 onUploadFileOkClientResponse(commandMessage);
-
                 break;
             //обрабатываем полученное от клиента сообщение об ошибке получения обновленного
             // списка файлов клиента в облачном хранилище
             case Commands.CLIENT_RESPONSE_FILE_UPLOAD_ERROR:
                 //вызываем метод обработки ответа клиента
-//                onUploadFileErrorClientResponse(ctx, commandMessage);
                 onUploadFileErrorClientResponse(commandMessage);
-
                 break;
             //обрабатываем полученный от клиента запрос на скачивание целого файла из облачного хранилища
             case Commands.REQUEST_SERVER_FILE_DOWNLOAD:
                 //вызываем метод обработки запроса от клиента на скачивание целого файла клиента
                 // из директории в сетевом хранилище
-//                onDownloadFileClientRequest(ctx, commandMessage);
                 onDownloadFileClientRequest(commandMessage);
-
                 break;
             //обрабатываем полученное от клиента подтверждение успешного сохранения целого файла,
             // скачанного из облачного хранилища
             case Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_OK:
                 //вызываем метод обработки ответа клиента
-//                onDownloadFileOkClientResponse(ctx, commandMessage);
                 onDownloadFileOkClientResponse(commandMessage);
-
                 break;
             //обрабатываем полученное от клиента сообщение об ошибке сохранения целого файла,
             // скачанного из облачного хранилища
             case Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_ERROR:
                 //вызываем метод обработки ответа клиента
-//                onDownloadFileErrorClientResponse(ctx, commandMessage);
                 onDownloadFileErrorClientResponse(commandMessage);
-
                 break;
             //обрабатываем полученный от клиента запрос на загрузку(сохранение) фрагмента файла в облачное хранилище
             case Commands.REQUEST_SERVER_FILE_FRAG_UPLOAD:
                 //вызываем метод обработки запроса от клиента на загрузку файла-фрагмента
                 //в директорию в сетевом хранилище.
-//                onUploadFileFragClientRequest(ctx, commandMessage);
                 onUploadFileFragClientRequest(commandMessage);
-
                 break;
             //обрабатываем полученный от клиента запрос на переименование файла или папки
             // в заданной директории в сетевом хранилище
             case Commands.REQUEST_SERVER_RENAME_FILE_OBJECT:
                 //вызываем метод обработки запроса от клиента
-//                onRenameFileObjectClientRequest(ctx, commandMessage);
                 onRenameFileObjectClientRequest(commandMessage);
-
                 break;
             //обрабатываем полученный от клиента запрос на удаление файла или папки
             // в заданной директории в сетевом хранилище
             case Commands.REQUEST_SERVER_DELETE_FILE_OBJECT:
                 //вызываем метод обработки запроса от клиента
-//                onDeleteFileObjectClientRequest(ctx, commandMessage);
                 onDeleteFileObjectClientRequest(commandMessage);
-
                 break;
             //обрабатываем полученный от AuthGateway проброшенный запрос на авторизацию клиента в облачное хранилище
             //возвращаем список объектов в корневой директорию пользователя в сетевом хранилище.
             case Commands.SERVER_RESPONSE_AUTH_OK:
                 //вызываем метод обработки запроса от AuthGateway
-//                onAuthClientRequest(ctx, commandMessage);
                 onAuthClientRequest(commandMessage);
-
                 break;
         }
     }
@@ -149,10 +127,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     /**
      * Метод обрабатывает полученный от клиента запрос на список объектов файлов и папок
      * в заданной директории в облачном хранилище
-//     * @param ctx - объект соединения netty, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
-//    private void onFileObjectsListClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) {
     private void onFileObjectsListClientRequest(CommandMessage commandMessage) {
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
         DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
@@ -176,10 +152,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     /**
      * Метод обработки запроса от клиента на загрузку целого файла клиента в директорию в
      * сетевом хранилище.
-//     * @param ctx - объект соединения netty, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
-//    private void onUploadFileClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) {
     private void onUploadFileClientRequest(CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
@@ -236,10 +210,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     /**
      * Метод обработки запроса от клиента на скачивание целого файла клиента из директории в
      * сетевом хранилище.
-//     * @param ctx - объект соединения netty, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
-//    private void onDownloadFileClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) throws IOException {
     private void onDownloadFileClientRequest(CommandMessage commandMessage) throws IOException {
 
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
@@ -262,17 +234,12 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //если размер запрашиваемого файла больше константы размера фрагмента
         if(fileSize > FileFragmentMessage.CONST_FRAG_SIZE){
             //запускаем метод отправки файла по частям
-//            downloadFileByFrags(ctx, fromDir, clientDir,
-//                    fileMessage.getFilename(), fileSize);
             downloadFileByFrags(fromDir, clientDir,
                     fileMessage.getFilename(), fileSize);
-
             //если файл меньше
         } else {
             //запускаем метод отправки целого файла
-//            downloadEntireFile(ctx, fromDir, clientDir, fileMessage.getFilename());
             downloadEntireFile(fromDir, clientDir, fileMessage.getFilename());
-
         }
     }
 
@@ -299,10 +266,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     /**
      * Метод обработки запроса от клиента на загрузку файла-фрагмента
      * в директорию в сетевом хранилище.
-//     * @param ctx - объект соединения netty, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
-//    private void onUploadFileFragClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) {
     private void onUploadFileFragClientRequest(CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileFragmentMessage fileFragmentMessage = (FileFragmentMessage) commandMessage.getMessageObject();
@@ -353,15 +318,12 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     /**
      * Метод скачивания и отправки по частям большого файла размером более
      * константы максмального размера фрагмента файла
-//     * @param ctx - объект соединения netty, установленного с клиентом
      * @param fromDir - директория(относительно корня) клиента где хранится файл источник
      * @param toDir - директория(относительно корня) в сетевом хранилище
      * @param filename - строковое имя файла
      * @param fullFileSize - размер целого файла в байтах
      * @throws IOException - исключение
      */
-//    private void downloadFileByFrags(ChannelHandlerContext ctx, String fromDir, String toDir,
-//                                     String filename, long fullFileSize) throws IOException {
     private void downloadFileByFrags(String fromDir, String toDir,
                                      String filename, long fullFileSize) throws IOException {
         //TODO temporarily
@@ -432,12 +394,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     /**
      * Метод скачивания и отправки целого небольшого файла размером менее
      * константы максмального размера фрагмента файла
-//     * @param ctx - объект соединения netty, установленного с клиентом
      * @param fromDir - директория(относительно корня) клиента где хранится файл источник
      * @param clientDir - директория(относительно корня) в сетевом хранилище
      * @param filename - строковое имя файла
      */
-//    private void downloadEntireFile(ChannelHandlerContext ctx, String fromDir, String clientDir, String filename){
     private void downloadEntireFile(String fromDir, String clientDir, String filename){
         //создаем объект файлового сообщения
         FileMessage fileMessage = new FileMessage(fromDir, clientDir, filename);
@@ -460,10 +420,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     /**
      * Метод обрабатываем полученный от клиента запрос на переименование файла или папки
      * в заданной директории в сетевом хранилище
-//     * @param ctx - объект соединения netty, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
-//    private void onRenameFileObjectClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) {
     private void onRenameFileObjectClientRequest(CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
@@ -501,10 +459,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     /**
      * Метод обрабатываем полученный от клиента запрос на удаление файла или папки
      * в заданной директории в сетевом хранилище
-//     * @param ctx - объект соединения netty, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
-//    private void onDeleteFileObjectClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) {
     private void onDeleteFileObjectClientRequest(CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
@@ -537,10 +493,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     /**
      * Метод обрабатывает полученный от AuthGateway проброшенный запрос на авторизацию клиента в облачное хранилище
      * Возвращает список объектов в корневой директорию пользователя в сетевом хранилище.
-//     * @param ctx - объект соединения netty, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
-//    private void onAuthClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) {
     private void onAuthClientRequest(CommandMessage commandMessage) {
         //вынимаем тип команды из объекта сообщения(команды)
         command = commandMessage.getCommand();
