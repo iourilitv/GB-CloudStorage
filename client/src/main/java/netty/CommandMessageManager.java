@@ -104,19 +104,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //вызываем метод обработки ответа сервера
                 onAuthErrorServerResponse(commandMessage);
                 break;
-
-//            //обрабатываем полученный ответ сервера с массивом файловых объектов в заданной
-//            // директории пользователя в сетевом хранилище, если нет ошибок
-//            case Commands.SERVER_RESPONSE_FILE_OBJECTS_LIST_OK:
-//                //вызываем метод обработки ответа сервера
-//                onFileObjectsListOkServerResponse(commandMessage);
-//                break;
-//            //обрабатываем полученное от сервера подтверждение успешной загрузки(сохранения)
-//            // файла в облачное хранилище
-//            case Commands.SERVER_RESPONSE_FILE_UPLOAD_OK:
-//                //вызываем метод обработки ответа сервера
-//                onUploadFileOkServerResponse(commandMessage);
-//                break;
             //обрабатываем полученное от сервера сообщение об ошибке загрузки(сохранения)
             // файла в облачное хранилище
             case Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR:
@@ -162,41 +149,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         // повторить запрос на авторизацию с новыми данными логина и пароля
         printMsg("[client]CommandMessageManager.onAuthErrorServerResponse() - Something wrong with your login and password!");
     }
-
-//    /**
-//     * Метод обрабатывает полученный ответ сервера с массивом файловых объектов в заданной
-//     * директории пользователя в сетевом хранилище, если нет ошибок
-//     * @param commandMessage - объект сообщения(команды)
-//     */
-//    private void onFileObjectsListOkServerResponse(CommandMessage commandMessage) {
-//        //вынимаем объект сообщения о директории из объекта сообщения(команды)
-//        DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
-//        //обновляем список элементов списка серверной части
-//        guiController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
-//                directoryMessage.getFileObjectsList());
-//    }
-
-//    /**
-//     * Метод обрабатывает полученное от сервера подтверждение успешной загрузки(сохранения)
-//     * файла в облачное хранилище.
-//     * Выводит в GUI полученный от сервера список файлов и папок в корневой пользовательской директории в сетевом хранилище.
-//     * @param commandMessage - объект сообщения(команды)
-//     */
-//    private void onUploadFileOkServerResponse(CommandMessage commandMessage) {
-//        //вынимаем объект сообщения о директории из объекта сообщения(команды)
-//        DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
-//        //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
-//        guiController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
-//                directoryMessage.getFileObjectsList());
-//
-//        //TODO temporarily
-//        printMsg("[client]CommandMessageManager.onUploadFileOkServerResponse() - " +
-//                "command: " + commandMessage.getCommand() +
-//                ". directoryMessage.getDirectory(): " + directoryMessage.getDirectory() +
-//                ". directoryMessage.getFileObjectsList(): " +
-//                Arrays.toString(directoryMessage.getFileObjectsList()));
-//
-//    }
 
     /**
      * Метод обрабатывает полученное от сервера сообщение об ошибке загрузки(сохранения)
