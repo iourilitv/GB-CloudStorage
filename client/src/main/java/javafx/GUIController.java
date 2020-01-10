@@ -277,8 +277,9 @@ public class GUIController implements Initializable {
             String newName = takeNewNameWindow(origin, listView);
             //если текущий список клиентский
             if(listView.equals(clientItemListView)){
-                //вызываем метод переименования файлового объекта на клиенте
-                storageClient.renameItem(origin, newName);
+                //переименовываем файловый объект
+                origin.renameTo(new File(Paths.get(origin.getParent(),
+                        newName).toString()));
                 //обновляем список файловых объектов в текущей директории
                 updateClientItemListInGUI(currentClientDir);
                 //если текущий список облачного хранилища
@@ -287,51 +288,19 @@ public class GUIController implements Initializable {
                 //пользователя в сетевом хранилище
                 storageClient.demandRenameItem(currentStorageDir, origin.getName(), newName);
             }
-
-//            //TODO temporarily
-//            System.out.println("GUIController.callContextMenu().menuItemRename.setOnAction() - " +
-//                    "\nlistView.getSelectionModel().getSelectedItem(): " +
-//                    listView.getSelectionModel().getSelectedItem());
-
-//            //запоминаем выбранный элемент списка
-//            File origin = listView.getSelectionModel().getSelectedItem();
-
-//            //TODO добавить диалоговое окно - получить новое имя
-//            //получаем новое имя файлового объекта
-//            String newName = "Renamed" + origin.getName();
-
-//            //TODO
-//            System.out.println("GUIController.callContextMenu().menuItemRename.setOnAction() - " +
-//                    "origin.renameTo()): " +
-//                    origin.renameTo(new File(Paths.get(origin.getParent(),
-//                            newName).toString())));
-
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
-
-//            //обновляем список файловых объектов в текущей директории
-//            updateClientItemListInGUI(currentClientDir);
-
         });
         return menuItemRename;
     }
 
     private String takeNewNameWindow(File origin, ListView<File> listView) {
-//        Parent root = null;
-//        try {
-//            root = FXMLLoader.load(getClass().getResource("/Login.fxml"));
-//            Scene scene = new Scene(root);
-////            ((Stage)mainVBox.getScene().getWindow()).setScene(scene);
-//            ((Stage)listView.getScene().getWindow()).setScene(scene);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
             Parent root = loader.load();
             RenameController renameController = loader.getController();
+            //записываем текущее имя в текстовое поле
             renameController.newName.setText(origin.getName());
             renameController.backController = this;
 
@@ -344,8 +313,6 @@ public class GUIController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-//        return "Renamed" + origin.getName();
         return newName;
     }
 

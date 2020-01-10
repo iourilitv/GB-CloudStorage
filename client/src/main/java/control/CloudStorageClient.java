@@ -261,11 +261,6 @@ public class CloudStorageClient {
         printMsg("***CloudStorageClient.downloadFile() - has finished***");
     }
 
-    public void renameItem(File fileObject, String newName) {
-        //вызываем метод удаления папки или файла
-        fileUtils.renameFileObject(fileObject, newName);
-    }
-
     /**
      * Метод отправляет на сервер запрос на переименовании файла или папки в облачном хранилище
      * @param directory - заданная директория в облачном хранилище
