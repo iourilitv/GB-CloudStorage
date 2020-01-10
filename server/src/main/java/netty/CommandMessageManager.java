@@ -243,19 +243,28 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     private void onUploadFileFragClientRequest(CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileFragmentMessage fileFragmentMessage = (FileFragmentMessage) commandMessage.getMessageObject();
-        //собираем целевую директорию пользователя в сетевом хранилище
-        //сбрасываем до корневой папки пользователя в сетевом хранилище
-        String toTempDir = userStorageRoot.toString();//TODO turn String into Path
-        // добавляем временную директорию сетевого хранилища из объекта сообщения(команды)
-        toTempDir = toTempDir.concat("/").concat(fileFragmentMessage.getToTempDir());
-        //создаем объект пути к папке с загруженным файлом
-        String toDir = Paths.get(toTempDir).getParent().toString();//FIXME переделать на Path?
-        //инициируем директорию для показа списка загруженных фрагментов или файла
-        String directory = toTempDir;
 
+//        //собираем целевую директорию пользователя в сетевом хранилище
+//        //сбрасываем до корневой папки пользователя в сетевом хранилище
+//        String toTempDir = userStorageRoot.toString();//TODO turn String into Path
+//        // добавляем временную директорию сетевого хранилища из объекта сообщения(команды)
+//        toTempDir = toTempDir.concat("/").concat(fileFragmentMessage.getToTempDir());
+        //собираем временную директорию в целевой директории пользователя в сетевом хранилище
+        //для сохранения фрагментов
+        String realToDirTemp = realStorageDirectory(fileFragmentMessage.getToTempDir());
+
+//        //создаем объект пути к папке с загруженным файлом
+//        String toDir = Paths.get(toTempDir).getParent().toString();//FIXME переделать на Path?
+//        //инициируем директорию для показа списка загруженных фрагментов или файла
+//        String directory = toTempDir;
+        //создаем объект пути к папке с загруженным файлом
+        String realToDir = Paths.get(realToDirTemp).getParent().toString();
+//        //инициируем директорию для показа списка загруженных фрагментов или файла
+//        String directory = realToDirTemp;
 
         //если сохранение полученного фрагмента файла во временную папку сетевого хранилища прошло удачно
-        if(fileUtils.saveFileFragment(toTempDir, fileFragmentMessage)){
+//        if(fileUtils.saveFileFragment(toTempDir, fileFragmentMessage)){
+        if(fileUtils.saveFileFragment(realToDirTemp, fileFragmentMessage)){
             //отправляем сообщение на сервер: подтверждение, что все прошло успешно
             command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_OK;
         //если что-то пошло не так
@@ -268,11 +277,13 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //если это последний фрагмент
         if(fileFragmentMessage.isFinalFileFragment()){
             //если корректно собран файл из фрагментов сохраненных во временную папку
-            if(fileUtils.compileFileFragments(toTempDir, toDir, fileFragmentMessage)){
+//            if(fileUtils.compileFileFragments(toTempDir, toDir, fileFragmentMessage)){
+            if(fileUtils.compileFileFragments(realToDirTemp, realToDir, fileFragmentMessage)){
                 //ответ сервера, что сборка файла из загруженных фрагментов прошла успешно
                 command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_OK;
-                //устанавливаем финальное значение папки для показа загруженного файла
-                directory = toDir;
+//                //устанавливаем финальное значение папки для показа загруженного файла
+//                directory = realToDir;
+
             //если что-то пошло не так
             } else {
                 //выводим сообщение
@@ -280,14 +291,17 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //инициируем переменную типа команды - ответ об ошибке
                 command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_ERROR;
             }
+            //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
+            // заданной директории клиента в сетевом хранилище
+            sendFileObjectsList(fileFragmentMessage.getToDir(), realToDir, command);
         }
 
-        //инициируем объект сообщения о директории
-        DirectoryMessage directoryMessage = new DirectoryMessage(directory);
-        //формируем список файлов и папок в корневой директории клиента по умолчанию
-        directoryMessage.takeFileObjectsList(directory);
-        //отправляем объект сообщения(команды) клиенту
-        ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
+//        //инициируем объект сообщения о директории
+//        DirectoryMessage directoryMessage = new DirectoryMessage(directory);
+//        //формируем список файлов и папок в корневой директории клиента по умолчанию
+//        directoryMessage.takeFileObjectsList(directory);
+//        //отправляем объект сообщения(команды) клиенту
+//        ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
 
 
     }
