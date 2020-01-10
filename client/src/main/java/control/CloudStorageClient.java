@@ -22,7 +22,7 @@ import java.nio.file.Paths;
  */
 public class CloudStorageClient {
     //принимаем объект хендлера для операций с директориями
-    private GUIController GUIController;
+    private GUIController guiController;
     //принимаем объект соединения
     ChannelHandlerContext ctx;
     //инициируем константу IP адреса сервера(здесь - адрес моего ноута в домашней локальной сети)
@@ -47,9 +47,9 @@ public class CloudStorageClient {
     private final String login = "login1";
     private final String password = "pass1";
 
-    public CloudStorageClient(GUIController GUIController) {
+    public CloudStorageClient(GUIController guiController) {
         //принимаем объект контроллера GUI
-        this.GUIController = GUIController;
+        this.guiController = guiController;
         //инициируем объект файлового обработчика
         fileUtils = new FileUtils();
     }
@@ -295,8 +295,8 @@ public class CloudStorageClient {
         return fileUtils;
     }
 
-    public javafx.GUIController getGUIController() {
-        return GUIController;
+    public GUIController getGuiController() {
+        return guiController;
     }
 
     public void printMsg(String msg){

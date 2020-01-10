@@ -4,13 +4,13 @@ import control.CloudStorageClient;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
+import javafx.GUIController;
 import messages.DirectoryMessage;
 import messages.FileFragmentMessage;
 import messages.FileMessage;
 import utils.CommandMessage;
 import utils.Commands;
 import utils.FileUtils;
-import javafx.GUIController;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -26,7 +26,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     //принимаем объект соединения
     ChannelHandlerContext ctx;
     //принимаем объект контроллера GUI
-    private GUIController GUIController;
+    private GUIController guiController;
 
     //объявляем переменную типа команды
     private int command;
@@ -36,7 +36,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //принимаем объект файлового обработчика
         fileUtils = storageClient.getFileUtils();
         //принимаем объект контроллера GUI
-        GUIController = storageClient.getGUIController();
+        guiController = storageClient.getGuiController();
     }
 
     @Override
@@ -160,7 +160,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
         DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
         //обновляем список элементов списка серверной части
-        GUIController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
+        guiController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
                 directoryMessage.getFileObjectsList());
     }
 
@@ -174,7 +174,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
         DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
-        GUIController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
+        guiController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
                 directoryMessage.getFileObjectsList());
 
         //TODO temporarily
@@ -208,11 +208,11 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //вынимаем заданную клиентскую директорию заданную относительно CLIENT_ROOT из объекта сообщения(команды)
         String clientDir = fileMessage.getToDir();
         //собираем реальную текущую директорию на клиенте
-        String realToDir = GUIController.realClientDirectory(clientDir);
+        String realToDir = guiController.realClientDirectory(clientDir);
         //если сохранение прошло удачно
         if(fileUtils.saveFile(realToDir, fileMessage)){
             //обновляем список файловых объектов на клиенте
-            GUIController.updateClientItemListInGUI(clientDir);
+            guiController.updateClientItemListInGUI(clientDir);
             //отправляем сообщение на сервер: подтверждение, что все прошло успешно
             command = Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_OK;
         //если что-то пошло не так
@@ -305,7 +305,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
         DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
-        GUIController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
+        guiController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
                 directoryMessage.getFileObjectsList());
     }
 
