@@ -19,6 +19,8 @@ public class CloudStorageServer {
     private final PrintStream log = System.out;
     //инициируем объект пути к корневой директории облачного хранилища(сервера) для хранения файлов клиентов
     private final Path storageRoot = Paths.get("storage","server_storage");
+    //инициируем константу строки названия корневой директории для списка в серверной части GUI
+    private final String storageDefaultDirectory = "";
     //объявляем множество авторизованных клиентов <соединение, логин>
     private Map<ChannelHandlerContext, String> authorizedUsers;
     //объявляем объект контроллера авторизации клиента
@@ -39,6 +41,10 @@ public class CloudStorageServer {
 
     public Path getStorageRoot() {
         return storageRoot;
+    }
+
+    public String getStorageDefaultDirectory() {
+        return storageDefaultDirectory;
     }
 
     public Map<ChannelHandlerContext, String> getAuthorizedUsers() {
