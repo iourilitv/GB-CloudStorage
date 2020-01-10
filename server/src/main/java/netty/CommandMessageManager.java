@@ -199,34 +199,19 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         String storageDir = fileMessage.getFromDir();
         //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
         String clientDir = fileMessage.getToDir();
-
-        //FIXME переделать после ответа препадователя
-        //собираем целевую директорию пользователя в сетевом хранилище
-//        Path fromDirPath = userStorageRoot;
-//        fromDirPath = fromDirPath.resolve(storageDir);
-//        String fromDir = fromDirPath.toString();
         //собираем целевую директорию пользователя в сетевом хранилище
         String realStorageDir = realStorageDirectory(storageDir);
-
         //вычисляем размер файла
-//        long fileSize = Files.size(Paths.get(fromDir, fileMessage.getFilename()));
         long fileSize = Files.size(Paths.get(realStorageDir, fileMessage.getFilename()));
-//        long fileSize = Files.size(toFilePath);
-
         //если размер запрашиваемого файла больше константы размера фрагмента
         if(fileSize > FileFragmentMessage.CONST_FRAG_SIZE){
             //запускаем метод отправки файла по частям
-//            downloadFileByFrags(fromDir, clientDir,
-//                    fileMessage.getFilename(), fileSize);
             downloadFileByFrags(realStorageDir, clientDir,
                     fileMessage.getFilename(), fileSize);
-
             //если файл меньше
         } else {
             //запускаем метод отправки целого файла
-//            downloadEntireFile(fromDir, clientDir, fileMessage.getFilename());
             downloadEntireFile(realStorageDir, clientDir, fileMessage.getFilename());
-
         }
     }
 
