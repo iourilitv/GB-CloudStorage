@@ -8,12 +8,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
@@ -194,16 +196,26 @@ public class GUIController implements Initializable {
         //устанавливаем обработчика нажатия на этот пункт контекстного меню
         menuItemGetInto.setOnAction(event -> {
             //запоминаем кликнутый элемент списка
-            File item = listView.getSelectionModel().getSelectedItem();
+//            File fileObject = listView.getSelectionModel().getSelectedItem();
+
+            Item item = new Item(listView.getSelectionModel().getSelectedItem().getName(), currentClientDir);
+
+            Path path = Paths.get(currentClientDir, item.getToItemPath().toString());
+
+            System.out.println("GUIController.menuItemGetInto() - " +
+                    "path.toString(): " + path.toString());
+
             //если текущий список клиентский
             if(listView.equals(clientItemListView)){
                 //обновляем список элементов списка клиентской части
-                updateClientItemListInGUI(item.getName());
+//                updateClientItemListInGUI(item.getName());
+                updateClientItemListInGUI(path.toString());
+
             //если текущий список облачного хранилища
             } else if(listView.equals(storageItemListView)){
                 //отправляем на сервер запрос на получение списка элементов заданной директории
                 //пользователя в сетевом хранилище
-                storageClient.demandDirectoryItemList(item.getName());
+                storageClient.demandDirectoryItemList(item.getItemName());
             }
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
@@ -274,7 +286,7 @@ public class GUIController implements Initializable {
             //запоминаем выбранный элемент списка
             File origin = listView.getSelectionModel().getSelectedItem();
             //открываем диалоговое окно переименования файлового объекта
-            String newName = takeNewNameWindow(origin, listView);
+            String newName = takeNewNameWindow(origin);
             //если текущий список клиентский
             if(listView.equals(clientItemListView)){
                 //переименовываем файловый объект
@@ -294,7 +306,12 @@ public class GUIController implements Initializable {
         return menuItemRename;
     }
 
-    private String takeNewNameWindow(File origin, ListView<File> listView) {
+    /**
+     * Метод открывает модальное окно для ввода нового имени элемента списка.
+     * @param origin - файловый объект - оригинал
+     * @return - текстовую строку с новым имем
+     */
+    private String takeNewNameWindow(File origin) {
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
@@ -350,6 +367,68 @@ public class GUIController implements Initializable {
             listView.getSelectionModel().clearSelection();
         });
         return menuItemDelete;
+    }
+
+    /**
+     * Метод отрабатывает нажатие на кнопку Home в клиентской части GUI.
+     * Выводит список файловых объектов в корневой директории в клиентской части
+     * @param mouseEvent - любой клик мышкой
+     */
+    @FXML
+    public void onClientHomeBtnClicked(MouseEvent mouseEvent) {
+        updateClientItemListInGUI(storageClient.getClientDefaultDirectory());
+    }
+
+    /**
+     * Метод отрабатывает нажатие на кнопку Home в серверной части GUI.
+     * Выводит список файловых объектов в корневой директории в серверной части
+     * @param mouseEvent - любой клик мышкой
+     */
+    @FXML
+    public void onStorageHomeBtnClicked(MouseEvent mouseEvent) {
+        storageClient.demandDirectoryItemList(storageClient.getStorageDefaultDirectory());
+    }
+
+    /**
+     * Метод отрабатывает нажатие на кнопку GoUp в клиентской части GUI.
+     * Выводит список файловых объектов  в родительской директории в клиентской части
+     * @param mouseEvent - любой клик мышкой
+     */
+    @FXML
+    public void onClientGoUpBtnClicked(MouseEvent mouseEvent) {
+        //если мы уже находимся в корневой директории клиента
+        if(currentClientDir.equals(storageClient.getClientDefaultDirectory())){
+            //обновляем список в корневой директории
+            updateClientItemListInGUI(storageClient.getClientDefaultDirectory());
+            //если нет(ниже)
+        } else{
+            //выводим список в родительской директории
+            updateClientItemListInGUI(getParent(currentClientDir));
+        }
+    }
+
+    private String getParent(String currentClientDir) {
+        //собираем путь до родительской папки
+        String parent = Paths.get(realClientDirectory(currentClientDir))
+                .relativize(Paths.get(CloudStorageClient.CLIENT_ROOT)).toString();
+        //из-за особенности метода relativize, где ".." - это корневая директория
+        if(parent.equals("..")){
+            parent = storageClient.getClientDefaultDirectory();
+        }
+
+        System.out.println("GUIController.onClientGoUpBtnClicked() - " +
+                "parent: " + parent);
+        return parent;
+    }
+
+    /**
+     * Метод отрабатывает нажатие на кнопку GoUp в серверной части GUI.
+     * Выводит список файловых объектов  в родительской директории в клиентской части
+     * @param mouseEvent - любой клик мышкой
+     */
+    @FXML
+    public void onStorageGoUpBtnClicked(MouseEvent mouseEvent) {
+        storageClient.demandDirectoryItemList(new File(currentStorageDir).getParent());
     }
 
     private String clientDefaultDirectory(){

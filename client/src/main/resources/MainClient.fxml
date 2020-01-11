@@ -12,6 +12,7 @@
 
 <VBox alignment="center" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javafx.GUIController">
     <HBox VBox.vgrow="ALWAYS">
+        <!--        Client Side        -->
         <VBox spacing="2.0" HBox.hgrow="ALWAYS">
             <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" text="Client Side" textAlignment="JUSTIFY" wrapText="true">
                 <padding>
@@ -25,7 +26,7 @@
             </font>
             </Label>
             <HBox spacing="2.0" VBox.vgrow="ALWAYS">
-                <Button fx:id="clientHomeButton" text="Home">
+                <Button fx:id="clientHomeButton" onMouseClicked="#onClientHomeBtnClicked" text="Home">
                     <graphic>
                         <ImageView fitHeight="22.0" fitWidth="22.0">
                             <Image url="images/home-icon-24x24.png" />
@@ -35,7 +36,7 @@
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </padding>
                 </Button>
-            <Button fx:id="clientGoUpButton" text="GoUp">
+            <Button fx:id="clientGoUpButton" onMouseClicked="#onClientGoUpBtnClicked" text="GoUp">
                <graphic>
                    <ImageView fitHeight="22.0" fitWidth="22.0">
                        <Image url="images/red-go-up-md-22x22.png"/>
@@ -72,6 +73,7 @@
                <Insets bottom="2.0" left="2.0" right="2.0" />
             </VBox.margin></ListView>
         </VBox>
+<!--        Cloud Storage Side        -->
         <VBox spacing="2.0" HBox.hgrow="ALWAYS">
             <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" text="Cloud Storage Side" textAlignment="JUSTIFY" wrapText="true">
                 <padding>
@@ -85,7 +87,7 @@
                 </font>
             </Label>
             <HBox spacing="2.0" VBox.vgrow="ALWAYS">
-                <Button fx:id="storageHomeButton" text="Home">
+                <Button fx:id="storageHomeButton" onMouseClicked="#onStorageHomeBtnClicked" text="Home">
                     <graphic>
                         <ImageView fitHeight="22.0" fitWidth="22.0">
                             <Image url="images/home-icon-24x24.png" />
@@ -95,7 +97,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                     </padding>
                 </Button>
-                <Button fx:id="storageGoUpButton" text="GoUp">
+                <Button fx:id="storageGoUpButton" onMouseClicked="#onStorageGoUpBtnClicked" text="GoUp">
                     <graphic>
                         <ImageView fitHeight="22.0" fitWidth="22.0">
                             <Image url="images/red-go-up-md-22x22.png"/>
