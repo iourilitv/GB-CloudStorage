@@ -31,15 +31,8 @@ public class CloudStorageClient {
     //инициируем переменную для печати сообщений в консоль
     private final PrintStream log = System.out;
 
-    //инициируем константу строки названия корневой директории для списка в клиентской части GUI
-    public static final String CLIENT_ROOT = "storage/client_storage";
+    //инициируем константу объект пути к корневой директории для списка в клиентской части GUI
     public static final Path CLIENT_ROOT_PATH = Paths.get("storage","client_storage");
-
-//    //инициируем константу строки названия директории по умолчанию относительно корневой директории
-//    // для списка в клиентской части GUI
-//    private final String clientDefaultDirectory = "";
-//    //инициируем константу строки названия корневой директории для списка в серверной части GUI
-//    private final String storageDefaultDirectory = "";
 
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
@@ -280,14 +273,6 @@ public class CloudStorageClient {
                 fileMessage));
     }
 
-//    /**
-//     * Метод удаляет файл или папку в текущей директории на клиенте
-//     * @param fileObject - файловый объект
-//     */
-//    public void deleteItem(File fileObject) {
-//        //вызываем метод удаления папки или файла
-//        fileUtils.deleteFileObject(fileObject);
-//    }
     /**
      * Метод удаляет файл или папку в текущей директории на клиенте
      * @param item - объект списка в клиенте
@@ -332,14 +317,6 @@ public class CloudStorageClient {
     public Item[] clientItemsList(Item clientCurrentDirItem) {
         return itemUtils.getItemsList(clientCurrentDirItem, CLIENT_ROOT_PATH);
     }
-
-//    public String getStorageDefaultDirectory() {
-//        return storageDefaultDirectory;
-//    }
-
-//    public String getClientDefaultDirectory() {
-//        return clientDefaultDirectory;
-//    }
 
     public FileUtils getFileUtils() {
         return fileUtils;

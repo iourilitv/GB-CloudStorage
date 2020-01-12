@@ -20,15 +20,6 @@ public class Item implements Serializable {
         this.isDefaultDirectory = true;
     }
 
-    public Item(Item item) {
-        this.itemName = item.itemName;
-        this.parentName = item.parentName;
-        this.itemPathname = item.itemPathname;
-        this.parentPathname = item.parentPathname;
-        this.isDirectory = item.isDirectory;
-        this.isDefaultDirectory = item.isDefaultDirectory;
-    }
-
     public Item(String itemName, String parentName, String itemPathname, String parentPathname, boolean isDirectory) {
         this.itemName = itemName;
         this.parentName = parentName;

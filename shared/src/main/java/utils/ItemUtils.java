@@ -22,9 +22,7 @@ public class ItemUtils {
      */
     public Item[] getItemsList(Item directoryItem, Path rootPath) {
         //инициируем временный файловый объект заданной директории
-//        File dirFileObject = new File(realClientDirectory(directoryItem.getItemPathname()));
         File dirFileObject = new File(getRealPath(directoryItem.getItemPathname(), rootPath).toString());
-
         //инициируем и получаем массив файловых объектов заданной директории
         File[] files = dirFileObject.listFiles();
         assert files != null;
@@ -34,26 +32,13 @@ public class ItemUtils {
             //инициируем переменную имени элемента
             String itemName = files[i].getName();
             //инициируем строковыю переменную пути к элементу относительно директории по умолчанию
-//            String itemPathname = getItemPathname(itemName, directoryItem.getItemPathname(),
-//                    rootPath.toString());//FIXME переделать на универсальный
             String itemPathname = getItemPathname(files[i].getPath(), rootPath);
-
             //инициируем объект элемента в заданной директории
             items[i] = new Item(itemName, directoryItem.getItemName(), itemPathname,
                     directoryItem.getItemPathname(), files[i].isDirectory());
         }
         return items;
     }
-
-//    ////FIXME переделать на универсальный
-//    private String getItemPathname(String itemName, String currentDirPathname,
-//                                   String rootPathname) {
-//        Path rootPath = Paths.get(rootPathname);
-//
-//        Path relativePath = rootPath.relativize(Paths.get(realClientDirectory(currentDirPathname), itemName));
-//
-//        return relativePath.toString();
-//    }
 
     /**
      * Метод возвращает строку относительного пути к объекту списка
@@ -107,28 +92,7 @@ public class ItemUtils {
      * @return - объект относительного пути к родителю объекта элемента
      */
     private Path getParentPath(String itemPathname, Path rootPath) {
-        //инициируем объект реального пути к родительской директории
-//        Path parentPath = Paths.get(realClientDirectory(itemPathname)).getParent();
-//        Path parentPath = getRealPath(itemPathname, rootPath).getParent();
-
-        //возвращаем объект относительного пути к родительской папке относительно директории по умолчанию
-//        return rootPath.relativize(parentPath);
         return rootPath.relativize(getRealPath(itemPathname, rootPath).getParent());
     }
-
-//    /** //FIXME убрать дублирование с realClientItemPathname и может заменить на Path?
-//     * Метод возвращает строку реального пути к
-//     * @param currentDirPathname -
-//     * @return -
-//     */
-//    public String realClientDirectory(String currentDirPathname){
-//        //собираем путь к текущей папке(к директории по умолчанию) для получения списка объектов
-//        return Paths.get(CloudStorageClient.CLIENT_ROOT, currentDirPathname).toString();
-//    }
-
-//    //FIXME убрать дублирование с realClientItemPathname и может заменить на Path?
-//    private String realClientItemPathname(String itemPathname) {
-//        return Paths.get(CloudStorageClient.CLIENT_ROOT, itemPathname).toString();
-//    }
 
 }
