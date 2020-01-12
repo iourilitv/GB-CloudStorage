@@ -6,14 +6,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-
-import java.io.File;
 import java.io.IOException;
 
 /**
  * This class responds for showing of the list custom items.
  */
-public class FileListCell extends ListCell<File> {
+public class FileListCell extends ListCell<Item> {
     private FXMLLoader mLLoader;
 
     @FXML
@@ -31,7 +29,7 @@ public class FileListCell extends ListCell<File> {
     }
 
     @Override
-    protected void updateItem(File item, boolean empty) {
+    protected void updateItem(Item item, boolean empty) {
         super.updateItem(item, empty);
         if (empty || item == null) {
             setText(null);
@@ -47,7 +45,7 @@ public class FileListCell extends ListCell<File> {
                 }
             }
             //выводим название элемента списка
-            nameLabel.setText(item.getName());
+            nameLabel.setText(item.getItemName());
             //если элемент списка это директория
             if(item.isDirectory()){
                 //показываем картинку папки

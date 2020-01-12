@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -34,11 +35,14 @@ public class CloudStorageClient {
 
     //инициируем константу строки названия корневой директории для списка в клиентской части GUI
     public static final String CLIENT_ROOT = "storage/client_storage";
-    //инициируем константу строки названия директории по умолчанию относительно корневой директории
-    // для списка в клиентской части GUI
-    private final String clientDefaultDirectory = "";
-    //инициируем константу строки названия корневой директории для списка в серверной части GUI
-    private final String storageDefaultDirectory = "";
+    public static final Path CLIENT_ROOT_PATH = Paths.get("storage","client_storage");
+
+//    //инициируем константу строки названия директории по умолчанию относительно корневой директории
+//    // для списка в клиентской части GUI
+//    private final String clientDefaultDirectory = "";
+//    //инициируем константу строки названия корневой директории для списка в серверной части GUI
+//    private final String storageDefaultDirectory = "";
+
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
 
@@ -298,13 +302,13 @@ public class CloudStorageClient {
                 fileMessage));
     }
 
-    public String getStorageDefaultDirectory() {
-        return storageDefaultDirectory;
-    }
+//    public String getStorageDefaultDirectory() {
+//        return storageDefaultDirectory;
+//    }
 
-    public String getClientDefaultDirectory() {
-        return clientDefaultDirectory;
-    }
+//    public String getClientDefaultDirectory() {
+//        return clientDefaultDirectory;
+//    }
 
     public FileUtils getFileUtils() {
         return fileUtils;
