@@ -1,4 +1,4 @@
-package javafx;
+package utils;
 
 import java.io.Serializable;
 
@@ -7,7 +7,6 @@ public class Item implements Serializable {
     private String parentName;
     private String itemPathname;
     private String parentPathname;
-//    Item parentDirItem;
 
     private boolean isDirectory;
     private boolean isDefaultDirectory;
@@ -29,15 +28,6 @@ public class Item implements Serializable {
         this.isDirectory = isDirectory;
         this.isDefaultDirectory = false;
     }
-
-//    public Item(String itemName, String itemPathname, Item parentDirItem, boolean isDirectory) {
-//        this.itemName = itemName;
-//        this.parentName = parentDirItem.getItemName();
-//        this.itemPathname = itemPathname;
-//        this.parentPathname = parentDirItem.getParentPathname();
-//        this.isDirectory = isDirectory;
-//        this.isDefaultDirectory = false;
-//    }
 
     public String getParentPathname() {
         return parentPathname;
