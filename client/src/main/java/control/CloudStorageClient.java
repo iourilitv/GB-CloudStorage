@@ -259,6 +259,25 @@ public class CloudStorageClient {
     }
 
     /**
+     * Метод переименовывает объект элемента списка.
+     * @param origin - текущий объект элемента списка
+     * @param newName - новое имя элемента
+     * @return - результат переименования
+     */
+    public boolean renameClientItem(Item origin, String newName) {
+        //инициируем объект пути к исходному файловому объекту
+        Path originPath = itemUtils.getRealPath(origin.getItemPathname(), CLIENT_ROOT_PATH);
+        //инициируем файловый объект для объекта списка в клиенте
+        File originFileObject = new File(originPath.toString());
+        //инициируем объект пути к новому файловому объекту
+        Path newPath = Paths.get(originFileObject.getParent(), newName);
+        //инициируем файловый объект для нового файлового объекта
+        File newFileObject = new File(newPath.toString());
+        //возвращаем результат переименования файлового объекта
+        return originFileObject.renameTo(newFileObject);
+    }
+
+    /**
      * Метод отправляет на сервер запрос на переименовании файла или папки в облачном хранилище
      * @param directory - заданная директория в облачном хранилище
      * @param fileObjectName - файловый объект
@@ -276,12 +295,13 @@ public class CloudStorageClient {
     /**
      * Метод удаляет файл или папку в текущей директории на клиенте
      * @param item - объект списка в клиенте
+     * @return - результат переименования
      */
-    public void deleteClientItem(Item item) {
+    public boolean deleteClientItem(Item item) {
         //инициируем файловый объект для объекта списка в клиенте
         File fileObject = new File(itemUtils.getRealPath(item.getItemPathname(), CLIENT_ROOT_PATH).toString());
         //вызываем метод удаления папки или файла
-        fileUtils.deleteFileObject(fileObject);
+        return fileUtils.deleteFileObject(fileObject);
     }
 
     /**

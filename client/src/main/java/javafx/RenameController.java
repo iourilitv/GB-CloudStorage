@@ -15,11 +15,12 @@ public class RenameController {
 
     public GUIController backController;
 
+    /**
+     * Метод обрабатывает клик мыши по кнопке "Confirm" в диалоговом окне ввода нового имени
+     * @param actionEvent - клик мыши по кнопке "Confirm"
+     */
+    @FXML
     public void saveNewName(ActionEvent actionEvent) {
-
-        //TODO temporarily
-        System.out.println("[client]RenameController.printNewName() - newName.getText(): " + newName.getText());
-
         //записываем новое имя в соответствующую переменную главного контроллера
         backController.setNewName(newName.getText());
         //закрываем модальное окно

@@ -16,7 +16,6 @@ import utils.Item;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 /**
@@ -129,6 +128,11 @@ public class GUIController implements Initializable {
         });
     }
 
+    /**
+     * Метод-прокладка возвращает массив объектов элементов в заданной директории в клиенте.
+     * @param clientCurrentDirItem - объект заданной директории в клиенте
+     * @return - массив объектов элементов в заданной директории в клиенте
+     */
     private Item[] clientItemsList(Item clientCurrentDirItem) {
         return storageClient.clientItemsList(clientCurrentDirItem);
     }
@@ -331,11 +335,11 @@ public class GUIController implements Initializable {
             //если текущий список клиентский
             if(listView.equals(clientItemListView)){
                 //переименовываем файловый объект
-//                origin.renameTo(new File(Paths.get(origin.getParentPathname(),
-//                        newName).toString()));
-                new File(origin.getItemPathname()).renameTo(new File(Paths.get(origin.getParentPathname(),
-                        newName).toString()));//FIXME неверно origin.getItemPathname() и перенести в storageClient
-
+                //если произошла ошибка при переименовании
+                if(!storageClient.renameClientItem(origin, newName)){
+                    //TODO добавить диалоговое окно - предупреждение об ошибке
+                    System.out.println("GUIController.menuItemRename() - Some thing wrong with item renaming!");
+                }
                 //обновляем список объектов элемента в текущей директории
                 updateClientItemListInGUI(clientCurrentDirItem);
                 //если текущий список облачного хранилища
@@ -389,11 +393,6 @@ public class GUIController implements Initializable {
         MenuItem menuItemDelete = new MenuItem("Delete");
         //устанавливаем обработчика нажатия на этот пункт контекстного меню
         menuItemDelete.setOnAction(event -> {
-
-            System.out.println("GUIController.callContextMenu().menuItemDelete.setOnAction() - " +
-                    "\nlistView.getSelectionModel().getSelectedItem(): " +
-                    listView.getSelectionModel().getSelectedItem());
-
             //TODO добавить диалоговое окно - предупреждение-подтверждение
 
             //запоминаем выбранный элемент списка
@@ -401,10 +400,11 @@ public class GUIController implements Initializable {
             //если текущий список клиентский
             if(listView.equals(clientItemListView)){
                 //удаляем файл или папку в текущей директории на клиенте
-//                storageClient.deleteItem(item);
-//                storageClient.deleteItem(new File(realClientItemPathname(item.getItemPathname())));
-                storageClient.deleteClientItem(item);
-
+                //если произошла ошибка при удалении
+                if(!storageClient.deleteClientItem(item)){
+                    //TODO добавить диалоговое окно - предупреждение об ошибке
+                    System.out.println("GUIController.menuItemRename() - Some thing wrong with item deleting!");
+                }
                 //обновляем список элементов списка клиентской части
                 updateClientItemListInGUI(clientCurrentDirItem);
             //если текущий список облачного хранилища
