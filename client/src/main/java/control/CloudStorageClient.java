@@ -7,9 +7,7 @@ import messages.DirectoryMessage;
 import messages.FileFragmentMessage;
 import messages.FileMessage;
 import netty.NettyClient;
-import utils.CommandMessage;
-import utils.Commands;
-import utils.FileUtils;
+import utils.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +43,8 @@ public class CloudStorageClient {
 
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
+    //объявляем объект обработчика операций с объектами элементов списков в GUI
+    private final ItemUtils itemUtils = ItemUtils.getOwnObject();
 
     //FIXME temporarily - будет получать из GUI
     //инициируем константы логина и пароля пользователя
@@ -280,11 +280,21 @@ public class CloudStorageClient {
                 fileMessage));
     }
 
+//    /**
+//     * Метод удаляет файл или папку в текущей директории на клиенте
+//     * @param fileObject - файловый объект
+//     */
+//    public void deleteItem(File fileObject) {
+//        //вызываем метод удаления папки или файла
+//        fileUtils.deleteFileObject(fileObject);
+//    }
     /**
      * Метод удаляет файл или папку в текущей директории на клиенте
-     * @param fileObject - файловый объект
+     * @param item - объект списка в клиенте
      */
-    public void deleteItem(File fileObject) {
+    public void deleteClientItem(Item item) {
+        //инициируем файловый объект для объекта списка в клиенте
+        File fileObject = new File(itemUtils.getRealPath(item.getItemPathname(), CLIENT_ROOT_PATH).toString());
         //вызываем метод удаления папки или файла
         fileUtils.deleteFileObject(fileObject);
     }
@@ -300,6 +310,27 @@ public class CloudStorageClient {
         //отправляем на сервер объект сообщения(команды)
         ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_DELETE_FILE_OBJECT,
                 fileMessage));
+    }
+
+    /**
+     * Метод-прокладка возвращает объект элемента родительской директории объекта элемента текущей директории.
+     * @param directoryItem - объект элемента текущей директории
+     * @param defaultDirItem - объект элемента директории по умолчанию(начальной)
+     * @param rootPath - объект пути к реальной корневой директории
+     * @return - объект элемента родительской директории объекта элемента текущей директории
+     */
+    public Item getParentDirItem(Item directoryItem, Item defaultDirItem, Path rootPath) {
+        return itemUtils.getParentDirItem(directoryItem, defaultDirItem,
+                rootPath);
+    }
+
+    /**
+     * Метод-прокладка возвращает массив объектов элементов в заданной директории в клиенте.
+     * @param clientCurrentDirItem - объект заданной директории в клиенте
+     * @return - массив объектов элементов в заданной директории в клиенте
+     */
+    public Item[] clientItemsList(Item clientCurrentDirItem) {
+        return itemUtils.getItemsList(clientCurrentDirItem, CLIENT_ROOT_PATH);
     }
 
 //    public String getStorageDefaultDirectory() {
