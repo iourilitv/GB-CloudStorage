@@ -32,9 +32,6 @@ public class GUIController implements Initializable {
     @FXML
     Label clientDirLabel, storageDirLabel;
 
-//    //объявляем объекты коллекций файловых объектов
-//    @FXML
-//    ListView<File> clientItemListView, storageItemListView;
     //объявляем объекты коллекций файловых объектов
     @FXML
     ListView<Item> clientItemListView, storageItemListView;
@@ -49,18 +46,15 @@ public class GUIController implements Initializable {
     //инициируем константу строки названия корневой директории для списка в серверной части GUI
     private final String STORAGE_DEFAULT_DIR = "";
     //получаем текущую папку списка файловых объектов в клиентской части GUI
-    private String clientCurrentDirPathname;
+    private String clientCurrentDirPathname;//TODO удалить?
 
     //получаем текущую папку списка файловых объектов в серверной части GUI
-    private String currentStorageDir;
-
+    private String currentStorageDir;//TODO удалить?
+    //объявляем объект директории по умолчанию в клиенте
     private Item clientDefaultDirItem;
 
-    //получаем объект текущей папки списка файловых объектов в клиентской части GUI
+    //объявляем объект текущей папки списка файловых объектов в клиентской части GUI
     private Item clientCurrentDirItem;
-//    //получаем текущую папку списка файловых объектов в серверной части GUI
-//    private String currentStorageDir;
-
     //объявляем переменную введенного нового имени
     private String newName;
 
@@ -68,18 +62,13 @@ public class GUIController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         //инициируем объект клиента облачного хранилища
         storageClient = new CloudStorageClient(GUIController.this);
-
-//        //получаем текущую папку списка файловых объектов в клиентской части GUI
-//        currentClientDir = storageClient.getClientDefaultDirectory();//""
-//        //получаем текущую папку списка файловых объектов в серверной части GUI
-//        currentStorageDir = storageClient.getStorageDefaultDirectory();//""
         //получаем текущую папку списка файловых объектов в клиентской части GUI
-        clientCurrentDirPathname = CLIENT_DEFAULT_DIR;
-
+        clientCurrentDirPathname = CLIENT_DEFAULT_DIR;//TODO удалить?
+        //инициируем объект директории по умолчанию в клиенте
         clientDefaultDirItem = new Item(CLIENT_DEFAULT_DIR);
 
         //получаем текущую папку списка файловых объектов в серверной части GUI
-        currentStorageDir = STORAGE_DEFAULT_DIR;
+        currentStorageDir = STORAGE_DEFAULT_DIR;//TODO удалить?
 
         //инициируем в клиентской части интерфейса список объектов в директории по умолчанию
         initializeClientItemListView();
@@ -92,11 +81,7 @@ public class GUIController implements Initializable {
      */
     public void initializeClientItemListView() {
         //выводим в клиентской части интерфейса список объектов в директории по умолчанию
-//        updateClientItemListInGUI(clientDefaultDirectory());
-//        updateClientItemListInGUI(CLIENT_DEFAULT_DIR);
-
         updateClientItemListInGUI(clientDefaultDirItem);
-
     }
 
     /**
@@ -133,34 +118,19 @@ public class GUIController implements Initializable {
         }).start();
     }
 
-//    /**
-//     * Метод обновляет список элементов списка в заданной директории клиентской части
-//     * @param directoryPathname - заданная директория относительно корневой
-//     */
-//    public void updateClientItemListInGUI(String directoryPathname) {
-//        //обновляем текущую директорию
-//        clientCurrentDirPathname = directoryPathname;
-//        //в отдельном потоке запускаем обновление интерфейса
-//        Platform.runLater(() -> {
-//            //записываем в метку текущую директорию
-//            clientDirLabel.setText("../" + clientCurrentDirPathname);
-//            //обновляем заданный список файловых объектов
-////            updateListView(clientItemListView, clientFilesList(currentClientDir));
-//            updateListView(clientItemListView, clientItemsList(clientCurrentDirPathname));
-//
-//        });
-//    }
+    /**
+     * Метод обновляет список элементов списка в заданной директории клиентской части
+     * @param directoryItem - объект заданной директории
+     */
     public void updateClientItemListInGUI(Item directoryItem) {
-        //обновляем текущую директорию
+        //обновляем объект текущей директории
         clientCurrentDirItem = directoryItem;
         //в отдельном потоке запускаем обновление интерфейса
         Platform.runLater(() -> {
-            //записываем в метку текущую директорию
+            //записываем в метку относительный строковый путь текущей директории
             clientDirLabel.setText("../" + clientCurrentDirItem.getItemPathname());
-            //обновляем заданный список файловых объектов
-//            updateListView(clientItemListView, clientFilesList(currentClientDir));
+            //обновляем заданный список объектов элемента
             updateListView(clientItemListView, clientItemsList(clientCurrentDirItem));
-
         });
     }
 
@@ -181,7 +151,7 @@ public class GUIController implements Initializable {
 //            updateListView(storageItemListView, fileObjs);
 //        });
 //    }
-    /**
+    /** //FIXME directory переделать на Item
      * Метод выводит в GUI список файлов и папок в корневой пользовательской директории
      * в сетевом хранилище.
      * @param directory - заданная пользовательская директория в сетевом хранилище
@@ -199,21 +169,6 @@ public class GUIController implements Initializable {
         });
     }
 
-//    /**
-//     * Метод обновляет заданный список файловых объектов.
-//     * @param listView - коллекция файловых объектов
-//     * @param fileObjs - массив файловых объектов
-//     */
-//    private void updateListView(ListView<File> listView, File[] fileObjs) {
-//        //очищаем список элементов
-//        listView.getItems().clear();
-//        //обновляем список элементов списка
-//        listView.getItems().addAll(fileObjs);
-//        //инициируем объект кастомизированного элемента списка
-//        listView.setCellFactory(itemListView -> new FileListCell());
-//        //инициируем контекстное меню
-//        setContextMenu(listView);
-//    }
     /**
      * Метод обновляет заданный список файловых объектов.
      * @param listView - коллекция файловых объектов
@@ -293,10 +248,8 @@ public class GUIController implements Initializable {
             Item item = listView.getSelectionModel().getSelectedItem();
             //если текущий список клиентский
             if(listView.equals(clientItemListView)){
-                //обновляем список элементов списка клиентской части
-//                updateClientItemListInGUI(item.getItemPathname());
+                //обновляем список объектов элемента клиентской части
                 updateClientItemListInGUI(item);
-
             //если текущий список облачного хранилища
             } else if(listView.equals(storageItemListView)){
                 //отправляем на сервер запрос на получение списка элементов заданной директории
@@ -381,10 +334,8 @@ public class GUIController implements Initializable {
                 new File(origin.getItemPathname()).renameTo(new File(Paths.get(origin.getParentPathname(),
                         newName).toString()));
 
-                //обновляем список файловых объектов в текущей директории
-//                updateClientItemListInGUI(clientCurrentDirPathname);
+                //обновляем список объектов элемента в текущей директории
                 updateClientItemListInGUI(clientCurrentDirItem);
-
                 //если текущий список облачного хранилища
             } else if(listView.equals(storageItemListView)){
                 //отправляем на сервер запрос на переименования файлового объекта в заданной директории
@@ -408,6 +359,8 @@ public class GUIController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
             Parent root = loader.load();
             RenameController renameController = loader.getController();
+
+            //FIXME добавить проверку релевантности имени - не должно быть пустой, пробела, и т.п.
             //записываем текущее имя в текстовое поле
             renameController.newName.setText(origin.getItemName());
             renameController.backController = this;
@@ -450,9 +403,7 @@ public class GUIController implements Initializable {
                 storageClient.deleteItem(new File(realClientItemPathname(item.getItemPathname())));
 
                 //обновляем список элементов списка клиентской части
-//                updateClientItemListInGUI(clientCurrentDirPathname);
                 updateClientItemListInGUI(clientCurrentDirItem);
-
             //если текущий список облачного хранилища
             } else if(listView.equals(storageItemListView)){
                 //отправляем на сервер запрос на получение списка элементов заданной директории
@@ -472,7 +423,6 @@ public class GUIController implements Initializable {
      */
     @FXML
     public void onClientHomeBtnClicked(MouseEvent mouseEvent) {
-//        updateClientItemListInGUI(CLIENT_DEFAULT_DIR);
         updateClientItemListInGUI(clientDefaultDirItem);
 
     }
@@ -489,40 +439,14 @@ public class GUIController implements Initializable {
 
     /**
      * Метод отрабатывает нажатие на кнопку GoUp в клиентской части GUI.
-     * Выводит список файловых объектов  в родительской директории в клиентской части
+     * Выводит список объектов элемента в родительской директории в клиентской части
      * @param mouseEvent - любой клик мышкой
      */
-//    @FXML
-//    public void onClientGoUpBtnClicked(MouseEvent mouseEvent) {
-//        //если мы уже находимся в корневой директории клиента
-//        if(clientCurrentDirPathname.equals(CLIENT_DEFAULT_DIR)){
-//            //обновляем список в корневой директории
-//            updateClientItemListInGUI(CLIENT_DEFAULT_DIR);
-//            //если нет(ниже)
-//        } else{
-//            //выводим список в родительской директории
-//            updateClientItemListInGUI(getDirParentPathname(clientCurrentDirPathname));
-//        }
-//    }
-//    @FXML
-//    public void onClientGoUpBtnClicked(MouseEvent mouseEvent) {
-//        //если мы уже находимся в корневой директории клиента
-//        if(clientCurrentDirPathname.equals(CLIENT_DEFAULT_DIR)){
-//            //обновляем список в корневой директории
-//            updateClientItemListInGUI(CLIENT_DEFAULT_DIR);
-//            //если нет(ниже)
-//        } else{
-//            //выводим список в родительской директории
-//            updateClientItemListInGUI(getDirParentPathname(clientCurrentDirPathname));
-//        }
-//    }
     @FXML
     public void onClientGoUpBtnClicked(MouseEvent mouseEvent) {
         //выводим список в родительской директории
-//        updateClientItemListInGUI(getDirParentPathname(clientCurrentDirItem));
-        updateClientItemListInGUI(getDirParentItem(clientCurrentDirItem, clientDefaultDirItem,
+        updateClientItemListInGUI(getParentDirItem(clientCurrentDirItem, clientDefaultDirItem,
                 CloudStorageClient.CLIENT_ROOT_PATH));
-
     }
 
     /**
@@ -536,211 +460,93 @@ public class GUIController implements Initializable {
         storageClient.demandDirectoryItemList(new File(currentStorageDir).getParent());
     }
 
-//    private String clientDefaultDirectory(){
-//        return storageClient.getClientDefaultDirectory();
-//    }
-
-//    private File[] clientFilesList(String currentDirectory) {
-//        return new File(realClientDirectory(currentDirectory)).listFiles();
-//    }
-
-//    private Item[] clientItemsList(String currentDirPathname) {
-//
-//        File dirFileObject = new File(realClientDirectory(currentDirPathname));
-//        String parentName, parentPathname;
-//        if(currentDirPathname.equals(CLIENT_DEFAULT_DIR)){
-//            parentName = CLIENT_DEFAULT_DIR;
-//            parentPathname = CLIENT_DEFAULT_DIR;
-//
-//        } else{
-//
-//            parentName = dirFileObject.getName();
-////            parentPathname = getPathname(dirFileObject.getName(),
-////                    getParent(currentDirPathname),
-////                    CloudStorageClient.CLIENT_ROOT);
-//            parentPathname = relativeDirPathname(dirFileObject.getPath(), CloudStorageClient.CLIENT_ROOT);
-//        }
-//
-//
-//        System.out.println("GUIController.clientItemsList() - " +
-//                "dirFileObject.getName(): " + dirFileObject.getName() +
-//                ", dirFileObject.getPath(): " + dirFileObject.getPath());
-//
-//        File[] files = dirFileObject.listFiles();
-//        assert files != null;
-//        Item[] items = new Item[files.length];
-//        for (int i = 0; i < files.length; i++) {
-//            String itemName = files[i].getName();
-//
-//            String itemPathname = getPathname(itemName, currentDirPathname,
-//                    CloudStorageClient.CLIENT_ROOT);
-//
-//            items[i] = new Item(itemName, parentName, itemPathname, parentPathname, files[i].isDirectory());
-//
-//            System.out.println("GUIController.clientItemsList() - " +
-//                    "items[" + i + "]: " + items[i].toString());
-//
-//        }
-//        return items;
-//    }
+    /** //FIXME переделать на универсальный root
+     * Метод возвращает массив объектов элементов в заданной директории.
+     * @param directoryItem - объект элемента заданной директории
+     * @return - массив объектов элементов в заданной директории
+     */
     private Item[] clientItemsList(Item directoryItem) {
-
+        //инициируем временный файловый объект заданной директории
         File dirFileObject = new File(realClientDirectory(directoryItem.getItemPathname()));
-//        String parentName, parentPathname;
-//        if(currentDirPathname.equals(CLIENT_DEFAULT_DIR)){
-//            parentName = CLIENT_DEFAULT_DIR;
-//            parentPathname = CLIENT_DEFAULT_DIR;
-//
-//        } else{
-//
-//            parentName = dirFileObject.getName();
-////            parentPathname = getPathname(dirFileObject.getName(),
-////                    getParent(currentDirPathname),
-////                    CloudStorageClient.CLIENT_ROOT);
-//            parentPathname = relativeDirPathname(dirFileObject.getPath(), CloudStorageClient.CLIENT_ROOT);
-//        }
-
-//        System.out.println("GUIController.clientItemsList() - " +
-//                "dirFileObject.getName(): " + dirFileObject.getName() +
-//                ", dirFileObject.getPath(): " + dirFileObject.getPath());
-
+        //инициируем и получаем массив файловых объектов заданной директории
         File[] files = dirFileObject.listFiles();
         assert files != null;
+        //инициируем массив объектов элементов в заданной директории
         Item[] items = new Item[files.length];
         for (int i = 0; i < files.length; i++) {
+            //инициируем переменную имени элемента
             String itemName = files[i].getName();
-
-            String itemPathname = getPathname(itemName, directoryItem.getItemPathname(),
-                    CloudStorageClient.CLIENT_ROOT);
-
+            //инициируем строковыю переменную пути к элементу относительно директории по умолчанию
+            String itemPathname = getItemPathname(itemName, directoryItem.getItemPathname(),
+                    CloudStorageClient.CLIENT_ROOT);//FIXME переделать на универсальный
+            //инициируем объект элемента в заданной директории
             items[i] = new Item(itemName, directoryItem.getItemName(), itemPathname,
                     directoryItem.getItemPathname(), files[i].isDirectory());
-
-            System.out.println("GUIController.clientItemsList() - " +
-                    "items[" + i + "]: " + items[i].toString());
-
         }
         return items;
     }
 
-//    private String getPathname(String itemName, String currentDirPathname,
-//                                    String rootPathname, String defaultDirPathname) {
-////        return Paths.get(realClientDirectory(currentDirPathname), itemName)
-////                .relativize(Paths.get(CloudStorageClient.CLIENT_ROOT)).toString();
-//        if(currentDirPathname.equals(defaultDirPathname)){
-//            return Paths.get(defaultDirPathname, itemName).toString();
-//        } else {
-//            return Paths.get(realClientDirectory(currentDirPathname), itemName)
-//                    .relativize(Paths.get(rootPathname)).toString();
-//        }
-//    }
-    private String getPathname(String itemName, String currentDirPathname,
-                               String rootPathname) {
+    ////FIXME переделать на универсальный
+    private String getItemPathname(String itemName, String currentDirPathname,
+                                   String rootPathname) {
         Path rootPath = Paths.get(rootPathname);
 
         Path relativePath = rootPath.relativize(Paths.get(realClientDirectory(currentDirPathname), itemName));
 
-        System.out.println("GUIController.getPathname() - " +
-                "relativePath: " + relativePath);
 
         return relativePath.toString();
     }
 
-    private String relativeDirPathname(String realDirPathname, String rootPathname) {
-        Path rootPath = Paths.get(rootPathname);
-
-        Path relativePath = rootPath.relativize(Paths.get(realDirPathname));
-
-        System.out.println("GUIController.getPathname() - " +
-                "path: " + relativePath);
-
-        return relativePath.toString();
-    }
-
-//    private String getParent(String currentClientDir) {
-//        //собираем путь до родительской папки
-//        String parent = Paths.get(realClientDirectory(currentClientDir))
-//                .relativize(Paths.get(CloudStorageClient.CLIENT_ROOT)).toString();
-//        //из-за особенности метода relativize, где ".." - это корневая директория
-//        if(parent.equals("..")){
-//            parent = STORAGE_DEFAULT_DIR;
-//        }
-//
-//        System.out.println("GUIController.onClientGoUpBtnClicked() - " +
-//                "parent: " + parent);
-//
-//        return parent;
-//    }
-
-    private Item getDirParentItem(Item childrenDirItem, Item defaultDirItem, Path rootPath) {
-        if(childrenDirItem.isDefaultDirectory() ||
-                childrenDirItem.getParentName().equals(defaultDirItem.getItemName())){
+    /**
+     * Метод возвращает объект элемента родительской директории объекта элемента текущей директории.
+     * @param directoryItem - объект элемента текущей директории
+     * @param defaultDirItem - объект элемента директории по умолчанию(начальной)
+     * @param rootPath - объект пути к реальной корневой директории
+     * @return - объект элемента родительской директории объекта элемента текущей директории
+     */
+    private Item getParentDirItem(Item directoryItem, Item defaultDirItem, Path rootPath) {
+        //если текущая и родительская директория являются директориями по умолчанию
+        if(directoryItem.isDefaultDirectory() ||
+                directoryItem.getParentName().equals(defaultDirItem.getItemName())){
+            //возвращаем объект элемента директории по умолчанию(начальной)
             return defaultDirItem;
         } else {
-
-            Path parentPath = getParentPathname(childrenDirItem.getParentPathname(),
-                    rootPath);//FIXME
-            String parentName = parentPath.getFileName().toString();//FIXME
-
-            System.out.println("GUIController.getDirParentItem() - " +
-                    "parentName: " + parentName +
-                    ", parentPath.toString(): " + parentPath.toString());
-
-            return new Item(childrenDirItem.getParentName(), parentName,
-                    childrenDirItem.getParentPathname(), parentPath.toString(), true);
-
+            //инициируем объект пути к родительской директории
+            Path parentPath = getParentPath(directoryItem.getParentPathname(),
+                    rootPath);
+            //получаем имя родительской директории
+            String parentName = parentPath.getFileName().toString();
+            return new Item(directoryItem.getParentName(), parentName,
+                    directoryItem.getParentPathname(), parentPath.toString(), true);
         }
-
     }
 
-//    private String getParentName(Path relativePath) {
-////        Path rootPath = Paths.get(rootPathname);
-////        Path parentPath = Paths.get(realClientDirectory(pathname)).getParent();
-//
-////        Path relativePath = rootPath.relativize(parentPath);
-//        String parentName = relativePath.getFileName().toString();
-//
-//        System.out.println("GUIController.getParentName() - " +
-//                "relativePath: " + relativePath +
-//                ", parentName: " + parentName);
-//
-//        return parentName;
-//    }
-
-    private Path getParentPathname(String pathname, Path rootPath) {
-//        Path rootPath = Paths.get(rootPathname);
-        Path parentPath = Paths.get(realClientDirectory(pathname)).getParent();
-
-        System.out.println("GUIController.getParentPathname() - " +
-                "parentPath.toString(): " + parentPath.toString());
-        //GUIController.getParentPathname() - parentPath.toString(): storage\client_storage
-
-        Path relativePath = rootPath.relativize(parentPath);
-
-        System.out.println("GUIController.getParentPathname() - " +
-                "relativePath.toString(): " + relativePath.toString());
-        //GUIController.getParentPathname() - relativePath.toString(): ..\storage\client_storage
-
-//        Path relativePath = rootPath.relativize(Paths.get(realClientDirectory(pathname), itemName));
-
-        return relativePath;
+    /**
+     * Метод возвращает объект пути к родителю элемента списка.
+     * @param itemPathname - строка пути к элементу
+     * @param rootPath - объект пути к реальной корневой директории
+     * @return - объект пути к родителю элемента списка
+     */
+    private Path getParentPath(String itemPathname, Path rootPath) {
+        //инициируем объект реального пути к родительской директории
+        Path parentPath = Paths.get(realClientDirectory(itemPathname)).getParent();
+        //возвращаем путь к родительской папке относительно директории по умолчанию
+        return rootPath.relativize(parentPath);
     }
 
-    //    public String realClientDirectory(String currentDirectory){
-//        //собираем путь к текущей папке(к директории по умолчанию) для получения списка объектов
-//        return Paths.get(CloudStorageClient.CLIENT_ROOT, currentDirectory).toString();
-//    }
+    /** //FIXME убрать дублирование с realClientItemPathname и может заменить на Path?
+     * Метод возвращает строку реального пути к
+     * @param currentDirPathname -
+     * @return -
+     */
     public String realClientDirectory(String currentDirPathname){
         //собираем путь к текущей папке(к директории по умолчанию) для получения списка объектов
         return Paths.get(CloudStorageClient.CLIENT_ROOT, currentDirPathname).toString();
     }
 
+    //FIXME убрать дублирование с realClientItemPathname и может заменить на Path?
     private String realClientItemPathname(String itemPathname) {
         return Paths.get(CloudStorageClient.CLIENT_ROOT, itemPathname).toString();
-    }
-
-    public String getNewName() {
-        return newName;
     }
 
     public void setNewName(String newName) {
