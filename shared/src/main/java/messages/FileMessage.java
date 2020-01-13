@@ -21,10 +21,6 @@ public class FileMessage extends AbstractMessage {
     private long fileSize;
     //объявляем байтовый массив с данными из файла
     private byte[] data;
-//    //объявляем переменную заданной директории
-//    private String directory;
-//    //объявляем переменную имени файлового объекта
-//    private String fileObjectName;
     //принимаем объект родительской директории
     private Item storageDirectoryItem;
     //принимаем объект элемента
@@ -32,26 +28,13 @@ public class FileMessage extends AbstractMessage {
     //принимаем переменную нового имени файла
     private String newName;
 
-    //для операций переименования, удаления
-//    public FileMessage(String directory, String fileObjectName) {
-//        this.directory = directory;
-//        this.fileObjectName = fileObjectName;
-//    }
-
     //для операции удаления
-//    public FileMessage(Item item) {
-//        this.item = item;
-//    }
     public FileMessage(Item storageDirectoryItem, Item item) {
         this.storageDirectoryItem = storageDirectoryItem;
         this.item = item;
     }
 
     //для операции переименования
-//    public FileMessage(Item item, String newName) {
-//        this.item = item;
-//        this.newName = newName;
-//    }
     public FileMessage(Item storageDirectoryItem, Item item, String newName) {
         this.storageDirectoryItem = storageDirectoryItem;
         this.item = item;
@@ -71,20 +54,11 @@ public class FileMessage extends AbstractMessage {
         this.fileSize = fileSize;
     }
 
-//    /**
-//     * Метод читает все данные из файла в байтовый массив
-//     * @throws IOException - исключение ввода вывода
-//     */
-//    public void readFileData() throws IOException {
-//        //читаем все данные из файла побайтно в байтовый массив
-//        this.data = Files.readAllBytes(Paths.get(fromDir, filename));
-//    }
-
-    //TODO
-//    public void readFileData(String fromDir) throws IOException {
-//        //читаем все данные из файла побайтно в байтовый массив
-//        this.data = Files.readAllBytes(Paths.get(fromDir, filename));
-//    }
+    /**
+     * Метод заполняет массив байтами, считанными из файла
+     * @param itemPathname - строка имени пути к объекту
+     * @throws IOException - исключение ввода вывода
+     */
     public void readFileData(String itemPathname) throws IOException {
         //читаем все данные из файла побайтно в байтовый массив
         this.data = Files.readAllBytes(Paths.get(itemPathname));
@@ -97,14 +71,6 @@ public class FileMessage extends AbstractMessage {
     public String getToDir() {
         return toDir;
     }
-
-//    public String getDirectory() {
-//        return directory;
-//    }
-
-//    public String getFileObjectName() {
-//        return fileObjectName;
-//    }
 
     public String getFilename() {
         return filename;
@@ -121,10 +87,6 @@ public class FileMessage extends AbstractMessage {
     public String getNewName() {
         return newName;
     }
-
-//    public void setNewName(String newName) {
-//        this.newName = newName;
-//    }
 
     public long getFileSize() {
         return fileSize;

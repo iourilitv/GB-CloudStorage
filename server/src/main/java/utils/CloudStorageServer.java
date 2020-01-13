@@ -86,13 +86,14 @@ public class CloudStorageServer {
     }
 
     /**
-     * Метод удаляет объект элемента списка (файл или папку) в текущей директории в серверном хранилище.
+     * Метод удаляет объект элемента списка(файл или папку) в текущей директории в серверном хранилище.
      * @param item - объект списка в серверном хранилище
      * @return - результат удаления
      */
     public boolean deleteClientItem(Item item, Path userStorageRoot) {
         //инициируем файловый объект для объекта списка в клиенте
-        File fileObject = new File(itemUtils.getRealPath(item.getItemPathname(), userStorageRoot).toString());
+        File fileObject = new File(itemUtils.getRealPath(item.getItemPathname(),
+                userStorageRoot).toString());
         //вызываем метод удаления папки или файла
         return fileUtils.deleteFileObject(fileObject);
     }
