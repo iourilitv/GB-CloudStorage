@@ -30,10 +30,8 @@ public class CloudStorageClient {
     private static final int PORT = 8189;
     //инициируем переменную для печати сообщений в консоль
     private final PrintStream log = System.out;
-
     //инициируем константу объект пути к корневой директории для списка в клиентской части GUI
     public static final Path CLIENT_ROOT_PATH = Paths.get("storage","client_storage");
-
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
     //принимаем объект обработчика операций с объектами элементов списков в GUI
@@ -89,53 +87,25 @@ public class CloudStorageClient {
                 new AuthMessage(login, password)));
     }
 
-//    /**
-//     * Метод отправляет на сервер запрос на получение списка элементов заданной директории
-//     * пользователя в сетевом хранилище
-//     * @param directoryPathname - строка заданной относительной директории пользователя
-//     * в сетевом хранилище
-//     */
-//    public void demandDirectoryItemList(String directoryPathname) {
-//        //отправляем на сервер объект сообщения(команды)
-//        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_OBJECTS_LIST,
-//                new DirectoryMessage(directoryPathname)));
-//    }
+    /**
+     * Метод отправляет на сервер запрос на получение списка элементов заданной директории
+     * пользователя в сетевом хранилище
+     * @param directoryPathname - строка заданной относительной директории пользователя
+     * в сетевом хранилище
+     */
     public void demandDirectoryItemList(String directoryPathname) {
         //отправляем на сервер объект сообщения(команды)
         ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_ITEMS_LIST,
                 new DirectoryMessage(directoryPathname)));
     }
 
-//    /**
-//     * Метод отправляет на сервер запрос на загрузку файла в облачное хранилище
-//     * @param fromDir - директория источник на клиенте
-//     * @param toDir - директория назначения в облачном хранилище
-//     * @param filename - имя файла
-//     * @throws IOException - исключение
-//     */
-//    public void demandUploadFile(String fromDir, String toDir, String filename) throws IOException {
-//        //TODO temporarily
-//        printMsg("***CloudStorageClient.uploadFile() - has started***");
-//
-//        //TODO temporarily
-//        System.out.println("CloudStorageClient.uploadFile - fromDir: " + fromDir +
-//                ", toDir: " + toDir + ", filename: " + filename);
-//
-//        //вычисляем размер файла
-//        long fileSize = Files.size(Paths.get(fromDir, filename));
-//        //если размер файла больше константы размера фрагмента
-//        if(fileSize > FileFragmentMessage.CONST_FRAG_SIZE){
-//            //запускаем метод отправки файла по частям
-//            uploadFileByFrags(fromDir, toDir, filename, fileSize);
-//        //если файл меньше
-//        } else {
-//            //запускаем метод отправки целого файла
-//            uploadEntireFile(fromDir, toDir, filename, fileSize);
-//        }
-//
-//        //TODO temporarily
-//        printMsg("***CloudStorageClient.uploadFile() - has finished***");
-//    }
+    /**
+     * Метод отправляет на сервер запрос на загрузку файла в облачное хранилище
+     * @param clientFromDir - директория источник на клиенте
+     * @param storageToDir - директория назначения в облачном хранилище
+     * @param clientItem - объект элемента списка(файла) на клиенте
+     * @throws IOException -  - исключение
+     */
     public void demandUploadFile(String clientFromDir, String storageToDir, Item clientItem) throws IOException {
         //TODO temporarily
         printMsg("***CloudStorageClient.uploadFile() - has started***");
@@ -241,36 +211,13 @@ public class CloudStorageClient {
         System.out.println("CloudStorageClient.uploadFileByFrags() - duration(mc): " + finish);
     }
 
-//    /**
-//     * Метод отправки целого файла размером менее константы максмального размера фрагмента файла
-//     * @param fromDir - директория(относительно корня) клиента, где хранится файл источник
-//     * @param toDir - директория(относительно корня) в сетевом хранилище
-//     * @param filename - строковое имя файла
-//     * @param fileSize - размер файла в байтах
-//     */
-//    private void uploadEntireFile(String fromDir, String toDir, String filename, long fileSize) {
-//        //инициируем объект файлового сообщения
-//        FileMessage fileMessage = new FileMessage(fromDir, toDir, filename, fileSize);
-//
-//        //TODO temporarily
-//        System.out.println("CloudStorageClient.uploadEntireFile() - fileUtils: " + fileUtils +
-//                ", fromDir: " + fromDir +
-//                ", toDir: " + toDir +
-//                ", fileMessage: " + fileMessage);
-//
-//        //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
-//        //FIXME Разобраться с абсолютными папкими клиента
-//        //если скачивание прошло удачно
-//        if(fileUtils.readFile(fromDir, fileMessage)){
-//            //отправляем на сервер объект сообщения(команды)
-//            ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
-//                    fileMessage));
-//        //если что-то пошло не так
-//        } else {
-//            //выводим сообщение
-//            printMsg("[client]" + fileUtils.getMsg());
-//        }
-//    }
+    /**
+     * Метод отправки целого файла размером менее константы максмального размера фрагмента файла
+     * @param clientFromDir - директория(относительно корня) клиента, где хранится файл источник
+     * @param storageToDir - директория(относительно корня) в сетевом хранилище
+     * @param clientItem - объект элемента списка(файла) на клиенте
+     * @param fileSize - размер файла в байтах
+     */
     private void uploadEntireFile(String clientFromDir, String storageToDir,
                                   Item clientItem, long fileSize) {
         //инициируем объект файлового сообщения

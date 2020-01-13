@@ -24,7 +24,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     private GUIController guiController;
 
     //объявляем переменную типа команды
-    private int command;
+    private int command;//TODO сделать локальными?
 
     public CommandMessageManager(CloudStorageClient storageClient) {
         this.storageClient = storageClient;
@@ -256,17 +256,11 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 ////        tester.getConnection().sendMessageObject(new CommandMessage(command, fileFragmentMessage));
 //    }
 
-//    /**
-//     * Метод выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
-//     * @param commandMessage - объект сообщения(команды)
-//     */
-//    private void updateStorageItemListInGUI(CommandMessage commandMessage) {
-//        //вынимаем объект сообщения о директории из объекта сообщения(команды)
-//        DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
-//        //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
-//        guiController.updateStorageItemListInGUI(directoryMessage.getDirectory(),
-//                directoryMessage.getFileObjectsList());
-//    }
+    /**
+     * Метод выводит в GUI список объектов(файлов и папок) в корневой пользовательской директории
+     * в сетевом хранилище
+     * @param commandMessage - объект сообщения(команды)
+     */
     private void updateStorageItemListInGUI(CommandMessage commandMessage) {
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
         DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();

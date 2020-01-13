@@ -14,6 +14,13 @@ public class ItemUtils {
         return ownObject;
     }
 
+    /**
+     * Метод возвращает объект заданной директории.
+     * @param directoryPathname - строковое имя пути к заданной директории
+     * @param defaultDirItem - объект директории по умолчанию
+     * @param rootPath - объект реального пути к корневой директории
+     * @return - объект заданной директории
+     */
     public Item createDirectoryItem(String directoryPathname, Item defaultDirItem, Path rootPath) {
         //если текущая и родительская директория являются директориями по умолчанию
         if(directoryPathname.equals(defaultDirItem.getItemPathname())){
@@ -37,10 +44,6 @@ public class ItemUtils {
      * @return - массив объектов элементов в заданной директории
      */
     public Item[] getItemsList(Item directoryItem, Path rootPath) {
-
-        System.out.println("ItemUtils.getItemsList() - rootPath: " + rootPath +
-                ", directoryItem: " + directoryItem);
-
         //инициируем временный файловый объект заданной директории
         File dirFileObject = new File(getRealPath(directoryItem.getItemPathname(), rootPath).toString());
         //инициируем и получаем массив файловых объектов заданной директории
@@ -71,10 +74,10 @@ public class ItemUtils {
     }
 
     /**
-     * МЕтод возвращает реальный путь к объекту списка.
-     * @param itemPathname - строка относительного пути к объекту списка
+     * Метод возвращает реальный путь к объекту элемента.
+     * @param itemPathname - строка относительного пути к объекту элемента
      * @param rootPath - объект пути к реальной корневой директории
-     * @return - реальный путь к объекту списка
+     * @return - реальный путь к объекту элемента
      */
     public Path getRealPath(String itemPathname, Path rootPath) {
         //возвращаем объект реального пути к заданому объекту элемента списка
@@ -82,11 +85,11 @@ public class ItemUtils {
     }
 
     /**
-     * Метод возвращает объект элемента родительской директории объекта элемента текущей директории.
-     * @param directoryItem - объект элемента текущей директории
-     * @param defaultDirItem - объект элемента директории по умолчанию(начальной)
+     * Метод возвращает объект родительской директории объекта элемента текущей директории.
+     * @param directoryItem - объект текущей директории
+     * @param defaultDirItem - объект директории по умолчанию(начальной)
      * @param rootPath - объект пути к реальной корневой директории
-     * @return - объект элемента родительской директории объекта элемента текущей директории
+     * @return - объект родительской директории объекта элемента текущей директории
      */
     public Item getParentDirItem(Item directoryItem, Item defaultDirItem, Path rootPath) {
         //если текущая и родительская директория являются директориями по умолчанию

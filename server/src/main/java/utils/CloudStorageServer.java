@@ -28,7 +28,7 @@ public class CloudStorageServer {
     //объявляем объект контроллера авторизации клиента
     private UsersAuthController usersAuthController;
     //объявляем объект файлового обработчика
-    private FileUtils fileUtils;
+    private FileUtils fileUtils;//TODO переделать на синглтон
     //принимаем объект обработчика операций с объектами элементов списков в GUI
     private final ItemUtils itemUtils = ItemUtils.getOwnObject();
 
@@ -55,6 +55,12 @@ public class CloudStorageServer {
         return itemUtils.getItemsList(storageDirItem, userStorageRoot);
     }
 
+    /**
+     * Метод инициирует объект директории пользователя в сетевом хранилище.
+     * @param storageDirPathname - строка имени пути к директории
+     * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище
+     * @return - объект директории пользователя в сетевом хранилище
+     */
     public Item createStorageDirectoryItem(String storageDirPathname, Path userStorageRoot) {
         return itemUtils.createDirectoryItem(storageDirPathname, storageDefaultDirItem, userStorageRoot);
     }

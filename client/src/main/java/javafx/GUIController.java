@@ -44,10 +44,6 @@ public class GUIController implements Initializable {
     private final String CLIENT_DEFAULT_DIR = "";
     //инициируем константу строки названия корневой директории для списка в серверной части GUI
     private final String STORAGE_DEFAULT_DIR = "";
-
-//    //получаем текущую папку списка файловых объектов в серверной части GUI
-//    private String currentStorageDir;//TODO удалить?
-
     //объявляем объекты директории по умолчанию в клиентской и серверной части GUI
     private Item clientDefaultDirItem, storageDefaultDirItem;
     //объявляем объекты текущей папки списка файловых объектов в клиентской и серверной части GUI
@@ -62,10 +58,6 @@ public class GUIController implements Initializable {
         //инициируем объекты директории по умолчанию в клиентской и серверной части GUI
         clientDefaultDirItem = new Item(CLIENT_DEFAULT_DIR);
         storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);
-
-//        //получаем текущую папку списка файловых объектов в серверной части GUI
-//        currentStorageDir = STORAGE_DEFAULT_DIR;//TODO удалить?
-
         //инициируем в клиентской части интерфейса список объектов в директории по умолчанию
         initializeClientItemListView();
         //инициируем в серверной части интерфейса список объектов в директории по умолчанию
@@ -83,20 +75,6 @@ public class GUIController implements Initializable {
     /**
      * Метод инициирует в серверной части интерфейса список объектов в директории по умолчанию
      */
-//    public void initializeStorageItemListView() {
-//        //выводим в клиентской части интерфейса список объектов в директории по умолчанию
-//        updateStorageItemListInGUI("../",
-//                new File[]{new File("waiting for an item list from the server...")});
-//        //в отдельном потоке
-//        new Thread(() -> {
-//            try {
-//                //запускаем логику клиента облачного хранилища
-//                storageClient.run();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
-//    }
     public void initializeStorageItemListView() {
         //выводим в клиентской части интерфейса список объектов в директории по умолчанию
         updateStorageItemListInGUI(new Item(STORAGE_DEFAULT_DIR),
@@ -139,40 +117,12 @@ public class GUIController implements Initializable {
         return storageClient.clientItemsList(clientCurrentDirItem);
     }
 
-//    /**
-//     * Метод выводит в GUI список файлов и папок в корневой пользовательской директории
-//     * в сетевом хранилище.
-//     * @param directory - заданная пользовательская директория в сетевом хранилище
-//     * @param fileObjs - массив объектов класса File(файлы и директории)
-//     */
-//    public void updateStorageItemListInGUI(String directory, File[] fileObjs){
-//        //обновляем текущую директорию
-//        currentStorageDir = directory;
-//        //в отдельном потоке запускаем обновление интерфейса
-//        Platform.runLater(() -> {
-//            //выводим текущую директорию в метку серверной части
-//            storageDirLabel.setText(currentStorageDir);
-//            //обновляем заданный список файловых объектов
-//            updateListView(storageItemListView, fileObjs);
-//        });
-//    }
-//    /** //FIXME directory переделать на Item
-//     * Метод выводит в GUI список файлов и папок в корневой пользовательской директории
-//     * в сетевом хранилище.
-//     * @param directory - заданная пользовательская директория в сетевом хранилище
-//     * @param items - массив объектов класса File(файлы и директории)
-//     */
-//    public void updateStorageItemListInGUI(String directory, Item[] items){
-//        //обновляем текущую директорию
-//        currentStorageDir = directory;
-//        //в отдельном потоке запускаем обновление интерфейса
-//        Platform.runLater(() -> {
-//            //выводим текущую директорию в метку серверной части
-//            storageDirLabel.setText(currentStorageDir);
-//            //обновляем заданный список файловых объектов
-//            updateListView(storageItemListView, items);
-//        });
-//    }
+    /**
+     * Метод выводит в GUI список файлов и папок в корневой пользовательской директории
+     * в сетевом хранилище.
+     * @param directoryItem - объект полученной пользовательской директории в сетевом хранилище
+     * @param items - массив объектов элементов в директории
+     */
     public void updateStorageItemListInGUI(Item directoryItem, Item[] items){
         //обновляем объект текущей директории
         storageCurrentDirItem = directoryItem;
@@ -250,9 +200,9 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод инициирует элемент контекстного меню "Получить список файловых объектов",
-     * только для выбранной директории.
-     * @param listView - текущий список файловых объектов
+     * Метод инициирует элемент контекстного меню "Get into".
+     * Запрашивает список объектов для выбранной директории.
+     * @param listView - текущий список объектов
      * @return - объект элемента контекстного меню "Get into"
      */
     private MenuItem menuItemGetInto(ListView<Item> listView) {
@@ -270,9 +220,7 @@ public class GUIController implements Initializable {
             } else if(listView.equals(storageItemListView)){
                 //отправляем на сервер запрос на получение списка элементов заданной директории
                 //пользователя в сетевом хранилище
-//                storageClient.demandDirectoryItemList(item.getItemName());//FIXME
                 storageClient.demandDirectoryItemList(item.getItemPathname());
-
             }
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
@@ -452,7 +400,7 @@ public class GUIController implements Initializable {
 
     /**
      * Метод отрабатывает нажатие на кнопку Home в серверной части GUI.
-     * Выводит список файловых объектов в корневой директории в серверной части
+     * Запрашивает у сервера список объектов в корневой директории в серверной части
      * @param mouseEvent - любой клик мышкой
      */
     @FXML
@@ -475,13 +423,11 @@ public class GUIController implements Initializable {
 
     /**
      * Метод отрабатывает нажатие на кнопку GoUp в серверной части GUI.
-     * Выводит список файловых объектов  в родительской директории в клиентской части
+     * Запрашивает у сервера список объектов в родительской директории в клиентской части
      * @param mouseEvent - любой клик мышкой
      */
     @FXML
     public void onStorageGoUpBtnClicked(MouseEvent mouseEvent) {
-        //FIXME заменить FILE на Item
-//        storageClient.demandDirectoryItemList(new File(currentStorageDir).getParent());
         storageClient.demandDirectoryItemList(storageCurrentDirItem.getParentPathname());
     }
 

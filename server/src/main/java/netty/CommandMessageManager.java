@@ -27,10 +27,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     private Path userStorageRoot;
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
-    //принимаем объект обработчика операций с объектами элементов списков в GUI
-    private final ItemUtils itemUtils = ItemUtils.getOwnObject();
     //объявляем переменную типа команды
-    private int command;
+    private int command;//TODO сделать локальной?
 
     public CommandMessageManager(CloudStorageServer storageServer) {
         this.storageServer = storageServer;
@@ -51,7 +49,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //инициируем из объекта сообщения объект команды
         CommandMessage commandMessage = (CommandMessage) msg;
         //если сюда прошли, значит клиент авторизован
-        //***блок обработки объектов //TODO НЕсервисных сообщений(команд), полученных от клиента***
+        //***блок обработки объектов сообщений(команд), полученных от клиента***
         //выполняем операции в зависимости от типа полученного не сервисного сообщения(команды)
         switch (commandMessage.getCommand()) {
             //обрабатываем полученный от клиента запрос на список объектов файлов и папок
@@ -123,27 +121,14 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         }
     }
 
-//    /**
-//     * Метод обрабатывает полученный от клиента запрос на список объектов файлов и папок
-//     * в заданной директории в облачном хранилище
-//     * @param commandMessage - объект сообщения(команды)
-//     */
-//    private void onFileObjectsListClientRequest(CommandMessage commandMessage) {
-//        //вынимаем объект сообщения о директории из объекта сообщения(команды)
-//        DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
-//        //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
-//        String storageDir = directoryMessage.getDirectory();
-//        //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
-//        // заданной директории клиента в сетевом хранилище
-//        sendFileObjectsList(storageDir, realStorageDirectory(storageDir), command);
-//    }
+    /**
+     * Метод обрабатывает полученный от клиента запрос на список объектов(файлов и папок)
+     * в заданной директории в облачном хранилище
+     * @param commandMessage - объект сообщения(команды)
+     */
     private void onDirectoryItemsListClientRequest(CommandMessage commandMessage) {
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
         DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
-
-        System.out.println("CommandMessageManager.onDirectoryItemsListClientRequest()  - " +
-                "directoryMessage.getDirectoryPathname(): " + directoryMessage.getDirectoryPathname());
-
         //инициируем объект для принятой директории сетевого хранилища
         Item storageDirItem = storageServer.createStorageDirectoryItem(
                 directoryMessage.getDirectoryPathname(), userStorageRoot);
@@ -477,64 +462,30 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * Возвращает список объектов в корневой директорию пользователя в сетевом хранилище.
      * @param commandMessage - объект сообщения(команды)
      */
-//    private void onAuthClientRequest(CommandMessage commandMessage) {
-//        //вынимаем тип команды из объекта сообщения(команды)
-//        command = commandMessage.getCommand();
-//        //вынимаем объет пути к его корневой директории клиента в сетевом хранилище
-//        userStorageRoot = Paths.get(commandMessage.getDirectory());
-//        //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
-//        // заданной директории клиента в сетевом хранилище
-//        sendFileObjectsList(storageServer.getSTORAGE_DEFAULT_DIR(),
-//                userStorageRoot.toString(), command);
-//        //удаляем входящий хэндлер AuthGateway, т.к. после авторизации он больше не нужен
-//        printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
-//                "removed pipeline: " + ctx.channel().pipeline().remove(AuthGateway.class));
-//    }
     private void onAuthClientRequest(CommandMessage commandMessage) {
-        //вынимаем тип команды из объекта сообщения(команды)
-        command = commandMessage.getCommand();
         //вынимаем объект реального пути к его корневой директории клиента в сетевом хранилище
         userStorageRoot = Paths.get(commandMessage.getDirectory());
         //инициируем объект для принятой директории сетевого хранилища
         Item storageDirItem = new Item(storageServer.getSTORAGE_DEFAULT_DIR());
         //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
         // заданной директории клиента в сетевом хранилище
-        sendItemsList(storageDirItem, command);
-
-//        //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
-//        // заданной директории клиента в сетевом хранилище
-//        sendFileObjectsList(storageServer.getSTORAGE_DEFAULT_DIR(),
-//                userStorageRoot.toString(), command);
+        sendItemsList(storageDirItem, commandMessage.getCommand());
         //удаляем входящий хэндлер AuthGateway, т.к. после авторизации он больше не нужен
         printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
                 "removed pipeline: " + ctx.channel().pipeline().remove(AuthGateway.class));
     }
 
-//    /**
-//     * Метод формирует и отправляет клиенту сообщение(команду) с массивом файловых объектов
-//     * в заданной директории пользователя в сетевом хранилище.
-//     * @param storageDir - директория, заданная относительно корневой директории пользователя в сетевом хранилище
-//     * @param realStorageDir - реальный путь к файловому объекту относительно корневой директории проекта
-//     * @param command - комманда об успешном или не успешном формировании списка
-//     */
-//    private void sendFileObjectsList(String storageDir, String realStorageDir, int command) {
-//        //инициируем объект сообщения о директории
-//        DirectoryMessage directoryMessage = new DirectoryMessage(storageDir);
-//        //формируем список файлов и папок в заданной директории клиента в сетевом хранилище
-//        directoryMessage.takeFileObjectsList(realStorageDir);
-//        //отправляем объект сообщения(команды) клиенту
-//        ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
-//    }
+    /**
+     * Метод формирует и отправляет клиенту сообщение(команду) с массивом объектов
+     * в заданной директории пользователя в сетевом хранилище.
+     * @param storageDirItem - объект заданной директории пользователя в сетевом хранилище
+     * @param command - комманда об успешном или не успешном формировании списка
+     */
     private void sendItemsList(Item storageDirItem, int command) {
-        Item[] items = storageServer.storageItemsList(storageDirItem, userStorageRoot);
-
-        System.out.println("[server]CommandMessageManager.sendItemsList() - items: " + Arrays.toString(items));
-
-        //инициируем объект сообщения о директории со списком объектов
+        //инициируем объект сообщения о директории с массивом объектов
         // в заданной директории клиента в сетевом хранилище
         DirectoryMessage directoryMessage = new DirectoryMessage(storageDirItem,
-//                storageServer.storageItemsList(storageDirItem, userStorageRoot));
-                items);
+                storageServer.storageItemsList(storageDirItem, userStorageRoot));
         //отправляем объект сообщения(команды) клиенту
         ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
     }
