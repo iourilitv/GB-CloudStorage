@@ -1,10 +1,14 @@
 package utils;
 
 import io.netty.channel.ChannelHandlerContext;
+import messages.FileFragmentMessage;
+import messages.FileMessage;
 import netty.NettyServer;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -82,6 +86,63 @@ public class CloudStorageServer {
                 itemUtils.getRealPath(storageToDirItem.getItemPathname(), userStorageRoot).toString(),
                 item.getItemName());
         return fileUtils.saveFile(realNewToItemPath, data, fileSize);
+    }
+
+    public void downloadItem(FileMessage fileMessage, Path userStorageRoot
+            , ChannelHandlerContext ctx) throws IOException {
+        //если объект элемента - это директория
+        if(fileMessage.getItem().isDirectory()){
+            //FIXME что-то делаем, а пока выходим
+            return;
+        }
+        //инициируем объект реального пути к объекту элемента в сетевом хранилище
+        Path realStorageItemPath = itemUtils.getRealPath(fileMessage.getItem().getItemPathname(), userStorageRoot);
+        //вычисляем размер файла
+        long fileSize = Files.size(realStorageItemPath);
+        //если размер запрашиваемого файла больше константы размера фрагмента
+        if(fileSize > FileFragmentMessage.CONST_FRAG_SIZE){
+            //запускаем метод отправки файла по частям
+//            downloadFileByFrags(realStorageDir, clientDir,
+//                    fileMessage.getFilename(), fileSize);
+
+            //если файл меньше
+        } else {
+            //запускаем метод отправки целого файла
+            downloadEntireFile(fileMessage.getClientDirectoryItem(), fileMessage.getItem(),
+                    fileMessage.getItem(), fileSize, userStorageRoot, ctx);
+        }
+    }
+
+    //    /**
+//     * Метод скачивания и отправки целого небольшого файла размером менее
+//     * константы максмального размера фрагмента файла
+//     * @param fromDir - директория(относительно корня) клиента где хранится файл источник
+//     * @param clientDir - директория(относительно корня) в сетевом хранилище
+//     * @param filename - строковое имя файла
+//     */
+    private void downloadEntireFile(Item clientToDirItem, Item storageItem, Item item,
+                       long fileSize, Path userStorageRoot, ChannelHandlerContext ctx){
+        //создаем объект файлового сообщения
+        FileMessage fileMessage = new FileMessage(storageItem, clientToDirItem, item, fileSize);
+
+        System.out.println("CloudStorageServer.downloadEntireFile - " +
+                "fileMessage.getClientDirectoryItem(): " + fileMessage.getClientDirectoryItem());
+
+        int command;
+        //если скачивание прошло удачно
+        if(fileUtils.readFile(itemUtils.getRealPath(storageItem.getItemPathname(), userStorageRoot),
+                fileMessage)){
+            //инициируем переменную типа команды - ответ cо скачанным файлом
+            command = Commands.SERVER_RESPONSE_DOWNLOAD_ITEM_OK;
+            //если что-то пошло не так
+        } else {
+            //выводим сообщение
+            printMsg("[server]" + fileUtils.getMsg());
+            //инициируем переменную типа команды - ответ об ошибке скачивания
+            command = Commands.SERVER_RESPONSE_DOWNLOAD_ITEM_ERROR;
+        }
+        //отправляем объект сообщения(команды) клиенту
+        ctx.writeAndFlush(new CommandMessage(command, fileMessage));
     }
 
     /**

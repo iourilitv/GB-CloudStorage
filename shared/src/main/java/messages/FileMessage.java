@@ -43,11 +43,24 @@ public class FileMessage extends AbstractMessage {
         this.newName = newName;
     }
 
-    //this constructor is for downloadEntireFile operation
-    public FileMessage(String fromDir, String toDir, String filename) {
-        this.fromDir = fromDir;
-        this.toDir = toDir;
-        this.filename = filename;
+    //this constructor is for downloadEntireFile demanding operation
+//    public FileMessage(String fromDir, String toDir, String filename) {
+//        this.fromDir = fromDir;
+//        this.toDir = toDir;
+//        this.filename = filename;
+//    }
+    public FileMessage(Item storageDirectoryItem, Item clientDirectoryItem, Item item) {
+        this.storageDirectoryItem = storageDirectoryItem;
+        this.clientDirectoryItem = clientDirectoryItem;
+        this.item = item;
+    }
+
+    //this constructor is for downloadEntireFile receiving operation
+    public FileMessage(Item storageDirectoryItem, Item clientDirectoryItem, Item item, long fileSize) {
+        this.storageDirectoryItem = storageDirectoryItem;
+        this.clientDirectoryItem = clientDirectoryItem;
+        this.item = item;
+        this.fileSize = fileSize;
     }
 
     //this constructor is for uploadEntireFile operation

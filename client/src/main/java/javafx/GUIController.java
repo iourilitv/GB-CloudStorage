@@ -269,8 +269,7 @@ public class GUIController implements Initializable {
             //отправляем на сервер запрос на скачивание файла из облачного хранилища
 //            storageClient.demandDownloadFile(currentStorageDir,
 //                    clientCurrentDirPathname, item.getItemName());
-            storageClient.demandDownloadFile(storageCurrentDirItem.getItemPathname(),
-                    clientCurrentDirItem.getItemPathname(), item.getItemName());
+            storageClient.demandDownloadItem(storageCurrentDirItem, clientCurrentDirItem, item);
 
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();

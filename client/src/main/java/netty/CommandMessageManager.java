@@ -6,6 +6,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import javafx.GUIController;
 import messages.DirectoryMessage;
+import messages.FileMessage;
 import utils.CommandMessage;
 import utils.Commands;
 import utils.FileUtils;
@@ -106,12 +107,12 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 onUploadItemErrorServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера подтверждение успешного скачивания файла из облачного хранилища
-            case Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK:
+            case Commands.SERVER_RESPONSE_DOWNLOAD_ITEM_OK:
                 //вызываем метод обработки ответа сервера со скачанным целым файлом внутри
-//                onDownloadFileOkServerResponse(commandMessage);//FIXME
+                onDownloadItemOkServerResponse(commandMessage);//FIXME
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке скачивания файла из облачного хранилища
-            case Commands.SERVER_RESPONSE_FILE_DOWNLOAD_ERROR:
+            case Commands.SERVER_RESPONSE_DOWNLOAD_ITEM_ERROR:
                 //вызываем метод обработки ответа сервера
                 onDownloadFileErrorServerResponse(commandMessage);
                 break;
@@ -186,6 +187,20 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 //        //отправляем объект сообщения(команды) на сервер
 //        ctx.writeAndFlush(new CommandMessage(command, fileMessage));
 //    }
+    private void onDownloadItemOkServerResponse(CommandMessage commandMessage) {
+        //вынимаем объект файлового сообщения из объекта сообщения(команды)
+        FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
+        //если сохранение прошло удачно
+        if(storageClient.downloadItem(fileMessage.getClientDirectoryItem(), fileMessage.getItem(),
+                fileMessage.getData(), fileMessage.getFileSize())){
+            //обновляем список файловых объектов на клиенте
+            guiController.updateClientItemListInGUI(fileMessage.getClientDirectoryItem());
+        //если что-то пошло не так
+        } else {
+            //выводим сообщение
+            printMsg("[client]" + fileUtils.getMsg());
+        }
+    }
 
     /**
      * Метод обрабатывает полученное от сервера сообщение об ошибке

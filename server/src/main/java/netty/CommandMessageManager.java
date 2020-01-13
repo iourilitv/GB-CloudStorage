@@ -63,23 +63,25 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 onUploadItemClientRequest(commandMessage);
                 break;
             //обрабатываем полученный от клиента запрос на скачивание целого файла из облачного хранилища
-            case Commands.REQUEST_SERVER_FILE_DOWNLOAD:
+            case Commands.REQUEST_SERVER_DOWNLOAD_ITEM:
                 //вызываем метод обработки запроса от клиента на скачивание целого файла клиента
                 // из директории в сетевом хранилище
-                onDownloadFileClientRequest(commandMessage);
+                onDownloadItemClientRequest(commandMessage);
                 break;
-            //обрабатываем полученное от клиента подтверждение успешного сохранения целого файла,
-            // скачанного из облачного хранилища
-            case Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_OK:
-                //вызываем метод обработки ответа клиента
-                onDownloadFileOkClientResponse(commandMessage);
-                break;
-            //обрабатываем полученное от клиента сообщение об ошибке сохранения целого файла,
-            // скачанного из облачного хранилища
-            case Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_ERROR:
-                //вызываем метод обработки ответа клиента
-                onDownloadFileErrorClientResponse(commandMessage);
-                break;
+
+//            //обрабатываем полученное от клиента подтверждение успешного сохранения целого файла,
+//            // скачанного из облачного хранилища
+//            case Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_OK:
+//                //вызываем метод обработки ответа клиента
+//                onDownloadFileOkClientResponse(commandMessage);
+//                break;
+//            //обрабатываем полученное от клиента сообщение об ошибке сохранения целого файла,
+//            // скачанного из облачного хранилища
+//            case Commands.CLIENT_RESPONSE_FILE_DOWNLOAD_ERROR:
+//                //вызываем метод обработки ответа клиента
+//                onDownloadFileErrorClientResponse(commandMessage);
+//                break;
+
             //обрабатываем полученный от клиента запрос на загрузку(сохранение) фрагмента файла в облачное хранилище
             case Commands.REQUEST_SERVER_FILE_FRAG_UPLOAD:
                 //вызываем метод обработки запроса от клиента на загрузку файла-фрагмента
@@ -168,32 +170,42 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         printMsg("[server]CommandMessageManager.onUploadFileErrorClientResponse() command: " + commandMessage.getCommand());
     }
 
-    /**
-     * Метод обработки запроса от клиента на скачивание целого файла клиента из директории в
-     * сетевом хранилище.
-     * @param commandMessage - объект сообщения(команды)
-     */
-    private void onDownloadFileClientRequest(CommandMessage commandMessage) throws IOException {
+//    /**
+//     * Метод обработки запроса от клиента на скачивание целого файла клиента из директории в
+//     * сетевом хранилище.
+//     * @param commandMessage - объект сообщения(команды)
+//     */
+//    private void onDownloadItemClientRequest(CommandMessage commandMessage) throws IOException {
+//        //вынимаем объект файлового сообщения из объекта сообщения(команды)
+//        FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
+//        //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
+//        String storageDir = fileMessage.getFromDir();
+//        //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
+//        String clientDir = fileMessage.getToDir();
+//        //собираем целевую директорию пользователя в сетевом хранилище
+//        String realStorageDir = realStorageDirectory(storageDir);
+//        //вычисляем размер файла
+//        long fileSize = Files.size(Paths.get(realStorageDir, fileMessage.getFilename()));
+//        //если размер запрашиваемого файла больше константы размера фрагмента
+//        if(fileSize > FileFragmentMessage.CONST_FRAG_SIZE){
+//            //запускаем метод отправки файла по частям
+//            downloadFileByFrags(realStorageDir, clientDir,
+//                    fileMessage.getFilename(), fileSize);
+//            //если файл меньше
+//        } else {
+//            //запускаем метод отправки целого файла
+//            downloadEntireFile(realStorageDir, clientDir, fileMessage.getFilename());
+//        }
+//    }
+    private void onDownloadItemClientRequest(CommandMessage commandMessage) throws IOException {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
-        //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
-        String storageDir = fileMessage.getFromDir();
-        //вынимаем заданную клиентскую директорию из объекта сообщения(команды)
-        String clientDir = fileMessage.getToDir();
-        //собираем целевую директорию пользователя в сетевом хранилище
-        String realStorageDir = realStorageDirectory(storageDir);
-        //вычисляем размер файла
-        long fileSize = Files.size(Paths.get(realStorageDir, fileMessage.getFilename()));
-        //если размер запрашиваемого файла больше константы размера фрагмента
-        if(fileSize > FileFragmentMessage.CONST_FRAG_SIZE){
-            //запускаем метод отправки файла по частям
-            downloadFileByFrags(realStorageDir, clientDir,
-                    fileMessage.getFilename(), fileSize);
-            //если файл меньше
-        } else {
-            //запускаем метод отправки целого файла
-            downloadEntireFile(realStorageDir, clientDir, fileMessage.getFilename());
-        }
+
+        System.out.println("[serverCommandMessageManager.onDownloadItemClientRequest - " +
+                "fileMessage.getClientDirectoryItem(): " + fileMessage.getClientDirectoryItem());
+
+        //запускаем процесс скачивания и отправки объекта элемента
+        storageServer.downloadItem(fileMessage, userStorageRoot, ctx);
     }
 
     /**
@@ -359,7 +371,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 //        //отправляем объект сообщения(команды) клиенту
 //        ctx.writeAndFlush(new CommandMessage(command, fileMessage));
 //    }
-    private void downloadEntireFile(String fromDir, String clientDir, String filename){
+//    private void downloadEntireFile(String fromDir, String clientDir, String filename){
 //        //создаем объект файлового сообщения
 //        FileMessage fileMessage = new FileMessage(fromDir, clientDir, filename);
 //        //если скачивание прошло удачно
@@ -375,7 +387,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 //        }
 //        //отправляем объект сообщения(команды) клиенту
 //        ctx.writeAndFlush(new CommandMessage(command, fileMessage));
-    }
+//    }
 
     /**
      * Метод обрабатываем полученный от клиента запрос на переименование объекта элемента
