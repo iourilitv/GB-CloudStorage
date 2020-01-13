@@ -103,7 +103,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             // файла в облачное хранилище
             case Commands.SERVER_RESPONSE_UPLOAD_ITEM_ERROR:
                 //вызываем метод обработки ответа сервера
-                onUploadFileErrorServerResponse(commandMessage);
+                onUploadItemErrorServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера подтверждение успешного скачивания файла из облачного хранилища
             case Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK:
@@ -150,7 +150,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * файла в облачное хранилище
      * @param commandMessage - объект сообщения(команды)
      */
-    private void onUploadFileErrorServerResponse(CommandMessage commandMessage) {
+    private void onUploadItemErrorServerResponse(CommandMessage commandMessage) {
         //FIXME fill me!
         printMsg("[client]CommandMessageManager.onUploadFileErrorServerResponse() command: " + commandMessage.getCommand());
     }

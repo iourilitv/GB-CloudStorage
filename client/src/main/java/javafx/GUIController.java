@@ -242,18 +242,9 @@ public class GUIController implements Initializable {
         menuItemUpload.setOnAction(event -> {
             //запоминаем кликнутый элемент списка
             Item item = listView.getSelectionModel().getSelectedItem();
-
-//            System.out.println("GUIController.callContextMenu().menuItemUpload().setOnAction() - " +
-//                    "\nitem: " + item +
-//                    ", item.getParent(): " + item.getParent());
-
             try {
                 //отправляем на сервер запрос на загрузку файла в облачное хранилище
-//                storageClient.demandUploadFile(item.getParentName(), currentStorageDir, item.getItemName());
-//                storageClient.demandUploadFile(clientCurrentDirItem.getItemPathname(),
-//                        storageCurrentDirItem.getItemPathname(), item);
                 storageClient.demandUploadItem(storageCurrentDirItem, item);
-
             } catch (IOException e) {
                 e.printStackTrace();
             }

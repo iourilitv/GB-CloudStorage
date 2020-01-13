@@ -1,7 +1,6 @@
 package utils;
 
 import io.netty.channel.ChannelHandlerContext;
-import messages.FileMessage;
 import netty.NettyServer;
 
 import java.io.File;
@@ -67,6 +66,16 @@ public class CloudStorageServer {
         return itemUtils.createDirectoryItem(storageDirPathname, storageDefaultDirItem, userStorageRoot);
     }
 
+    /**
+     * Метод запускает процесс сохранения полученного от клиента объекта(файла)
+     * в заданную директорию в сетевом хранилище.
+     * @param storageToDirItem - объект заданной директории в сетевом хранилище
+     * @param item - объект элемента от клиента
+     * @param data - массив байт из файла
+     * @param fileSize - размер файла
+     * @param userStorageRoot- объект пути к корневой директории пользователя в сетевом хранилище
+     * @return - результат сохранения объекта
+     */
     public boolean uploadItem(Item storageToDirItem, Item item, byte[] data, long fileSize, Path userStorageRoot){
         //инициируем новый объект пути к объекту
         Path realNewToItemPath = Paths.get(

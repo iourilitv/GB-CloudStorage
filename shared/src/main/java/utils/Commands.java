@@ -17,10 +17,6 @@ public class Commands {
 
     //запрос на сервер загрузить(сохранить) объект элемента списка
     public static final int REQUEST_SERVER_UPLOAD_ITEM = 101101;
-//    //ответ клиента - подтверждение успешного получения обновленного списка объектов в облачном хранилище
-//    public static final int CLIENT_RESPONSE_UPLOAD_ITEM_OK = 101102;
-//    //ответ клиента - сообщение об ошибке получения обновленного списка объектов в облачном хранилище
-//    public static final int CLIENT_RESPONSE_FILE_UPLOAD_ERROR = 101109;
     //ответ сервера, что объект успешно загружен(сохранен)
     public static final int SERVER_RESPONSE_UPLOAD_ITEM_OK = 101202;
     //ответ сервера, что при загрузке(сохранении) объекта произошла ошибка
@@ -63,12 +59,6 @@ public class Commands {
 
     //запрос на сервер загрузить(сохранить) фрагмент файла
     public static final int REQUEST_SERVER_FILE_FRAG_UPLOAD = 111101;
-
-    //TODO Надо? это драфт
-//    //ответ клиента - подтверждение успешного получения обновленного списка, файлов в облачном хранилище
-//    public static final int CLIENT_RESPONSE_FILE_UPLOAD_OK = 101102;
-//    //ответ клиента - сообщение об ошибке получения обновленного списка, файлов в облачном хранилище
-//    public static final int CLIENT_RESPONSE_FILE_UPLOAD_ERROR = 101109;
 
     //ответ сервера, что фрагмент файла успешно загружен(сохранен)
     public static final int SERVER_RESPONSE_FILE_FRAG_UPLOAD_OK = 111202;
