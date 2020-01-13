@@ -1,5 +1,7 @@
 package messages;
 
+import utils.Item;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -19,17 +21,41 @@ public class FileMessage extends AbstractMessage {
     private long fileSize;
     //объявляем байтовый массив с данными из файла
     private byte[] data;
-    //объявляем переменную заданной директории
-    private String directory;
-    //объявляем переменную имени файлового объекта
-    private String fileObjectName;
-    //объявляем переменную нового имени файла
+//    //объявляем переменную заданной директории
+//    private String directory;
+//    //объявляем переменную имени файлового объекта
+//    private String fileObjectName;
+    //принимаем объект родительской директории
+    private Item storageDirectoryItem;
+    //принимаем объект элемента
+    private Item item;
+    //принимаем переменную нового имени файла
     private String newName;
 
     //для операций переименования, удаления
-    public FileMessage(String directory, String fileObjectName) {
-        this.directory = directory;
-        this.fileObjectName = fileObjectName;
+//    public FileMessage(String directory, String fileObjectName) {
+//        this.directory = directory;
+//        this.fileObjectName = fileObjectName;
+//    }
+
+    //для операции удаления
+//    public FileMessage(Item item) {
+//        this.item = item;
+//    }
+    public FileMessage(Item storageDirectoryItem, Item item) {
+        this.storageDirectoryItem = storageDirectoryItem;
+        this.item = item;
+    }
+
+    //для операции переименования
+//    public FileMessage(Item item, String newName) {
+//        this.item = item;
+//        this.newName = newName;
+//    }
+    public FileMessage(Item storageDirectoryItem, Item item, String newName) {
+        this.storageDirectoryItem = storageDirectoryItem;
+        this.item = item;
+        this.newName = newName;
     }
 
     public FileMessage(String fromDir, String toDir, String filename) {
@@ -72,25 +98,33 @@ public class FileMessage extends AbstractMessage {
         return toDir;
     }
 
-    public String getDirectory() {
-        return directory;
-    }
+//    public String getDirectory() {
+//        return directory;
+//    }
 
-    public String getFileObjectName() {
-        return fileObjectName;
-    }
+//    public String getFileObjectName() {
+//        return fileObjectName;
+//    }
 
     public String getFilename() {
         return filename;
+    }
+
+    public Item getStorageDirectoryItem() {
+        return storageDirectoryItem;
+    }
+
+    public Item getItem() {
+        return item;
     }
 
     public String getNewName() {
         return newName;
     }
 
-    public void setNewName(String newName) {
-        this.newName = newName;
-    }
+//    public void setNewName(String newName) {
+//        this.newName = newName;
+//    }
 
     public long getFileSize() {
         return fileSize;

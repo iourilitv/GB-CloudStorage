@@ -43,20 +43,20 @@ public class Commands {
     // в сетевом хранилище, если нет ошибок
     public static final int SERVER_RESPONSE_ITEMS_LIST_OK = 303102;
 
-    //переименовать файловый объект на сервере
-    public static final int REQUEST_SERVER_RENAME_FILE_OBJECT = 404101;
-    //ответ сервера с массивом файловых объектов в заданной директории пользователя
+    //переименовать объект на сервере
+    public static final int REQUEST_SERVER_RENAME_ITEM = 404101;
+    //ответ сервера с массивом объектов в заданной директории пользователя
     // в сетевом хранилище, если нет ошибок
-    public static final int SERVER_RESPONSE_RENAME_FILE_OBJECT_OK = 404102;
-    //ответ сервера, что при переименовании файлового объекта в облачном хранилище произошла ошибка
-    public static final int SERVER_RESPONSE_RENAME_FILE_OBJECT_ERROR = 404109;
+    public static final int SERVER_RESPONSE_RENAME_ITEM_OK = 404102;
+    //ответ сервера, что при переименовании объекта в облачном хранилище произошла ошибка
+    public static final int SERVER_RESPONSE_RENAME_ITEM_ERROR = 404109;
 
-    //запрос на сервер удалить файл на сервере
-    public static final int REQUEST_SERVER_DELETE_FILE_OBJECT = 505101;
-    //ответ сервера - подтверждение успешного удаления файлового объекта в облачном хранилище
-    public static final int SERVER_RESPONSE_DELETE_FILE_OBJECT_OK = 505102;
-    //ответ сервера, что при удаления файлового объекта в облачном хранилище произошла ошибка
-    public static final int SERVER_RESPONSE_DELETE_FILE_OBJECT_ERROR = 505109;
+    //запрос на сервер удалить объект элемента списка на сервере
+    public static final int REQUEST_SERVER_DELETE_ITEM = 505101;
+    //ответ сервера - подтверждение успешного удаления объекта элемента списка в облачном хранилище
+    public static final int SERVER_RESPONSE_DELETE_ITEM_OK = 505102;
+    //ответ сервера, что при удаления объекта элемента списка в облачном хранилище произошла ошибка
+    public static final int SERVER_RESPONSE_DELETE_ITEM_ERROR = 505109;
 
     //переместить файл в другую папку
     public static final int REQUEST_SERVER_MOVE_FILE = 606101;

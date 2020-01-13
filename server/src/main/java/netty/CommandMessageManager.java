@@ -7,12 +7,10 @@ import messages.FileFragmentMessage;
 import messages.FileMessage;
 import utils.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 /**
  * The server's class for recognizing command messages and control command handlers.
@@ -102,15 +100,15 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 break;
             //обрабатываем полученный от клиента запрос на переименование файла или папки
             // в заданной директории в сетевом хранилище
-            case Commands.REQUEST_SERVER_RENAME_FILE_OBJECT:
+            case Commands.REQUEST_SERVER_RENAME_ITEM:
                 //вызываем метод обработки запроса от клиента
-                onRenameFileObjectClientRequest(commandMessage);
+                onRenameItemClientRequest(commandMessage);
                 break;
             //обрабатываем полученный от клиента запрос на удаление файла или папки
             // в заданной директории в сетевом хранилище
-            case Commands.REQUEST_SERVER_DELETE_FILE_OBJECT:
+            case Commands.REQUEST_SERVER_DELETE_ITEM:
                 //вызываем метод обработки запроса от клиента
-                onDeleteFileObjectClientRequest(commandMessage);
+                onDeleteItemClientRequest(commandMessage);
                 break;
             //обрабатываем полученный от AuthGateway проброшенный запрос на авторизацию клиента в облачное хранилище
             //возвращаем список объектов в корневой директорию пользователя в сетевом хранилище.
@@ -132,7 +130,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //инициируем объект для принятой директории сетевого хранилища
         Item storageDirItem = storageServer.createStorageDirectoryItem(
                 directoryMessage.getDirectoryPathname(), userStorageRoot);
-        //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
+        //отправляем объект сообщения(команды) клиенту со списком объектов(файлов и папок) в
         // заданной директории клиента в сетевом хранилище
         sendItemsList(storageDirItem, Commands.SERVER_RESPONSE_ITEMS_LIST_OK);
     }
@@ -394,67 +392,115 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         ctx.writeAndFlush(new CommandMessage(command, fileMessage));
     }
 
-    /**
-     * Метод обрабатываем полученный от клиента запрос на переименование файла или папки
-     * в заданной директории в сетевом хранилище
-     * @param commandMessage - объект сообщения(команды)
-     */
-    private void onRenameFileObjectClientRequest(CommandMessage commandMessage) {
+//    /**
+//     * Метод обрабатываем полученный от клиента запрос на переименование файла или папки
+//     * в заданной директории в сетевом хранилище
+//     * @param commandMessage - объект сообщения(команды)
+//     */
+//    private void onRenameFileObjectClientRequest(CommandMessage commandMessage) {
+//        //вынимаем объект файлового сообщения из объекта сообщения(команды)
+//        FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
+//        //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
+//        String storageDir = fileMessage.getDirectory();
+//        //собираем реальный путь к файловому объекту в реальной заданнуй директории пользователя в сетевом хранилище
+//        String realFileObjectPathname = Paths.get(realStorageDirectory(storageDir),
+//                fileMessage.getFileObjectName()).toString();
+//        //инициируем реальный файловый объект
+//        File fileObject = new File(realFileObjectPathname);
+//        //если сохранение прошло удачно
+//        if(fileObject.renameTo(new File(Paths.get(fileObject.getParent(),
+//                fileMessage.getNewName()).toString()))){
+//            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+//            command = Commands.SERVER_RESPONSE_RENAME_ITEM_OK;
+//            //если что-то пошло не так
+//        } else {
+//            //выводим сообщение
+//            printMsg("[server]" + fileUtils.getMsg());
+//            //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+//            command = Commands.SERVER_RESPONSE_RENAME_ITEM_ERROR;
+//        }
+//        //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
+//        // заданной директории клиента в сетевом хранилище
+////        sendFileObjectsList(storageDir, fileObject.getParent(), command);//FIXME
+//    }
+    private void onRenameItemClientRequest(CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
-        //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
-        String storageDir = fileMessage.getDirectory();
-        //собираем реальный путь к файловому объекту в реальной заданнуй директории пользователя в сетевом хранилище
-        String realFileObjectPathname = Paths.get(realStorageDirectory(storageDir),
-                fileMessage.getFileObjectName()).toString();
-        //инициируем реальный файловый объект
-        File fileObject = new File(realFileObjectPathname);
         //если сохранение прошло удачно
-        if(fileObject.renameTo(new File(Paths.get(fileObject.getParent(),
-                fileMessage.getNewName()).toString()))){
+        if(storageServer.renameStorageItem(fileMessage.getItem(), fileMessage.getNewName(), userStorageRoot)){
             //отправляем сообщение на сервер: подтверждение, что все прошло успешно
-            command = Commands.SERVER_RESPONSE_RENAME_FILE_OBJECT_OK;
+            command = Commands.SERVER_RESPONSE_RENAME_ITEM_OK;
             //если что-то пошло не так
         } else {
             //выводим сообщение
             printMsg("[server]" + fileUtils.getMsg());
             //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
-            command = Commands.SERVER_RESPONSE_RENAME_FILE_OBJECT_ERROR;
+            command = Commands.SERVER_RESPONSE_RENAME_ITEM_ERROR;
         }
-        //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
+//        //инициируем объект родительской директории сетевого хранилища для принятого объекта элемента
+//        Item storageDirItem = storageServer.createStorageDirectoryItem(
+//                fileMessage.getItem().getParentPathname(), userStorageRoot);
+//        //отправляем объект сообщения(команды) клиенту со списком объектов(файлов и папок) в
+//        // заданной директории клиента в сетевом хранилище
+//        sendItemsList(storageDirItem, command);
+        //отправляем объект сообщения(команды) клиенту со списком объектов(файлов и папок) в
         // заданной директории клиента в сетевом хранилище
-//        sendFileObjectsList(storageDir, fileObject.getParent(), command);//FIXME
+        sendItemsList(fileMessage.getStorageDirectoryItem(), command);
     }
 
-    /**
-     * Метод обрабатываем полученный от клиента запрос на удаление файла или папки
-     * в заданной директории в сетевом хранилище
-     * @param commandMessage - объект сообщения(команды)
-     */
-    private void onDeleteFileObjectClientRequest(CommandMessage commandMessage) {
+//    /**
+//     * Метод обрабатываем полученный от клиента запрос на удаление файла или папки
+//     * в заданной директории в сетевом хранилище
+//     * @param commandMessage - объект сообщения(команды)
+//     */
+//    private void onDeleteFileObjectClientRequest(CommandMessage commandMessage) {
+//        //вынимаем объект файлового сообщения из объекта сообщения(команды)
+//        FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
+//        //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
+//        String storageDir = fileMessage.getDirectory();
+//        //собираем реальный путь к файловому объекту в реальной заданнуй директории пользователя в сетевом хранилище
+//        String realFileObjectPathname = Paths.get(realStorageDirectory(storageDir),
+//                fileMessage.getFileObjectName()).toString();
+//        //инициируем реальный файловый объект
+//        File fileObject = new File(realFileObjectPathname);
+//        //если сохранение прошло удачно
+//        if(fileUtils.deleteFileObject(fileObject)){
+//            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+//            command = Commands.SERVER_RESPONSE_DELETE_FILE_OBJECT_OK;
+//            //если что-то пошло не так
+//        } else {
+//            //выводим сообщение
+//            printMsg("[server]" + fileUtils.getMsg());
+//            //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+//            command = Commands.SERVER_RESPONSE_DELETE_FILE_OBJECT_ERROR;
+//        }
+//        //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
+//        // заданной директории клиента в сетевом хранилище
+////        sendFileObjectsList(storageDir, fileObject.getParent(), command);//FIXME
+//    }
+    private void onDeleteItemClientRequest(CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
-        //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
-        String storageDir = fileMessage.getDirectory();
-        //собираем реальный путь к файловому объекту в реальной заданнуй директории пользователя в сетевом хранилище
-        String realFileObjectPathname = Paths.get(realStorageDirectory(storageDir),
-                fileMessage.getFileObjectName()).toString();
-        //инициируем реальный файловый объект
-        File fileObject = new File(realFileObjectPathname);
-        //если сохранение прошло удачно
-        if(fileUtils.deleteFileObject(fileObject)){
+        //если удаление прошло удачно
+        if(storageServer.deleteClientItem(fileMessage.getItem(), userStorageRoot)){
             //отправляем сообщение на сервер: подтверждение, что все прошло успешно
-            command = Commands.SERVER_RESPONSE_DELETE_FILE_OBJECT_OK;
+            command = Commands.SERVER_RESPONSE_DELETE_ITEM_OK;
             //если что-то пошло не так
         } else {
             //выводим сообщение
             printMsg("[server]" + fileUtils.getMsg());
             //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
-            command = Commands.SERVER_RESPONSE_DELETE_FILE_OBJECT_ERROR;
+            command = Commands.SERVER_RESPONSE_DELETE_ITEM_ERROR;
         }
-        //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
+//        //инициируем объект родительской директории сетевого хранилища для принятого объекта элемента
+//        Item storageDirItem = storageServer.createStorageDirectoryItem(
+//                fileMessage.getItem().getParentPathname(), userStorageRoot);
+//        //отправляем объект сообщения(команды) клиенту со списком объектов(файлов и папок) в
+//        // заданной директории клиента в сетевом хранилище
+//        sendItemsList(storageDirItem, command);
+        //отправляем объект сообщения(команды) клиенту со списком объектов(файлов и папок) в
         // заданной директории клиента в сетевом хранилище
-//        sendFileObjectsList(storageDir, fileObject.getParent(), command);//FIXME
+        sendItemsList(fileMessage.getStorageDirectoryItem(), command);
     }
 
     /**

@@ -88,9 +88,9 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             // всего большого файла(по фрагментно) в облачное хранилище
             case Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_OK:
             //обрабатываем полученный от сервера ответ об успешном переименовании файла или папки в облачном хранилище
-            case Commands.SERVER_RESPONSE_RENAME_FILE_OBJECT_OK:
+            case Commands.SERVER_RESPONSE_RENAME_ITEM_OK:
             //обрабатываем полученный от сервера ответ об успешном удалении файла или папки в облачном хранилище
-            case Commands.SERVER_RESPONSE_DELETE_FILE_OBJECT_OK:
+            case Commands.SERVER_RESPONSE_DELETE_ITEM_OK:
                 //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
                 updateStorageItemListInGUI(commandMessage);
                 break;

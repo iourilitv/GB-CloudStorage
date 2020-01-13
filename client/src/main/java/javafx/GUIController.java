@@ -312,8 +312,11 @@ public class GUIController implements Initializable {
             } else if(listView.equals(storageItemListView)){
                 //отправляем на сервер запрос на переименования файлового объекта в заданной директории
                 //пользователя в сетевом хранилище
-                storageClient.demandRenameItem(storageCurrentDirItem.getItemPathname(),
-                        origin.getItemName(), newName);
+//                storageClient.demandRenameItem(storageCurrentDirItem.getItemPathname(),
+//                        origin.getItemName(), newName);
+//                storageClient.demandRenameItem(origin, newName);
+                storageClient.demandRenameItem(storageCurrentDirItem, origin, newName);
+
             }
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
@@ -378,8 +381,11 @@ public class GUIController implements Initializable {
             } else if(listView.equals(storageItemListView)){
                 //отправляем на сервер запрос на получение списка элементов заданной директории
                 //пользователя в сетевом хранилище
-                storageClient.demandDeleteItem(storageCurrentDirItem.getItemPathname(),
-                        item.getItemName());
+//                storageClient.demandDeleteItem(storageCurrentDirItem.getItemPathname(),
+//                        item.getItemName());
+//                storageClient.demandDeleteItem(item);
+                storageClient.demandDeleteItem(storageCurrentDirItem, item);
+
             }
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();

@@ -3,6 +3,7 @@ package utils;
 import io.netty.channel.ChannelHandlerContext;
 import netty.NettyServer;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -63,6 +64,37 @@ public class CloudStorageServer {
      */
     public Item createStorageDirectoryItem(String storageDirPathname, Path userStorageRoot) {
         return itemUtils.createDirectoryItem(storageDirPathname, storageDefaultDirItem, userStorageRoot);
+    }
+
+    /**
+     * Метод переименовывает объект элемента списка в серверном хранилище.
+     * @param origin - текущий объект элемента списка в серверном хранилище
+     * @param newName - новое имя элемента
+     * @return - результат переименования
+     */
+    public boolean renameStorageItem(Item origin, String newName, Path userStorageRoot) {
+        //инициируем объект пути к исходному файловому объекту
+        Path originPath = itemUtils.getRealPath(origin.getItemPathname(), userStorageRoot);
+        //инициируем файловый объект для объекта списка в клиенте
+        File originFileObject = new File(originPath.toString());
+        //инициируем объект пути к новому файловому объекту
+        Path newPath = Paths.get(originFileObject.getParent(), newName);
+        //инициируем файловый объект для нового файлового объекта
+        File newFileObject = new File(newPath.toString());
+        //возвращаем результат переименования файлового объекта
+        return originFileObject.renameTo(newFileObject);
+    }
+
+    /**
+     * Метод удаляет объект элемента списка (файл или папку) в текущей директории в серверном хранилище.
+     * @param item - объект списка в серверном хранилище
+     * @return - результат удаления
+     */
+    public boolean deleteClientItem(Item item, Path userStorageRoot) {
+        //инициируем файловый объект для объекта списка в клиенте
+        File fileObject = new File(itemUtils.getRealPath(item.getItemPathname(), userStorageRoot).toString());
+        //вызываем метод удаления папки или файла
+        return fileUtils.deleteFileObject(fileObject);
     }
 
     public Path getSTORAGE_ROOT_PATH() {

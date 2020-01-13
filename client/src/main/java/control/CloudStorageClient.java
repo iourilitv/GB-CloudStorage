@@ -266,7 +266,7 @@ public class CloudStorageClient {
     }
 
     /**
-     * Метод переименовывает объект элемента списка.
+     * Метод переименовывает объект элемента списка на клиенте.
      * @param origin - текущий объект элемента списка
      * @param newName - новое имя элемента
      * @return - результат переименования
@@ -284,25 +284,35 @@ public class CloudStorageClient {
         return originFileObject.renameTo(newFileObject);
     }
 
-    /**
-     * Метод отправляет на сервер запрос на переименовании файла или папки в облачном хранилище
-     * @param directory - заданная директория в облачном хранилище
-     * @param itemName - объект элемента списка
-     */
-    public void demandRenameItem(String directory, String itemName, String newName) {
-        //инициируем объект файлового сообщения
-        FileMessage fileMessage = new FileMessage(directory, itemName);
-        //записываем в сообщение новое имя(вынужденно, т.к. такой конструктор уже занят)
-        fileMessage.setNewName(newName);
+//    /**
+//     * Метод отправляет на сервер запрос на переименовании файла или папки в облачном хранилище
+//     * @param directory - заданная директория в облачном хранилище
+//     * @param itemName - объект элемента списка
+//     */
+//    public void demandRenameItem(String directory, String itemName, String newName) {
+//        //инициируем объект файлового сообщения
+//        FileMessage fileMessage = new FileMessage(directory, itemName);
+//        //записываем в сообщение новое имя(вынужденно, т.к. такой конструктор уже занят)
+//        fileMessage.setNewName(newName);
+//        //отправляем на сервер объект сообщения(команды)
+//        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_RENAME_ITEM,
+//                fileMessage));
+//    }
+//    public void demandRenameItem(Item storageOriginItem, String newName) {
+//        //отправляем на сервер объект сообщения(команды)
+//        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_RENAME_ITEM,
+//                new FileMessage(storageOriginItem, newName)));
+//    }
+    public void demandRenameItem(Item storageDirectoryItem, Item storageOriginItem, String newName) {
         //отправляем на сервер объект сообщения(команды)
-        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_RENAME_FILE_OBJECT,
-                fileMessage));
+        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_RENAME_ITEM,
+                new FileMessage(storageDirectoryItem, storageOriginItem, newName)));
     }
 
     /**
      * Метод удаляет файл или папку в текущей директории на клиенте
      * @param item - объект списка в клиенте
-     * @return - результат переименования
+     * @return - результат удаления
      */
     public boolean deleteClientItem(Item item) {
         //инициируем файловый объект для объекта списка в клиенте
@@ -311,17 +321,27 @@ public class CloudStorageClient {
         return fileUtils.deleteFileObject(fileObject);
     }
 
-    /**
-     * Метод отправляет на сервер запрос на удаление файла или папки в облачном хранилище
-     * @param directory - заданная директория в облачном хранилище
-     * @param itemName - объект элемента списка
-     */
-    public void demandDeleteItem(String directory, String itemName) {
-        //инициируем объект файлового сообщения
-        FileMessage fileMessage = new FileMessage(directory, itemName);
+//    /**
+//     * Метод отправляет на сервер запрос на удаление файла или папки в облачном хранилище
+//     * @param directory - заданная директория в облачном хранилище
+//     * @param itemName - объект элемента списка
+//     */
+//    public void demandDeleteItem(String directory, String itemName) {
+//        //инициируем объект файлового сообщения
+//        FileMessage fileMessage = new FileMessage(directory, itemName);
+//        //отправляем на сервер объект сообщения(команды)
+//        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_DELETE_FILE_OBJECT,
+//                fileMessage));
+//    }
+//    public void demandDeleteItem(Item storageItem) {
+//        //отправляем на сервер объект сообщения(команды)
+//        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_DELETE_ITEM,
+//                new FileMessage(storageItem)));
+//    }
+    public void demandDeleteItem(Item storageDirectoryItem, Item item) {
         //отправляем на сервер объект сообщения(команды)
-        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_DELETE_FILE_OBJECT,
-                fileMessage));
+        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_DELETE_ITEM,
+                new FileMessage(storageDirectoryItem, item)));
     }
 
     /**
