@@ -15,16 +15,16 @@ public class Commands {
     //ответ сервера, что авторизация прошла успешно
     public static final int SERVER_RESPONSE_AUTH_ERROR = 911209;
 
-    //запрос на сервер загрузить(сохранить) файл
-    public static final int REQUEST_SERVER_FILE_UPLOAD = 101101;
-    //ответ клиента - подтверждение успешного получения обновленного списка, файлов в облачном хранилище
-    public static final int CLIENT_RESPONSE_FILE_UPLOAD_OK = 101102;
-    //ответ клиента - сообщение об ошибке получения обновленного списка, файлов в облачном хранилище
-    public static final int CLIENT_RESPONSE_FILE_UPLOAD_ERROR = 101109;
-    //ответ сервера, что файл успешно загружен(сохранен)
-    public static final int SERVER_RESPONSE_FILE_UPLOAD_OK = 101202;
-    //ответ сервера, что при загрузке(сохранении) файла произошла ошибка
-    public static final int SERVER_RESPONSE_FILE_UPLOAD_ERROR = 101209;
+    //запрос на сервер загрузить(сохранить) объект элемента списка
+    public static final int REQUEST_SERVER_UPLOAD_ITEM = 101101;
+//    //ответ клиента - подтверждение успешного получения обновленного списка объектов в облачном хранилище
+//    public static final int CLIENT_RESPONSE_UPLOAD_ITEM_OK = 101102;
+//    //ответ клиента - сообщение об ошибке получения обновленного списка объектов в облачном хранилище
+//    public static final int CLIENT_RESPONSE_FILE_UPLOAD_ERROR = 101109;
+    //ответ сервера, что объект успешно загружен(сохранен)
+    public static final int SERVER_RESPONSE_UPLOAD_ITEM_OK = 101202;
+    //ответ сервера, что при загрузке(сохранении) объекта произошла ошибка
+    public static final int SERVER_RESPONSE_UPLOAD_ITEM_ERROR = 101209;
 
     //запрос на сервер скачать файл
     public static final int REQUEST_SERVER_FILE_DOWNLOAD = 202101;

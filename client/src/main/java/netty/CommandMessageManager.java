@@ -83,7 +83,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             case Commands.SERVER_RESPONSE_ITEMS_LIST_OK:
             //обрабатываем полученное от сервера подтверждение успешной загрузке(сохранении)
             // файла в облачное хранилище
-            case Commands.SERVER_RESPONSE_FILE_UPLOAD_OK:
+            case Commands.SERVER_RESPONSE_UPLOAD_ITEM_OK:
             //обрабатываем полученное от сервера подтверждение успешной загрузке(сохранении)
             // всего большого файла(по фрагментно) в облачное хранилище
             case Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_OK:
@@ -101,7 +101,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке загрузки(сохранения)
             // файла в облачное хранилище
-            case Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR:
+            case Commands.SERVER_RESPONSE_UPLOAD_ITEM_ERROR:
                 //вызываем метод обработки ответа сервера
                 onUploadFileErrorServerResponse(commandMessage);
                 break;

@@ -1,6 +1,7 @@
 package utils;
 
 import io.netty.channel.ChannelHandlerContext;
+import messages.FileMessage;
 import netty.NettyServer;
 
 import java.io.File;
@@ -64,6 +65,14 @@ public class CloudStorageServer {
      */
     public Item createStorageDirectoryItem(String storageDirPathname, Path userStorageRoot) {
         return itemUtils.createDirectoryItem(storageDirPathname, storageDefaultDirItem, userStorageRoot);
+    }
+
+    public boolean uploadItem(Item storageToDirItem, Item item, byte[] data, long fileSize, Path userStorageRoot){
+        //инициируем новый объект пути к объекту
+        Path realNewToItemPath = Paths.get(
+                itemUtils.getRealPath(storageToDirItem.getItemPathname(), userStorageRoot).toString(),
+                item.getItemName());
+        return fileUtils.saveFile(realNewToItemPath, data, fileSize);
     }
 
     /**

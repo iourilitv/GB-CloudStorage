@@ -21,7 +21,9 @@ public class FileMessage extends AbstractMessage {
     private long fileSize;
     //объявляем байтовый массив с данными из файла
     private byte[] data;
-    //принимаем объект родительской директории
+    //принимаем объект родительской директории элемента в клиенте
+    private Item clientDirectoryItem;
+    //принимаем объект родительской директории элемента в сетевом хранилище
     private Item storageDirectoryItem;
     //принимаем объект элемента
     private Item item;
@@ -41,16 +43,29 @@ public class FileMessage extends AbstractMessage {
         this.newName = newName;
     }
 
+    //downloadEntireFile
     public FileMessage(String fromDir, String toDir, String filename) {
         this.fromDir = fromDir;
         this.toDir = toDir;
         this.filename = filename;
     }
 
-    public FileMessage(String fromDir, String toDir, String filename, long fileSize) {
-        this.fromDir = fromDir;
-        this.toDir = toDir;
-        this.filename = filename;
+//    public FileMessage(String fromDir, String toDir, String filename, long fileSize) {
+//        this.fromDir = fromDir;
+//        this.toDir = toDir;
+//        this.filename = filename;
+//        this.fileSize = fileSize;
+//    }
+    //uploadEntireFile
+//    public FileMessage(Item clientDirectoryItem, Item storageDirectoryItem, Item item, long fileSize) {
+//        this.clientDirectoryItem = clientDirectoryItem;
+//        this.storageDirectoryItem = storageDirectoryItem;
+//        this.item = item;
+//        this.fileSize = fileSize;
+//    }
+    public FileMessage(Item storageDirectoryItem, Item item, long fileSize) {
+        this.storageDirectoryItem = storageDirectoryItem;
+        this.item = item;
         this.fileSize = fileSize;
     }
 
@@ -74,6 +89,10 @@ public class FileMessage extends AbstractMessage {
 
     public String getFilename() {
         return filename;
+    }
+
+    public Item getClientDirectoryItem() {
+        return clientDirectoryItem;
     }
 
     public Item getStorageDirectoryItem() {

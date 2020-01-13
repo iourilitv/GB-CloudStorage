@@ -99,27 +99,59 @@ public class CloudStorageClient {
                 new DirectoryMessage(directoryPathname)));
     }
 
-    /**
-     * Метод отправляет на сервер запрос на загрузку файла в облачное хранилище
-     * @param clientFromDir - директория источник на клиенте
-     * @param storageToDir - директория назначения в облачном хранилище
-     * @param clientItem - объект элемента списка(файла) на клиенте
-     * @throws IOException -  - исключение
-     */
-    public void demandUploadFile(String clientFromDir, String storageToDir, Item clientItem) throws IOException {
+//    /**
+//     * Метод отправляет на сервер запрос на загрузку файла в облачное хранилище
+//     * @param clientFromDir - директория источник на клиенте
+//     * @param storageToDir - директория назначения в облачном хранилище
+//     * @param clientItem - объект элемента списка(файла) на клиенте
+//     * @throws IOException -  - исключение
+//     */
+//    public void demandUploadFile(String clientFromDir, String storageToDir, Item clientItem) throws IOException {
+//        //TODO temporarily
+//        printMsg("***CloudStorageClient.uploadFile() - has started***");
+//
+//        //TODO temporarily
+////        System.out.println("CloudStorageClient.uploadFile - fromDir: " + fromDir +
+////                ", toDir: " + toDir + ", filename: " + filename);
+//
+//        Path realClientItemPath = itemUtils.getRealPath(clientItem.getItemPathname(), CLIENT_ROOT_PATH);
+//
+//        //вычисляем размер файла
+////        long fileSize = Files.size(Paths.get(fromDir, filename));
+//        long fileSize = Files.size(realClientItemPath);
+//
+//        //если размер файла больше константы размера фрагмента
+//        if(fileSize > FileFragmentMessage.CONST_FRAG_SIZE){
+//            //запускаем метод отправки файла по частям
+////            uploadFileByFrags(fromDir, toDir, filename, fileSize);//FIXME
+//
+//            //если файл меньше
+//        } else {
+//            //запускаем метод отправки целого файла
+//            uploadEntireFile(clientFromDir, storageToDir, clientItem, fileSize);
+//        }
+//
+//        //TODO temporarily
+//        printMsg("***CloudStorageClient.uploadFile() - has finished***");
+//    }
+    public void demandUploadItem(Item storageToDirItem, Item clientItem) throws IOException {
         //TODO temporarily
-        printMsg("***CloudStorageClient.uploadFile() - has started***");
+        printMsg("***CloudStorageClient.demandUploadItem() - has started***");
+
+        //если объект элемента - это директория
+        if(clientItem.isDirectory()){
+            //FIXME что-то делаем, а пока выходим
+            return;
+        }
 
         //TODO temporarily
 //        System.out.println("CloudStorageClient.uploadFile - fromDir: " + fromDir +
 //                ", toDir: " + toDir + ", filename: " + filename);
 
+        //инициируем объект реального пути к объекту элемента в клиенте
         Path realClientItemPath = itemUtils.getRealPath(clientItem.getItemPathname(), CLIENT_ROOT_PATH);
-
         //вычисляем размер файла
-//        long fileSize = Files.size(Paths.get(fromDir, filename));
         long fileSize = Files.size(realClientItemPath);
-
         //если размер файла больше константы размера фрагмента
         if(fileSize > FileFragmentMessage.CONST_FRAG_SIZE){
             //запускаем метод отправки файла по частям
@@ -128,11 +160,12 @@ public class CloudStorageClient {
             //если файл меньше
         } else {
             //запускаем метод отправки целого файла
-            uploadEntireFile(clientFromDir, storageToDir, clientItem, fileSize);
+//            uploadEntireFile(clientFromDirItem, storageToDirItem, clientItem, fileSize);
+            uploadEntireFile(storageToDirItem, clientItem, fileSize);
         }
 
         //TODO temporarily
-        printMsg("***CloudStorageClient.uploadFile() - has finished***");
+        printMsg("***CloudStorageClient.demandUploadItem() - has finished***");
     }
 
     /**
@@ -211,31 +244,58 @@ public class CloudStorageClient {
         System.out.println("CloudStorageClient.uploadFileByFrags() - duration(mc): " + finish);
     }
 
-    /**
-     * Метод отправки целого файла размером менее константы максмального размера фрагмента файла
-     * @param clientFromDir - директория(относительно корня) клиента, где хранится файл источник
-     * @param storageToDir - директория(относительно корня) в сетевом хранилище
-     * @param clientItem - объект элемента списка(файла) на клиенте
-     * @param fileSize - размер файла в байтах
-     */
-    private void uploadEntireFile(String clientFromDir, String storageToDir,
-                                  Item clientItem, long fileSize) {
+//    /**
+//     * Метод отправки целого файла размером менее константы максмального размера фрагмента файла
+//     * @param clientFromDir - директория(относительно корня) клиента, где хранится файл источник
+//     * @param storageToDir - директория(относительно корня) в сетевом хранилище
+//     * @param clientItem - объект элемента списка(файла) на клиенте
+//     * @param fileSize - размер файла в байтах
+//     */
+//    private void uploadEntireFile(String clientFromDir, String storageToDir,
+//                                  Item clientItem, long fileSize) {
+//        //инициируем объект файлового сообщения
+//        FileMessage fileMessage = new FileMessage(clientFromDir, storageToDir,
+//                clientItem.getItemName(), fileSize);
+//
+//        //TODO temporarily
+//        System.out.println("CloudStorageClient.uploadEntireFile() - fileUtils: " + fileUtils +
+//                ", fromDir: " + clientFromDir +
+//                ", toDir: " + storageToDir +
+//                ", fileMessage: " + fileMessage);
+//
+//        //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
+//        //FIXME Разобраться с абсолютными папкими клиента
+//        //если скачивание прошло удачно
+//        if(fileUtils.readFile(clientItem.getItemPathname(), fileMessage)){
+//            //отправляем на сервер объект сообщения(команды)
+//            ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
+//                    fileMessage));
+//            //если что-то пошло не так
+//        } else {
+//            //выводим сообщение
+//            printMsg("[client]" + fileUtils.getMsg());
+//        }
+//    }
+    private void uploadEntireFile(Item storageToDirItem, Item clientItem, long fileSize) {
         //инициируем объект файлового сообщения
-        FileMessage fileMessage = new FileMessage(clientFromDir, storageToDir,
-                clientItem.getItemName(), fileSize);
+//        FileMessage fileMessage = new FileMessage(clientFromDirItem, storageToDirItem,
+//                clientItem, fileSize);
+        FileMessage fileMessage = new FileMessage(storageToDirItem,
+                clientItem, fileSize);
 
-        //TODO temporarily
-        System.out.println("CloudStorageClient.uploadEntireFile() - fileUtils: " + fileUtils +
-                ", fromDir: " + clientFromDir +
-                ", toDir: " + storageToDir +
-                ", fileMessage: " + fileMessage);
+//        //TODO temporarily
+//        System.out.println("CloudStorageClient.uploadEntireFile() - fileUtils: " + fileUtils +
+//                ", fromDir: " + clientFromDir +
+//                ", toDir: " + storageToDir +
+//                ", fileMessage: " + fileMessage);
 
         //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
         //FIXME Разобраться с абсолютными папкими клиента
         //если скачивание прошло удачно
-        if(fileUtils.readFile(clientItem.getItemPathname(), fileMessage)){
+        if(fileUtils.readFile(itemUtils.getRealPath(clientItem.getItemPathname(), CLIENT_ROOT_PATH),
+                fileMessage)){
             //отправляем на сервер объект сообщения(команды)
-            ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
+            ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_UPLOAD_ITEM,
                     fileMessage));
             //если что-то пошло не так
         } else {

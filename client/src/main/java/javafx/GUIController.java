@@ -104,18 +104,20 @@ public class GUIController implements Initializable {
             //записываем в метку относительный строковый путь текущей директории
             clientDirLabel.setText(">>" + clientCurrentDirItem.getItemPathname());
             //обновляем заданный список объектов элемента
-            updateListView(clientItemListView, clientItemsList(clientCurrentDirItem));
+//            updateListView(clientItemListView, clientItemsList(clientCurrentDirItem));
+            updateListView(clientItemListView, storageClient.clientItemsList(clientCurrentDirItem));
+
         });
     }
 
-    /**
-     * Метод-прокладка возвращает массив объектов элементов в заданной директории в клиенте.
-     * @param clientCurrentDirItem - объект заданной директории в клиенте
-     * @return - массив объектов элементов в заданной директории в клиенте
-     */
-    private Item[] clientItemsList(Item clientCurrentDirItem) {
-        return storageClient.clientItemsList(clientCurrentDirItem);
-    }
+//    /**
+//     * Метод-прокладка возвращает массив объектов элементов в заданной директории в клиенте.
+//     * @param clientCurrentDirItem - объект заданной директории в клиенте
+//     * @return - массив объектов элементов в заданной директории в клиенте
+//     */
+//    private Item[] clientItemsList(Item clientCurrentDirItem) {
+//        return storageClient.clientItemsList(clientCurrentDirItem);
+//    }
 
     /**
      * Метод выводит в GUI список файлов и папок в корневой пользовательской директории
@@ -248,8 +250,9 @@ public class GUIController implements Initializable {
             try {
                 //отправляем на сервер запрос на загрузку файла в облачное хранилище
 //                storageClient.demandUploadFile(item.getParentName(), currentStorageDir, item.getItemName());
-                storageClient.demandUploadFile(clientCurrentDirItem.getItemPathname(),
-                        storageCurrentDirItem.getItemPathname(), item);
+//                storageClient.demandUploadFile(clientCurrentDirItem.getItemPathname(),
+//                        storageCurrentDirItem.getItemPathname(), item);
+                storageClient.demandUploadItem(storageCurrentDirItem, item);
 
             } catch (IOException e) {
                 e.printStackTrace();

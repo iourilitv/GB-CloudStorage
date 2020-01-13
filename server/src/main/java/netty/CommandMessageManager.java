@@ -57,24 +57,26 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 onDirectoryItemsListClientRequest(commandMessage);
                 break;
             //обрабатываем полученный от клиента запрос на загрузку(сохранение) файла в облачное хранилище
-            case Commands.REQUEST_SERVER_FILE_UPLOAD:
+            case Commands.REQUEST_SERVER_UPLOAD_ITEM:
                 //вызываем метод обработки запроса от клиента на загрузку целого файла клиента
                 // в директорию в сетевом хранилище.
-                onUploadFileClientRequest(commandMessage);
+                onUploadItemClientRequest(commandMessage);
                 break;
-            //обрабатываем полученное от клиента подтверждение успешного получения обновленного
-            // списка файлов клиента в облачном хранилище
-            case Commands.CLIENT_RESPONSE_FILE_UPLOAD_OK:
-                //вызываем метод обработки ответа клиента
-                onUploadFileOkClientResponse(commandMessage);
-                break;
-            //обрабатываем полученное от клиента сообщение об ошибке получения обновленного
-            // списка файлов клиента в облачном хранилище
-            case Commands.CLIENT_RESPONSE_FILE_UPLOAD_ERROR:
-                //вызываем метод обработки ответа клиента
-                onUploadFileErrorClientResponse(commandMessage);
-                break;
+
+//            //обрабатываем полученное от клиента подтверждение успешного получения обновленного
+//            // списка файлов клиента в облачном хранилище
+//            case Commands.CLIENT_RESPONSE_UPLOAD_ITEM_OK:
+//                //вызываем метод обработки ответа клиента
+//                onUploadFileOkClientResponse(commandMessage);
+//                break;
+//            //обрабатываем полученное от клиента сообщение об ошибке получения обновленного
+//            // списка файлов клиента в облачном хранилище
+//            case Commands.CLIENT_RESPONSE_FILE_UPLOAD_ERROR:
+//                //вызываем метод обработки ответа клиента
+//                onUploadFileErrorClientResponse(commandMessage);
+//                break;
             //обрабатываем полученный от клиента запрос на скачивание целого файла из облачного хранилища
+
             case Commands.REQUEST_SERVER_FILE_DOWNLOAD:
                 //вызываем метод обработки запроса от клиента на скачивание целого файла клиента
                 // из директории в сетевом хранилище
@@ -135,32 +137,51 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         sendItemsList(storageDirItem, Commands.SERVER_RESPONSE_ITEMS_LIST_OK);
     }
 
-    /**
-     * Метод обработки запроса от клиента на загрузку целого файла клиента в директорию в
-     * сетевом хранилище.
-     * @param commandMessage - объект сообщения(команды)
-     */
-    private void onUploadFileClientRequest(CommandMessage commandMessage) {
+//    /**
+//     * Метод обработки запроса от клиента на загрузку целого файла клиента в директорию в
+//     * сетевом хранилище.
+//     * @param commandMessage - объект сообщения(команды)
+//     */
+//    private void onUploadFileClientRequest(CommandMessage commandMessage) {
+//        //вынимаем объект файлового сообщения из объекта сообщения(команды)
+//        FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
+//        //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
+//        String storageDir = fileMessage.getToDir();
+//        //собираем целевую директорию пользователя в сетевом хранилище
+//        String realStorageDir = realStorageDirectory(storageDir);
+//        //если сохранение прошло удачно
+//        if(fileUtils.saveFile(realStorageDir, fileMessage)){
+//            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+//            command = Commands.SERVER_RESPONSE_UPLOAD_ITEM_OK;
+//        //если что-то пошло не так
+//        } else {
+//            //выводим сообщение
+//            printMsg("[server]" + fileUtils.getMsg());
+//            //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+//            command = Commands.SERVER_RESPONSE_UPLOAD_ITEM_ERROR;
+//        }
+//        //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
+//        // заданной директории клиента в сетевом хранилище
+////        sendFileObjectsList(storageDir, realStorageDir, command);//FIXME
+//    }
+    private void onUploadItemClientRequest(CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
-        //вынимаем заданную директорию сетевого хранилища из объекта сообщения(команды)
-        String storageDir = fileMessage.getToDir();
-        //собираем целевую директорию пользователя в сетевом хранилище
-        String realStorageDir = realStorageDirectory(storageDir);
         //если сохранение прошло удачно
-        if(fileUtils.saveFile(realStorageDir, fileMessage)){
+        if(storageServer.uploadItem(fileMessage.getStorageDirectoryItem(), fileMessage.getItem(),
+                fileMessage.getData(), fileMessage.getFileSize(), userStorageRoot)){
             //отправляем сообщение на сервер: подтверждение, что все прошло успешно
-            command = Commands.SERVER_RESPONSE_FILE_UPLOAD_OK;
-        //если что-то пошло не так
+            command = Commands.SERVER_RESPONSE_UPLOAD_ITEM_OK;
+            //если что-то пошло не так
         } else {
             //выводим сообщение
             printMsg("[server]" + fileUtils.getMsg());
             //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
-            command = Commands.SERVER_RESPONSE_FILE_UPLOAD_ERROR;
+            command = Commands.SERVER_RESPONSE_UPLOAD_ITEM_ERROR;
         }
-        //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
+        //отправляем объект сообщения(команды) клиенту со списком объектов(файлов и папок) в
         // заданной директории клиента в сетевом хранилище
-//        sendFileObjectsList(storageDir, realStorageDir, command);//FIXME
+        sendItemsList(fileMessage.getStorageDirectoryItem(), command);
     }
 
     /**
@@ -375,21 +396,21 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 //        ctx.writeAndFlush(new CommandMessage(command, fileMessage));
 //    }
     private void downloadEntireFile(String fromDir, String clientDir, String filename){
-        //создаем объект файлового сообщения
-        FileMessage fileMessage = new FileMessage(fromDir, clientDir, filename);
-        //если скачивание прошло удачно
-        if(fileUtils.readFile(fromDir, fileMessage)){//TODO заменить fromDir на itemPathname
-            //инициируем переменную типа команды - ответ cо скачанным файлом
-            command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK;
-            //если что-то пошло не так
-        } else {
-            //выводим сообщение
-            printMsg("[server]" + fileUtils.getMsg());
-            //инициируем переменную типа команды - ответ об ошибке скачивания
-            command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_ERROR;
-        }
-        //отправляем объект сообщения(команды) клиенту
-        ctx.writeAndFlush(new CommandMessage(command, fileMessage));
+//        //создаем объект файлового сообщения
+//        FileMessage fileMessage = new FileMessage(fromDir, clientDir, filename);
+//        //если скачивание прошло удачно
+//        if(fileUtils.readFile(fromDir, fileMessage)){//TODO заменить fromDir на itemPathname
+//            //инициируем переменную типа команды - ответ cо скачанным файлом
+//            command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_OK;
+//            //если что-то пошло не так
+//        } else {
+//            //выводим сообщение
+//            printMsg("[server]" + fileUtils.getMsg());
+//            //инициируем переменную типа команды - ответ об ошибке скачивания
+//            command = Commands.SERVER_RESPONSE_FILE_DOWNLOAD_ERROR;
+//        }
+//        //отправляем объект сообщения(команды) клиенту
+//        ctx.writeAndFlush(new CommandMessage(command, fileMessage));
     }
 
     /**

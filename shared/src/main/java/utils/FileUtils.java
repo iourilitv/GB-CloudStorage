@@ -22,21 +22,38 @@ public class FileUtils {
     //инициируем строковую переменную для вывода сообщений
     private String msg;
 
-    /**
-     * Метод сохраняет полученный от клиента целый файл в заданную директорию
-     * @param toDir - заданная директория(папка) клиента в сетевом хранилище
-     * @param fileMessage - объект файлового сообщения с данными файла
-     * @return true, если файл сохранен без ошибок
-     */
-    public boolean saveFile(String toDir, FileMessage fileMessage) {
+//    /**
+//     * Метод сохраняет полученный от клиента целый файл в заданную директорию
+//     * @param toDir - заданная директория(папка) клиента в сетевом хранилище
+//     * @param fileMessage - объект файлового сообщения с данными файла
+//     * @return true, если файл сохранен без ошибок
+//     */
+//    public boolean saveFile(String toDir, FileMessage fileMessage) {
+//        try {
+//            //инициируем объект пути к файлу
+//            Path path = Paths.get(toDir, fileMessage.getFilename());
+//            //создаем новый файл и записываем в него данные из объекта файлового сообщения
+//            Files.write(path, fileMessage.getData(), StandardOpenOption.CREATE);
+//            //если длина сохраненного файла отличается от длины принятого файла
+//            //проверяем сохраненный файл по контрольной сумме//FIXME
+//            if(Files.size(path) != fileMessage.getFileSize()){
+//                msg = "FileUtils.saveFile() - Wrong the saved file size!";
+//                return false;
+//            }
+//        } catch (IOException e) {
+//            msg = "FileUtils.saveFile() - Something wrong with the directory or the file!";
+//            e.printStackTrace();
+//            return false;
+//        }
+//        return true;
+//    }
+    public boolean saveFile(Path realItemPath, byte[] data, long fileSize) {
         try {
-            //инициируем объект пути к файлу
-            Path path = Paths.get(toDir, fileMessage.getFilename());
             //создаем новый файл и записываем в него данные из объекта файлового сообщения
-            Files.write(path, fileMessage.getData(), StandardOpenOption.CREATE);
+            Files.write(realItemPath, data, StandardOpenOption.CREATE);
             //если длина сохраненного файла отличается от длины принятого файла
             //проверяем сохраненный файл по контрольной сумме//FIXME
-            if(Files.size(path) != fileMessage.getFileSize()){
+            if(Files.size(realItemPath) != fileSize){
                 msg = "FileUtils.saveFile() - Wrong the saved file size!";
                 return false;
             }
@@ -75,14 +92,15 @@ public class FileUtils {
 //        }
 //        return true;
 //    }
-    public boolean readFile(String itemPathname, FileMessage fileMessage) {
+    public boolean readFile(Path realItemPath, FileMessage fileMessage) {
         try {
+
+            System.out.println("FileUtils.readFile() - realItemPath.toString(): " + realItemPath.toString());
+
             //считываем данные из файла и записываем их в объект файлового сообщения
-            fileMessage.readFileData(itemPathname);
-            //инициируем объект пути к файлу
-            Path path = Paths.get(itemPathname);
+            fileMessage.readFileData(realItemPath.toString());
             //записываем размер файла для скачивания
-            fileMessage.setFileSize(Files.size(path));
+            fileMessage.setFileSize(Files.size(realItemPath));
             //если длина скачанного файла отличается от длины исходного файла в хранилище
             if(fileMessage.getFileSize() != fileMessage.getData().length){
                 msg = "FileUtils.downloadFile() - Wrong the read file size!";
