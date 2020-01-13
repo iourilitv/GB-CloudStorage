@@ -103,7 +103,7 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
             //TODO проверить как будут влиять несколько клиентов друг на друга
             //добавляем логин пользователя(имя его папки в сетевом хранилище)
             // к корневой директории клиента по умолчанию
-            Path userStorageRoot = storageServer.getStorageRoot();
+            Path userStorageRoot = storageServer.getSTORAGE_ROOT_PATH();
             userStorageRoot = userStorageRoot.resolve(authMessage.getLogin());
             //пробрасываем дальше объект сообщения об успешной авторизации клиента
             ctx.fireChannelRead(new CommandMessage(command, userStorageRoot.toString()));

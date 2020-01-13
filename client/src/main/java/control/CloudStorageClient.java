@@ -36,7 +36,7 @@ public class CloudStorageClient {
 
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
-    //объявляем объект обработчика операций с объектами элементов списков в GUI
+    //принимаем объект обработчика операций с объектами элементов списков в GUI
     private final ItemUtils itemUtils = ItemUtils.getOwnObject();
 
     //FIXME temporarily - будет получать из GUI
@@ -89,42 +89,76 @@ public class CloudStorageClient {
                 new AuthMessage(login, password)));
     }
 
-    /**
-     * Метод отправляет на сервер запрос на получение списка элементов заданной директории
-     * пользователя в сетевом хранилище
-     * @param directory - заданная директория пользователя в сетевом хранилище
-     */
-    public void demandDirectoryItemList(String directory) {
+//    /**
+//     * Метод отправляет на сервер запрос на получение списка элементов заданной директории
+//     * пользователя в сетевом хранилище
+//     * @param directoryPathname - строка заданной относительной директории пользователя
+//     * в сетевом хранилище
+//     */
+//    public void demandDirectoryItemList(String directoryPathname) {
+//        //отправляем на сервер объект сообщения(команды)
+//        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_OBJECTS_LIST,
+//                new DirectoryMessage(directoryPathname)));
+//    }
+    public void demandDirectoryItemList(String directoryPathname) {
         //отправляем на сервер объект сообщения(команды)
-        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_OBJECTS_LIST,
-                new DirectoryMessage(directory)));
+        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_ITEMS_LIST,
+                new DirectoryMessage(directoryPathname)));
     }
 
-    /**
-     * Метод отправляет на сервер запрос на загрузку файла в облачное хранилище
-     * @param fromDir - директория источник на клиенте
-     * @param toDir - директория назначения в облачном хранилище
-     * @param filename - имя файла
-     * @throws IOException - исключение
-     */
-    public void demandUploadFile(String fromDir, String toDir, String filename) throws IOException {
+//    /**
+//     * Метод отправляет на сервер запрос на загрузку файла в облачное хранилище
+//     * @param fromDir - директория источник на клиенте
+//     * @param toDir - директория назначения в облачном хранилище
+//     * @param filename - имя файла
+//     * @throws IOException - исключение
+//     */
+//    public void demandUploadFile(String fromDir, String toDir, String filename) throws IOException {
+//        //TODO temporarily
+//        printMsg("***CloudStorageClient.uploadFile() - has started***");
+//
+//        //TODO temporarily
+//        System.out.println("CloudStorageClient.uploadFile - fromDir: " + fromDir +
+//                ", toDir: " + toDir + ", filename: " + filename);
+//
+//        //вычисляем размер файла
+//        long fileSize = Files.size(Paths.get(fromDir, filename));
+//        //если размер файла больше константы размера фрагмента
+//        if(fileSize > FileFragmentMessage.CONST_FRAG_SIZE){
+//            //запускаем метод отправки файла по частям
+//            uploadFileByFrags(fromDir, toDir, filename, fileSize);
+//        //если файл меньше
+//        } else {
+//            //запускаем метод отправки целого файла
+//            uploadEntireFile(fromDir, toDir, filename, fileSize);
+//        }
+//
+//        //TODO temporarily
+//        printMsg("***CloudStorageClient.uploadFile() - has finished***");
+//    }
+    public void demandUploadFile(String clientFromDir, String storageToDir, Item clientItem) throws IOException {
         //TODO temporarily
         printMsg("***CloudStorageClient.uploadFile() - has started***");
 
         //TODO temporarily
-        System.out.println("CloudStorageClient.uploadFile - fromDir: " + fromDir +
-                ", toDir: " + toDir + ", filename: " + filename);
+//        System.out.println("CloudStorageClient.uploadFile - fromDir: " + fromDir +
+//                ", toDir: " + toDir + ", filename: " + filename);
+
+        Path realClientItemPath = itemUtils.getRealPath(clientItem.getItemPathname(), CLIENT_ROOT_PATH);
 
         //вычисляем размер файла
-        long fileSize = Files.size(Paths.get(fromDir, filename));
+//        long fileSize = Files.size(Paths.get(fromDir, filename));
+        long fileSize = Files.size(realClientItemPath);
+
         //если размер файла больше константы размера фрагмента
         if(fileSize > FileFragmentMessage.CONST_FRAG_SIZE){
             //запускаем метод отправки файла по частям
-            uploadFileByFrags(fromDir, toDir, filename, fileSize);
-        //если файл меньше
+//            uploadFileByFrags(fromDir, toDir, filename, fileSize);//FIXME
+
+            //если файл меньше
         } else {
             //запускаем метод отправки целого файла
-            uploadEntireFile(fromDir, toDir, filename, fileSize);
+            uploadEntireFile(clientFromDir, storageToDir, clientItem, fileSize);
         }
 
         //TODO temporarily
@@ -139,7 +173,8 @@ public class CloudStorageClient {
      * @param fullFileSize - размер целого файла в байтах
      * @throws IOException - исключение
      */
-    private void uploadFileByFrags(String fromDir, String toDir, String filename, long fullFileSize) throws IOException {
+    private void uploadFileByFrags(String fromDir, String toDir,
+                                   String filename, long fullFileSize) throws IOException {
         //TODO temporarily
         long start = System.currentTimeMillis();
 
@@ -206,31 +241,56 @@ public class CloudStorageClient {
         System.out.println("CloudStorageClient.uploadFileByFrags() - duration(mc): " + finish);
     }
 
-    /**
-     * Метод отправки целого файла размером менее константы максмального размера фрагмента файла
-     * @param fromDir - директория(относительно корня) клиента, где хранится файл источник
-     * @param toDir - директория(относительно корня) в сетевом хранилище
-     * @param filename - строковое имя файла
-     * @param fileSize - размер файла в байтах
-     */
-    private void uploadEntireFile(String fromDir, String toDir, String filename, long fileSize) {
+//    /**
+//     * Метод отправки целого файла размером менее константы максмального размера фрагмента файла
+//     * @param fromDir - директория(относительно корня) клиента, где хранится файл источник
+//     * @param toDir - директория(относительно корня) в сетевом хранилище
+//     * @param filename - строковое имя файла
+//     * @param fileSize - размер файла в байтах
+//     */
+//    private void uploadEntireFile(String fromDir, String toDir, String filename, long fileSize) {
+//        //инициируем объект файлового сообщения
+//        FileMessage fileMessage = new FileMessage(fromDir, toDir, filename, fileSize);
+//
+//        //TODO temporarily
+//        System.out.println("CloudStorageClient.uploadEntireFile() - fileUtils: " + fileUtils +
+//                ", fromDir: " + fromDir +
+//                ", toDir: " + toDir +
+//                ", fileMessage: " + fileMessage);
+//
+//        //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
+//        //FIXME Разобраться с абсолютными папкими клиента
+//        //если скачивание прошло удачно
+//        if(fileUtils.readFile(fromDir, fileMessage)){
+//            //отправляем на сервер объект сообщения(команды)
+//            ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
+//                    fileMessage));
+//        //если что-то пошло не так
+//        } else {
+//            //выводим сообщение
+//            printMsg("[client]" + fileUtils.getMsg());
+//        }
+//    }
+    private void uploadEntireFile(String clientFromDir, String storageToDir,
+                                  Item clientItem, long fileSize) {
         //инициируем объект файлового сообщения
-        FileMessage fileMessage = new FileMessage(fromDir, toDir, filename, fileSize);
+        FileMessage fileMessage = new FileMessage(clientFromDir, storageToDir,
+                clientItem.getItemName(), fileSize);
 
         //TODO temporarily
         System.out.println("CloudStorageClient.uploadEntireFile() - fileUtils: " + fileUtils +
-                ", fromDir: " + fromDir +
-                ", toDir: " + toDir +
+                ", fromDir: " + clientFromDir +
+                ", toDir: " + storageToDir +
                 ", fileMessage: " + fileMessage);
 
         //читаем файл и записываем данные в байтовый массив объекта файлового сообщения
         //FIXME Разобраться с абсолютными папкими клиента
         //если скачивание прошло удачно
-        if(fileUtils.readFile(fromDir, fileMessage)){
+        if(fileUtils.readFile(clientItem.getItemPathname(), fileMessage)){
             //отправляем на сервер объект сообщения(команды)
             ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_UPLOAD,
                     fileMessage));
-        //если что-то пошло не так
+            //если что-то пошло не так
         } else {
             //выводим сообщение
             printMsg("[client]" + fileUtils.getMsg());
@@ -280,11 +340,11 @@ public class CloudStorageClient {
     /**
      * Метод отправляет на сервер запрос на переименовании файла или папки в облачном хранилище
      * @param directory - заданная директория в облачном хранилище
-     * @param fileObjectName - файловый объект
+     * @param itemName - объект элемента списка
      */
-    public void demandRenameItem(String directory, String fileObjectName, String newName) {
+    public void demandRenameItem(String directory, String itemName, String newName) {
         //инициируем объект файлового сообщения
-        FileMessage fileMessage = new FileMessage(directory, fileObjectName);
+        FileMessage fileMessage = new FileMessage(directory, itemName);
         //записываем в сообщение новое имя(вынужденно, т.к. такой конструктор уже занят)
         fileMessage.setNewName(newName);
         //отправляем на сервер объект сообщения(команды)
@@ -307,11 +367,11 @@ public class CloudStorageClient {
     /**
      * Метод отправляет на сервер запрос на удаление файла или папки в облачном хранилище
      * @param directory - заданная директория в облачном хранилище
-     * @param fileObjectName - файловый объект
+     * @param itemName - объект элемента списка
      */
-    public void demandDeleteItem(String directory, String fileObjectName) {
+    public void demandDeleteItem(String directory, String itemName) {
         //инициируем объект файлового сообщения
-        FileMessage fileMessage = new FileMessage(directory, fileObjectName);
+        FileMessage fileMessage = new FileMessage(directory, itemName);
         //отправляем на сервер объект сообщения(команды)
         ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_DELETE_FILE_OBJECT,
                 fileMessage));

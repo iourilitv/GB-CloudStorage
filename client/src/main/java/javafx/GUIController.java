@@ -13,7 +13,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import utils.Item;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -39,19 +38,20 @@ public class GUIController implements Initializable {
     Label label;//TODO Зачем?
     //объявляем объект контроллера клиента облачного хранилища
     private CloudStorageClient storageClient;
+
     //инициируем константу строки названия директории по умолчанию относительно корневой директории
     // для списка в клиентской части GUI
     private final String CLIENT_DEFAULT_DIR = "";
     //инициируем константу строки названия корневой директории для списка в серверной части GUI
     private final String STORAGE_DEFAULT_DIR = "";
 
-    //получаем текущую папку списка файловых объектов в серверной части GUI
-    private String currentStorageDir;//TODO удалить?
+//    //получаем текущую папку списка файловых объектов в серверной части GUI
+//    private String currentStorageDir;//TODO удалить?
 
-    //объявляем объект директории по умолчанию в клиенте
-    private Item clientDefaultDirItem;
-    //объявляем объект текущей папки списка файловых объектов в клиентской части GUI
-    private Item clientCurrentDirItem;
+    //объявляем объекты директории по умолчанию в клиентской и серверной части GUI
+    private Item clientDefaultDirItem, storageDefaultDirItem;
+    //объявляем объекты текущей папки списка файловых объектов в клиентской и серверной части GUI
+    private Item clientCurrentDirItem, storageCurrentDirItem;
     //объявляем переменную введенного нового имени
     private String newName;
 
@@ -59,10 +59,12 @@ public class GUIController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         //инициируем объект клиента облачного хранилища
         storageClient = new CloudStorageClient(GUIController.this);
-        //инициируем объект директории по умолчанию в клиенте
+        //инициируем объекты директории по умолчанию в клиентской и серверной части GUI
         clientDefaultDirItem = new Item(CLIENT_DEFAULT_DIR);
-        //получаем текущую папку списка файловых объектов в серверной части GUI
-        currentStorageDir = STORAGE_DEFAULT_DIR;//TODO удалить?
+        storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);
+
+//        //получаем текущую папку списка файловых объектов в серверной части GUI
+//        currentStorageDir = STORAGE_DEFAULT_DIR;//TODO удалить?
 
         //инициируем в клиентской части интерфейса список объектов в директории по умолчанию
         initializeClientItemListView();
@@ -97,10 +99,10 @@ public class GUIController implements Initializable {
 //    }
     public void initializeStorageItemListView() {
         //выводим в клиентской части интерфейса список объектов в директории по умолчанию
-//        updateStorageItemListInGUI("../",
-//                new Item[]{new Item("waiting for an item list from the server...",
-//                        STORAGE_DEFAULT_DIR, "waiting for an item list from the server...",
-//                        STORAGE_DEFAULT_DIR, false)});//FIXME
+        updateStorageItemListInGUI(new Item(STORAGE_DEFAULT_DIR),
+                new Item[]{new Item("waiting for an item list from the server...",
+                        "", "waiting for an item list from the server...",
+                        "", false)});
         //в отдельном потоке
         new Thread(() -> {
             try {
@@ -154,19 +156,30 @@ public class GUIController implements Initializable {
 //            updateListView(storageItemListView, fileObjs);
 //        });
 //    }
-    /** //FIXME directory переделать на Item
-     * Метод выводит в GUI список файлов и папок в корневой пользовательской директории
-     * в сетевом хранилище.
-     * @param directory - заданная пользовательская директория в сетевом хранилище
-     * @param items - массив объектов класса File(файлы и директории)
-     */
-    public void updateStorageItemListInGUI(String directory, Item[] items){
-        //обновляем текущую директорию
-        currentStorageDir = directory;
+//    /** //FIXME directory переделать на Item
+//     * Метод выводит в GUI список файлов и папок в корневой пользовательской директории
+//     * в сетевом хранилище.
+//     * @param directory - заданная пользовательская директория в сетевом хранилище
+//     * @param items - массив объектов класса File(файлы и директории)
+//     */
+//    public void updateStorageItemListInGUI(String directory, Item[] items){
+//        //обновляем текущую директорию
+//        currentStorageDir = directory;
+//        //в отдельном потоке запускаем обновление интерфейса
+//        Platform.runLater(() -> {
+//            //выводим текущую директорию в метку серверной части
+//            storageDirLabel.setText(currentStorageDir);
+//            //обновляем заданный список файловых объектов
+//            updateListView(storageItemListView, items);
+//        });
+//    }
+    public void updateStorageItemListInGUI(Item directoryItem, Item[] items){
+        //обновляем объект текущей директории
+        storageCurrentDirItem = directoryItem;
         //в отдельном потоке запускаем обновление интерфейса
         Platform.runLater(() -> {
             //выводим текущую директорию в метку серверной части
-            storageDirLabel.setText(currentStorageDir);
+            storageDirLabel.setText(">>" + storageCurrentDirItem.getItemPathname());
             //обновляем заданный список файловых объектов
             updateListView(storageItemListView, items);
         });
@@ -257,7 +270,9 @@ public class GUIController implements Initializable {
             } else if(listView.equals(storageItemListView)){
                 //отправляем на сервер запрос на получение списка элементов заданной директории
                 //пользователя в сетевом хранилище
-                storageClient.demandDirectoryItemList(item.getItemName());//FIXME
+//                storageClient.demandDirectoryItemList(item.getItemName());//FIXME
+                storageClient.demandDirectoryItemList(item.getItemPathname());
+
             }
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
@@ -284,7 +299,10 @@ public class GUIController implements Initializable {
 
             try {
                 //отправляем на сервер запрос на загрузку файла в облачное хранилище
-                storageClient.demandUploadFile(item.getParentName(), currentStorageDir, item.getItemName());
+//                storageClient.demandUploadFile(item.getParentName(), currentStorageDir, item.getItemName());
+                storageClient.demandUploadFile(clientCurrentDirItem.getItemPathname(),
+                        storageCurrentDirItem.getItemPathname(), item);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -309,7 +327,7 @@ public class GUIController implements Initializable {
             //отправляем на сервер запрос на скачивание файла из облачного хранилища
 //            storageClient.demandDownloadFile(currentStorageDir,
 //                    clientCurrentDirPathname, item.getItemName());
-            storageClient.demandDownloadFile(currentStorageDir,
+            storageClient.demandDownloadFile(storageCurrentDirItem.getItemPathname(),
                     clientCurrentDirItem.getItemPathname(), item.getItemName());
 
             //сбрасываем выделение после действия
@@ -346,7 +364,8 @@ public class GUIController implements Initializable {
             } else if(listView.equals(storageItemListView)){
                 //отправляем на сервер запрос на переименования файлового объекта в заданной директории
                 //пользователя в сетевом хранилище
-                storageClient.demandRenameItem(currentStorageDir, origin.getItemName(), newName);
+                storageClient.demandRenameItem(storageCurrentDirItem.getItemPathname(),
+                        origin.getItemName(), newName);
             }
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
@@ -411,7 +430,8 @@ public class GUIController implements Initializable {
             } else if(listView.equals(storageItemListView)){
                 //отправляем на сервер запрос на получение списка элементов заданной директории
                 //пользователя в сетевом хранилище
-                storageClient.demandDeleteItem(currentStorageDir, item.getItemName());
+                storageClient.demandDeleteItem(storageCurrentDirItem.getItemPathname(),
+                        item.getItemName());
             }
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
@@ -448,7 +468,8 @@ public class GUIController implements Initializable {
     @FXML
     public void onClientGoUpBtnClicked(MouseEvent mouseEvent) {
         //выводим список в родительской директории
-        updateClientItemListInGUI(storageClient.getParentDirItem(clientCurrentDirItem, clientDefaultDirItem,
+        updateClientItemListInGUI(storageClient.getParentDirItem(
+                clientCurrentDirItem, clientDefaultDirItem,
                 CloudStorageClient.CLIENT_ROOT_PATH));
     }
 
@@ -460,7 +481,8 @@ public class GUIController implements Initializable {
     @FXML
     public void onStorageGoUpBtnClicked(MouseEvent mouseEvent) {
         //FIXME заменить FILE на Item
-        storageClient.demandDirectoryItemList(new File(currentStorageDir).getParent());
+//        storageClient.demandDirectoryItemList(new File(currentStorageDir).getParent());
+        storageClient.demandDirectoryItemList(storageCurrentDirItem.getParentPathname());
     }
 
     public void setNewName(String newName) {

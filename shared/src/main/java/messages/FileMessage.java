@@ -45,19 +45,23 @@ public class FileMessage extends AbstractMessage {
         this.fileSize = fileSize;
     }
 
-    /**
-     * Метод читает все данные из файла в байтовый массив
-     * @throws IOException - исключение ввода вывода
-     */
-    public void readFileData() throws IOException {
-        //читаем все данные из файла побайтно в байтовый массив
-        this.data = Files.readAllBytes(Paths.get(fromDir, filename));
-    }
+//    /**
+//     * Метод читает все данные из файла в байтовый массив
+//     * @throws IOException - исключение ввода вывода
+//     */
+//    public void readFileData() throws IOException {
+//        //читаем все данные из файла побайтно в байтовый массив
+//        this.data = Files.readAllBytes(Paths.get(fromDir, filename));
+//    }
 
     //TODO
-    public void readFileData(String fromDir) throws IOException {
+//    public void readFileData(String fromDir) throws IOException {
+//        //читаем все данные из файла побайтно в байтовый массив
+//        this.data = Files.readAllBytes(Paths.get(fromDir, filename));
+//    }
+    public void readFileData(String itemPathname) throws IOException {
         //читаем все данные из файла побайтно в байтовый массив
-        this.data = Files.readAllBytes(Paths.get(fromDir, filename));
+        this.data = Files.readAllBytes(Paths.get(itemPathname));
     }
 
     public String getFromDir() {

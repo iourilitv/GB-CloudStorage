@@ -48,19 +48,39 @@ public class FileUtils {
         return true;
     }
 
-    /**
-     * Метод читает данные из целого файла в заданной директорию сетевого хранилища
-     * и добавляем в объект файлового сообщения.
-     * @param fileMessage - объект файлового сообщения с данными файла
-     * @return true, если файл скачан без ошибок
-     */
-    public boolean readFile(String fromDir, FileMessage fileMessage) {
+//    /**
+//     * Метод читает данные из целого файла в заданной директорию сетевого хранилища
+//     * и добавляем в объект файлового сообщения.
+//     * @param fileMessage - объект файлового сообщения с данными файла
+//     * @return true, если файл скачан без ошибок
+//     */
+//    public boolean readFile(String fromDir, FileMessage fileMessage) {
+//        try {
+//            //считываем данные из файла и записываем их в объект файлового сообщения
+//            fileMessage.readFileData(fromDir);
+//
+//            //инициируем объект пути к файлу
+//            Path path = Paths.get(fromDir, fileMessage.getFilename());
+//            //записываем размер файла для скачивания
+//            fileMessage.setFileSize(Files.size(path));
+//            //если длина скачанного файла отличается от длины исходного файла в хранилище
+//            if(fileMessage.getFileSize() != fileMessage.getData().length){
+//                msg = "FileUtils.downloadFile() - Wrong the read file size!";
+//                return false;
+//            }
+//        } catch (IOException e) {
+//            msg = "FileUtils.downloadFile() - Something wrong with the directory or the file!";
+//            e.printStackTrace();
+//            return false;
+//        }
+//        return true;
+//    }
+    public boolean readFile(String itemPathname, FileMessage fileMessage) {
         try {
             //считываем данные из файла и записываем их в объект файлового сообщения
-            fileMessage.readFileData(fromDir);
-
+            fileMessage.readFileData(itemPathname);
             //инициируем объект пути к файлу
-            Path path = Paths.get(fromDir, fileMessage.getFilename());
+            Path path = Paths.get(itemPathname);
             //записываем размер файла для скачивания
             fileMessage.setFileSize(Files.size(path));
             //если длина скачанного файла отличается от длины исходного файла в хранилище

@@ -38,10 +38,10 @@ public class Commands {
     public static final int SERVER_RESPONSE_FILE_DOWNLOAD_ERROR = 202209;
 
     //запрос на сервер предоставить список объектов файлов и папок в заданной директории
-    public static final int REQUEST_SERVER_FILE_OBJECTS_LIST = 303101;
-    //ответ сервера с массивом файловых объектов в заданной директории пользователя
+    public static final int REQUEST_SERVER_ITEMS_LIST = 303101;
+    //ответ сервера с массивом объектов в заданной директории пользователя
     // в сетевом хранилище, если нет ошибок
-    public static final int SERVER_RESPONSE_FILE_OBJECTS_LIST_OK = 303102;
+    public static final int SERVER_RESPONSE_ITEMS_LIST_OK = 303102;
 
     //переименовать файловый объект на сервере
     public static final int REQUEST_SERVER_RENAME_FILE_OBJECT = 404101;

@@ -14,6 +14,22 @@ public class ItemUtils {
         return ownObject;
     }
 
+    public Item createDirectoryItem(String directoryPathname, Item defaultDirItem, Path rootPath) {
+        //если текущая и родительская директория являются директориями по умолчанию
+        if(directoryPathname.equals(defaultDirItem.getItemPathname())){
+            //возвращаем объект элемента директории по умолчанию(начальной)
+            return defaultDirItem;
+        } else {
+            String directoryName = getRealPath(directoryPathname, rootPath).getFileName().toString();
+            //инициируем объект пути к родительской директории
+            Path parentPath = getParentPath(directoryPathname, rootPath);
+            //получаем имя родительской директории
+            String parentName = parentPath.getFileName().toString();
+            return new Item(directoryName, parentName,
+                    directoryPathname, parentPath.toString(), true);
+        }
+    }
+
     /**
      * Метод возвращает массив объектов элементов в заданной директории.
      * @param directoryItem - объект заданной директории
@@ -21,6 +37,10 @@ public class ItemUtils {
      * @return - массив объектов элементов в заданной директории
      */
     public Item[] getItemsList(Item directoryItem, Path rootPath) {
+
+        System.out.println("ItemUtils.getItemsList() - rootPath: " + rootPath +
+                ", directoryItem: " + directoryItem);
+
         //инициируем временный файловый объект заданной директории
         File dirFileObject = new File(getRealPath(directoryItem.getItemPathname(), rootPath).toString());
         //инициируем и получаем массив файловых объектов заданной директории

@@ -18,15 +18,19 @@ public class CloudStorageServer {
     //инициируем переменную для печати сообщений в консоль
     private final PrintStream log = System.out;
     //инициируем объект пути к корневой директории облачного хранилища(сервера) для хранения файлов клиентов
-    private final Path storageRoot = Paths.get("storage","server_storage");
+    private final Path STORAGE_ROOT_PATH = Paths.get("storage","server_storage");//TODO static
     //инициируем константу строки названия корневой директории для списка в серверной части GUI
-    private final String storageDefaultDirectory = "";
+    private final String STORAGE_DEFAULT_DIR = "";
+    //объявляем объекты директории пользователя по умолчанию в серверной части GUI
+    private Item storageDefaultDirItem;
     //объявляем множество авторизованных клиентов <соединение, логин>
     private Map<ChannelHandlerContext, String> authorizedUsers;
     //объявляем объект контроллера авторизации клиента
     private UsersAuthController usersAuthController;
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
+    //принимаем объект обработчика операций с объектами элементов списков в GUI
+    private final ItemUtils itemUtils = ItemUtils.getOwnObject();
 
     public void run() throws Exception {
         //инициируем множество авторизованных клиентов
@@ -35,16 +39,32 @@ public class CloudStorageServer {
         usersAuthController = new UsersAuthController(this);
         //инициируем объект файлового обработчика
         fileUtils = new FileUtils();
+        //инициируем объект директории по умолчанию в серверной части GUI
+        storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);
         //инициируем объект сетевого подключения
         new NettyServer(this, PORT).run();
     }
 
-    public Path getStorageRoot() {
-        return storageRoot;
+    /**
+     * Метод-прокладка возвращает массив объектов элементов в заданной директории в сетевом хранилище.
+     * @param storageDirItem - объект заданной директории в сетевом хранилище
+     * @param userStorageRoot - объект реального пути к корневой директории пользователя в сетевом хранилище
+     * @return - массив объектов элементов в заданной директории в сетевом хранилище
+     */
+    public Item[] storageItemsList(Item storageDirItem, Path userStorageRoot) {
+        return itemUtils.getItemsList(storageDirItem, userStorageRoot);
     }
 
-    public String getStorageDefaultDirectory() {
-        return storageDefaultDirectory;
+    public Item createStorageDirectoryItem(String storageDirPathname, Path userStorageRoot) {
+        return itemUtils.createDirectoryItem(storageDirPathname, storageDefaultDirItem, userStorageRoot);
+    }
+
+    public Path getSTORAGE_ROOT_PATH() {
+        return STORAGE_ROOT_PATH;
+    }
+
+    public String getSTORAGE_DEFAULT_DIR() {
+        return STORAGE_DEFAULT_DIR;
     }
 
     public Map<ChannelHandlerContext, String> getAuthorizedUsers() {

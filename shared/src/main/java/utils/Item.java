@@ -20,7 +20,8 @@ public class Item implements Serializable {
         this.isDefaultDirectory = true;
     }
 
-    public Item(String itemName, String parentName, String itemPathname, String parentPathname, boolean isDirectory) {
+    public Item(String itemName, String parentName,
+                String itemPathname, String parentPathname, boolean isDirectory) {
         this.itemName = itemName;
         this.parentName = parentName;
         this.itemPathname = itemPathname;
