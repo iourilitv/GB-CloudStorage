@@ -213,10 +213,6 @@ public class FileUtils {
         }
     }
 
-    public String getMsg() {
-        return msg;
-    }
-
     /**
      * Метод удаляет файловый объект.
      * @param fileObject - файловый объект
@@ -256,4 +252,7 @@ public class FileUtils {
         return Objects.requireNonNull(folder.listFiles()).length == 0 && folder.delete();
     }
 
+    public String getMsg() {
+        return msg;
+    }
 }

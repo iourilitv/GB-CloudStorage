@@ -70,7 +70,7 @@ public class CloudStorageServer {
         return itemUtils.createDirectoryItem(storageDirPathname, storageDefaultDirItem, userStorageRoot);
     }
 
-    /**
+    /** //FIXME переделать как download
      * Метод запускает процесс сохранения полученного от клиента объекта(файла)
      * в заданную директорию в сетевом хранилище.
      * @param storageToDirItem - объект заданной директории в сетевом хранилище
@@ -88,6 +88,13 @@ public class CloudStorageServer {
         return fileUtils.saveFile(realNewToItemPath, data, fileSize);
     }
 
+    /**
+     * Метод запускает процесс скачивания и отправки клиенту объекта элемента(пока тольок файла).
+     * @param fileMessage - объект фалового сообщения
+     * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище
+     * @param ctx - объект сетевого соединения
+     * @throws IOException - исключение ввода-вывода
+     */
     public void downloadItem(FileMessage fileMessage, Path userStorageRoot
             , ChannelHandlerContext ctx) throws IOException {
         //если объект элемента - это директория
@@ -113,21 +120,19 @@ public class CloudStorageServer {
         }
     }
 
-    //    /**
-//     * Метод скачивания и отправки целого небольшого файла размером менее
-//     * константы максмального размера фрагмента файла
-//     * @param fromDir - директория(относительно корня) клиента где хранится файл источник
-//     * @param clientDir - директория(относительно корня) в сетевом хранилище
-//     * @param filename - строковое имя файла
-//     */
+    /**
+     * Метод скачивания и отправки целого небольшого файла размером менее
+     * @param clientToDirItem - объект директории назначения клиента
+     * @param storageItem - объект директории источника в сетевом хранилище, где хранится файл источник
+     * @param item - объект элемента в сетевом хранилище
+     * @param fileSize - размер объекта(файла)
+     * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище
+     * @param ctx - объект сетевого соединения
+     */
     private void downloadEntireFile(Item clientToDirItem, Item storageItem, Item item,
                        long fileSize, Path userStorageRoot, ChannelHandlerContext ctx){
         //создаем объект файлового сообщения
         FileMessage fileMessage = new FileMessage(storageItem, clientToDirItem, item, fileSize);
-
-        System.out.println("CloudStorageServer.downloadEntireFile - " +
-                "fileMessage.getClientDirectoryItem(): " + fileMessage.getClientDirectoryItem());
-
         int command;
         //если скачивание прошло удачно
         if(fileUtils.readFile(itemUtils.getRealPath(storageItem.getItemPathname(), userStorageRoot),
@@ -149,6 +154,7 @@ public class CloudStorageServer {
      * Метод переименовывает объект элемента списка в серверном хранилище.
      * @param origin - текущий объект элемента списка в серверном хранилище
      * @param newName - новое имя элемента
+     * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище
      * @return - результат переименования
      */
     public boolean renameStorageItem(Item origin, String newName, Path userStorageRoot) {
@@ -167,6 +173,7 @@ public class CloudStorageServer {
     /**
      * Метод удаляет объект элемента списка(файл или папку) в текущей директории в серверном хранилище.
      * @param item - объект списка в серверном хранилище
+     * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище
      * @return - результат удаления
      */
     public boolean deleteClientItem(Item item, Path userStorageRoot) {

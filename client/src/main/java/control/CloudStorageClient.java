@@ -100,7 +100,8 @@ public class CloudStorageClient {
     }
 
     /**
-     * Метод отправляет на сервер запрос на загрузку файла из клиента в облачное хранилище.
+     * Метод отправляет на сервер запрос на загрузку объекта элемента(пока тольок файла)
+     * из клиента в облачное хранилище.
      * @param storageToDirItem - объект директории назначения в сетевом хранилище
      * @param clientItem - объект элемента списка(файла) на клиенте
      * @throws IOException - исключение ввода-вывода
@@ -233,43 +234,21 @@ public class CloudStorageClient {
         }
     }
 
-//    /**
-//     * Метод отправляет на сервер запрос на скачивание файла из облачного хранилища
-//     * @param fromDir - директория(относительно корня) в сетевом хранилище, где хранится файл источник
-//     * @param toDir - директория(относительно корня) клиента
-//     * @param filename - строковое имя файла
-//     */
-//    public void demandDownloadFile(String fromDir, String toDir, String filename){
-//        //TODO temporarily
-//        printMsg("***CloudStorageClient.downloadFile() - has started***");
-//
-//        //инициируем объект файлового сообщения
-//        FileMessage fileMessage = new FileMessage(fromDir, toDir, filename);
-//
-//        //отправляем на сервер объект сообщения(команды)
-//        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_DOWNLOAD,
-//                fileMessage));
-//
-//        //TODO temporarily
-//        printMsg("***CloudStorageClient.downloadFile() - has finished***");
-//    }
+    /**
+     * Метод отправляет на сервер запрос на скачивание объекта элемента из облачного хранилища.
+     * @param storageFromDirItem - объект директории источника в сетевом хранилище
+     * @param clientToDirItem - объект директории назначения в клиенте
+     * @param storageItem - объект объекта элемента(источника) в сетевом хранилище
+     */
     public void demandDownloadItem(Item storageFromDirItem, Item clientToDirItem, Item storageItem){
-        //TODO temporarily
-        printMsg("***CloudStorageClient.downloadFile() - has started***");
-
         //инициируем объект файлового сообщения
         FileMessage fileMessage = new FileMessage(storageFromDirItem, clientToDirItem, storageItem);
         //отправляем на сервер объект сообщения(команды)
         ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_DOWNLOAD_ITEM,
                 fileMessage));
-
-
-
-        //TODO temporarily
-        printMsg("***CloudStorageClient.downloadFile() - has finished***");
     }
 
-    /**
+    /** //FIXME переделать как download
      * Метод запускает процесс сохранения полученного от сервера объекта(файла)
      * в заданную директорию в сетевом хранилище.
      * @param clientToDirItem - объект заданной директории в клиенте
@@ -279,16 +258,10 @@ public class CloudStorageClient {
      * @return - результат сохранения объекта
      */
     public boolean downloadItem(Item clientToDirItem, Item item, byte[] data, long fileSize){
-        String dir = itemUtils.getRealPath(clientToDirItem.getItemPathname(), CLIENT_ROOT_PATH).toString();
-
-        System.out.println("CloudStorageClient.downloadItem - dir: " + dir +
-                ", item.getItemName(): " + item.getItemName());
-
+        //инициируем строку имени реального пути к папке с объектом элемента
+        String realDirPathname = itemUtils.getRealPath(clientToDirItem.getItemPathname(), CLIENT_ROOT_PATH).toString();
         //инициируем новый объект пути к объекту
-        Path realNewToItemPath = Paths.get(
-//                itemUtils.getRealPath(clientToDirItem.getItemPathname(), CLIENT_ROOT_PATH).toString(),
-                dir,
-                item.getItemName());
+        Path realNewToItemPath = Paths.get(realDirPathname, item.getItemName());
         return fileUtils.saveFile(realNewToItemPath, data, fileSize);
     }
 

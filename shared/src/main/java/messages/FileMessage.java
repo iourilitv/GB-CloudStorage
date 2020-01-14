@@ -11,12 +11,6 @@ import java.nio.file.Paths;
  * CONST_FRAG_SIZE in the FileFragmentMessage class.
  */
 public class FileMessage extends AbstractMessage {
-    //объявляем переменную директории источника
-    private String fromDir;
-    //объявляем переменную директории назначения
-    private String toDir;
-    //объявляем переменную имени файла
-    private String filename;
     //объявляем переменную размера файла(в байтах)
     private long fileSize;
     //объявляем байтовый массив с данными из файла
@@ -44,11 +38,6 @@ public class FileMessage extends AbstractMessage {
     }
 
     //this constructor is for downloadEntireFile demanding operation
-//    public FileMessage(String fromDir, String toDir, String filename) {
-//        this.fromDir = fromDir;
-//        this.toDir = toDir;
-//        this.filename = filename;
-//    }
     public FileMessage(Item storageDirectoryItem, Item clientDirectoryItem, Item item) {
         this.storageDirectoryItem = storageDirectoryItem;
         this.clientDirectoryItem = clientDirectoryItem;
@@ -78,18 +67,6 @@ public class FileMessage extends AbstractMessage {
     public void readFileData(String itemPathname) throws IOException {
         //читаем все данные из файла побайтно в байтовый массив
         this.data = Files.readAllBytes(Paths.get(itemPathname));
-    }
-
-    public String getFromDir() {
-        return fromDir;
-    }
-
-    public String getToDir() {
-        return toDir;
-    }
-
-    public String getFilename() {
-        return filename;
     }
 
     public Item getClientDirectoryItem() {

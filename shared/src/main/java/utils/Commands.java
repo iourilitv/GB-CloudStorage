@@ -24,12 +24,6 @@ public class Commands {
 
     //запрос на сервер скачать объект элемента списка(пока только файл)
     public static final int REQUEST_SERVER_DOWNLOAD_ITEM = 202101;
-
-//    //ответ клиента, если нет ошибок
-//    public static final int CLIENT_RESPONSE_FILE_DOWNLOAD_OK = 202102;
-//    //ответ клиента, что при скачивании файла произошла ошибка
-//    public static final int CLIENT_RESPONSE_FILE_DOWNLOAD_ERROR = 202109;
-
     //ответ сервера с объектом элемента списка(пока только файл), если нет ошибок
     public static final int SERVER_RESPONSE_DOWNLOAD_ITEM_OK = 202202;
     //ответ сервера, что при скачивании объекта элемента списка(пока только файл) произошла ошибка

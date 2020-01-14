@@ -46,9 +46,9 @@ public class GUIController implements Initializable {
     private final String STORAGE_DEFAULT_DIR = "";
     //объявляем объекты директории по умолчанию в клиентской и серверной части GUI
     private Item clientDefaultDirItem, storageDefaultDirItem;
-    //объявляем объекты текущей папки списка файловых объектов в клиентской и серверной части GUI
+    //объявляем объекты текущей папки списка объектов элемента в клиентской и серверной части GUI
     private Item clientCurrentDirItem, storageCurrentDirItem;
-    //объявляем переменную введенного нового имени
+    //объявляем переменную введенного нового имени объекта элемента
     private String newName;
 
     @Override
@@ -94,7 +94,7 @@ public class GUIController implements Initializable {
 
     /**
      * Метод обновляет список элементов списка в заданной директории клиентской части
-     * @param directoryItem - объект заданной директории
+     * @param directoryItem - объект элемента заданной директории
      */
     public void updateClientItemListInGUI(Item directoryItem) {
         //обновляем объект текущей директории
@@ -104,24 +104,13 @@ public class GUIController implements Initializable {
             //записываем в метку относительный строковый путь текущей директории
             clientDirLabel.setText(">>" + clientCurrentDirItem.getItemPathname());
             //обновляем заданный список объектов элемента
-//            updateListView(clientItemListView, clientItemsList(clientCurrentDirItem));
             updateListView(clientItemListView, storageClient.clientItemsList(clientCurrentDirItem));
-
         });
     }
 
-//    /**
-//     * Метод-прокладка возвращает массив объектов элементов в заданной директории в клиенте.
-//     * @param clientCurrentDirItem - объект заданной директории в клиенте
-//     * @return - массив объектов элементов в заданной директории в клиенте
-//     */
-//    private Item[] clientItemsList(Item clientCurrentDirItem) {
-//        return storageClient.clientItemsList(clientCurrentDirItem);
-//    }
-
     /**
-     * Метод выводит в GUI список файлов и папок в корневой пользовательской директории
-     * в сетевом хранилище.
+     * Метод выводит в GUI список объектов(файлов и папок)
+     * в корневой пользовательской директории в сетевом хранилище.
      * @param directoryItem - объект полученной пользовательской директории в сетевом хранилище
      * @param items - массив объектов элементов в директории
      */
@@ -138,9 +127,9 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод обновляет заданный список файловых объектов.
-     * @param listView - коллекция файловых объектов
-     * @param items - массив файловых объектов
+     * Метод обновляет заданный список объектов элемента.
+     * @param listView - коллекция объектов элемента
+     * @param items - массив объектов элемента
      */
     private void updateListView(ListView<Item> listView, Item[] items) {
         //очищаем список элементов
@@ -154,8 +143,8 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод инициирует контекстное меню для переданной в параметре коллекции файловых объектов.
-     * @param listView - коллекция файловых объектов
+     * Метод инициирует контекстное меню для переданной в параметре коллекции объектов элемента.
+     * @param listView - коллекция объектов элемента
      */
     private void setContextMenu(ListView<Item> listView){
         //инициируем объект контестного меню
@@ -204,7 +193,7 @@ public class GUIController implements Initializable {
     /**
      * Метод инициирует элемент контекстного меню "Get into".
      * Запрашивает список объектов для выбранной директории.
-     * @param listView - текущий список объектов
+     * @param listView - текущий список объектов элемента
      * @return - объект элемента контекстного меню "Get into"
      */
     private MenuItem menuItemGetInto(ListView<Item> listView) {
@@ -232,7 +221,7 @@ public class GUIController implements Initializable {
 
     /**
      * Метод инициирует элемент контекстного меню "Загрузить в облачное хранилище"
-     * @param listView - текущий список файловых объектов
+     * @param listView - текущий список объектов элемента
      * @return - объект элемента контекстного меню "Upload"
      */
     private MenuItem menuItemUpload(ListView<Item> listView) {
@@ -256,7 +245,7 @@ public class GUIController implements Initializable {
 
     /**
      * Метод инициирует элемент контекстного меню "Скачать из облачного хранилища"
-     * @param listView - текущий список файловых объектов
+     * @param listView - текущий список объектов элемента
      * @return - объект элемента контекстного меню "Download"
      */
     private MenuItem menuItemDownload(ListView<Item> listView) {
@@ -267,10 +256,7 @@ public class GUIController implements Initializable {
             //запоминаем кликнутый элемент списка
             Item item = listView.getSelectionModel().getSelectedItem();
             //отправляем на сервер запрос на скачивание файла из облачного хранилища
-//            storageClient.demandDownloadFile(currentStorageDir,
-//                    clientCurrentDirPathname, item.getItemName());
             storageClient.demandDownloadItem(storageCurrentDirItem, clientCurrentDirItem, item);
-
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
         });
@@ -279,7 +265,7 @@ public class GUIController implements Initializable {
 
     /**
      * Метод инициирует элемент контекстного меню "Переименовать"
-     * @param listView - текущий список файловых объектов
+     * @param listView - текущий список объектов элемента
      * @return - объект элемента контекстного меню "Rename"
      */
     private MenuItem menuItemRename(ListView<Item> listView) {
@@ -315,7 +301,7 @@ public class GUIController implements Initializable {
 
     /**
      * Метод открывает модальное окно для ввода нового имени элемента списка.
-     * @param origin - файловый объект - оригинал
+     * @param origin - объект элемента - оригинал
      * @return - текстовую строку с новым имем
      */
     private String takeNewNameWindow(Item origin) {
@@ -344,7 +330,7 @@ public class GUIController implements Initializable {
 
     /**
      * Метод инициирует элемент контекстного меню "Удалить"
-     * @param listView - текущий список файловых объектов
+     * @param listView - текущий список объектов элемента
      * @return - объект элемента контекстного меню "Delete"
      */
     private MenuItem menuItemDelete(ListView<Item> listView) {
@@ -379,8 +365,8 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод отрабатывает нажатие на кнопку Home в клиентской части GUI.
-     * Выводит список файловых объектов в корневой директории в клиентской части
+     * Метод отрабатывает нажатие на кнопку "Home" в клиентской части GUI.
+     * Выводит список объектов элемента в корневой директории в клиентской части
      * @param mouseEvent - любой клик мышкой
      */
     @FXML
@@ -390,8 +376,8 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод отрабатывает нажатие на кнопку Home в серверной части GUI.
-     * Запрашивает у сервера список объектов в корневой директории в серверной части
+     * Метод отрабатывает нажатие на кнопку "Home" в серверной части GUI.
+     * Запрашивает у сервера список объектов элемента в корневой директории в серверной части
      * @param mouseEvent - любой клик мышкой
      */
     @FXML
@@ -400,7 +386,7 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод отрабатывает нажатие на кнопку GoUp в клиентской части GUI.
+     * Метод отрабатывает нажатие на кнопку "GoUp" в клиентской части GUI.
      * Выводит список объектов элемента в родительской директории в клиентской части
      * @param mouseEvent - любой клик мышкой
      */
@@ -413,8 +399,8 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод отрабатывает нажатие на кнопку GoUp в серверной части GUI.
-     * Запрашивает у сервера список объектов в родительской директории в клиентской части
+     * Метод отрабатывает нажатие на кнопку "GoUp" в серверной части GUI.
+     * Запрашивает у сервера список объектов элемента в родительской директории в клиентской части
      * @param mouseEvent - любой клик мышкой
      */
     @FXML
