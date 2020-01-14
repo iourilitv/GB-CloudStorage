@@ -36,9 +36,9 @@ public class GUIController implements Initializable {
 
     @FXML
     Label label;//TODO Зачем?
+
     //объявляем объект контроллера клиента облачного хранилища
     private CloudStorageClient storageClient;
-
     //инициируем константу строки названия директории по умолчанию относительно корневой директории
     // для списка в клиентской части GUI
     private final String CLIENT_DEFAULT_DIR = "";
@@ -372,7 +372,6 @@ public class GUIController implements Initializable {
     @FXML
     public void onClientHomeBtnClicked(MouseEvent mouseEvent) {
         updateClientItemListInGUI(clientDefaultDirItem);
-
     }
 
     /**

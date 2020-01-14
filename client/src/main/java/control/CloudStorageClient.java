@@ -123,6 +123,7 @@ public class CloudStorageClient {
         if(fileSize > FileFragmentMessage.CONST_FRAG_SIZE){
             //запускаем метод отправки файла по частям
 //            uploadFileByFrags(fromDir, toDir, filename, fileSize);//FIXME
+            uploadFileByFrags(storageToDirItem, clientItem, fileSize);
 
             //если файл меньше
         } else {
@@ -134,16 +135,82 @@ public class CloudStorageClient {
         printMsg("***CloudStorageClient.demandUploadItem() - has finished***");
     }
 
-    /**
-     * Метод отправки по частям большого файла размером более константы максмального размера фрагмента файла
-     * @param fromDir - директория(относительно корня) клиента где хранится файл источник
-     * @param toDir - директория(относительно корня) в сетевом хранилище
-     * @param filename - строковое имя файла
-     * @param fullFileSize - размер целого файла в байтах
-     * @throws IOException - исключение
-     */
-    private void uploadFileByFrags(String fromDir, String toDir,
-                                   String filename, long fullFileSize) throws IOException {
+//    /**
+//     * Метод отправки по частям большого файла размером более константы максмального размера фрагмента файла
+//     * @param fromDir - директория(относительно корня) клиента где хранится файл источник
+//     * @param toDir - директория(относительно корня) в сетевом хранилище
+//     * @param filename - строковое имя файла
+//     * @param fullFileSize - размер целого файла в байтах
+//     * @throws IOException - исключение
+//     */
+//    private void uploadFileByFrags(String fromDir, String toDir,
+//                                   String filename, long fullFileSize) throws IOException {
+//        //TODO temporarily
+//        long start = System.currentTimeMillis();
+//
+//        //***разбиваем файл на фрагменты***
+//        //рассчитываем количество полных фрагментов файла
+//        int totalEntireFragsNumber = (int) fullFileSize / FileFragmentMessage.CONST_FRAG_SIZE;
+//        //рассчитываем размер последнего фрагмента файла
+//        int finalFileFragmentSize = (int) fullFileSize - FileFragmentMessage.CONST_FRAG_SIZE * totalEntireFragsNumber;
+//        //рассчитываем общее количество фрагментов файла
+//        //если есть последний фрагмент, добавляем 1 к количеству полных фрагментов файла
+//        int totalFragsNumber = (finalFileFragmentSize == 0) ?
+//                totalEntireFragsNumber : totalEntireFragsNumber + 1;
+//
+//        //TODO temporarily
+//        System.out.println("CloudStorageClient.uploadFileByFrags() - fullFileSize: " + fullFileSize);
+//        System.out.println("CloudStorageClient.uploadFileByFrags() - totalFragsNumber: " + totalFragsNumber);
+//        System.out.println("CloudStorageClient.uploadFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
+//
+//        //устанавливаем началные значения номера текущего фрагмента и стартового байта
+//        long startByte = 0;
+//        //инициируем байтовый массив для чтения данных для полных фрагментов
+//        byte[] data = new byte[FileFragmentMessage.CONST_FRAG_SIZE];
+//        //инициируем массив имен фрагментов файла
+//        String[] fragsNames = new String[totalFragsNumber];
+//        //***в цикле создаем целые фрагменты, читаем в них данные и отправляем***
+//        for (int i = 1; i <= totalEntireFragsNumber; i++) {
+//            //инициируем объект фрагмента файлового сообщения
+//            FileFragmentMessage fileFragmentMessage =
+//                    new FileFragmentMessage(fromDir, toDir, filename, fullFileSize,
+//                            i, totalFragsNumber, FileFragmentMessage.CONST_FRAG_SIZE, fragsNames, data);
+//            //читаем данные во фрагмент с определенного места файла
+//            fileFragmentMessage.readFileDataToFragment(fromDir, filename, startByte);
+//            //увеличиваем указатель стартового байта на размер фрагмента
+//            startByte += FileFragmentMessage.CONST_FRAG_SIZE;
+//
+//            //отправляем на сервер объект сообщения(команды)
+//            ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_FRAG_UPLOAD,
+//                    fileFragmentMessage));
+//
+//        }
+//
+//        //TODO temporarily
+//        System.out.println("CloudStorageClient.uploadFileByFrags() - currentFragNumber: " + totalFragsNumber);
+//        System.out.println("CloudStorageClient.uploadFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
+//
+//        //***отправляем последний фрагмент, если он есть***
+//        if(totalFragsNumber > totalEntireFragsNumber){
+//            //инициируем байтовый массив для чтения данных для последнего фрагмента
+//            byte[] dataFinal = new byte[finalFileFragmentSize];
+//            //инициируем объект фрагмента файлового сообщения
+//            FileFragmentMessage fileFragmentMessage =
+//                    new FileFragmentMessage(fromDir, toDir, filename, fullFileSize,
+//                            totalFragsNumber, totalFragsNumber, finalFileFragmentSize, fragsNames, dataFinal);
+//            //читаем данные во фрагмент с определенного места файла
+//            fileFragmentMessage.readFileDataToFragment(fromDir, filename, startByte);
+//
+//            //отправляем на сервер объект сообщения(команды)
+//            ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_FRAG_UPLOAD,
+//                    fileFragmentMessage));
+//        }
+//
+//        //TODO temporarily
+//        long finish = System.currentTimeMillis() - start;
+//        System.out.println("CloudStorageClient.uploadFileByFrags() - duration(mc): " + finish);
+//    }
+    private void uploadFileByFrags(Item storageToDirItem, Item clientItem, long fullFileSize) throws IOException {
         //TODO temporarily
         long start = System.currentTimeMillis();
 
@@ -171,11 +238,11 @@ public class CloudStorageClient {
         //***в цикле создаем целые фрагменты, читаем в них данные и отправляем***
         for (int i = 1; i <= totalEntireFragsNumber; i++) {
             //инициируем объект фрагмента файлового сообщения
-            FileFragmentMessage fileFragmentMessage =
-                    new FileFragmentMessage(fromDir, toDir, filename, fullFileSize,
-                            i, totalFragsNumber, FileFragmentMessage.CONST_FRAG_SIZE, fragsNames, data);
+            FileFragmentMessage fileFragmentMessage = new FileFragmentMessage(
+                    storageToDirItem, clientItem, fullFileSize, i, totalFragsNumber,
+                    FileFragmentMessage.CONST_FRAG_SIZE, fragsNames, data);
             //читаем данные во фрагмент с определенного места файла
-            fileFragmentMessage.readFileDataToFragment(fromDir, filename, startByte);
+            fileFragmentMessage.readFileDataToFragment(clientItem.getItemPathname(), startByte);
             //увеличиваем указатель стартового байта на размер фрагмента
             startByte += FileFragmentMessage.CONST_FRAG_SIZE;
 
@@ -194,11 +261,16 @@ public class CloudStorageClient {
             //инициируем байтовый массив для чтения данных для последнего фрагмента
             byte[] dataFinal = new byte[finalFileFragmentSize];
             //инициируем объект фрагмента файлового сообщения
-            FileFragmentMessage fileFragmentMessage =
-                    new FileFragmentMessage(fromDir, toDir, filename, fullFileSize,
-                            totalFragsNumber, totalFragsNumber, finalFileFragmentSize, fragsNames, dataFinal);
+//            FileFragmentMessage fileFragmentMessage =
+//                    new FileFragmentMessage(fromDir, toDir, filename, fullFileSize,
+//                            totalFragsNumber, totalFragsNumber, finalFileFragmentSize,
+//                            fragsNames, dataFinal);
+            FileFragmentMessage fileFragmentMessage = new FileFragmentMessage(
+                    storageToDirItem, clientItem, fullFileSize, totalFragsNumber, totalFragsNumber,
+                    finalFileFragmentSize, fragsNames, dataFinal);
+
             //читаем данные во фрагмент с определенного места файла
-            fileFragmentMessage.readFileDataToFragment(fromDir, filename, startByte);
+            fileFragmentMessage.readFileDataToFragment(clientItem.getItemPathname(), startByte);
 
             //отправляем на сервер объект сообщения(команды)
             ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_FRAG_UPLOAD,

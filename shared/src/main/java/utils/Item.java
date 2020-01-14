@@ -10,6 +10,8 @@ public class Item implements Serializable {
 
     private boolean isDirectory;
     private boolean isDefaultDirectory;
+    //объявляем переменную размера файла(в байтах)
+    private long fullFileSize;
 
     public Item(String DEFAULT_DIR) {
         this.itemName = DEFAULT_DIR;

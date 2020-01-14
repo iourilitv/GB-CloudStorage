@@ -24,17 +24,11 @@ public class FileMessage extends AbstractMessage {
     //принимаем переменную нового имени файла
     private String newName;
 
-    //для операции удаления
-    public FileMessage(Item storageDirectoryItem, Item item) {
+    //this constructor is for uploadEntireFile operation
+    public FileMessage(Item storageDirectoryItem, Item item, long fileSize) {
         this.storageDirectoryItem = storageDirectoryItem;
         this.item = item;
-    }
-
-    //для операции переименования
-    public FileMessage(Item storageDirectoryItem, Item item, String newName) {
-        this.storageDirectoryItem = storageDirectoryItem;
-        this.item = item;
-        this.newName = newName;
+        this.fileSize = fileSize;
     }
 
     //this constructor is for downloadEntireFile demanding operation
@@ -52,11 +46,17 @@ public class FileMessage extends AbstractMessage {
         this.fileSize = fileSize;
     }
 
-    //this constructor is for uploadEntireFile operation
-    public FileMessage(Item storageDirectoryItem, Item item, long fileSize) {
+    //для операции переименования
+    public FileMessage(Item storageDirectoryItem, Item item, String newName) {
         this.storageDirectoryItem = storageDirectoryItem;
         this.item = item;
-        this.fileSize = fileSize;
+        this.newName = newName;
+    }
+
+    //для операции удаления
+    public FileMessage(Item storageDirectoryItem, Item item) {
+        this.storageDirectoryItem = storageDirectoryItem;
+        this.item = item;
     }
 
     /**

@@ -117,14 +117,81 @@ public class FileUtils {
         return true;
     }
 
-    /**
-     * Метод собирает целый файл из файлов-фрагментов, сохраненных во временной папке,
-     * сохраняет его в директорию назначения и удаляет временную папку с файлами-фрагментами
-     * @param toTempDir - временная папка для файлов-фрагментов
-     * @param toDir - заданная директория для загрузки целого файла
-     * @param fileFragmentMessage - объект сообщения фрагмента файла
-     * @return true, если целый файл собран и сохранен без ошибок
-     */
+//    /**
+//     * Метод собирает целый файл из файлов-фрагментов, сохраненных во временной папке,
+//     * сохраняет его в директорию назначения и удаляет временную папку с файлами-фрагментами
+//     * @param toTempDir - временная папка для файлов-фрагментов
+//     * @param toDir - заданная директория для загрузки целого файла
+//     * @param fileFragmentMessage - объект сообщения фрагмента файла
+//     * @return true, если целый файл собран и сохранен без ошибок
+//     */
+//    public boolean compileFileFragments(
+//            String toTempDir, String toDir, FileFragmentMessage fileFragmentMessage
+//    ) {
+//        //TODO temporarily
+//        long start = System.currentTimeMillis();
+//
+//        try {
+//            //инициируем объект пути к временной папке с фрагментами файла
+//            Path pathToFile = Paths.get(toDir, fileFragmentMessage.getFilename());
+//            //удаляем файл, если уже существует
+//            Files.deleteIfExists(pathToFile);
+//            //создаем новый файл для сборки загруженных фрагментов файла
+//            Files.createFile(pathToFile);
+//
+//            //в цикле листаем временную папку и добавляем в файл данные из файлов-фрагментов
+//            for (int i = 1; i <= fileFragmentMessage.getFragsNames().length; i++) {
+//                //ищем требуемый фрагмент во временной папке и инициируем канал для чтения из него
+//                ReadableByteChannel source = Channels.newChannel(
+//                        Files.newInputStream(Paths.get(toTempDir, fileFragmentMessage.getFragsNames()[i - 1])));
+//                //инициируем канал для записи в файл назначения
+//                WritableByteChannel destination = Channels.newChannel(
+//                        Files.newOutputStream(pathToFile, StandardOpenOption.APPEND));
+//                //переписываем данные из файла фрагмента в файл-назначения через канал
+//                copyData(source, destination);
+//                //закрываем потоки и каналы
+//                source.close();
+//                destination.close();
+//            }
+//
+////            //добавлено по требованию IDEA
+////            assert fragsNames != null;
+////            //если количество файлов-фрагментов не совпадает с требуемым
+////            if(fragsNames.length != fileFragmentMessage.getTotalFragsNumber()){
+////                server.printMsg("(Server)FileCommandHandler.compileUploadedFileFragments() - " +
+////                        "Wrong the saved file fragments count!");
+////                return false;
+////            }
+//
+//            //если длина сохраненного файла-фрагмента отличается от длины принятого фрагмента файла
+//            if(Files.size(pathToFile) != fileFragmentMessage.getFullFileSize()){
+//                msg = "FileUtils.compileUploadedFileFragments() - " +
+//                        "Wrong the saved entire file size!";
+//                return false;
+//            //если файл собран без ошибок
+//            } else {
+//                //***удаляем временную папку***//FIXME уже есть метод (deleteFolder)
+//                //в цикле листаем временную папку и удаляем все файлы-фрагменты
+//                for (String fragName : fileFragmentMessage.getFragsNames()) {
+//                    //удаляем файл-фрагмент
+//                    Files.delete(Paths.get(toTempDir, fragName));
+//                }
+//                //теперь можем удалить пустую папку
+//                Files.delete(Paths.get(toTempDir));
+//            }
+//        } catch (IOException e) {
+//            msg = "FileUtils.compileUploadedFileFragments() - " +
+//                    "Something wrong with the directory or the file!";
+//            e.printStackTrace();
+//            return false;
+//        }
+//
+//        //TODO temporarily
+//        long finish = System.currentTimeMillis() - start;
+//        System.out.println("FileUtils.compileUploadedFileFragments() - duration(mc): " + finish);
+//
+//        return true;
+//    }
     public boolean compileFileFragments(
             String toTempDir, String toDir, FileFragmentMessage fileFragmentMessage
     ) {
@@ -132,8 +199,13 @@ public class FileUtils {
         long start = System.currentTimeMillis();
 
         try {
+//            //инициируем объект пути к временной папке с фрагментами файла
+//            Path pathToFile = Paths.get(toDir, fileFragmentMessage.getFilename());
+            //FIXME нужен реальный путь? и нет универсальности
             //инициируем объект пути к временной папке с фрагментами файла
-            Path pathToFile = Paths.get(toDir, fileFragmentMessage.getFilename());
+            Path pathToFile = Paths.get(fileFragmentMessage.getStorageDirectoryItem().getItemPathname(),
+                    fileFragmentMessage.getItem().getItemName());
+
             //удаляем файл, если уже существует
             Files.deleteIfExists(pathToFile);
             //создаем новый файл для сборки загруженных фрагментов файла
@@ -168,7 +240,7 @@ public class FileUtils {
                 msg = "FileUtils.compileUploadedFileFragments() - " +
                         "Wrong the saved entire file size!";
                 return false;
-            //если файл собран без ошибок
+                //если файл собран без ошибок
             } else {
                 //***удаляем временную папку***//FIXME уже есть метод (deleteFolder)
                 //в цикле листаем временную папку и удаляем все файлы-фрагменты

@@ -197,7 +197,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         FileFragmentMessage fileFragmentMessage = (FileFragmentMessage) commandMessage.getMessageObject();
         //собираем временную директорию в целевой директории пользователя в сетевом хранилище
         //для сохранения фрагментов
-        String realToDirTemp = realStorageDirectory(fileFragmentMessage.getToTempDir());
+        String realToDirTemp = realStorageDirectory(fileFragmentMessage.getToTempDirName());
         //создаем объект пути к папке с загруженным файлом
         String realToDir = Paths.get(realToDirTemp).getParent().toString();
         //если сохранение полученного фрагмента файла во временную папку сетевого хранилища прошло удачно
@@ -212,99 +212,99 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_ERROR;
         }
         //если это последний фрагмент
-        if(fileFragmentMessage.isFinalFileFragment()){
-            //если корректно собран файл из фрагментов сохраненных во временную папку
-            if(fileUtils.compileFileFragments(realToDirTemp, realToDir, fileFragmentMessage)){
-                //ответ сервера, что сборка файла из загруженных фрагментов прошла успешно
-                command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_OK;
-            //если что-то пошло не так
-            } else {
-                //выводим сообщение
-                printMsg("[server]" + fileUtils.getMsg());
-                //инициируем переменную типа команды - ответ об ошибке
-                command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_ERROR;
-            }
-            //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
-            // заданной директории клиента в сетевом хранилище
-//            sendFileObjectsList(fileFragmentMessage.getToDir(), realToDir, command);//FIXME
-        }
+//        if(fileFragmentMessage.isFinalFileFragment()){
+//            //если корректно собран файл из фрагментов сохраненных во временную папку
+//            if(fileUtils.compileFileFragments(realToDirTemp, realToDir, fileFragmentMessage)){
+//                //ответ сервера, что сборка файла из загруженных фрагментов прошла успешно
+//                command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_OK;
+//            //если что-то пошло не так
+//            } else {
+//                //выводим сообщение
+//                printMsg("[server]" + fileUtils.getMsg());
+//                //инициируем переменную типа команды - ответ об ошибке
+//                command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_ERROR;
+//            }
+//            //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
+//            // заданной директории клиента в сетевом хранилище
+////            sendFileObjectsList(fileFragmentMessage.getToDir(), realToDir, command);//FIXME
+//        }
     }
 
-    /**
-     * Метод скачивания и отправки по частям большого файла размером более
-     * константы максмального размера фрагмента файла
-     * @param fromDir - директория(относительно корня) клиента где хранится файл источник
-     * @param toDir - директория(относительно корня) в сетевом хранилище
-     * @param filename - строковое имя файла
-     * @param fullFileSize - размер целого файла в байтах
-     * @throws IOException - исключение
-     */
-    private void downloadFileByFrags(String fromDir, String toDir,
-                                     String filename, long fullFileSize) throws IOException {
-        //TODO temporarily
-        long start = System.currentTimeMillis();
-
-        //***разбиваем файл на фрагменты***
-        //рассчитываем количество полных фрагментов файла
-        int totalEntireFragsNumber = (int) fullFileSize / FileFragmentMessage.CONST_FRAG_SIZE;
-        //рассчитываем размер последнего фрагмента файла
-        int finalFileFragmentSize = (int) fullFileSize - FileFragmentMessage.CONST_FRAG_SIZE * totalEntireFragsNumber;
-        //рассчитываем общее количество фрагментов файла
-        //если есть последний фрагмент, добавляем 1 к количеству полных фрагментов файла
-        int totalFragsNumber = (finalFileFragmentSize == 0) ?
-                totalEntireFragsNumber : totalEntireFragsNumber + 1;
-
-        //TODO temporarily
-        printMsg("[server]CommandMessageManager.downloadFileByFrags() - fullFileSize: " + fullFileSize);
-        printMsg("[server]CommandMessageManager.downloadFileByFrags() - totalFragsNumber: " + totalFragsNumber);
-        printMsg("[server]CommandMessageManager.downloadFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
-
-        //устанавливаем начальные значения номера текущего фрагмента и стартового байта
-        long startByte = 0;
-        //инициируем байтовый массив для чтения данных для полных фрагментов
-        byte[] data = new byte[FileFragmentMessage.CONST_FRAG_SIZE];
-        //инициируем массив имен фрагментов файла
-        String[] fragsNames = new String[totalFragsNumber];
-        //***в цикле создаем целые фрагменты, читаем в них данные и отправляем***
-        for (int i = 1; i <= totalEntireFragsNumber; i++) {
-            //инициируем объект фрагмента файлового сообщения
-            FileFragmentMessage fileFragmentMessage =
-                    new FileFragmentMessage(fromDir, toDir, filename, fullFileSize,
-                            i, totalFragsNumber, FileFragmentMessage.CONST_FRAG_SIZE, fragsNames, data);
-            //читаем данные во фрагмент с определенного места файла
-            fileFragmentMessage.readFileDataToFragment(fromDir, filename, startByte);
-            //увеличиваем указатель стартового байта на размер фрагмента
-            startByte += FileFragmentMessage.CONST_FRAG_SIZE;
-
-            //отправляем объект сообщения(команды) клиенту
-            ctx.writeAndFlush(new CommandMessage(Commands.SERVER_RESPONSE_FILE_FRAGS_DOWNLOAD_OK,
-                    fileFragmentMessage));
-        }
-
-        //TODO temporarily
-        printMsg("[server]CommandMessageManager.downloadFileByFrags() - currentFragNumber: " + totalFragsNumber);
-        printMsg("[server]CommandMessageManager.downloadFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
-
-        //***отправляем последний фрагмент, если он есть***
-        if(totalFragsNumber > totalEntireFragsNumber){
-            //инициируем байтовый массив для чтения данных для последнего фрагмента
-            byte[] dataFinal = new byte[finalFileFragmentSize];
-            //инициируем объект фрагмента файлового сообщения
-            FileFragmentMessage fileFragmentMessage =
-                    new FileFragmentMessage(fromDir, toDir, filename, fullFileSize,
-                            totalFragsNumber, totalFragsNumber, finalFileFragmentSize, fragsNames, dataFinal);
-            //читаем данные во фрагмент с определенного места файла
-            fileFragmentMessage.readFileDataToFragment(fromDir, filename, startByte);
-
-            //отправляем объект сообщения(команды) клиенту
-            ctx.writeAndFlush(new CommandMessage(Commands.SERVER_RESPONSE_FILE_FRAGS_DOWNLOAD_OK,
-                    fileFragmentMessage));
-        }
-
-        //TODO temporarily
-        long finish = System.currentTimeMillis() - start;
-        printMsg("[server]CommandMessageManager.downloadFileByFrags() - duration(mc): " + finish);
-    }
+//    /**
+//     * Метод скачивания и отправки по частям большого файла размером более
+//     * константы максмального размера фрагмента файла
+//     * @param fromDir - директория(относительно корня) клиента где хранится файл источник
+//     * @param toDir - директория(относительно корня) в сетевом хранилище
+//     * @param filename - строковое имя файла
+//     * @param fullFileSize - размер целого файла в байтах
+//     * @throws IOException - исключение
+//     */
+//    private void downloadFileByFrags(String fromDir, String toDir,
+//                                     String filename, long fullFileSize) throws IOException {
+//        //TODO temporarily
+//        long start = System.currentTimeMillis();
+//
+//        //***разбиваем файл на фрагменты***
+//        //рассчитываем количество полных фрагментов файла
+//        int totalEntireFragsNumber = (int) fullFileSize / FileFragmentMessage.CONST_FRAG_SIZE;
+//        //рассчитываем размер последнего фрагмента файла
+//        int finalFileFragmentSize = (int) fullFileSize - FileFragmentMessage.CONST_FRAG_SIZE * totalEntireFragsNumber;
+//        //рассчитываем общее количество фрагментов файла
+//        //если есть последний фрагмент, добавляем 1 к количеству полных фрагментов файла
+//        int totalFragsNumber = (finalFileFragmentSize == 0) ?
+//                totalEntireFragsNumber : totalEntireFragsNumber + 1;
+//
+//        //TODO temporarily
+//        printMsg("[server]CommandMessageManager.downloadFileByFrags() - fullFileSize: " + fullFileSize);
+//        printMsg("[server]CommandMessageManager.downloadFileByFrags() - totalFragsNumber: " + totalFragsNumber);
+//        printMsg("[server]CommandMessageManager.downloadFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
+//
+//        //устанавливаем начальные значения номера текущего фрагмента и стартового байта
+//        long startByte = 0;
+//        //инициируем байтовый массив для чтения данных для полных фрагментов
+//        byte[] data = new byte[FileFragmentMessage.CONST_FRAG_SIZE];
+//        //инициируем массив имен фрагментов файла
+//        String[] fragsNames = new String[totalFragsNumber];
+//        //***в цикле создаем целые фрагменты, читаем в них данные и отправляем***
+//        for (int i = 1; i <= totalEntireFragsNumber; i++) {
+//            //инициируем объект фрагмента файлового сообщения
+//            FileFragmentMessage fileFragmentMessage =
+//                    new FileFragmentMessage(fromDir, toDir, filename, fullFileSize,
+//                            i, totalFragsNumber, FileFragmentMessage.CONST_FRAG_SIZE, fragsNames, data);
+//            //читаем данные во фрагмент с определенного места файла
+//            fileFragmentMessage.readFileDataToFragment(fromDir, filename, startByte);
+//            //увеличиваем указатель стартового байта на размер фрагмента
+//            startByte += FileFragmentMessage.CONST_FRAG_SIZE;
+//
+//            //отправляем объект сообщения(команды) клиенту
+//            ctx.writeAndFlush(new CommandMessage(Commands.SERVER_RESPONSE_FILE_FRAGS_DOWNLOAD_OK,
+//                    fileFragmentMessage));
+//        }
+//
+//        //TODO temporarily
+//        printMsg("[server]CommandMessageManager.downloadFileByFrags() - currentFragNumber: " + totalFragsNumber);
+//        printMsg("[server]CommandMessageManager.downloadFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
+//
+//        //***отправляем последний фрагмент, если он есть***
+//        if(totalFragsNumber > totalEntireFragsNumber){
+//            //инициируем байтовый массив для чтения данных для последнего фрагмента
+//            byte[] dataFinal = new byte[finalFileFragmentSize];
+//            //инициируем объект фрагмента файлового сообщения
+//            FileFragmentMessage fileFragmentMessage =
+//                    new FileFragmentMessage(fromDir, toDir, filename, fullFileSize,
+//                            totalFragsNumber, totalFragsNumber, finalFileFragmentSize, fragsNames, dataFinal);
+//            //читаем данные во фрагмент с определенного места файла
+//            fileFragmentMessage.readFileDataToFragment(fromDir, filename, startByte);
+//
+//            //отправляем объект сообщения(команды) клиенту
+//            ctx.writeAndFlush(new CommandMessage(Commands.SERVER_RESPONSE_FILE_FRAGS_DOWNLOAD_OK,
+//                    fileFragmentMessage));
+//        }
+//
+//        //TODO temporarily
+//        long finish = System.currentTimeMillis() - start;
+//        printMsg("[server]CommandMessageManager.downloadFileByFrags() - duration(mc): " + finish);
+//    }
 
 //    /**
 //     * Метод скачивания и отправки целого небольшого файла размером менее
