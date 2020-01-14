@@ -132,14 +132,14 @@ public class CloudStorageServer {
     }
 
     /**
-     * Метод запускает процесс скачивания и отправки клиенту объекта элемента(пока тольок файла).
+     * Метод запускает процесс скачивания и отправки клиенту объекта элемента(пока только файла).
      * @param fileMessage - объект фалового сообщения
      * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище
      * @param ctx - объект сетевого соединения
      * @throws IOException - исключение ввода-вывода
      */
-    public void downloadItem(FileMessage fileMessage, Path userStorageRoot
-            , ChannelHandlerContext ctx) throws IOException {
+    public void downloadItem(FileMessage fileMessage, Path userStorageRoot,
+                             ChannelHandlerContext ctx) throws IOException {
         //если объект элемента - это директория
         if(fileMessage.getItem().isDirectory()){
             //FIXME что-то делаем, а пока выходим
@@ -152,11 +152,8 @@ public class CloudStorageServer {
         //если размер запрашиваемого файла больше константы размера фрагмента
         if(fileSize > FileFragmentMessage.CONST_FRAG_SIZE){
             //запускаем метод отправки файла по частям
-//            downloadFileByFrags(realStorageDir, clientDir,
-//                    fileMessage.getFilename(), fileSize);
             downloadFileByFrags(fileMessage.getClientDirectoryItem(),
                     fileMessage.getItem(), fileSize, userStorageRoot, ctx);
-
             //если файл меньше
         } else {
             //запускаем метод отправки целого файла

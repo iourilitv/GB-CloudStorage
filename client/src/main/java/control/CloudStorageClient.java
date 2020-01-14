@@ -270,8 +270,8 @@ public class CloudStorageClient {
      */
     public boolean downloadItemFragment(FileFragmentMessage fileFragMsg) {
         //инициируем реальный путь к временной папке для файлов-фрагментов
-        Path realToTempDirPath = itemUtils.getRealPath(//FIXME to client
-                Paths.get(
+        Path realToTempDirPath = itemUtils.getRealPath(
+                Paths.get(//FIXME to client
                         fileFragMsg.getStorageDirectoryItem().getItemPathname(),
                         fileFragMsg.getToTempDirName()).toString(),
                 CLIENT_ROOT_PATH);
@@ -290,7 +290,7 @@ public class CloudStorageClient {
     public boolean compileItemFragments(FileFragmentMessage fileFragMsg) {
         //инициируем реальный путь к временной папке для файлов-фрагментов
         Path realToTempDirPath = itemUtils.getRealPath(
-                Paths.get(
+                Paths.get(//FIXME to client
                         fileFragMsg.getStorageDirectoryItem().getItemPathname(),
                         fileFragMsg.getToTempDirName()).toString(),
                 CLIENT_ROOT_PATH);
