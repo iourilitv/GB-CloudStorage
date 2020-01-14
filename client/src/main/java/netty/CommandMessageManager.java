@@ -6,6 +6,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import javafx.GUIController;
 import messages.DirectoryMessage;
+import messages.FileFragmentMessage;
 import messages.FileMessage;
 import utils.CommandMessage;
 import utils.Commands;
@@ -87,7 +88,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             case Commands.SERVER_RESPONSE_UPLOAD_ITEM_OK:
             //обрабатываем полученное от сервера подтверждение успешной загрузке(сохранении)
             // всего большого файла(по фрагментно) в облачное хранилище
-            case Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_OK:
+            case Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAGS_OK:
             //обрабатываем полученный от сервера ответ об успешном переименовании файла или папки в облачном хранилище
             case Commands.SERVER_RESPONSE_RENAME_ITEM_OK:
             //обрабатываем полученный от сервера ответ об успешном удалении файла или папки в облачном хранилище
@@ -117,10 +118,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 onDownloadFileErrorServerResponse(commandMessage);
                 break;
             //обрабатываем полученный от сервера ответ на запрос на скачивание с фрагментом файла из облачного хранилища
-            case Commands.SERVER_RESPONSE_FILE_FRAGS_DOWNLOAD_OK:
+            case Commands.SERVER_RESPONSE_DOWNLOAD_FILE_FRAG_OK:
                 //вызываем метод обработки ответа от сервера с файлом-фрагментом
                 //в директорию клиента
-//                onDownloadFileFragOkServerResponse(commandMessage);//FIXME
+                onDownloadFileFragOkServerResponse(commandMessage);//FIXME
                 break;
 
         }
@@ -183,6 +184,98 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     private void onDownloadFileErrorServerResponse(CommandMessage commandMessage) {
         //FIXME fill me!
         printMsg("[client]CommandMessageManager.onDownloadFileErrorServerResponse() command: " + commandMessage.getCommand());
+    }
+
+//    /**
+//     * Метод обработки полученного от сервера ответа на запрос на скачивание с фрагментом файла из облачного хранилища
+//     * @param commandMessage - объект сообщения(команды)
+//     */
+//    private void onDownloadFileFragOkServerResponse(CommandMessage commandMessage) {
+//        //вынимаем объект файлового сообщения из объекта сообщения(команды)
+//        FileFragmentMessage fileFragmentMessage = (FileFragmentMessage) commandMessage.getMessageObject();
+//
+//        //собираем целевую директорию на клиенте
+//        //сбрасываем до корневой папки
+//        String toTempDir = storageClient.getClientDefaultDirectory();
+//        // добавляем временную директорию клиента из объекта сообщения(команды)
+//        toTempDir = toTempDir.concat("/").concat(fileFragmentMessage.getToTempDir());
+//        //создаем объект пути к папке с загруженным файлом
+//        String toDir = Paths.get(toTempDir).getParent().toString();//FIXME переделать на Path?
+//
+//        //если сохранение полученного фрагмента файла во временную папку сетевого хранилища прошло удачно
+//        if(fileUtils.saveFileFragment(toTempDir, fileFragmentMessage)){
+//
+//            //FIXME продумать, что отравлять серверу в ответ на присланный фрагмент и как это обрабатывать на сервере
+//            System.out.println();
+////            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+////            command = Commands.CLIENT_RESPONSE_FILE_FRAG_DOWNLOAD_OK;
+//            //если что-то пошло не так
+//        } else {
+//            //выводим сообщение
+//            printMsg("[client]" + fileUtils.getMsg());
+//
+//            //FIXME продумать, что отравлять серверу в ответ на присланный фрагмент и как это обрабатывать на сервере
+////            //инициируем переменную типа команды - ответ об ошибке
+////            command = Commands.CLIENT_RESPONSE_FILE_FRAG_DOWNLOAD_ERROR;
+//        }
+//        //если это последний фрагмент
+//        if(fileFragmentMessage.isFinalFileFragment()){
+//            //если корректно собран файл из фрагментов сохраненных во временную папку
+//            if(fileUtils.compileFileFragments(toTempDir, toDir, fileFragmentMessage)){
+//
+//                //FIXME продумать, что отравлять серверу в ответ на присланный фрагмент и как это обрабатывать на сервере
+//                System.out.println();
+////                //ответ сервера, что сборка файла из загруженных фрагментов прошла успешно
+////                command = Commands.CLIENT_RESPONSE_FILE_FRAGS_DOWNLOAD_OK;
+//
+//                //если что-то пошло не так
+//            } else {
+//                //выводим сообщение
+//                printMsg("[client]" + fileUtils.getMsg());
+//
+//                //FIXME продумать, что отравлять серверу в ответ на присланный фрагмент и как это обрабатывать на сервере
+////                //инициируем переменную типа команды - ответ об ошибке
+////                command = Commands.CLIENT_RESPONSE_FILE_FRAGS_DOWNLOAD_ERROR;
+//            }
+//        }
+//        //FIXME продумать, что отравлять серверу в ответ на присланный фрагмент и как это обрабатывать на сервере
+////        //создаем объект файлового сообщения
+////        fileFragmentMessage = new FileFragmentMessage(storageDir, clientDir, fileMessage.getFilename());
+////        //отправляем объект сообщения(команды) на сервер
+////        tester.getConnection().sendMessageObject(new CommandMessage(command, fileFragmentMessage));
+//    }
+    /**
+     * Метод обработки ответа от сервера на загрузку файла-фрагмента
+     * в директорию в клиенте.
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onDownloadFileFragOkServerResponse(CommandMessage commandMessage) {
+        //вынимаем объект файлового сообщения из объекта сообщения(команды)
+        FileFragmentMessage fileFragMsg = (FileFragmentMessage) commandMessage.getMessageObject();
+        //если сохранение полученного фрагмента файла во временную папку клиента прошло удачно
+        if(storageClient.downloadItemFragment(fileFragMsg)){
+            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+            command = Commands.CLIENT_RESPONSE_DOWNLOAD_FILE_FRAG_OK;
+            //если что-то пошло не так
+        } else {
+            //выводим сообщение
+            printMsg("[client]" + fileUtils.getMsg());
+            //инициируем переменную типа команды - ответ об ошибке
+            command = Commands.CLIENT_RESPONSE_DOWNLOAD_FILE_FRAG_ERROR;
+        }
+        //если это последний фрагмент
+        if(fileFragMsg.isFinalFileFragment()){
+            //если корректно собран файл из фрагментов сохраненных во временную папку
+            if(storageClient.compileItemFragments(fileFragMsg)){
+                //обновляем список файловых объектов на клиенте
+                guiController.updateClientItemListInGUI(
+                        fileFragMsg.getStorageDirectoryItem());//FIXME to .getClientDirectoryItem()
+                //если что-то пошло не так
+            } else {
+                //выводим сообщение
+                printMsg("[client]" + fileUtils.getMsg());
+            }
+        }
     }
 
     /**

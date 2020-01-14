@@ -22,12 +22,32 @@ public class Commands {
     //ответ сервера, что при загрузке(сохранении) объекта произошла ошибка
     public static final int SERVER_RESPONSE_UPLOAD_ITEM_ERROR = 101209;
 
+    //запрос на сервер загрузить(сохранить) фрагмент файла
+    public static final int REQUEST_SERVER_UPLOAD_FILE_FRAG = 111101;
+    //ответ сервера, что фрагмент файла успешно загружен(сохранен)
+    public static final int SERVER_RESPONSE_UPLOAD_FILE_FRAG_OK = 111202;
+    //ответ сервера, что при загрузке(сохранении) фрагмент файла произошла ошибка
+    public static final int SERVER_RESPONSE_UPLOAD_FILE_FRAG_ERROR = 111209;
+    //ответ сервера, что сборка файла из загруженных фрагментов прошла успешно
+    public static final int SERVER_RESPONSE_UPLOAD_FILE_FRAGS_OK = 111222;
+    //ответ сервера, что при сборке файла из загруженных фрагментов произошла ошибка
+    public static final int SERVER_RESPONSE_UPLOAD_FILE_FRAGS_ERROR = 111299;
+
     //запрос на сервер скачать объект элемента списка(пока только файл)
     public static final int REQUEST_SERVER_DOWNLOAD_ITEM = 202101;
     //ответ сервера с объектом элемента списка(пока только файл), если нет ошибок
     public static final int SERVER_RESPONSE_DOWNLOAD_ITEM_OK = 202202;
     //ответ сервера, что при скачивании объекта элемента списка(пока только файл) произошла ошибка
     public static final int SERVER_RESPONSE_DOWNLOAD_ITEM_ERROR = 202209;
+
+    //ответ сервера с файлом-фрагментом, если нет ошибок
+    public static final int SERVER_RESPONSE_DOWNLOAD_FILE_FRAG_OK = 222202;
+    //ответ сервера, что при скачивании файла-фрагмента произошла ошибка
+    public static final int SERVER_RESPONSE_DOWNLOAD_FILE_FRAG_ERROR = 222209;//TODO надо ли?
+    //ответ клиента, что файл-фрагмент получен и сохранен успешно
+    public static final int CLIENT_RESPONSE_DOWNLOAD_FILE_FRAG_OK = 202102;
+    //ответ клиента, что при получени или сохранении файла-фрагмента произошла ошибка
+    public static final int CLIENT_RESPONSE_DOWNLOAD_FILE_FRAG_ERROR = 202109;
 
     //запрос на сервер предоставить список объектов файлов и папок в заданной директории
     public static final int REQUEST_SERVER_ITEMS_LIST = 303101;
@@ -53,20 +73,4 @@ public class Commands {
     //переместить файл в другую папку
     public static final int REQUEST_SERVER_MOVE_FILE = 606101;
 
-    //запрос на сервер загрузить(сохранить) фрагмент файла
-    public static final int REQUEST_SERVER_FILE_FRAG_UPLOAD = 111101;
-
-    //ответ сервера, что фрагмент файла успешно загружен(сохранен)
-    public static final int SERVER_RESPONSE_FILE_FRAG_UPLOAD_OK = 111202;
-    //ответ сервера, что при загрузке(сохранении) фрагмент файла произошла ошибка
-    public static final int SERVER_RESPONSE_FILE_FRAG_UPLOAD_ERROR = 111209;
-    //ответ сервера, что сборка файла из загруженных фрагментов прошла успешно
-    public static final int SERVER_RESPONSE_FILE_FRAGS_UPLOAD_OK = 111222;
-    //ответ сервера, что при сборке файла из загруженных фрагментов произошла ошибка
-    public static final int SERVER_RESPONSE_FILE_FRAGS_UPLOAD_ERROR = 111299;
-
-    //ответ сервера с файлом-фрагментом, если нет ошибок
-    public static final int SERVER_RESPONSE_FILE_FRAGS_DOWNLOAD_OK = 222202;
-    //ответ сервера, что при скачивании файла-фрагмента произошла ошибка
-    public static final int SERVER_RESPONSE_FILE_FRAGS_DOWNLOAD_ERROR = 222209;//TODO надо ли?
 }

@@ -68,7 +68,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 onDownloadItemClientRequest(commandMessage);
                 break;
             //обрабатываем полученный от клиента запрос на загрузку(сохранение) фрагмента файла в облачное хранилище
-            case Commands.REQUEST_SERVER_FILE_FRAG_UPLOAD:
+            case Commands.REQUEST_SERVER_UPLOAD_FILE_FRAG:
                 //вызываем метод обработки запроса от клиента на загрузку файла-фрагмента
                 //в директорию в сетевом хранилище.
                 onUploadFileFragClientRequest(commandMessage);
@@ -178,26 +178,26 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //если сохранение полученного фрагмента файла во временную папку сетевого хранилища прошло удачно
         if(storageServer.uploadItemFragment(fileFragMsg, userStorageRoot)){
             //отправляем сообщение на сервер: подтверждение, что все прошло успешно
-            command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_OK;
+            command = Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAG_OK;
             //если что-то пошло не так
         } else {
             //выводим сообщение
             printMsg("[server]" + fileUtils.getMsg());
             //инициируем переменную типа команды - ответ об ошибке
-            command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_ERROR;
+            command = Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAG_ERROR;
         }
         //если это последний фрагмент
         if(fileFragMsg.isFinalFileFragment()){
             //если корректно собран файл из фрагментов сохраненных во временную папку
             if(storageServer.compileItemFragments(fileFragMsg, userStorageRoot)){
                 //ответ сервера, что сборка файла из загруженных фрагментов прошла успешно
-                command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_OK;
+                command = Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAGS_OK;
             //если что-то пошло не так
             } else {
                 //выводим сообщение
                 printMsg("[server]" + fileUtils.getMsg());
                 //инициируем переменную типа команды - ответ об ошибке
-                command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_ERROR;
+                command = Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAGS_ERROR;
             }
             //отправляем объект сообщения(команды) клиенту со списком объектов(файлов и папок) в
             // заданной директории клиента в сетевом хранилище

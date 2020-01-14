@@ -83,6 +83,11 @@ public class FileUtils {
     public boolean saveFileFragment(Path realToTempDirPath, Path realToFragPath,
                                     FileFragmentMessage fileFragMsg) {
         try {
+
+            System.out.println("FileUtils.saveFileFragment() - " +
+                    "realToTempDirPath: " + realToTempDirPath +
+                    ", realToFragPath: " + realToFragPath);
+
             //инициируем объект временной директории
             File dir = new File(realToTempDirPath.toString());
             //если временной директории нет

@@ -177,7 +177,7 @@ public class CloudStorageClient {
             //увеличиваем указатель стартового байта на размер фрагмента
             startByte += FileFragmentMessage.CONST_FRAG_SIZE;
             //отправляем на сервер объект сообщения(команды)
-            ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_FRAG_UPLOAD,
+            ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_UPLOAD_FILE_FRAG,
                     fileFragmentMessage));
         }
 
@@ -198,7 +198,7 @@ public class CloudStorageClient {
                     itemUtils.getRealPath(clientItem.getItemPathname(), CLIENT_ROOT_PATH).toString(),
                     startByte);
             //отправляем на сервер объект сообщения(команды)
-            ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_FILE_FRAG_UPLOAD,
+            ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_UPLOAD_FILE_FRAG,
                     fileFragmentMessage));
         }
 
@@ -245,7 +245,7 @@ public class CloudStorageClient {
                 fileMessage));
     }
 
-    /** //FIXME переделать как download
+    /**
      * Метод запускает процесс сохранения полученного от сервера объекта(файла)
      * в заданную директорию в сетевом хранилище.
      * @param clientToDirItem - объект заданной директории в клиенте
@@ -261,6 +261,49 @@ public class CloudStorageClient {
         Path realNewToItemPath = Paths.get(realDirPathname, item.getItemName());
         return fileUtils.saveFile(realNewToItemPath, data, fileSize);
     }
+
+    /**
+     * Метод запускает процесс сохранения файла-фрагмента из полученного байтового массива
+     * во временной директории в клиенте.
+     * @param fileFragMsg - объект файлового сообщения
+     * @return результат процесс сохранения файла-фрагмента из полученного байтового массива
+     */
+    public boolean downloadItemFragment(FileFragmentMessage fileFragMsg) {
+        //инициируем реальный путь к временной папке для файлов-фрагментов
+        Path realToTempDirPath = itemUtils.getRealPath(//FIXME to client
+                Paths.get(
+                        fileFragMsg.getStorageDirectoryItem().getItemPathname(),
+                        fileFragMsg.getToTempDirName()).toString(),
+                CLIENT_ROOT_PATH);
+        //инициируем реальный путь к файлу-фрагменту
+        Path realToFragPath = Paths.get(
+                realToTempDirPath.toString(), fileFragMsg.getFragName());
+        //если сохранение полученного фрагмента файла во временную папку сетевого хранилища прошло удачно
+        return fileUtils.saveFileFragment(realToTempDirPath, realToFragPath, fileFragMsg);
+    }
+
+    /**
+     * Метод запускает процесс сборки целого файла из файлов-фрагментов.
+     * @param fileFragMsg - объект файлового сообщения
+     * @return результат процесса сборки целого файла из файлов-фрагментов
+     */
+    public boolean compileItemFragments(FileFragmentMessage fileFragMsg) {
+        //инициируем реальный путь к временной папке для файлов-фрагментов
+        Path realToTempDirPath = itemUtils.getRealPath(
+                Paths.get(
+                        fileFragMsg.getStorageDirectoryItem().getItemPathname(),
+                        fileFragMsg.getToTempDirName()).toString(),
+                CLIENT_ROOT_PATH);
+        //инициируем реальный путь к файлу-фрагменту
+        Path realToFilePath = itemUtils.getRealPath(
+                Paths.get(
+                        fileFragMsg.getStorageDirectoryItem().getItemPathname(),
+                        fileFragMsg.getItem().getItemName()).toString(),
+                CLIENT_ROOT_PATH);
+        //возвращаем результат процесса сборки целого объекта(файла) из файлов-фрагментов
+        return fileUtils.compileFileFragments(realToTempDirPath, realToFilePath, fileFragMsg);
+    }
+
 
     /**
      * Метод переименовывает объект элемента списка на клиенте.
