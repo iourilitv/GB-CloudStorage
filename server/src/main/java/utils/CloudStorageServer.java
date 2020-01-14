@@ -70,14 +70,14 @@ public class CloudStorageServer {
         return itemUtils.createDirectoryItem(storageDirPathname, storageDefaultDirItem, userStorageRoot);
     }
 
-    /** //FIXME переделать как download
+    /**
      * Метод запускает процесс сохранения полученного от клиента объекта(файла)
      * в заданную директорию в сетевом хранилище.
      * @param storageToDirItem - объект заданной директории в сетевом хранилище
      * @param item - объект элемента от клиента
      * @param data - массив байт из файла
      * @param fileSize - размер файла
-     * @param userStorageRoot- объект пути к корневой директории пользователя в сетевом хранилище
+     * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище
      * @return - результат сохранения объекта
      */
     public boolean uploadItem(Item storageToDirItem, Item item, byte[] data, long fileSize, Path userStorageRoot){
@@ -88,6 +88,12 @@ public class CloudStorageServer {
         return fileUtils.saveFile(realNewToItemPath, data, fileSize);
     }
 
+    /**
+     * Метод запускает процесс сохранения файла-фрагмента из полученного байтового массива.
+     * @param fileFragMsg - объект файлового сообщения
+     * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище
+     * @return результат процесс сохранения файла-фрагмента из полученного байтового массива
+     */
     public boolean uploadItemFragment(FileFragmentMessage fileFragMsg, Path userStorageRoot) {
         //инициируем реальный путь к временной папке для файлов-фрагментов
         Path realToTempDirPath = itemUtils.getRealPath(
@@ -102,6 +108,12 @@ public class CloudStorageServer {
         return fileUtils.saveFileFragment(realToTempDirPath, realToFragPath, fileFragMsg);
     }
 
+    /**
+     * Метод запускает процесс сборки целого файла из файлов-фрагментов.
+     * @param fileFragMsg - объект файлового сообщения
+     * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище
+     * @return результат процесса сборки целого файла из файлов-фрагментов
+     */
     public boolean compileItemFragments(FileFragmentMessage fileFragMsg, Path userStorageRoot) {
         //инициируем реальный путь к временной папке для файлов-фрагментов
         Path realToTempDirPath = itemUtils.getRealPath(

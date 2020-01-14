@@ -136,26 +136,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * Метод обрабатывает полученное от клиента подтверждение успешного получения
-     * обновленного списка файлов клиента в облачном хранилище
-     * @param commandMessage - объект сообщения(команды)
-     */
-    private void onUploadFileOkClientResponse(CommandMessage commandMessage) {
-        //FIXME fill me!
-        printMsg("[server]CommandMessageManager.onUploadFileOkClientResponse() command: " + commandMessage.getCommand());
-    }
-
-    /**
-     * Метод обрабатывает полученное от клиента сообщение об ошибке получения обновленного
-     * списка файлов клиента в облачном хранилище
-     * @param commandMessage - объект сообщения(команды)
-     */
-    private void onUploadFileErrorClientResponse(CommandMessage commandMessage) {
-        //FIXME fill me!
-        printMsg("[server]CommandMessageManager.onUploadFileErrorClientResponse() command: " + commandMessage.getCommand());
-    }
-
-    /**
      * Метод обработки запроса от клиента на скачивание целого объекта элемента(файла)
      * из директории в сетевом хранилище в клиента.
      * @param commandMessage - объект сообщения(команды)
@@ -187,48 +167,11 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         printMsg("[server]CommandMessageManager.onDownloadFileErrorClientResponse() command: " + commandMessage.getCommand());
     }
 
-//    /**
-//     * Метод обработки запроса от клиента на загрузку файла-фрагмента
-//     * в директорию в сетевом хранилище.
-//     * @param commandMessage - объект сообщения(команды)
-//     */
-//    private void onUploadFileFragClientRequest(CommandMessage commandMessage) {
-//        //вынимаем объект файлового сообщения из объекта сообщения(команды)
-//        FileFragmentMessage fileFragmentMessage = (FileFragmentMessage) commandMessage.getMessageObject();
-//        //собираем временную директорию в целевой директории пользователя в сетевом хранилище
-//        //для сохранения фрагментов
-//        String realToDirTemp = realStorageDirectory(fileFragmentMessage.getToTempDirName());
-//        //создаем объект пути к папке с загруженным файлом
-//        String realToDir = Paths.get(realToDirTemp).getParent().toString();
-//        //если сохранение полученного фрагмента файла во временную папку сетевого хранилища прошло удачно
-//        if(fileUtils.saveFileFragment(realToDirTemp, fileFragmentMessage)){
-//            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
-//            command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_OK;
-//        //если что-то пошло не так
-//        } else {
-//            //выводим сообщение
-//            printMsg("[server]" + fileUtils.getMsg());
-//            //инициируем переменную типа команды - ответ об ошибке
-//            command = Commands.SERVER_RESPONSE_FILE_FRAG_UPLOAD_ERROR;
-//        }
-//        //если это последний фрагмент
-////        if(fileFragmentMessage.isFinalFileFragment()){
-////            //если корректно собран файл из фрагментов сохраненных во временную папку
-////            if(fileUtils.compileFileFragments(realToDirTemp, realToDir, fileFragmentMessage)){
-////                //ответ сервера, что сборка файла из загруженных фрагментов прошла успешно
-////                command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_OK;
-////            //если что-то пошло не так
-////            } else {
-////                //выводим сообщение
-////                printMsg("[server]" + fileUtils.getMsg());
-////                //инициируем переменную типа команды - ответ об ошибке
-////                command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_ERROR;
-////            }
-////            //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
-////            // заданной директории клиента в сетевом хранилище
-//////            sendFileObjectsList(fileFragmentMessage.getToDir(), realToDir, command);//FIXME
-////        }
-//    }
+    /**
+     * Метод обработки запроса от клиента на загрузку файла-фрагмента
+     * в директорию в сетевом хранилище.
+     * @param commandMessage - объект сообщения(команды)
+     */
     private void onUploadFileFragClientRequest(CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileFragmentMessage fileFragMsg = (FileFragmentMessage) commandMessage.getMessageObject();
@@ -246,7 +189,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //если это последний фрагмент
         if(fileFragMsg.isFinalFileFragment()){
             //если корректно собран файл из фрагментов сохраненных во временную папку
-//            if(fileUtils.compileFileFragments(realToDirTemp, realToDir, fileFragmentMessage)){
             if(storageServer.compileItemFragments(fileFragMsg, userStorageRoot)){
                 //ответ сервера, что сборка файла из загруженных фрагментов прошла успешно
                 command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_OK;
@@ -257,10 +199,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //инициируем переменную типа команды - ответ об ошибке
                 command = Commands.SERVER_RESPONSE_FILE_FRAGS_UPLOAD_ERROR;
             }
-            //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
-            // заданной директории клиента в сетевом хранилище
-//            sendFileObjectsList(fileFragmentMessage.getToDir(), realToDir, command);//FIXME
-
             //отправляем объект сообщения(команды) клиенту со списком объектов(файлов и папок) в
             // заданной директории клиента в сетевом хранилище
             sendItemsList(fileFragMsg.getStorageDirectoryItem(), command);
@@ -465,10 +403,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //отправляем объект сообщения(команды) клиенту
         ctx.writeAndFlush(new CommandMessage(command, directoryMessage));
     }
-
-//    private String realStorageDirectory(String storageDir) {
-//        return Paths.get(userStorageRoot.toString(), storageDir).toString();
-//    }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
