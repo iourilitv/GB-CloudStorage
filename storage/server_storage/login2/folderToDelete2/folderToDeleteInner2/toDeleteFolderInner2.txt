@@ -1,0 +1,12 @@
+To DELETE folder!
+
+Completed the authorizing task for this stage.
+Moved two methods(for auth) from the TCPServer class into the ServiceCommandHandler class of the server module and deleted old code there. All work correctly.
+The following scenarios work:
+*Scenario "upload a file":
+ - The client sends to the server a CommandMessage with a request "upload the file from the client directory to the user's directory in the storage" with the file data inside;
+ - The server reads the file data, saves it into a new file and sends back a CommandMessage about a result;
+*Scenario "download a file":
+ - The client sends to the server a CommandMessage with a request "download the file from the user's directory in the storage to the client directory";
+ - The server reads the file and sends back a CommandMessage with the file data;
+ - The client saves the file.

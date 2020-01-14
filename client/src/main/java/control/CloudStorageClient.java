@@ -39,8 +39,8 @@ public class CloudStorageClient {
 
     //FIXME temporarily - будет получать из GUI
     //инициируем константы логина и пароля пользователя
-    private final String login = "login1";
-    private final String password = "pass1";
+    private final String login = "login2";
+    private final String password = "pass2";
 
     public CloudStorageClient(GUIController guiController) {
         //принимаем объект контроллера GUI
