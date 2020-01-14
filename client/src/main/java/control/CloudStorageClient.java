@@ -33,7 +33,7 @@ public class CloudStorageClient {
     //инициируем константу объект пути к корневой директории для списка в клиентской части GUI
     public static final Path CLIENT_ROOT_PATH = Paths.get("storage","client_storage");
     //объявляем объект файлового обработчика
-    private FileUtils fileUtils;
+    private FileUtils fileUtils = FileUtils.getOwnObject();
     //принимаем объект обработчика операций с объектами элементов списков в GUI
     private final ItemUtils itemUtils = ItemUtils.getOwnObject();
 
@@ -45,8 +45,6 @@ public class CloudStorageClient {
     public CloudStorageClient(GUIController guiController) {
         //принимаем объект контроллера GUI
         this.guiController = guiController;
-        //инициируем объект файлового обработчика
-        fileUtils = new FileUtils();
     }
 
     /**
@@ -271,8 +269,8 @@ public class CloudStorageClient {
     public boolean downloadItemFragment(FileFragmentMessage fileFragMsg) {
         //инициируем реальный путь к временной папке для файлов-фрагментов
         Path realToTempDirPath = itemUtils.getRealPath(
-                Paths.get(//FIXME to client
-                        fileFragMsg.getStorageDirectoryItem().getItemPathname(),
+                Paths.get(
+                        fileFragMsg.getToDirectoryItem().getItemPathname(),
                         fileFragMsg.getToTempDirName()).toString(),
                 CLIENT_ROOT_PATH);
         //инициируем реальный путь к файлу-фрагменту
@@ -290,20 +288,19 @@ public class CloudStorageClient {
     public boolean compileItemFragments(FileFragmentMessage fileFragMsg) {
         //инициируем реальный путь к временной папке для файлов-фрагментов
         Path realToTempDirPath = itemUtils.getRealPath(
-                Paths.get(//FIXME to client
-                        fileFragMsg.getStorageDirectoryItem().getItemPathname(),
+                Paths.get(
+                        fileFragMsg.getToDirectoryItem().getItemPathname(),
                         fileFragMsg.getToTempDirName()).toString(),
                 CLIENT_ROOT_PATH);
         //инициируем реальный путь к файлу-фрагменту
         Path realToFilePath = itemUtils.getRealPath(
                 Paths.get(
-                        fileFragMsg.getStorageDirectoryItem().getItemPathname(),
+                        fileFragMsg.getToDirectoryItem().getItemPathname(),
                         fileFragMsg.getItem().getItemName()).toString(),
                 CLIENT_ROOT_PATH);
         //возвращаем результат процесса сборки целого объекта(файла) из файлов-фрагментов
         return fileUtils.compileFileFragments(realToTempDirPath, realToFilePath, fileFragMsg);
     }
-
 
     /**
      * Метод переименовывает объект элемента списка на клиенте.

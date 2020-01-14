@@ -19,6 +19,13 @@ import java.util.Objects;
  * The common class for operating with fileMessages and fileFragmentMessages.
  */
 public class FileUtils {
+    //инициируем синглтон(объект класса)
+    private static FileUtils ownObject = new FileUtils();
+
+    public static FileUtils getOwnObject() {
+        return ownObject;
+    }
+
     //инициируем строковую переменную для вывода сообщений
     private String msg;
 

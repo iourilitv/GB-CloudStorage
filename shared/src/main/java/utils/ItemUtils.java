@@ -8,6 +8,7 @@ import java.nio.file.Paths;
  * This class responds for operating with the Item class.
  */
 public class ItemUtils {
+    //инициируем синглтон(объект класса)
     private static ItemUtils ownObject = new ItemUtils();
 
     public static ItemUtils getOwnObject() {

@@ -23,7 +23,7 @@ public class CloudStorageServer {
     //инициируем переменную для печати сообщений в консоль
     private final PrintStream log = System.out;
     //инициируем объект пути к корневой директории облачного хранилища(сервера) для хранения файлов клиентов
-    private final Path STORAGE_ROOT_PATH = Paths.get("storage","server_storage");//TODO static
+    private static final Path STORAGE_ROOT_PATH = Paths.get("storage","server_storage");
     //инициируем константу строки названия корневой директории для списка в серверной части GUI
     private final String STORAGE_DEFAULT_DIR = "";
     //объявляем объекты директории пользователя по умолчанию в серверной части GUI
@@ -33,7 +33,7 @@ public class CloudStorageServer {
     //объявляем объект контроллера авторизации клиента
     private UsersAuthController usersAuthController;
     //объявляем объект файлового обработчика
-    private FileUtils fileUtils;//TODO переделать на синглтон
+    private FileUtils fileUtils = FileUtils.getOwnObject();
     //принимаем объект обработчика операций с объектами элементов списков в GUI
     private final ItemUtils itemUtils = ItemUtils.getOwnObject();
 
@@ -42,8 +42,6 @@ public class CloudStorageServer {
         authorizedUsers = new HashMap<>();
         //инициируем объект контроллера авторизации пользователей
         usersAuthController = new UsersAuthController(this);
-        //инициируем объект файлового обработчика
-        fileUtils = new FileUtils();
         //инициируем объект директории по умолчанию в серверной части GUI
         storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);
         //инициируем объект сетевого подключения
@@ -98,7 +96,7 @@ public class CloudStorageServer {
         //инициируем реальный путь к временной папке для файлов-фрагментов
         Path realToTempDirPath = itemUtils.getRealPath(
                 Paths.get(
-                        fileFragMsg.getStorageDirectoryItem().getItemPathname(),
+                        fileFragMsg.getToDirectoryItem().getItemPathname(),
                         fileFragMsg.getToTempDirName()).toString(),
                 userStorageRoot);
         //инициируем реальный путь к файлу-фрагменту
@@ -118,13 +116,13 @@ public class CloudStorageServer {
         //инициируем реальный путь к временной папке для файлов-фрагментов
         Path realToTempDirPath = itemUtils.getRealPath(
                 Paths.get(
-                        fileFragMsg.getStorageDirectoryItem().getItemPathname(),
+                        fileFragMsg.getToDirectoryItem().getItemPathname(),
                         fileFragMsg.getToTempDirName()).toString(),
                 userStorageRoot);
         //инициируем реальный путь к файлу-фрагменту
         Path realToFilePath = itemUtils.getRealPath(
                 Paths.get(
-                        fileFragMsg.getStorageDirectoryItem().getItemPathname(),
+                        fileFragMsg.getToDirectoryItem().getItemPathname(),
                         fileFragMsg.getItem().getItemName()).toString(),
                         userStorageRoot);
         //возвращаем результат процесса сборки целого объекта(файла) из файлов-фрагментов

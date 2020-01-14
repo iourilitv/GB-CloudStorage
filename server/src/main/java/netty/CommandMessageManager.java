@@ -25,7 +25,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
     //объявляем переменную типа команды
-    private int command;//TODO сделать локальной?
+    private int command;
 
     public CommandMessageManager(CloudStorageServer storageServer) {
         this.storageServer = storageServer;
@@ -201,7 +201,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             }
             //отправляем объект сообщения(команды) клиенту со списком объектов(файлов и папок) в
             // заданной директории клиента в сетевом хранилище
-            sendItemsList(fileFragMsg.getStorageDirectoryItem(), command);
+            sendItemsList(fileFragMsg.getToDirectoryItem(), command);
         }
     }
 

@@ -25,9 +25,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     //принимаем объект контроллера GUI
     private GUIController guiController;
 
-    //объявляем переменную типа команды
-    private int command;//TODO сделать локальными?
-
     public CommandMessageManager(CloudStorageClient storageClient) {
         this.storageClient = storageClient;
         //принимаем объект файлового обработчика
@@ -110,7 +107,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             //обрабатываем полученное от сервера подтверждение успешного скачивания файла из облачного хранилища
             case Commands.SERVER_RESPONSE_DOWNLOAD_ITEM_OK:
                 //вызываем метод обработки ответа сервера со скачанным целым файлом внутри
-                onDownloadItemOkServerResponse(commandMessage);//FIXME
+                onDownloadItemOkServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке скачивания файла из облачного хранилища
             case Commands.SERVER_RESPONSE_DOWNLOAD_ITEM_ERROR:
@@ -121,9 +118,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             case Commands.SERVER_RESPONSE_DOWNLOAD_FILE_FRAG_OK:
                 //вызываем метод обработки ответа от сервера с файлом-фрагментом
                 //в директорию клиента
-                onDownloadFileFragOkServerResponse(commandMessage);//FIXME
+                onDownloadFileFragOkServerResponse(commandMessage);
                 break;
-
         }
     }
 
@@ -195,6 +191,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileFragmentMessage fileFragMsg = (FileFragmentMessage) commandMessage.getMessageObject();
         //если сохранение полученного фрагмента файла во временную папку клиента прошло удачно
+        //объявляем переменную типа команды
+        int command;
         if(storageClient.downloadItemFragment(fileFragMsg)){
             //отправляем сообщение на сервер: подтверждение, что все прошло успешно
             command = Commands.CLIENT_RESPONSE_DOWNLOAD_FILE_FRAG_OK;
@@ -211,7 +209,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             if(storageClient.compileItemFragments(fileFragMsg)){
                 //обновляем список файловых объектов на клиенте
                 guiController.updateClientItemListInGUI(
-                        fileFragMsg.getStorageDirectoryItem());//FIXME to .getClientDirectoryItem()
+                        fileFragMsg.getToDirectoryItem());
                 //если что-то пошло не так
             } else {
                 //выводим сообщение

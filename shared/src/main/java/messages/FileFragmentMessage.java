@@ -16,7 +16,7 @@ public class FileFragmentMessage extends AbstractMessage {
     //инициируем константу размера фрагментов файла в байтах
     public static final int CONST_FRAG_SIZE = 1024 * 1024 * 10;
     //принимаем объект родительской директории элемента в сетевом хранилище
-    private Item storageDirectoryItem;
+    private Item toDirectoryItem;
     //принимаем объект элемента
     private Item item;
     //объявляем переменную размера файла(в байтах)
@@ -34,11 +34,11 @@ public class FileFragmentMessage extends AbstractMessage {
     //объявляем переменную имени фрагмента файла
     private String fragName;
 
-    //this constructor is for uploadFileByFrags operation
+    //this constructor is for upload and download FileByFrags operation
     public FileFragmentMessage(
-            Item storageDirectoryItem, Item item, long fullFileSize,
+            Item toDirectoryItem, Item item, long fullFileSize,
             int currentFragNumber, int totalFragsNumber, int fileFragmentSize, byte[] data) {
-        this.storageDirectoryItem = storageDirectoryItem;
+        this.toDirectoryItem = toDirectoryItem;
         this.item = item;
         this.fullFileSize = fullFileSize;
         this.currentFragNumber = currentFragNumber;
@@ -110,8 +110,8 @@ public class FileFragmentMessage extends AbstractMessage {
         bis.close();
     }
 
-    public Item getStorageDirectoryItem() {
-        return storageDirectoryItem;
+    public Item getToDirectoryItem() {
+        return toDirectoryItem;
     }
 
     public Item getItem() {
