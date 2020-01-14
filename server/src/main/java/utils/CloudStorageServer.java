@@ -88,6 +88,37 @@ public class CloudStorageServer {
         return fileUtils.saveFile(realNewToItemPath, data, fileSize);
     }
 
+    public boolean uploadItemFragment(FileFragmentMessage fileFragMsg, Path userStorageRoot) {
+        //инициируем реальный путь к временной папке для файлов-фрагментов
+        Path realToTempDirPath = itemUtils.getRealPath(
+                Paths.get(
+                        fileFragMsg.getStorageDirectoryItem().getItemPathname(),
+                        fileFragMsg.getToTempDirName()).toString(),
+                userStorageRoot);
+        //инициируем реальный путь к файлу-фрагменту
+        Path realToFragPath = Paths.get(
+                        realToTempDirPath.toString(), fileFragMsg.getFragName());
+        //если сохранение полученного фрагмента файла во временную папку сетевого хранилища прошло удачно
+        return fileUtils.saveFileFragment(realToTempDirPath, realToFragPath, fileFragMsg);
+    }
+
+    public boolean compileItemFragments(FileFragmentMessage fileFragMsg, Path userStorageRoot) {
+        //инициируем реальный путь к временной папке для файлов-фрагментов
+        Path realToTempDirPath = itemUtils.getRealPath(
+                Paths.get(
+                        fileFragMsg.getStorageDirectoryItem().getItemPathname(),
+                        fileFragMsg.getToTempDirName()).toString(),
+                userStorageRoot);
+        //инициируем реальный путь к файлу-фрагменту
+        Path realToFilePath = itemUtils.getRealPath(
+                Paths.get(
+                        fileFragMsg.getStorageDirectoryItem().getItemPathname(),
+                        fileFragMsg.getItem().getItemName()).toString(),
+                        userStorageRoot);
+        //возвращаем результат процесса сборки целого объекта(файла) из файлов-фрагментов
+        return fileUtils.compileFileFragments(realToTempDirPath, realToFilePath, fileFragMsg);
+    }
+
     /**
      * Метод запускает процесс скачивания и отправки клиенту объекта элемента(пока тольок файла).
      * @param fileMessage - объект фалового сообщения
@@ -207,4 +238,5 @@ public class CloudStorageServer {
     public void printMsg(String msg){
         log.append(msg).append("\n");
     }
+
 }
