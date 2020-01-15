@@ -62,8 +62,11 @@ public class GUIController implements Initializable {
         //инициируем объекты директории по умолчанию в клиентской и серверной части GUI
         clientDefaultDirItem = new Item(CLIENT_DEFAULT_DIR);
         storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);
+
+        //TODO текст в метку не выводится и даже если текст прописан в fxml.
 //        //выводим текст в метку
 //        label.setText("Connecting to the Cloud Storage server, please wait..");
+
         //инициируем в клиентской части интерфейса список объектов в директории по умолчанию
         initializeClientItemListView();
         //инициируем в серверной части интерфейса список объектов в директории по умолчанию
