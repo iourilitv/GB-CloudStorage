@@ -17,7 +17,8 @@ listView.setOnContextMenuRequested(event -> {
 NullPointerException. И если просто кликнуть на список, то контекстное меню на скрывается.
 И как его вызвать не понятно.
 2. Также проблема с закрыванием вторичного окна.
-Выражение stage.setOnHidden(event -> System.out.println("stage.setOnHidden..."));
+Выражение stage.setOnCloseRequest(event -> System.out.println("stage.setOnCloseRequest..."));
+или stage.setOnHidden(event -> System.out.println("stage.setOnHidden..."));
 не работает для вторичных окон. 
 Окно по крестику закрывается и как это событие обработать на понятно.
 3. Не выводится текст в метку и при инициализации GUIController и даже,
