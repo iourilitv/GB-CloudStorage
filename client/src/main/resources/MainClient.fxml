@@ -117,6 +117,11 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                     </padding>
                 </Button>
+<!--                <Button fx:id="AuthorisationButton" onAction="#openAuthWindow" text="Authorisation" prefWidth="80.0" prefHeight="26.0">-->
+<!--                    <padding>-->
+<!--                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />-->
+<!--                    </padding>-->
+<!--                </Button>-->
                 <VBox.margin>
                     <Insets left="2.0" right="2.0" top="2.0" />
                 </VBox.margin>

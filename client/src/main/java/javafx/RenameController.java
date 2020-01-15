@@ -21,9 +21,17 @@ public class RenameController {
      */
     @FXML
     public void saveNewName(ActionEvent actionEvent) {
-        //записываем новое имя в соответствующую переменную главного контроллера
-        backController.setNewName(newName.getText());
-        //закрываем модальное окно
-        globParent.getScene().getWindow().hide();
+        //если введенное новое имя корректно
+        if(isNewNameCorrect(newName.getText())){
+            //записываем новое имя в соответствующую переменную главного контроллера
+            backController.setNewName(newName.getText());
+            //закрываем модальное окно
+            globParent.getScene().getWindow().hide();
+        }
+    }
+
+    //FIXME
+    private boolean isNewNameCorrect(String newName){
+        return !newName.trim().isEmpty();
     }
 }

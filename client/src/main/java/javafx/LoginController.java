@@ -16,13 +16,45 @@ public class LoginController {
     @FXML
     VBox globParent;
 
-    public int id;
-
+    //главный контроллер GUI
     public GUIController backController;
 
+    /**
+     * Метод обрабатывает клик мыши по кнопке "Authorization" в диалоговом окне ввода нового имени
+     * @param actionEvent - клик мыши по кнопке "Authorization"
+     */
     public void auth(ActionEvent actionEvent) {
-        System.out.println(login.getText() + " " + password.getText());
-        System.out.println("id = " + id);
-        globParent.getScene().getWindow().hide();
+        //если введенные логин и пароль корректны
+        if(isLoginPasswordCorrect(login.getText(), password.getText())){
+            //записываем введенные логин и пароль в соответствующие переменные главного контроллера
+            backController.setLogin(login.getText());
+            backController.setPassword(password.getText());
+            //запускаем процесс авторизации
+            backController.startAuthorisation();
+            globParent.getScene().getWindow().hide();
+        }
     }
+
+    //FIXME
+    private boolean isLoginPasswordCorrect(String login, String password){
+
+        System.out.println("LoginController.isLoginPasswordCorrect() - login: " + login
+                + ", password: " + password);
+
+        return !login.trim().isEmpty() && !password.trim().isEmpty();
+    }
+
+    //FIXME
+    public void onRegistrationLink(ActionEvent actionEvent) {
+        System.out.println("LoginController.onRegistrationLink() - get registration");
+    }
+
+    //Метод отправки запроса об отключении на сервер
+    public void dispose() {
+        System.out.println("LoginController.dispose() - Закрыть основное окно");
+
+        backController.label.getScene().getWindow().hide();
+    }
+
+
 }

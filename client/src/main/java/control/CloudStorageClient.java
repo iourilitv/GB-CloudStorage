@@ -37,10 +37,10 @@ public class CloudStorageClient {
     //принимаем объект обработчика операций с объектами элементов списков в GUI
     private final ItemUtils itemUtils = ItemUtils.getOwnObject();
 
-    //FIXME temporarily - будет получать из GUI
-    //инициируем константы логина и пароля пользователя
-    private final String login = "login2";
-    private final String password = "pass2";
+//    //FIXME temporarily - будет получать из GUI
+//    //инициируем константы логина и пароля пользователя
+//    private final String login = "login2";
+//    private final String password = "pass2";
 
     public CloudStorageClient(GUIController guiController) {
         //принимаем объект контроллера GUI
@@ -56,19 +56,35 @@ public class CloudStorageClient {
         new NettyClient(this, IP_ADDR, PORT).run();//TODO
     }
 
+//    /**
+//     * Публичный метод отправляет на сервер запрос на авторизацию в облачное хранилище
+//     * @param ctx - объект сетевого соединения
+//     */
+//    public void startAuthorization(ChannelHandlerContext ctx) {
+//        //принимаем объект сетевого соединения
+//        this.ctx = ctx;
+//
+//        //TODO temporarily
+//        printMsg("***CloudStorageClient.requestAuthorization() - has started***");
+//
+//        //отправляем на сервер запрос на авторизацию в облачное хранилище
+////        requestAuthorization(login, password);
+//        requestAuthorization(guiController.getLogin(), guiController.getPassword());
+//
+//        //TODO temporarily
+//        printMsg("***CloudStorageClient.requestAuthorization() - has finished***");
+//    }
     /**
      * Публичный метод отправляет на сервер запрос на авторизацию в облачное хранилище
-     * @param ctx - объект сетевого соединения
      */
-    public void startAuthorization(ChannelHandlerContext ctx) {
-        //принимаем объект сетевого соединения
-        this.ctx = ctx;
-
+    public void startAuthorization() {
         //TODO temporarily
         printMsg("***CloudStorageClient.requestAuthorization() - has started***");
 
+
         //отправляем на сервер запрос на авторизацию в облачное хранилище
-        requestAuthorization(login, password);
+//        requestAuthorization(login, password);
+        requestAuthorization(guiController.getLogin(), guiController.getPassword());
 
         //TODO temporarily
         printMsg("***CloudStorageClient.requestAuthorization() - has finished***");
@@ -385,8 +401,19 @@ public class CloudStorageClient {
         return guiController;
     }
 
+    public ChannelHandlerContext getCtx() {
+        return ctx;
+    }
+
+    public void setCtx(ChannelHandlerContext ctx) {
+        this.ctx = ctx;
+    }
+
     public void printMsg(String msg){
         log.append(msg).append("\n");
     }
 
+    public void setLabelText(String text) {
+        guiController.setLabelText(text);
+    }
 }

@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import javafx.GUIController;
+import javafx.application.Platform;
 import messages.DirectoryMessage;
 import messages.FileFragmentMessage;
 import messages.FileMessage;
@@ -37,6 +38,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx){
         //принимаем объект соединения
         this.ctx = ctx;
+
+        storageClient.setCtx(ctx);
     }
 
     /**
@@ -128,8 +131,23 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * @param commandMessage - объект сообщения(команды)
      */
     private void onServerConnectedResponse(CommandMessage commandMessage) {
-        //отправляем запрос на авторизацию в обланое хранилище
-        storageClient.startAuthorization(ctx);
+
+//        storageClient.getGuiController().openAuthWindow();
+        //java.lang.IllegalStateException: Not on FX application thread; currentThread = nioEventLoopGroup-2-1
+        //	at javafx.GUIController.openAuthWindow(GUIController.java:91)
+
+//        //отправляем запрос на авторизацию в обланое хранилище
+//        storageClient.startAuthorization(ctx);
+//        storageClient.startAuthorization();
+        //в отдельном потоке запускаем обновление интерфейса
+        Platform.runLater(() -> {
+            //выводим сообщение в нижнюю метку GUI
+            storageClient.setLabelText("Server has connected, insert login and password.");
+            //выводим
+            guiController.openAuthWindow();
+        });
+
+//        guiController.openAuthWindow("Server has connected, press the \"Authorisation\" button.");
     }
 
     /**
@@ -141,6 +159,16 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         // вывести в GUI сообщение об ошибке
         // повторить запрос на авторизацию с новыми данными логина и пароля
         printMsg("[client]CommandMessageManager.onAuthErrorServerResponse() - Something wrong with your login and password!");
+
+        //в отдельном потоке запускаем обновление интерфейса
+        Platform.runLater(() -> {
+            //выводим сообщение в нижнюю метку GUI
+            storageClient.setLabelText("Something wrong with your login or password! Insert them again.");
+            //выводим
+            guiController.openAuthWindow();
+
+        });
+
     }
 
     /**

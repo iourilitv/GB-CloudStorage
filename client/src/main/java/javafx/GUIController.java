@@ -21,6 +21,9 @@ import java.util.ResourceBundle;
  * The client class for operating with directoryMessages.
  */
 public class GUIController implements Initializable {
+    @FXML
+    Button AuthorisationButton;//TODO надо ли?
+
     //объявляем объекты кнопок для коллекции файловых объектов клиента и сервера
     @FXML
     Button  clientHomeButton, storageHomeButton,//"В корневую директорию"
@@ -35,10 +38,13 @@ public class GUIController implements Initializable {
     ListView<Item> clientItemListView, storageItemListView;
 
     @FXML
-    Label label;//TODO Зачем?
+    Label label;
 
     //объявляем объект контроллера клиента облачного хранилища
     private CloudStorageClient storageClient;
+    //объявляем переменные логина и пароля пользователя
+    private String login;
+    private String password;
     //инициируем константу строки названия директории по умолчанию относительно корневой директории
     // для списка в клиентской части GUI
     private final String CLIENT_DEFAULT_DIR = "";
@@ -49,7 +55,7 @@ public class GUIController implements Initializable {
     //объявляем объекты текущей папки списка объектов элемента в клиентской и серверной части GUI
     private Item clientCurrentDirItem, storageCurrentDirItem;
     //объявляем переменную введенного нового имени объекта элемента
-    private String newName;
+    private String newName = "";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -58,10 +64,80 @@ public class GUIController implements Initializable {
         //инициируем объекты директории по умолчанию в клиентской и серверной части GUI
         clientDefaultDirItem = new Item(CLIENT_DEFAULT_DIR);
         storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);
+
+//        //открываем окно авторизации
+//        openAuthWindow();
+
         //инициируем в клиентской части интерфейса список объектов в директории по умолчанию
         initializeClientItemListView();
         //инициируем в серверной части интерфейса список объектов в директории по умолчанию
         initializeStorageItemListView();
+        //в отдельном потоке
+        new Thread(() -> {
+            try {
+                //запускаем логику клиента облачного хранилища
+                storageClient.run();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    /**
+     * Метод открывает модальное окно для ввода логина и пароля пользователя.
+     */
+    public void openAuthWindow() {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Login.fxml"));
+            Parent root = loader.load();
+            LoginController loginController = loader.getController();
+            loginController.backController = this;
+
+            stage.setTitle("Authorisation to the Cloud Storage by LYS");
+            stage.setScene(new Scene(root, 300, 200));
+            stage.isAlwaysOnTop();
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            //определяем действия по событию закрыть окно по крестику через лямбда
+            //TODO не вызывается закрытии окна
+            stage.setOnCloseRequest(event -> {
+                System.out.println("stage.setOnCloseRequest...");
+                loginController.dispose();
+//                label.getScene().getWindow().hide();
+            });
+            //TODO не вызывается закрытии окна
+            stage.setOnHidden(event -> {
+                System.out.println("stage.setOnHidden...");
+                loginController.dispose();
+//                label.getScene().getWindow().hide();
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Метод запускает процесс показа основного окна и процесс авторизации в сетевом хранилище.
+     */
+    public void startAuthorisation() {
+//        //инициируем в клиентской части интерфейса список объектов в директории по умолчанию
+//        initializeClientItemListView();
+//        //инициируем в серверной части интерфейса список объектов в директории по умолчанию
+//        initializeStorageItemListView();
+//        //в отдельном потоке
+//        new Thread(() -> {
+//            try {
+//                //запускаем логику клиента облачного хранилища
+//                storageClient.run();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
+
+        storageClient.startAuthorization();
     }
 
     /**
@@ -81,15 +157,15 @@ public class GUIController implements Initializable {
                 new Item[]{new Item("waiting for an item list from the server...",
                         "", "waiting for an item list from the server...",
                         "", false)});
-        //в отдельном потоке
-        new Thread(() -> {
-            try {
-                //запускаем логику клиента облачного хранилища
-                storageClient.run();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
+//        //в отдельном потоке
+//        new Thread(() -> {
+//            try {
+//                //запускаем логику клиента облачного хранилища
+//                storageClient.run();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
     }
 
     /**
@@ -101,6 +177,8 @@ public class GUIController implements Initializable {
         clientCurrentDirItem = directoryItem;
         //в отдельном потоке запускаем обновление интерфейса
         Platform.runLater(() -> {
+            //очищаем метку уведомлений
+            label.setText("");
             //записываем в метку относительный строковый путь текущей директории
             clientDirLabel.setText(">>" + clientCurrentDirItem.getItemPathname());
             //обновляем заданный список объектов элемента
@@ -119,6 +197,8 @@ public class GUIController implements Initializable {
         storageCurrentDirItem = directoryItem;
         //в отдельном потоке запускаем обновление интерфейса
         Platform.runLater(() -> {
+            //очищаем метку уведомлений
+            label.setText("");
             //выводим текущую директорию в метку серверной части
             storageDirLabel.setText(">>" + storageCurrentDirItem.getItemPathname());
             //обновляем заданный список файловых объектов
@@ -276,7 +356,12 @@ public class GUIController implements Initializable {
             //запоминаем выбранный элемент списка
             Item origin = listView.getSelectionModel().getSelectedItem();
             //открываем диалоговое окно переименования файлового объекта
-            String newName = takeNewNameWindow(origin);
+            takeNewNameWindow(origin);
+            //если имя пришло пустое(при закрытии окна), то выходим без действий
+            if(newName.isEmpty()){
+                System.out.println("GUIController.menuItemRename() - the newName var is empty!");
+                return;
+            }
             //если текущий список клиентский
             if(listView.equals(clientItemListView)){
                 //переименовываем файловый объект
@@ -295,6 +380,8 @@ public class GUIController implements Initializable {
             }
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
+            //очищаем переменную имени
+            newName = "";
         });
         return menuItemRename;
     }
@@ -302,16 +389,14 @@ public class GUIController implements Initializable {
     /**
      * Метод открывает модальное окно для ввода нового имени элемента списка.
      * @param origin - объект элемента - оригинал
-     * @return - текстовую строку с новым имем
      */
-    private String takeNewNameWindow(Item origin) {
+    private void takeNewNameWindow(Item origin) {
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
             Parent root = loader.load();
             RenameController renameController = loader.getController();
 
-            //FIXME добавить проверку релевантности имени - не должно быть пустой, пробела, и т.п.
             //записываем текущее имя в текстовое поле
             renameController.newName.setText(origin.getItemName());
             renameController.backController = this;
@@ -325,7 +410,6 @@ public class GUIController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return newName;
     }
 
     /**
@@ -407,8 +491,32 @@ public class GUIController implements Initializable {
         storageClient.demandDirectoryItemList(storageCurrentDirItem.getParentPathname());
     }
 
+    public String getLabelText() {
+        return label.getText();
+    }
+
+    public void setLabelText(String text) {
+        label.setText(text);
+    }
+
     public void setNewName(String newName) {
         this.newName = newName;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setLogin(String text) {
+        login = text;
+    }
+
+    public void setPassword(String text) {
+        password = text;
     }
 
     //Метод отправки запроса об отключении на сервер
@@ -423,5 +531,4 @@ public class GUIController implements Initializable {
 //            e.printStackTrace();
 //        }
     }
-
 }
