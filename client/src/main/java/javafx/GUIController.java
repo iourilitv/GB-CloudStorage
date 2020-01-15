@@ -21,8 +21,6 @@ import java.util.ResourceBundle;
  * The client class for operating with directoryMessages.
  */
 public class GUIController implements Initializable {
-    @FXML
-    Button AuthorisationButton;//TODO надо ли?
 
     //объявляем объекты кнопок для коллекции файловых объектов клиента и сервера
     @FXML
@@ -64,6 +62,8 @@ public class GUIController implements Initializable {
         //инициируем объекты директории по умолчанию в клиентской и серверной части GUI
         clientDefaultDirItem = new Item(CLIENT_DEFAULT_DIR);
         storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);
+//        //выводим текст в метку
+//        label.setText("Connecting to the Cloud Storage server, please wait..");
         //инициируем в клиентской части интерфейса список объектов в директории по умолчанию
         initializeClientItemListView();
         //инициируем в серверной части интерфейса список объектов в директории по умолчанию
@@ -111,8 +111,6 @@ public class GUIController implements Initializable {
      * Метод запускает процесс показа основного окна и процесс авторизации в сетевом хранилище.
      */
     public void startAuthorisation() {
-        //выводим текст в метку
-        label.setText("Connecting to the cloud storage server, please wait..");
         //запускаем процесс авторизации
         storageClient.startAuthorization();
     }
