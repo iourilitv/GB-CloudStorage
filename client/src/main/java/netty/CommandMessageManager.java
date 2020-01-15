@@ -5,7 +5,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import javafx.GUIController;
-import javafx.application.Platform;
 import messages.DirectoryMessage;
 import messages.FileFragmentMessage;
 import messages.FileMessage;
@@ -131,23 +130,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * @param commandMessage - объект сообщения(команды)
      */
     private void onServerConnectedResponse(CommandMessage commandMessage) {
-
-//        storageClient.getGuiController().openAuthWindow();
-        //java.lang.IllegalStateException: Not on FX application thread; currentThread = nioEventLoopGroup-2-1
-        //	at javafx.GUIController.openAuthWindow(GUIController.java:91)
-
-//        //отправляем запрос на авторизацию в обланое хранилище
-//        storageClient.startAuthorization(ctx);
-//        storageClient.startAuthorization();
-        //в отдельном потоке запускаем обновление интерфейса
-        Platform.runLater(() -> {
-            //выводим сообщение в нижнюю метку GUI
-            storageClient.setLabelText("Server has connected, insert login and password.");
-            //выводим
-            guiController.openAuthWindow();
-        });
-
-//        guiController.openAuthWindow("Server has connected, press the \"Authorisation\" button.");
+        //выводим сообщение в нижнюю метку GUI
+        showTextInGUI("Server has connected, insert login and password.");
+        //открываем окно авторизации
+        guiController.openAuthWindowInGUI();
     }
 
     /**
@@ -155,20 +141,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * @param commandMessage - объект сообщения(команды)
      */
     private void onAuthErrorServerResponse(CommandMessage commandMessage) {
-        //FIXME
-        // вывести в GUI сообщение об ошибке
-        // повторить запрос на авторизацию с новыми данными логина и пароля
-        printMsg("[client]CommandMessageManager.onAuthErrorServerResponse() - Something wrong with your login and password!");
-
-        //в отдельном потоке запускаем обновление интерфейса
-        Platform.runLater(() -> {
-            //выводим сообщение в нижнюю метку GUI
-            storageClient.setLabelText("Something wrong with your login or password! Insert them again.");
-            //выводим
-            guiController.openAuthWindow();
-
-        });
-
+        //выводим сообщение в нижнюю метку GUI
+        showTextInGUI("Something wrong with your login or password! Insert them again.");
+        //открываем окно авторизации
+        guiController.openAuthWindowInGUI();
     }
 
     /**
@@ -195,8 +171,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             guiController.updateClientItemListInGUI(fileMessage.getClientDirectoryItem());
         //если что-то пошло не так
         } else {
-            //выводим сообщение
+            //печатаем сообщение в консоль
             printMsg("[client]" + fileUtils.getMsg());
+            //выводим сообщение в GUI
+            showTextInGUI(fileUtils.getMsg());
         }
     }
 
@@ -226,8 +204,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             command = Commands.CLIENT_RESPONSE_DOWNLOAD_FILE_FRAG_OK;
             //если что-то пошло не так
         } else {
-            //выводим сообщение
+            //печатаем сообщение в консоль
             printMsg("[client]" + fileUtils.getMsg());
+            //выводим сообщение в GUI
+            showTextInGUI(fileUtils.getMsg());
             //инициируем переменную типа команды - ответ об ошибке
             command = Commands.CLIENT_RESPONSE_DOWNLOAD_FILE_FRAG_ERROR;
         }
@@ -240,8 +220,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                         fileFragMsg.getToDirectoryItem());
                 //если что-то пошло не так
             } else {
-                //выводим сообщение
+                //печатаем сообщение в консоль
                 printMsg("[client]" + fileUtils.getMsg());
+                //выводим сообщение в GUI
+                showTextInGUI(fileUtils.getMsg());
             }
         }
     }
@@ -267,5 +249,14 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 
     public void printMsg(String msg){
         storageClient.printMsg(msg);
+    }
+
+    /**
+     * Метод выводит сообщение в нижнюю метку GUI
+     * @param text - сообщение
+     */
+    public void showTextInGUI(String text){
+        //выводим сообщение в нижнюю метку GUI
+        guiController.showTextInGUI(text);
     }
 }

@@ -56,38 +56,12 @@ public class CloudStorageClient {
         new NettyClient(this, IP_ADDR, PORT).run();//TODO
     }
 
-//    /**
-//     * Публичный метод отправляет на сервер запрос на авторизацию в облачное хранилище
-//     * @param ctx - объект сетевого соединения
-//     */
-//    public void startAuthorization(ChannelHandlerContext ctx) {
-//        //принимаем объект сетевого соединения
-//        this.ctx = ctx;
-//
-//        //TODO temporarily
-//        printMsg("***CloudStorageClient.requestAuthorization() - has started***");
-//
-//        //отправляем на сервер запрос на авторизацию в облачное хранилище
-////        requestAuthorization(login, password);
-//        requestAuthorization(guiController.getLogin(), guiController.getPassword());
-//
-//        //TODO temporarily
-//        printMsg("***CloudStorageClient.requestAuthorization() - has finished***");
-//    }
     /**
      * Публичный метод отправляет на сервер запрос на авторизацию в облачное хранилище
      */
     public void startAuthorization() {
-        //TODO temporarily
-        printMsg("***CloudStorageClient.requestAuthorization() - has started***");
-
-
         //отправляем на сервер запрос на авторизацию в облачное хранилище
-//        requestAuthorization(login, password);
         requestAuthorization(guiController.getLogin(), guiController.getPassword());
-
-        //TODO temporarily
-        printMsg("***CloudStorageClient.requestAuthorization() - has finished***");
     }
 
     /**
@@ -121,12 +95,10 @@ public class CloudStorageClient {
      * @throws IOException - исключение ввода-вывода
      */
     public void demandUploadItem(Item storageToDirItem, Item clientItem) throws IOException {
-        //TODO temporarily
-        printMsg("***CloudStorageClient.demandUploadItem() - has started***");
-
         //если объект элемента - это директория
         if(clientItem.isDirectory()){
-            //FIXME что-то делаем, а пока выходим
+            //выводим сообщение в нижнюю метку GUI
+            showTextInGUI("It is not allowed to upload a directory!");
             return;
         }
         //инициируем объект реального пути к объекту элемента в клиенте
@@ -142,9 +114,6 @@ public class CloudStorageClient {
             //запускаем метод отправки целого файла
             uploadEntireFile(storageToDirItem, clientItem, fileSize);
         }
-
-        //TODO temporarily
-        printMsg("***CloudStorageClient.demandUploadItem() - has finished***");
     }
 
     /**
@@ -240,8 +209,10 @@ public class CloudStorageClient {
                     fileMessage));
             //если что-то пошло не так
         } else {
-            //выводим сообщение
+            //выводим сообщение в консоль
             printMsg("[client]" + fileUtils.getMsg());
+            //выводим сообщение в нижнюю метку GUI
+            showTextInGUI(fileUtils.getMsg());
         }
     }
 
@@ -401,10 +372,6 @@ public class CloudStorageClient {
         return guiController;
     }
 
-    public ChannelHandlerContext getCtx() {
-        return ctx;
-    }
-
     public void setCtx(ChannelHandlerContext ctx) {
         this.ctx = ctx;
     }
@@ -413,7 +380,12 @@ public class CloudStorageClient {
         log.append(msg).append("\n");
     }
 
-    public void setLabelText(String text) {
-        guiController.setLabelText(text);
+    /**
+     * Метод выводит сообщение в нижнюю метку GUI
+     * @param text - сообщение
+     */
+    public void showTextInGUI(String text){
+        //выводим сообщение в нижнюю метку GUI
+        guiController.showTextInGUI(text);
     }
 }

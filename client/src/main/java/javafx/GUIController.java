@@ -64,10 +64,6 @@ public class GUIController implements Initializable {
         //инициируем объекты директории по умолчанию в клиентской и серверной части GUI
         clientDefaultDirItem = new Item(CLIENT_DEFAULT_DIR);
         storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);
-
-//        //открываем окно авторизации
-//        openAuthWindow();
-
         //инициируем в клиентской части интерфейса список объектов в директории по умолчанию
         initializeClientItemListView();
         //инициируем в серверной части интерфейса список объектов в директории по умолчанию
@@ -86,7 +82,7 @@ public class GUIController implements Initializable {
     /**
      * Метод открывает модальное окно для ввода логина и пароля пользователя.
      */
-    public void openAuthWindow() {
+    private void openAuthWindow() {
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Login.fxml"));
@@ -102,18 +98,10 @@ public class GUIController implements Initializable {
             stage.showAndWait();
 
             //определяем действия по событию закрыть окно по крестику через лямбда
-            //TODO не вызывается закрытии окна
-            stage.setOnCloseRequest(event -> {
-                System.out.println("stage.setOnCloseRequest...");
-                loginController.dispose();
-//                label.getScene().getWindow().hide();
-            });
-            //TODO не вызывается закрытии окна
-            stage.setOnHidden(event -> {
-                System.out.println("stage.setOnHidden...");
-                loginController.dispose();
-//                label.getScene().getWindow().hide();
-            });
+            //TODO !!! не вызывается закрытии окна
+            stage.setOnCloseRequest(event -> System.out.println("stage.setOnCloseRequest..."));
+            //TODO !!! не вызывается закрытии окна
+            stage.setOnHidden(event -> System.out.println("stage.setOnHidden..."));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -123,20 +111,9 @@ public class GUIController implements Initializable {
      * Метод запускает процесс показа основного окна и процесс авторизации в сетевом хранилище.
      */
     public void startAuthorisation() {
-//        //инициируем в клиентской части интерфейса список объектов в директории по умолчанию
-//        initializeClientItemListView();
-//        //инициируем в серверной части интерфейса список объектов в директории по умолчанию
-//        initializeStorageItemListView();
-//        //в отдельном потоке
-//        new Thread(() -> {
-//            try {
-//                //запускаем логику клиента облачного хранилища
-//                storageClient.run();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
-
+        //выводим текст в метку
+        label.setText("Connecting to the cloud storage server, please wait..");
+        //запускаем процесс авторизации
         storageClient.startAuthorization();
     }
 
@@ -157,15 +134,6 @@ public class GUIController implements Initializable {
                 new Item[]{new Item("waiting for an item list from the server...",
                         "", "waiting for an item list from the server...",
                         "", false)});
-//        //в отдельном потоке
-//        new Thread(() -> {
-//            try {
-//                //запускаем логику клиента облачного хранилища
-//                storageClient.run();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
     }
 
     /**
@@ -491,14 +459,6 @@ public class GUIController implements Initializable {
         storageClient.demandDirectoryItemList(storageCurrentDirItem.getParentPathname());
     }
 
-    public String getLabelText() {
-        return label.getText();
-    }
-
-    public void setLabelText(String text) {
-        label.setText(text);
-    }
-
     public void setNewName(String newName) {
         this.newName = newName;
     }
@@ -519,6 +479,23 @@ public class GUIController implements Initializable {
         password = text;
     }
 
+    public void showTextInGUI(String text){
+        //в отдельном потоке запускаем обновление интерфейса
+        Platform.runLater(() -> {
+            //выводим сообщение в нижнюю метку GUI
+            label.setText(text);
+        });
+    }
+
+    /**
+     * Метод прокладка, чтобы открывать окно GUI в других потоках
+     */
+    public void openAuthWindowInGUI() {
+        //в отдельном потоке запускаем обновление интерфейса
+        //открываем окно авторизации
+        Platform.runLater(this::openAuthWindow);
+    }
+
     //Метод отправки запроса об отключении на сервер
     public void dispose() {
         System.out.println("Отправляем сообщение о закрытии");
@@ -531,4 +508,5 @@ public class GUIController implements Initializable {
 //            e.printStackTrace();
 //        }
     }
+
 }

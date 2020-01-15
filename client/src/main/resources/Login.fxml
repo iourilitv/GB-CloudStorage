@@ -5,19 +5,6 @@
 <?import javafx.scene.layout.*?>
 
 <VBox fx:id="globParent" alignment="center" spacing="5.0" style="-fx-background-image: url(images/wall.png);" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javafx.LoginController">
-<!--    <TextField fx:id="login" maxWidth="200" promptText="Login">-->
-<!--      <VBox.margin>-->
-<!--         <Insets bottom="10.0" />-->
-<!--      </VBox.margin></TextField>-->
-<!--    <PasswordField fx:id="password" maxWidth="200" promptText="Password" />-->
-<!--    <Button onAction="#auth" prefWidth="200" text="Authorization">-->
-<!--      <opaqueInsets>-->
-<!--         <Insets />-->
-<!--      </opaqueInsets>-->
-<!--      <VBox.margin>-->
-<!--         <Insets top="10.0" />-->
-<!--      </VBox.margin></Button>-->
-
     <TextField fx:id="login" focusTraversable="false" maxWidth="200" prefHeight="25.0" promptText="insert your login" />
     <PasswordField fx:id="password" focusTraversable="false" maxWidth="200" prefHeight="25.0" promptText="insert your password" />
     <Button alignment="CENTER" defaultButton="true" onAction="#auth" prefHeight="25.0" prefWidth="90.0" text="Authorization" textAlignment="CENTER">

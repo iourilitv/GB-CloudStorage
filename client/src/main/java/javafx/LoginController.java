@@ -49,12 +49,4 @@ public class LoginController {
         System.out.println("LoginController.onRegistrationLink() - get registration");
     }
 
-    //Метод отправки запроса об отключении на сервер
-    public void dispose() {
-        System.out.println("LoginController.dispose() - Закрыть основное окно");
-
-        backController.label.getScene().getWindow().hide();
-    }
-
-
 }
