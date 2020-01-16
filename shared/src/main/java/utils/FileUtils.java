@@ -171,15 +171,31 @@ public class FileUtils {
     public boolean saveFileFragment(Path realToTempDirPath, Path realToFragPath,
                                     FileFragmentMessage fileFragMsg) {
         try {
-            //инициируем объект временной директории
-            File dir = new File(realToTempDirPath.toString());
-            //если временной директории нет
-            if(!dir.exists()){
-                //создаем временную директорию
+//            //инициируем объект временной директории
+//            File dir = new File(realToTempDirPath.toString());
+//            //если временной директории нет
+//            if(!dir.exists()){
+//                //создаем временную директорию
+//                System.out.println("FileUtils.saveFileFragment() - " +
+//                        "dir." + dir.getPath() +
+//                        ", dir.mkdir(): " + dir.mkdir());
+//            }
+
+            //если текущий фрагмент первый
+            if(fileFragMsg.getCurrentFragNumber() == 1){
+                //инициируем объект временной директории
+                File dir = new File(realToTempDirPath.toString());
+                //если временная директория уже существует(возможно не пустая)
+                if(dir.exists()){
+                    //то предварительно удаляем
+                    deleteFolder(dir);
+                }
+                //и создаем новую временную директорию
                 System.out.println("FileUtils.saveFileFragment() - " +
                         "dir." + dir.getPath() +
                         ", dir.mkdir(): " + dir.mkdir());
             }
+
             //создаем новый файл-фрагмент и записываем в него данные из объекта файлового сообщения
             Files.write(realToFragPath, fileFragMsg.getData(), StandardOpenOption.CREATE);
             //если длина сохраненного файла-фрагмента отличается от длины принятого фрагмента файла
@@ -241,7 +257,7 @@ public class FileUtils {
                 //TODO temporarily
                 System.out.println("FileUtils.compileFileFragments() - " +
                         "fragFile.getName(): " + fragFile.getName() +
-                        "FileFragSize: " + Files.size(Paths.get(fragFile.getPath())) +
+                        ". FileFragSize: " + Files.size(Paths.get(fragFile.getPath())) +
                         ". Files.size(realToFilePath): " + Files.size(realToFilePath));
 
                 //закрываем потоки и каналы
