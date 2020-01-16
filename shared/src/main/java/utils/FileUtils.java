@@ -60,9 +60,12 @@ public class FileUtils {
 
     /**
      * Метод отправки по частям большого файла размером более константы максмального размера фрагмента файла
-     * @param toDirItem - объект директории назначения в клиенте
-     * @param item - объект элемента в сетевом хранилище
+     * @param toDirItem - объект директории назначения
+     * @param item - объект элемента(исходный файл)
      * @param fullFileSize - размер целого файла в байтах
+     * @param rootPath - объект пути к корневой папке
+     * @param ctx - сетевое соединение
+     * @param command - конастанта типа команды
      * @throws IOException - исключение
      */
     public void cutAndSendFileByFrags(Item toDirItem, Item item,
