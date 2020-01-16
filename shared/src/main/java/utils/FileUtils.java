@@ -171,16 +171,6 @@ public class FileUtils {
     public boolean saveFileFragment(Path realToTempDirPath, Path realToFragPath,
                                     FileFragmentMessage fileFragMsg) {
         try {
-//            //инициируем объект временной директории
-//            File dir = new File(realToTempDirPath.toString());
-//            //если временной директории нет
-//            if(!dir.exists()){
-//                //создаем временную директорию
-//                System.out.println("FileUtils.saveFileFragment() - " +
-//                        "dir." + dir.getPath() +
-//                        ", dir.mkdir(): " + dir.mkdir());
-//            }
-
             //если текущий фрагмент первый
             if(fileFragMsg.getCurrentFragNumber() == 1){
                 //инициируем объект временной директории
