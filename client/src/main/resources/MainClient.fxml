@@ -140,7 +140,7 @@
                 </VBox.margin></ListView>
         </VBox>
     </HBox>
-    <Label fx:id="label" alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-background-color: #FFF;" text="..." textAlignment="CENTER">
+    <Label fx:id="noticeLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-background-color: #FFF;" textAlignment="CENTER">
         <font>
             <Font size="18.0" />
         </font></Label>

@@ -236,6 +236,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     private void updateStorageItemListInGUI(CommandMessage commandMessage) {
         //вынимаем объект сообщения о директории из объекта сообщения(команды)
         DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
+        //очищаем метку уведомлений
+        guiController.showTextInGUI("");
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
         guiController.updateStorageItemListInGUI(directoryMessage.getDirectoryItem(),
                 directoryMessage.getItemsList());

@@ -36,7 +36,7 @@ public class GUIController implements Initializable {
     ListView<Item> clientItemListView, storageItemListView;
 
     @FXML
-    Label label;
+    Label noticeLabel;
 
     //объявляем объект контроллера клиента облачного хранилища
     private CloudStorageClient storageClient;
@@ -62,11 +62,8 @@ public class GUIController implements Initializable {
         //инициируем объекты директории по умолчанию в клиентской и серверной части GUI
         clientDefaultDirItem = new Item(CLIENT_DEFAULT_DIR);
         storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);
-
-        //TODO текст в метку не выводится и даже если текст прописан в fxml.
-//        //выводим текст в метку
-//        label.setText("Connecting to the Cloud Storage server, please wait..");
-
+        //выводим текст в метку
+        noticeLabel.setText("Connecting to the Cloud Storage server, please wait..");
         //инициируем в клиентской части интерфейса список объектов в директории по умолчанию
         initializeClientItemListView();
         //инициируем в серверной части интерфейса список объектов в директории по умолчанию
@@ -93,18 +90,18 @@ public class GUIController implements Initializable {
             LoginController loginController = loader.getController();
             loginController.backController = this;
 
+            //определяем действия по событию закрыть окно по крестику через лямбда
+            //TODO !!! не вызывается закрытии окна
+            stage.setOnCloseRequest(event -> System.out.println("stage.setOnCloseRequest..."));
+            //TODO !!! не вызывается закрытии окна
+            stage.setOnHidden(event -> System.out.println("stage.setOnHidden..."));
+
             stage.setTitle("Authorisation to the Cloud Storage by LYS");
             stage.setScene(new Scene(root, 300, 200));
             stage.isAlwaysOnTop();
             stage.setResizable(false);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
-
-            //определяем действия по событию закрыть окно по крестику через лямбда
-            //TODO !!! не вызывается закрытии окна
-            stage.setOnCloseRequest(event -> System.out.println("stage.setOnCloseRequest..."));
-            //TODO !!! не вызывается закрытии окна
-            stage.setOnHidden(event -> System.out.println("stage.setOnHidden..."));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -146,8 +143,6 @@ public class GUIController implements Initializable {
         clientCurrentDirItem = directoryItem;
         //в отдельном потоке запускаем обновление интерфейса
         Platform.runLater(() -> {
-            //очищаем метку уведомлений
-            label.setText("");
             //записываем в метку относительный строковый путь текущей директории
             clientDirLabel.setText(">>" + clientCurrentDirItem.getItemPathname());
             //обновляем заданный список объектов элемента
@@ -166,8 +161,6 @@ public class GUIController implements Initializable {
         storageCurrentDirItem = directoryItem;
         //в отдельном потоке запускаем обновление интерфейса
         Platform.runLater(() -> {
-            //очищаем метку уведомлений
-            label.setText("");
             //выводим текущую директорию в метку серверной части
             storageDirLabel.setText(">>" + storageCurrentDirItem.getItemPathname());
             //обновляем заданный список файловых объектов
@@ -484,7 +477,7 @@ public class GUIController implements Initializable {
         //в отдельном потоке запускаем обновление интерфейса
         Platform.runLater(() -> {
             //выводим сообщение в нижнюю метку GUI
-            label.setText(text);
+            noticeLabel.setText(text);
         });
     }
 
