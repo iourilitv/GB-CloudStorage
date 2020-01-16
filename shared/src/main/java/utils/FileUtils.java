@@ -5,9 +5,12 @@ import messages.FileFragmentMessage;
 import messages.FileMessage;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
@@ -229,31 +232,9 @@ public class FileUtils {
                         "Wrong the saved file fragments count!");
                 return false;
             }
-            //удаляем файл, если уже существует
-            Files.deleteIfExists(realToFilePath);
-            //создаем новый файл для сборки загруженных фрагментов файла
-            Files.createFile(realToFilePath);
-            //в цикле листаем временную папку и добавляем в файл данные из файлов-фрагментов
-            for (File fragFile : fragFiles) {
-                //ищем требуемый фрагмент во временной папке и инициируем канал для чтения из него
-                ReadableByteChannel source = Channels.newChannel(
-                        Files.newInputStream(Paths.get(fragFile.getPath())));
-                //инициируем канал для записи в файл назначения
-                WritableByteChannel destination = Channels.newChannel(
-                        Files.newOutputStream(realToFilePath, StandardOpenOption.APPEND));
-                //переписываем данные из файла фрагмента в файл-назначения через канал
-                copyData(source, destination);
 
-                //TODO temporarily
-                System.out.println("FileUtils.compileFileFragments() - " +
-                        "fragFile.getName(): " + fragFile.getName() +
-                        ". FileFragSize: " + Files.size(Paths.get(fragFile.getPath())) +
-                        ". Files.size(realToFilePath): " + Files.size(realToFilePath));
-
-                //закрываем потоки и каналы
-                source.close();
-                destination.close();
-            }
+            //FIXME
+            transferDataFromFragsToFinalFile(realToFilePath, fragFiles);
 
             //если длина сохраненного файла-фрагмента отличается от длины принятого фрагмента файла
             if(Files.size(realToFilePath) != fileFragMsg.getFullFileSize()){
@@ -283,24 +264,103 @@ public class FileUtils {
         return true;
     }
 
-    /**
-     * Метод переписывает данные из канала-источника в канал-назначения с применением буфера
-     * @param source - канал чтения данных из источника
-     * @param destination - канал записи данных
-     * @throws IOException - исключение
-     */
-    private void copyData(ReadableByteChannel source, WritableByteChannel destination) throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocateDirect(1024);
-        while (source.read(buffer) != -1) {
-            // The Buffer Is Used To Be Drained
-            buffer.flip();
-            // Make Sure That The Buffer Was Fully Drained
-            while (buffer.hasRemaining()) {
-                destination.write(buffer);
-            }
-            // Now The Buffer Is Empty!
-            buffer.clear();
+//    /**
+//     * Метод переписывает данные из канала-источника в канал-назначения с применением буфера
+//     * @param source - канал чтения данных из источника
+//     * @param destination - канал записи данных
+//     * @throws IOException - исключение
+//     */
+//    private void copyData(ReadableByteChannel source, WritableByteChannel destination) throws IOException {
+//        ByteBuffer buffer = ByteBuffer.allocateDirect(1024);
+//        while (source.read(buffer) != -1) {
+//            // The Buffer Is Used To Be Drained
+//            buffer.flip();
+//            // Make Sure That The Buffer Was Fully Drained
+//            while (buffer.hasRemaining()) {
+//                destination.write(buffer);
+//            }
+//            // Now The Buffer Is Empty!
+//            buffer.clear();
+//        }
+//    }
+//    private void copyDataFromFileFragIntoFinalFile(File sourceFile, File destinationFile,
+//                                                   long position, long count) throws IOException {
+//
+//        FileInputStream fromFileInStream = new FileInputStream(sourceFile);
+//        FileChannel fromChannel = fromFileInStream.getChannel();
+//        RandomAccessFile toFileRAF = new RandomAccessFile(destinationFile, "rw");//rw rwd
+//        FileChannel toChannel = toFileRAF.getChannel();
+//
+//        //TODO temporarily
+//        System.out.println("FileUtils.transferTo() - " +
+//                "position: " + position +
+//                ". count: " + count +
+//                ". fromFilePathname: " + sourceFile +
+//                ". toFilePathname: " + destinationFile);
+//
+//        fromChannel.transferTo(position, count, toChannel);
+//
+//        fromFileInStream.close();
+//        fromChannel.close();
+//        toFileRAF.close();
+//        toChannel.close();
+//
+//    }
+//private void copyDataFromFileFragIntoFinalFile(File sourceFile, File destinationFile,
+//                                               long position, long count) throws IOException {
+//
+//    FileInputStream fromFileInStream = new FileInputStream(sourceFile);
+//    FileChannel fromChannel = fromFileInStream.getChannel();
+//    RandomAccessFile toFileRAF = new RandomAccessFile(destinationFile, "rwd");//rw rwd rws
+//    FileChannel toChannel = toFileRAF.getChannel();
+//
+//    //TODO temporarily
+//    System.out.println("FileUtils.transferTo() - " +
+//            "position: " + position +
+//            ". count: " + count +
+//            ". fromFilePathname: " + sourceFile +
+//            ". toFilePathname: " + destinationFile);
+//
+//    fromChannel.transferTo(position, count, toChannel);
+//
+//    fromFileInStream.close();
+//    fromChannel.close();
+//    toFileRAF.close();
+//    toChannel.close();
+//
+//}
+
+    private void transferDataFromFragsToFinalFile(Path realToFilePath,
+                                                  File[] fragFiles) throws IOException {
+        //удаляем файл, если уже существует
+        Files.deleteIfExists(realToFilePath);
+            //создаем новый файл для сборки загруженных фрагментов файла
+        Files.createFile(realToFilePath);
+        File finalFile = new File(realToFilePath.toString());
+        //инициируем выходной поток и канал для записи данных в итоговый файл
+        RandomAccessFile toFileRAF = new RandomAccessFile(finalFile, "rw");//rw rwd rws
+        FileChannel toChannel = toFileRAF.getChannel();
+        //в цикле листаем временную папку и добавляем в файл данные из файлов-фрагментов
+        for (File fragFile : fragFiles) {
+            //инициируем входной поток и канал для чтения данных из файла-фрагмента
+            FileInputStream fromFileInStream = new FileInputStream(fragFile);
+            FileChannel fromChannel = fromFileInStream.getChannel();
+
+//            //TODO temporarily
+//            System.out.println("FileUtils.transferTo() - " +
+//                    "finalFile.length(): " + finalFile.length() +
+//                    ". count: " + fragFile.length() +
+//                    ". fragFile: " + fragFile +
+//                    ". finalFile: " + finalFile);
+            //переписываем данные через каналы
+            fromChannel.transferTo(0, fragFile.length(), toChannel);
+            //закрываем входные потоки и каналы
+            fromFileInStream.close();
+            fromChannel.close();
         }
+        //закрываем выходные потоки и каналы
+        toFileRAF.close();
+        toChannel.close();
     }
 
     /**
