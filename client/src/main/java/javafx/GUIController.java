@@ -16,6 +16,7 @@ import utils.Item;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The client class for operating with directoryMessages.
@@ -91,10 +92,11 @@ public class GUIController implements Initializable {
             loginController.backController = this;
 
             //определяем действия по событию закрыть окно по крестику через лямбда
-            //TODO !!! не вызывается закрытии окна
-            stage.setOnCloseRequest(event -> System.out.println("stage.setOnCloseRequest..."));
-            //TODO !!! не вызывается закрытии окна
-            stage.setOnHidden(event -> System.out.println("stage.setOnHidden..."));
+            stage.setOnCloseRequest(event -> {
+
+                //FIXME заблокировать отправку логина/пароля на сервер
+                System.out.println("stage.setOnCloseRequest...");
+            });
 
             stage.setTitle("Authorisation to the Cloud Storage by LYS");
             stage.setScene(new Scene(root, 300, 200));
@@ -317,13 +319,19 @@ public class GUIController implements Initializable {
         menuItemRename.setOnAction(event -> {
             //запоминаем выбранный элемент списка
             Item origin = listView.getSelectionModel().getSelectedItem();
+//            //открываем диалоговое окно переименования файлового объекта
+//            takeNewNameWindow(origin);
+//            //если имя пришло пустое(при закрытии окна), то выходим без действий
+//            if(newName.isEmpty()){
+//                System.out.println("GUIController.menuItemRename() - the newName var is empty!");
+//                return;
+//            }
             //открываем диалоговое окно переименования файлового объекта
-            takeNewNameWindow(origin);
-            //если имя пришло пустое(при закрытии окна), то выходим без действий
-            if(newName.isEmpty()){
-                System.out.println("GUIController.menuItemRename() - the newName var is empty!");
+            //если окно было просто закрыто по крестику, то выходим без действий
+            if(!takeNewNameWindow(origin)){
                 return;
             }
+
             //если текущий список клиентский
             if(listView.equals(clientItemListView)){
                 //переименовываем файловый объект
@@ -348,16 +356,52 @@ public class GUIController implements Initializable {
         return menuItemRename;
     }
 
-    /**
-     * Метод открывает модальное окно для ввода нового имени элемента списка.
-     * @param origin - объект элемента - оригинал
-     */
-    private void takeNewNameWindow(Item origin) {
+//    /**
+//     * Метод открывает модальное окно для ввода нового имени элемента списка.
+//     * @param origin - объект элемента - оригинал
+//     */
+//    private void takeNewNameWindow(Item origin) {
+//        try {
+//            Stage stage = new Stage();
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
+//            Parent root = loader.load();
+//            RenameController renameController = loader.getController();
+//
+//            //определяем действия по событию закрыть окно по крестику через лямбда
+//            stage.setOnCloseRequest(event -> {
+//
+//                //FIXME заблокировать отправку нового имени на сервер
+//                System.out.println("stage.setOnCloseRequest...");
+//            });
+//
+//            //записываем текущее имя в текстовое поле
+//            renameController.newName.setText(origin.getItemName());
+//            renameController.backController = this;
+//
+//            stage.setTitle("insert a new name");
+//            stage.setScene(new Scene(root, 200, 50));
+//            stage.isAlwaysOnTop();
+//            stage.setResizable(false);
+//            stage.initModality(Modality.APPLICATION_MODAL);
+//            stage.showAndWait();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+    private boolean takeNewNameWindow(Item origin) {
+        AtomicBoolean flag = new AtomicBoolean(false);
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
             Parent root = loader.load();
             RenameController renameController = loader.getController();
+
+            //определяем действия по событию закрыть окно по крестику через лямбда
+            stage.setOnCloseRequest(event -> {
+                System.out.println("GUIController.menuItemRename() - " +
+                        "the newNameWindow was closed forcibly!");
+                flag.set(false);
+            });
 
             //записываем текущее имя в текстовое поле
             renameController.newName.setText(origin.getItemName());
@@ -371,7 +415,9 @@ public class GUIController implements Initializable {
             stage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     /**
