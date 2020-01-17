@@ -37,11 +37,6 @@ public class CloudStorageClient {
     //принимаем объект обработчика операций с объектами элементов списков в GUI
     private final ItemUtils itemUtils = ItemUtils.getOwnObject();
 
-//    //FIXME temporarily - будет получать из GUI
-//    //инициируем константы логина и пароля пользователя
-//    private final String login = "login2";
-//    private final String password = "pass2";
-
     public CloudStorageClient(GUIController guiController) {
         //принимаем объект контроллера GUI
         this.guiController = guiController;
@@ -53,7 +48,7 @@ public class CloudStorageClient {
      */
     public void run() throws Exception {
         //инициируем объект соединения
-        new NettyClient(this, IP_ADDR, PORT).run();//TODO
+        new NettyClient(this, IP_ADDR, PORT).run();
     }
 
     /**

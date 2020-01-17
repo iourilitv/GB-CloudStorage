@@ -424,34 +424,6 @@ public class GUIController implements Initializable {
         storageClient.demandDirectoryItemList(storageCurrentDirItem.getParentPathname());
     }
 
-//    /**
-//     * Метод открывает модальное окно для ввода логина и пароля пользователя.
-//     */
-//    @FXML
-//    private void openAuthWindow() {
-//        try {
-//            Stage stage = new Stage();
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Login.fxml"));
-//            Parent root = loader.load();
-//            LoginController loginController = loader.getController();
-//            loginController.backController = this;
-//
-//            //определяем действия по событию закрыть окно по крестику через лямбда
-//            stage.setOnCloseRequest(event -> {
-//                System.out.println("GUIController.openAuthWindow() - " +
-//                        "the AuthWindow was closed forcibly!");
-//            });
-//
-//            stage.setTitle("Authorisation to the Cloud Storage by LYS");
-//            stage.setScene(new Scene(root, 300, 200));
-//            stage.isAlwaysOnTop();
-//            stage.setResizable(false);
-//            stage.initModality(Modality.APPLICATION_MODAL);
-//            stage.showAndWait();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
     /**
      * Метод открывает модальное окно для ввода логина и пароля пользователя.
      */
