@@ -63,6 +63,7 @@ public class GUIController implements Initializable {
     private Item clientCurrentDirItem, storageCurrentDirItem;
     //объявляем переменную введенного нового имени объекта элемента
     private String newName = "";
+    private AtomicBoolean flagWindow = new AtomicBoolean(false);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -103,9 +104,14 @@ public class GUIController implements Initializable {
      */
     public void startAuthorisation() {
         //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
-        if(!login.isEmpty() && !password.isEmpty()){
+//        if(!login.isEmpty() && !password.isEmpty()){
+        if(flagWindow.get()){
+
             //запускаем процесс авторизации
             storageClient.startAuthorization();
+        //если окно закрыто по крестику выхода
+        } else {
+            noticeLabel.setText("");
         }
     }
 
@@ -428,6 +434,9 @@ public class GUIController implements Initializable {
      * Метод открывает модальное окно для ввода логина и пароля пользователя.
      */
     private void openAuthWindow() {
+        //выводим сообщение в нижнюю метку GUI
+        noticeLabel.setText("Server has connected, insert login and password.");
+
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Login.fxml"));
@@ -436,8 +445,13 @@ public class GUIController implements Initializable {
             loginController.backController = this;
 
             //определяем действия по событию закрыть окно по крестику через лямбда
-            stage.setOnCloseRequest(event -> System.out.println("GUIController.openAuthWindow() - " +
-                    "the AuthWindow was closed forcibly!"));
+            stage.setOnCloseRequest(event -> {
+//                GUIController.this.openAuthWindow();
+                GUIController.this.dispose();
+                System.out.println("GUIController.openAuthWindow() - " +
+                        "the AuthWindow was closed forcibly!" +
+                        ". flagWindow.get()" + flagWindow.get());
+            });
 
             stage.setTitle("Authorisation to the Cloud Storage by LYS");
             stage.setScene(new Scene(root, 300, 200));
@@ -467,7 +481,10 @@ public class GUIController implements Initializable {
             stage.setOnCloseRequest(event -> {
                 System.out.println("GUIController.menuItemRename() - " +
                         "the newNameWindow was closed forcibly!");
+                //сбрасываем флаг
                 flag.set(false);
+                //сбрасываем текстовое поле имени
+                GUIController.this.newName = "";
             });
 
             //записываем текущее имя в текстовое поле
@@ -541,9 +558,25 @@ public class GUIController implements Initializable {
         password = text;
     }
 
+    public AtomicBoolean getFlagWindow() {
+        return flagWindow;
+    }
+
+//    public void setFlagWindow(AtomicBoolean flagWindow) {
+//        this.flagWindow = flagWindow;
+//    }
+    public void setFlagWindow(boolean flagWindow) {
+        this.flagWindow = new AtomicBoolean(flagWindow);
+    }
+
     //Метод отправки запроса об отключении на сервер
     public void dispose() {
-        System.out.println("Отправляем сообщение о закрытии");
+        System.out.println("GUIController.dispose() - Отправляем сообщение о закрытии");
+
+        noticeLabel.setText("Disconnecting the Cloud Storage server...");
+        //запускаем процесс отправки запроса серверу на разрыв соединения
+        storageClient.demandDisconnecting();
+
 //        try {
 //            //проверяем подключен ли клиент
 //            if (out != null && !socket.isClosed()) {

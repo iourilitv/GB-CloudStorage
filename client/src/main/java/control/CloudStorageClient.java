@@ -119,7 +119,7 @@ public class CloudStorageClient {
      * @param fullFileSize - размер целого файла в байтах
      * @throws IOException - исключение
      */
-    private void uploadFileByFrags(Item storageToDirItem, Item clientItem, long fullFileSize) throws IOException {
+    private void uploadFileByFrags(Item storageToDirItem, Item clientItem, long fullFileSize) {
         fileUtils.cutAndSendFileByFrags(storageToDirItem, clientItem, fullFileSize,
                 CLIENT_ROOT_PATH, ctx, Commands.REQUEST_SERVER_UPLOAD_FILE_FRAG);
     }
@@ -321,5 +321,14 @@ public class CloudStorageClient {
     public void showTextInGUI(String text){
         //выводим сообщение в нижнюю метку GUI
         guiController.showTextInGUI(text);
+    }
+
+    public void demandDisconnecting() {
+
+        System.out.println("CloudStorageClient.demandDisconnecting() - Отправляем серверу запрос о разрыве соединения");
+        //отправляем на сервер объект сообщения(команды)
+        //FIXME
+//        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_DELETE_ITEM,
+//                new FileMessage(storageDirectoryItem, item)));
     }
 }

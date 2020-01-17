@@ -133,8 +133,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * @param commandMessage - объект сообщения(команды)
      */
     private void onServerConnectedResponse(CommandMessage commandMessage) {
-        //выводим сообщение в нижнюю метку GUI
-        showTextInGUI("Server has connected, insert login and password.");
+//        //выводим сообщение в нижнюю метку GUI
+//        showTextInGUI("Server has connected, insert login and password.");
         //открываем окно авторизации
         guiController.openAuthWindowInGUI();
     }
