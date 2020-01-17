@@ -71,27 +71,18 @@ public class GUIController implements Initializable {
         //инициируем объекты директории по умолчанию в клиентской и серверной части GUI
         clientDefaultDirItem = new Item(CLIENT_DEFAULT_DIR);
         storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);
-//        //выводим текст в метку
-//        noticeLabel.setText("Connecting to the Cloud Storage server, please wait..");
         //выводим текст в метку
         noticeLabel.setText("Server disconnected. Press \"Connect to the Cloud Storage\" button.");
-
         //инициируем в клиентской части интерфейса список объектов в директории по умолчанию
         initializeClientItemListView();
         //инициируем в серверной части интерфейса список объектов в директории по умолчанию
         initializeStorageItemListView();
-//        //в отдельном потоке
-//        new Thread(() -> {
-//            try {
-//                //запускаем логику клиента облачного хранилища
-//                storageClient.run();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
-//        startConnectingToServer();
     }
 
+    /**
+     * Метод обрабатывает нажатие connectToCloudStorageButton и запускает процесс
+     * подключения к серверу облачного хранилища.
+     */
     @FXML
     private void startConnectingToServer() {
         //выводим текст в метку
@@ -108,41 +99,14 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод открывает модальное окно для ввода логина и пароля пользователя.
-     */
-    @FXML
-    private void openAuthWindow() {
-        try {
-            Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Login.fxml"));
-            Parent root = loader.load();
-            LoginController loginController = loader.getController();
-            loginController.backController = this;
-
-            //определяем действия по событию закрыть окно по крестику через лямбда
-            stage.setOnCloseRequest(event -> {
-
-                //FIXME заблокировать отправку логина/пароля на сервер
-                System.out.println("stage.setOnCloseRequest...");
-            });
-
-            stage.setTitle("Authorisation to the Cloud Storage by LYS");
-            stage.setScene(new Scene(root, 300, 200));
-            stage.isAlwaysOnTop();
-            stage.setResizable(false);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Метод запускает процесс показа основного окна и процесс авторизации в сетевом хранилище.
      */
     public void startAuthorisation() {
-        //запускаем процесс авторизации
-        storageClient.startAuthorization();
+        //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
+        if(!login.isEmpty() && !password.isEmpty()){
+            //запускаем процесс авторизации
+            storageClient.startAuthorization();
+        }
     }
 
     /**
@@ -382,43 +346,6 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод открывает модальное окно для ввода нового имени элемента списка.
-     * @param origin - объект элемента - оригинал
-     * @return false - если закрыть окно принудительно, true - при штатном вводе
-     */
-    private boolean takeNewNameWindow(Item origin) {
-        AtomicBoolean flag = new AtomicBoolean(false);
-        try {
-            Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
-            Parent root = loader.load();
-            RenameController renameController = loader.getController();
-
-            //определяем действия по событию закрыть окно по крестику через лямбда
-            stage.setOnCloseRequest(event -> {
-                System.out.println("GUIController.menuItemRename() - " +
-                        "the newNameWindow was closed forcibly!");
-                flag.set(false);
-            });
-
-            //записываем текущее имя в текстовое поле
-            renameController.newName.setText(origin.getItemName());
-            renameController.backController = this;
-
-            stage.setTitle("insert a new name");
-            stage.setScene(new Scene(root, 200, 50));
-            stage.isAlwaysOnTop();
-            stage.setResizable(false);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Метод инициирует элемент контекстного меню "Удалить"
      * @param listView - текущий список объектов элемента
      * @return - объект элемента контекстного меню "Delete"
@@ -497,6 +424,97 @@ public class GUIController implements Initializable {
         storageClient.demandDirectoryItemList(storageCurrentDirItem.getParentPathname());
     }
 
+//    /**
+//     * Метод открывает модальное окно для ввода логина и пароля пользователя.
+//     */
+//    @FXML
+//    private void openAuthWindow() {
+//        try {
+//            Stage stage = new Stage();
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Login.fxml"));
+//            Parent root = loader.load();
+//            LoginController loginController = loader.getController();
+//            loginController.backController = this;
+//
+//            //определяем действия по событию закрыть окно по крестику через лямбда
+//            stage.setOnCloseRequest(event -> {
+//                System.out.println("GUIController.openAuthWindow() - " +
+//                        "the AuthWindow was closed forcibly!");
+//            });
+//
+//            stage.setTitle("Authorisation to the Cloud Storage by LYS");
+//            stage.setScene(new Scene(root, 300, 200));
+//            stage.isAlwaysOnTop();
+//            stage.setResizable(false);
+//            stage.initModality(Modality.APPLICATION_MODAL);
+//            stage.showAndWait();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+    /**
+     * Метод открывает модальное окно для ввода логина и пароля пользователя.
+     */
+    private void openAuthWindow() {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Login.fxml"));
+            Parent root = loader.load();
+            LoginController loginController = loader.getController();
+            loginController.backController = this;
+
+            //определяем действия по событию закрыть окно по крестику через лямбда
+            stage.setOnCloseRequest(event -> System.out.println("GUIController.openAuthWindow() - " +
+                    "the AuthWindow was closed forcibly!"));
+
+            stage.setTitle("Authorisation to the Cloud Storage by LYS");
+            stage.setScene(new Scene(root, 300, 200));
+            stage.isAlwaysOnTop();
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Метод открывает модальное окно для ввода нового имени элемента списка.
+     * @param origin - объект элемента - оригинал
+     * @return false - если закрыть окно принудительно, true - при штатном вводе
+     */
+    private boolean takeNewNameWindow(Item origin) {
+        AtomicBoolean flag = new AtomicBoolean(false);
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
+            Parent root = loader.load();
+            RenameController renameController = loader.getController();
+
+            //определяем действия по событию закрыть окно по крестику через лямбда
+            stage.setOnCloseRequest(event -> {
+                System.out.println("GUIController.menuItemRename() - " +
+                        "the newNameWindow was closed forcibly!");
+                flag.set(false);
+            });
+
+            //записываем текущее имя в текстовое поле
+            renameController.newName.setText(origin.getItemName());
+            renameController.backController = this;
+
+            stage.setTitle("insert a new name");
+            stage.setScene(new Scene(root, 200, 50));
+            stage.isAlwaysOnTop();
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Метод выводит в отдельном потоке(не javaFX) переданное сообщение в метку уведомлений.
      * @param text - строка сообщения
@@ -510,7 +528,7 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод прокладка, чтобы открывать окно GUI в других потоках
+     * Метод-прокладка, чтобы открывать окно GUI в других потоках
      */
     public void openAuthWindowInGUI() {
         //в отдельном потоке запускаем обновление интерфейса

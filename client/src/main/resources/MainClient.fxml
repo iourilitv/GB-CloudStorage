@@ -136,7 +136,7 @@
                 </VBox.margin></ListView>
             <StackPane fx:id="connectToCloudStorageStackPane" prefHeight="403.0"
                        style="-fx-background-image: url(images/wall.png);">
-                <Button fx:id="connectToCloudStorageButton" onAction="#startConnectingToServer" prefHeight="26.0"
+                <Button fx:id="connectToCloudStorageButton" defaultButton="true" onAction="#startConnectingToServer" prefHeight="26.0"
                         prefWidth="180.0" text="Connect to the Cloud Storage">
                     <padding>
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>

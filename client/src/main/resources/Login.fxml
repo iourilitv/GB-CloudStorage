@@ -5,11 +5,12 @@
 <?import javafx.scene.layout.*?>
 
 <VBox fx:id="globParent" alignment="center" spacing="5.0" style="-fx-background-image: url(images/wall.png);" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javafx.LoginController">
-    <TextField fx:id="login" focusTraversable="false" maxWidth="200" prefHeight="25.0" promptText="insert your login" />
-    <PasswordField fx:id="password" focusTraversable="false" maxWidth="200" prefHeight="25.0" promptText="insert your password" />
-    <Button alignment="CENTER" defaultButton="true" onAction="#auth" prefHeight="25.0" prefWidth="90.0" text="Authorization" textAlignment="CENTER">
-    </Button>
-   <Hyperlink fx:id="registrationLink" alignment="CENTER" contentDisplay="CENTER" onAction="#onRegistrationLink" prefHeight="25.0" prefWidth="80.0" text="Registration" textAlignment="CENTER" underline="true" visited="true" />
+<!--    <TextField fx:id="login" focusTraversable="false" maxWidth="200" prefHeight="25.0" promptText="insert your login" /> /TODO for test added text-->
+<!--    <PasswordField fx:id="password" focusTraversable="false" maxWidth="200" prefHeight="25.0" promptText="insert your password" /> //TODO for test added text-->
+    <TextField fx:id="login" focusTraversable="false" maxWidth="200" prefHeight="25.0" promptText="insert your login" text="login1"/>
+    <PasswordField fx:id="password" focusTraversable="false" maxWidth="200" prefHeight="25.0" promptText="insert your password" text="pass1"/>
+    <Button alignment="CENTER" defaultButton="true" onAction="#demandAuthorization" prefHeight="25.0" prefWidth="90.0" text="Authorization" textAlignment="CENTER"/>
+    <Hyperlink fx:id="registrationLink" alignment="CENTER" contentDisplay="CENTER" onAction="#onRegistrationLink" prefHeight="25.0" prefWidth="80.0" text="Registration" textAlignment="CENTER" underline="true" visited="true" />
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>

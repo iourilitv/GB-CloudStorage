@@ -23,7 +23,8 @@ public class LoginController {
      * Метод обрабатывает клик мыши по кнопке "Authorization" в диалоговом окне ввода нового имени
      * @param actionEvent - клик мыши по кнопке "Authorization"
      */
-    public void auth(ActionEvent actionEvent) {
+    @FXML
+    public void demandAuthorization(ActionEvent actionEvent) {
         //если введенные логин и пароль корректны
         if(isLoginPasswordCorrect(login.getText(), password.getText())){
             //записываем введенные логин и пароль в соответствующие переменные главного контроллера
