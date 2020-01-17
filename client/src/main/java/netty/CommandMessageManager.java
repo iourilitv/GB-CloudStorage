@@ -79,6 +79,9 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 break;
             //обрабатываем полученное от сервера подтверждение успешной авторизации в облачное хранилище
             case Commands.SERVER_RESPONSE_AUTH_OK:
+                //вызываем метод обработки ответа сервера
+                onAuthOKServerResponse(commandMessage);
+                break;
             //обрабатываем полученный ответ сервера с массивом файловых объектов в заданной
             // директории пользователя в сетевом хранилище, если нет ошибок
             case Commands.SERVER_RESPONSE_ITEMS_LIST_OK:
@@ -136,6 +139,14 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         guiController.openAuthWindowInGUI();
     }
 
+
+    private void onAuthOKServerResponse(CommandMessage commandMessage) {
+        //устанавливаем режим отображения "Авторизован"
+        guiController.setAuthMode(true);
+        //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
+        updateStorageItemListInGUI(commandMessage);
+    }
+
     /**
      * Метод обрабатывает полученное от сервера сообщение об ошибке авторизации в облачное хранилище
      * @param commandMessage - объект сообщения(команды)
@@ -144,7 +155,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //выводим сообщение в нижнюю метку GUI
         showTextInGUI("Something wrong with your login or password! Insert them again.");
         //открываем окно авторизации
-        guiController.openAuthWindowInGUI();
+        guiController.openAuthWindowInGUI();//FIXME
     }
 
     /**

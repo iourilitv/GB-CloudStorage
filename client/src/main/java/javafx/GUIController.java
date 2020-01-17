@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import utils.Item;
@@ -22,6 +23,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * The client class for operating with directoryMessages.
  */
 public class GUIController implements Initializable {
+
+    @FXML
+    StackPane connectToCloudStorageStackPane;
+
+    @FXML
+    Button connectToCloudStorageButton;
 
     //объявляем объекты кнопок для коллекции файловых объектов клиента и сервера
     @FXML
@@ -63,12 +70,31 @@ public class GUIController implements Initializable {
         //инициируем объекты директории по умолчанию в клиентской и серверной части GUI
         clientDefaultDirItem = new Item(CLIENT_DEFAULT_DIR);
         storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);
+//        //выводим текст в метку
+//        noticeLabel.setText("Connecting to the Cloud Storage server, please wait..");
         //выводим текст в метку
-        noticeLabel.setText("Connecting to the Cloud Storage server, please wait..");
+        noticeLabel.setText("Server disconnected. Press \"Connect to the Cloud Storage\" button.");
+
         //инициируем в клиентской части интерфейса список объектов в директории по умолчанию
         initializeClientItemListView();
         //инициируем в серверной части интерфейса список объектов в директории по умолчанию
         initializeStorageItemListView();
+//        //в отдельном потоке
+//        new Thread(() -> {
+//            try {
+//                //запускаем логику клиента облачного хранилища
+//                storageClient.run();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
+//        startConnectingToServer();
+    }
+
+    @FXML
+    private void startConnectingToServer() {
+        //выводим текст в метку
+        noticeLabel.setText("Connecting to the Cloud Storage server, please wait..");
         //в отдельном потоке
         new Thread(() -> {
             try {
@@ -83,6 +109,7 @@ public class GUIController implements Initializable {
     /**
      * Метод открывает модальное окно для ввода логина и пароля пользователя.
      */
+    @FXML
     private void openAuthWindow() {
         try {
             Stage stage = new Stage();
@@ -519,4 +546,12 @@ public class GUIController implements Initializable {
 //        }
     }
 
+    public void setAuthMode(boolean isAuthMode) {
+        connectToCloudStorageStackPane.setManaged(!isAuthMode);
+        connectToCloudStorageStackPane.setVisible(!isAuthMode);
+
+        storageItemListView.setManaged(isAuthMode);
+        storageItemListView.setVisible(isAuthMode);
+
+    }
 }

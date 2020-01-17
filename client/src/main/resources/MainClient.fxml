@@ -7,12 +7,13 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <VBox alignment="center" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javafx.GUIController">
     <HBox VBox.vgrow="ALWAYS">
-        <!--        Client Side        -->
+        <!-- ***** Client Side ***** -->
         <VBox spacing="2.0" HBox.hgrow="ALWAYS">
             <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" text="Client Side" textAlignment="JUSTIFY" wrapText="true">
                 <padding>
@@ -39,23 +40,23 @@
             <Button fx:id="clientGoUpButton" onMouseClicked="#onClientGoUpBtnClicked" text="GoUp">
                <graphic>
                    <ImageView fitHeight="22.0" fitWidth="22.0">
-                       <Image url="images/red-go-up-md-22x22.png"/>
+                       <Image url="images/red-go-up-md-22x22.png" />
                    </ImageView>
                </graphic>
                <padding>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </padding>
             </Button>
-            <Button fx:id="clientNewFolderButton" text="NewFolder">
-               <graphic>
-                   <ImageView fitHeight="22.0" fitWidth="22.0">
-                       <Image url="images/storage-el-folder-empty-22x17.png"/>
-                   </ImageView>
-               </graphic>
-               <padding>
-                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-               </padding>
-            </Button>
+<!--            <Button fx:id="clientNewFolderButton" text="NewFolder">-->
+<!--               <graphic>-->
+<!--                   <ImageView fitHeight="22.0" fitWidth="22.0">-->
+<!--                       <Image url="images/storage-el-folder-empty-22x17.png" />-->
+<!--                   </ImageView>-->
+<!--               </graphic>-->
+<!--               <padding>-->
+<!--                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />-->
+<!--               </padding>-->
+<!--            </Button>-->
             <VBox.margin>
                <Insets left="2.0" right="2.0" top="2.0" />
             </VBox.margin>
@@ -73,7 +74,7 @@
                <Insets bottom="2.0" left="2.0" right="2.0" />
             </VBox.margin></ListView>
         </VBox>
-<!--        Cloud Storage Side        -->
+        <!-- ***** Cloud Storage Side***** -->
         <VBox spacing="2.0" HBox.hgrow="ALWAYS">
             <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" text="Cloud Storage Side" textAlignment="JUSTIFY" wrapText="true">
                 <padding>
@@ -100,24 +101,19 @@
                 <Button fx:id="storageGoUpButton" onMouseClicked="#onStorageGoUpBtnClicked" text="GoUp">
                     <graphic>
                         <ImageView fitHeight="22.0" fitWidth="22.0">
-                            <Image url="images/red-go-up-md-22x22.png"/>
+                            <Image url="images/red-go-up-md-22x22.png" />
                         </ImageView>
                     </graphic>
                     <padding>
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                     </padding>
                 </Button>
-                <Button fx:id="storageNewFolderButton" text="NewFolder">
-                    <graphic>
-                        <ImageView fitHeight="22.0" fitWidth="22.0">
-                            <Image url="images/storage-el-folder-empty-22x17.png"/>
-                        </ImageView>
-                    </graphic>
-                    <padding>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                    </padding>
-                </Button>
-<!--                <Button fx:id="AuthorisationButton" onAction="#openAuthWindow" text="Authorisation" prefWidth="80.0" prefHeight="26.0">-->
+<!--                <Button fx:id="storageNewFolderButton" text="NewFolder">-->
+<!--                    <graphic>-->
+<!--                        <ImageView fitHeight="22.0" fitWidth="22.0">-->
+<!--                            <Image url="images/storage-el-folder-empty-22x17.png"/>-->
+<!--                        </ImageView>-->
+<!--                    </graphic>-->
 <!--                    <padding>-->
 <!--                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />-->
 <!--                    </padding>-->
@@ -134,10 +130,19 @@
                     <Insets left="2.0" right="2.0" />
                 </VBox.margin>
             </Label>
-            <ListView fx:id="storageItemListView" VBox.vgrow="ALWAYS">
+            <ListView fx:id="storageItemListView" managed="false" visible="false" VBox.vgrow="ALWAYS">
                 <VBox.margin>
                     <Insets bottom="2.0" left="2.0" right="2.0" />
                 </VBox.margin></ListView>
+            <StackPane fx:id="connectToCloudStorageStackPane" prefHeight="403.0"
+                       style="-fx-background-image: url(images/wall.png);">
+                <Button fx:id="connectToCloudStorageButton" onAction="#startConnectingToServer" prefHeight="26.0"
+                        prefWidth="180.0" text="Connect to the Cloud Storage">
+                    <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>
+                    </padding>
+                </Button>
+            </StackPane>
         </VBox>
     </HBox>
     <Label fx:id="noticeLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-background-color: #FFF;" textAlignment="CENTER">
