@@ -56,82 +56,15 @@ public class FileUtils {
         return true;
     }
 
-//    /**
-//     * Метод отправки по частям большого файла размером более константы максмального размера фрагмента файла
-//     * @param toDirItem - объект директории назначения
-//     * @param item - объект элемента(исходный файл)
-//     * @param fullFileSize - размер целого файла в байтах
-//     * @param rootPath - объект пути к корневой папке
-//     * @param ctx - сетевое соединение
-//     * @param command - конастанта типа команды
-//     * @throws IOException - исключение
-//     */
-//    public void cutAndSendFileByFrags(Item toDirItem, Item item,
-//                                     long fullFileSize, Path rootPath,
-//                                     ChannelHandlerContext ctx, int command) throws IOException {
-//        //TODO temporarily
-//        long start = System.currentTimeMillis();
-//
-//        //***разбиваем файл на фрагменты***
-//        //рассчитываем количество полных фрагментов файла
-//        int totalEntireFragsNumber = (int) fullFileSize / FileFragmentMessage.CONST_FRAG_SIZE;
-//        //рассчитываем размер последнего фрагмента файла
-//        int finalFileFragmentSize = (int) fullFileSize - FileFragmentMessage.CONST_FRAG_SIZE * totalEntireFragsNumber;
-//        //рассчитываем общее количество фрагментов файла
-//        //если есть последний фрагмент, добавляем 1 к количеству полных фрагментов файла
-//        int totalFragsNumber = (finalFileFragmentSize == 0) ?
-//                totalEntireFragsNumber : totalEntireFragsNumber + 1;
-//
-//        //TODO temporarily
-//        System.out.println("FileUtils.cutAndSendFileByFrags() - fullFileSize: " + fullFileSize);
-//        System.out.println("FileUtils.cutAndSendFileByFrags() - totalFragsNumber: " + totalFragsNumber);
-//        System.out.println("FileUtils.cutAndSendFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
-//
-//        //устанавливаем началные значения номера текущего фрагмента и стартового байта
-//        long startByte = 0;
-//        //инициируем байтовый массив для чтения данных для полных фрагментов
-//        byte[] data = new byte[FileFragmentMessage.CONST_FRAG_SIZE];
-//
-//        //***в цикле создаем целые фрагменты, читаем в них данные и отправляем***
-//        for (int i = 1; i <= totalEntireFragsNumber; i++) {
-//            //инициируем объект фрагмента файлового сообщения
-//            FileFragmentMessage fileFragmentMessage = new FileFragmentMessage(
-//                    toDirItem, item, fullFileSize, i, totalFragsNumber,
-//                    FileFragmentMessage.CONST_FRAG_SIZE, data);
-//            //читаем данные во фрагмент с определенного места файла
-//            fileFragmentMessage.readFileDataToFragment(
-//                    itemUtils.getRealPath(item.getItemPathname(), rootPath).toString(),
-//                    startByte);
-//            //увеличиваем указатель стартового байта на размер фрагмента
-//            startByte += FileFragmentMessage.CONST_FRAG_SIZE;
-//            //отправляем на сервер объект сообщения(команды)
-//            ctx.writeAndFlush(new CommandMessage(command, fileFragmentMessage));
-//        }
-//
-//        //TODO temporarily
-//        System.out.println("FileUtils.cutAndSendFileByFrags() - currentFragNumber: " + totalFragsNumber);
-//        System.out.println("FileUtils.cutAndSendFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
-//
-//        //***отправляем последний фрагмент, если он есть***
-//        if(totalFragsNumber > totalEntireFragsNumber){
-//            //инициируем байтовый массив для чтения данных для последнего фрагмента
-//            byte[] dataFinal = new byte[finalFileFragmentSize];
-//            //инициируем объект фрагмента файлового сообщения
-//            FileFragmentMessage fileFragmentMessage = new FileFragmentMessage(
-//                    toDirItem, item, fullFileSize, totalFragsNumber,
-//                    totalFragsNumber, finalFileFragmentSize, dataFinal);
-//            //читаем данные во фрагмент с определенного места файла
-//            fileFragmentMessage.readFileDataToFragment(
-//                    itemUtils.getRealPath(item.getItemPathname(), rootPath).toString(),
-//                    startByte);
-//            //отправляем на сервер объект сообщения(команды)
-//            ctx.writeAndFlush(new CommandMessage(command, fileFragmentMessage));
-//        }
-//
-//        //TODO temporarily
-//        long finish = System.currentTimeMillis() - start;
-//        System.out.println("FileUtils.cutAndSendFileByFrags() - duration(mc): " + finish);
-//    }
+    /**
+     * Метод отправки по частям большого файла размером более константы максмального размера фрагмента файла
+     * @param toDirItem - объект директории назначения
+     * @param item - объект элемента(исходный файл)
+     * @param fullFileSize - размер целого файла в байтах
+     * @param rootPath - объект пути к корневой папке
+     * @param ctx - сетевое соединение
+     * @param command - конастанта типа команды
+     */
     public void cutAndSendFileByFrags(Item toDirItem, Item item,
                                       long fullFileSize, Path rootPath,
                                       ChannelHandlerContext ctx, int command) {
