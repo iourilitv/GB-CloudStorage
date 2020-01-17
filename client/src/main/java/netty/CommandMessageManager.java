@@ -139,7 +139,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         guiController.openAuthWindowInGUI();
     }
 
-
+    /**
+     * Метод обрабатывает полученное от сервера подтверждение успешной авторизации в облачное хранилище
+     * @param commandMessage - объект сообщения(команды)
+     */
     private void onAuthOKServerResponse(CommandMessage commandMessage) {
         //устанавливаем режим отображения "Авторизован"
         guiController.setAuthMode(true);
@@ -155,7 +158,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //выводим сообщение в нижнюю метку GUI
         showTextInGUI("Something wrong with your login or password! Insert them again.");
         //открываем окно авторизации
-        guiController.openAuthWindowInGUI();//FIXME
+        guiController.openAuthWindowInGUI();
     }
 
     /**

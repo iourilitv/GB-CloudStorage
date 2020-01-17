@@ -39,10 +39,11 @@ public class GUIController implements Initializable {
     @FXML
     Label clientDirLabel, storageDirLabel;
 
-    //объявляем объекты коллекций файловых объектов
+    //объявляем объекты коллекций объектов элементов
     @FXML
     ListView<Item> clientItemListView, storageItemListView;
 
+    //объявляем объект метки уведомлений
     @FXML
     Label noticeLabel;
 
@@ -496,6 +497,40 @@ public class GUIController implements Initializable {
         storageClient.demandDirectoryItemList(storageCurrentDirItem.getParentPathname());
     }
 
+    /**
+     * Метод выводит в отдельном потоке(не javaFX) переданное сообщение в метку уведомлений.
+     * @param text - строка сообщения
+     */
+    public void showTextInGUI(String text){
+        //в отдельном потоке запускаем обновление интерфейса
+        Platform.runLater(() -> {
+            //выводим сообщение в нижнюю метку GUI
+            noticeLabel.setText(text);
+        });
+    }
+
+    /**
+     * Метод прокладка, чтобы открывать окно GUI в других потоках
+     */
+    public void openAuthWindowInGUI() {
+        //в отдельном потоке запускаем обновление интерфейса
+        //открываем окно авторизации
+        Platform.runLater(this::openAuthWindow);
+    }
+
+    /**
+     * Метод устанавливает GUI в режим авторизован или нет, в зависимости от параметра
+     * @param isAuthMode - true - сервер авторизовал пользователя
+     */
+    public void setAuthMode(boolean isAuthMode) {
+        //скрываем и деактивируем(если isAuthMode = true) кнопку подключения к серверу
+        connectToCloudStorageStackPane.setManaged(!isAuthMode);
+        connectToCloudStorageStackPane.setVisible(!isAuthMode);
+        //показываем и активируем(если isAuthMode = true) список объектов в сетевом хранилище
+        storageItemListView.setManaged(isAuthMode);
+        storageItemListView.setVisible(isAuthMode);
+    }
+
     public void setNewName(String newName) {
         this.newName = newName;
     }
@@ -516,23 +551,6 @@ public class GUIController implements Initializable {
         password = text;
     }
 
-    public void showTextInGUI(String text){
-        //в отдельном потоке запускаем обновление интерфейса
-        Platform.runLater(() -> {
-            //выводим сообщение в нижнюю метку GUI
-            noticeLabel.setText(text);
-        });
-    }
-
-    /**
-     * Метод прокладка, чтобы открывать окно GUI в других потоках
-     */
-    public void openAuthWindowInGUI() {
-        //в отдельном потоке запускаем обновление интерфейса
-        //открываем окно авторизации
-        Platform.runLater(this::openAuthWindow);
-    }
-
     //Метод отправки запроса об отключении на сервер
     public void dispose() {
         System.out.println("Отправляем сообщение о закрытии");
@@ -546,12 +564,4 @@ public class GUIController implements Initializable {
 //        }
     }
 
-    public void setAuthMode(boolean isAuthMode) {
-        connectToCloudStorageStackPane.setManaged(!isAuthMode);
-        connectToCloudStorageStackPane.setVisible(!isAuthMode);
-
-        storageItemListView.setManaged(isAuthMode);
-        storageItemListView.setVisible(isAuthMode);
-
-    }
 }
