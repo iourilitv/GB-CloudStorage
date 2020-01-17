@@ -262,67 +262,6 @@ public class FileUtils {
 
         return true;
     }
-//    public boolean compileFileFragments(Path realToTempDirPath, Path realToFilePath,
-//                                        FileFragmentMessage fileFragMsg) {
-//        //TODO temporarily
-//        long start = System.currentTimeMillis();
-//        //
-//        AtomicBoolean flag = new AtomicBoolean(false);
-//        //запускаем в отдельном процессе, чтобы не тормозить основные процессы(подвисает GUI)
-//        new Thread(() -> {
-//            try {
-//                //инициируем файловый объект для временной папки
-//                File tempDirFileObject = new File(realToTempDirPath.toString());
-//                //инициируем массив файлов-фрагментов во временной папке
-//                File[] fragFiles = tempDirFileObject.listFiles();
-//                //если количество файлов-фрагментов не совпадает с требуемым
-//                assert fragFiles != null;
-//                if(fragFiles.length != fileFragMsg.getTotalFragsNumber()){
-//                    msg = ("FileUtils.compileFileFragments() - " +
-//                            "Wrong the saved file fragments count!");
-////                    return false;
-//                    flag.set(false);
-//                    return;
-//                }
-//                //переписываем данные из канала-источника в канал-назначения данные
-//                // из файлов-фрагментов в итоговый файл
-//                transferDataFromFragsToFinalFile(realToFilePath, fragFiles);
-//                //если длина сохраненного файла-фрагмента отличается от длины принятого фрагмента файла
-//                if(Files.size(realToFilePath) != fileFragMsg.getFullFileSize()){
-//                    msg = "FileUtils.compileFileFragments() - " +
-//                            "Wrong a size of the saved entire file!";
-////                    return false;
-//                    flag.set(false);
-//
-//                    //если файл собран без ошибок
-//                } else {
-//                    //***удаляем временную папку***
-//                    if(!deleteFolder(tempDirFileObject)){
-//                        msg = "FileUtils.compileFileFragments() - " +
-//                                "Something wrong with the temp folder deleting!!";
-////                    return false;
-//                        flag.set(false);
-//
-//                    }
-//                }
-//            } catch (IOException e) {
-//                msg = "FileUtils.compileFileFragments() - " +
-//                        "Something wrong with the directory or the file!";
-//                e.printStackTrace();
-////                    return false;
-//                flag.set(false);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
-//
-//        //TODO temporarily
-//        long finish = System.currentTimeMillis() - start;
-//        System.out.println("FileUtils.compileUploadedFileFragments() - duration(mc): " + finish);
-//
-////        return true;
-//        return flag.get();
-//    }
 
     /**
      * Метод переписывает данные из канала-источника в канал-назначения данные
