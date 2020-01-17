@@ -167,6 +167,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //если сохранение прошло удачно
         if(storageClient.downloadItem(fileMessage.getClientDirectoryItem(), fileMessage.getItem(),
                 fileMessage.getData(), fileMessage.getFileSize())){
+            //очищаем метку уведомлений
+            showTextInGUI("");
             //обновляем список файловых объектов на клиенте
             guiController.updateClientItemListInGUI(fileMessage.getClientDirectoryItem());
         //если что-то пошло не так
@@ -215,6 +217,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         if(fileFragMsg.isFinalFileFragment()){
             //если корректно собран файл из фрагментов сохраненных во временную папку
             if(storageClient.compileItemFragments(fileFragMsg)){
+                //очищаем метку уведомлений
+                showTextInGUI("");
                 //обновляем список файловых объектов на клиенте
                 guiController.updateClientItemListInGUI(
                         fileFragMsg.getToDirectoryItem());
@@ -243,16 +247,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 directoryMessage.getItemsList());
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
-        ctx.close();
-    }
-
-    public void printMsg(String msg){
-        storageClient.printMsg(msg);
-    }
-
     /**
      * Метод выводит сообщение в нижнюю метку GUI
      * @param text - сообщение
@@ -261,4 +255,15 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //выводим сообщение в нижнюю метку GUI
         guiController.showTextInGUI(text);
     }
+
+    public void printMsg(String msg){
+        storageClient.printMsg(msg);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
+    }
+
 }

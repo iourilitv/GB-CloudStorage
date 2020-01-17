@@ -276,6 +276,8 @@ public class GUIController implements Initializable {
             //запоминаем кликнутый элемент списка
             Item item = listView.getSelectionModel().getSelectedItem();
             try {
+                //выводим сообщение в нижнюю метку
+                noticeLabel.setText("Uploading a file...");
                 //отправляем на сервер запрос на загрузку файла в облачное хранилище
                 storageClient.demandUploadItem(storageCurrentDirItem, item);
             } catch (IOException e) {
@@ -299,6 +301,8 @@ public class GUIController implements Initializable {
         menuItemDownload.setOnAction(event -> {
             //запоминаем кликнутый элемент списка
             Item item = listView.getSelectionModel().getSelectedItem();
+            //выводим сообщение в нижнюю метку
+            noticeLabel.setText("Downloading a file...");
             //отправляем на сервер запрос на скачивание файла из облачного хранилища
             storageClient.demandDownloadItem(storageCurrentDirItem, clientCurrentDirItem, item);
             //сбрасываем выделение после действия
