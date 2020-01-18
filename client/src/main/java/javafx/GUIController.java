@@ -11,7 +11,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -70,7 +69,7 @@ public class GUIController implements Initializable {
     //объявляем переменную введенного нового имени объекта элемента
     private String newName = "";
     private AtomicBoolean flagWindow = new AtomicBoolean(false);
-
+    //объявляем переменную стадии приложения
     Stage stage;
 
     @Override
@@ -451,7 +450,7 @@ public class GUIController implements Initializable {
 
     /**
      * Метод отрабатывает нажатие на кнопку "GoUp" в серверной части GUI.
-     * Запрашивает у сервера список объектов элемента в родительской директории в клиентской части
+     * Запрашивает у сервера список объектов элемента в родительской директории в серверной части
      * @param mouseEvent - любой клик мышкой
      */
     @FXML
@@ -459,12 +458,22 @@ public class GUIController implements Initializable {
         storageClient.demandDirectoryItemList(storageCurrentDirItem.getParentPathname());
     }
 
+    /**
+     * Метод отрабатывает нажатие на кнопку "Refresh" в клиентской части GUI.
+     * Запрашивает у сервера список объектов элемента в текущей директории в клиентской части
+     * @param mouseEvent - любой клик мышкой
+     */
     @FXML
     public void onClientRefreshBtnClicked(MouseEvent mouseEvent) {
         //обновляем список объектов элемента клиентской части
         updateClientItemListInGUI(clientCurrentDirItem);
     }
 
+    /**
+     * Метод отрабатывает нажатие на кнопку "Refresh" в серверной части GUI.
+     * Запрашивает у сервера список объектов элемента в текущей директории в серверной части
+     * @param mouseEvent - любой клик мышкой
+     */
     @FXML
     public void onStorageRefreshBtnClicked(MouseEvent mouseEvent) {
         //отправляем на сервер запрос на получение списка элементов заданной директории
@@ -472,6 +481,11 @@ public class GUIController implements Initializable {
         storageClient.demandDirectoryItemList(storageCurrentDirItem.getItemPathname());
     }
 
+    /**
+     * Метод отрабатывает нажатие на кнопку "NewFolder" в клиентской части GUI.
+     * Запрашивает у сервера создать новую папку в текущей директории в клиентской части
+     * @param mouseEvent - любой клик мышкой
+     */
     @FXML
     public void onClientNewFolderBtnClicked(MouseEvent mouseEvent) {
         //FIXME
@@ -480,6 +494,11 @@ public class GUIController implements Initializable {
                 "вызвать метод в storageClient создать новую папку");
     }
 
+    /**
+     * Метод отрабатывает нажатие на кнопку "NewFolder" в серверной части GUI.
+     * Запрашивает у сервера создать новую папку в текущей директории в серверной части
+     * @param mouseEvent - любой клик мышкой
+     */
     @FXML
     public void onStorageNewFolderBtnClicked(MouseEvent mouseEvent) {
         //FIXME
