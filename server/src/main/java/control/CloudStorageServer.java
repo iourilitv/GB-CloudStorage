@@ -176,7 +176,6 @@ public class CloudStorageServer {
      * @param fullFileSize - размер целого файла в байтах
      * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище
      * @param ctx - сетевое соединение
-     * @throws IOException - исключение
      */
     private void downloadFileByFrags(Item clientToDirItem, Item storageItem,
                                      long fullFileSize, Path userStorageRoot,

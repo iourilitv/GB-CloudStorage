@@ -77,20 +77,6 @@ public class LoginController {
      * @param actionEvent - клик мыши по кнопке "Authorization"
      */
     @FXML
-//    public void onAuthorizationBtnClick(ActionEvent actionEvent) {
-//        //если введенные логин и пароль корректны
-//        if(isLoginPasswordCorrect(login.getText(), password.getText())){
-//            //записываем введенные логин и пароль в соответствующие переменные главного контроллера
-//            backController.setLogin(login.getText());
-//            backController.setPassword(password.getText());
-//            //устанавливаем флаг штатного закрытия окна
-//            backController.setFlagWindow(true);
-//            //запускаем процесс авторизации
-//            backController.startAuthorisation();
-//            //закрываем окно
-//            globParent.getScene().getWindow().hide();
-//        }
-//    }
     public void onAuthorizationBtnClick(ActionEvent actionEvent) {
         //если введенные логин и пароль корректны
         if(isLoginPasswordCorrect(login.getText(), password.getText())){

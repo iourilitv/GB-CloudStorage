@@ -51,30 +51,22 @@ public class CloudStorageClient {
         new NettyClient(this, IP_ADDR, PORT).run();
     }
 
-
+    /**
+     * Метод отправляет на сервер запрос на регистрацию нового пользователя в облачное хранилище.
+     * @param login - логин пользователя
+     * @param password - пароль пользователя
+     */
     public void demandRegistration(String login, String password) {
         //отправляем на сервер объект сообщения(команды)
         ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_REGISTRATION,
                 new AuthMessage(login, password)));
     }
 
-//    /**
-//     * Публичный метод отправляет на сервер запрос на авторизацию в облачное хранилище
-//     */
-//    public void startAuthorization() {
-//        //отправляем на сервер запрос на авторизацию в облачное хранилище
-//        requestAuthorization(guiController.getLogin(), guiController.getPassword());
-//    }
-//    /**
-//     * Приватный метод отправляет на сервер запрос на авторизацию в облачное хранилище
-//     * @param login - логин пользователя
-//     * @param password - пароль пользователя
-//     */
-//    private void requestAuthorization(String login, String password) {
-//        //отправляем на сервер объект сообщения(команды)
-//        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
-//                new AuthMessage(login, password)));
-//    }
+    /**
+     * Метод отправляет на сервер запрос на авторизацию пользователя в облачное хранилище.
+     * @param login - логин пользователя
+     * @param password - пароль пользователя
+     */
     public void demandAuthorization(String login, String password) {
         //отправляем на сервер объект сообщения(команды)
         ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_AUTH,

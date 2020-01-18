@@ -68,9 +68,8 @@ public class GUIController implements Initializable {
     private Item clientCurrentDirItem, storageCurrentDirItem;
     //объявляем переменную введенного нового имени объекта элемента
     private String newName = "";
-    private AtomicBoolean flagWindow = new AtomicBoolean(false);
     //объявляем переменную стадии приложения
-    Stage stage;
+    private Stage stage;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -106,7 +105,12 @@ public class GUIController implements Initializable {
         }).start();
     }
 
-
+    /**
+     * Метод-прокладка запускает процессы: показа окна авторизации в режиме авторизации
+     * и процесс регистрации пользователя в сетевом хранилище.
+     * @param login - логин пользователя
+     * @param password - пароль пользователя
+     */
     public void demandRegistration(String login, String password) {
         //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
         if(isLoginPasswordNotEmpty(login, password)){
@@ -119,20 +123,11 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод-прокладка запускает процесс показа основного окна и процесс авторизации в сетевом хранилище.
+     * Метод-прокладка запускает процесс показа основного окна и процесс
+     * авторизации пользователя в сетевом хранилище.
+     * @param login - логин пользователя
+     * @param password - пароль пользователя
      */
-//    public void startAuthorisation() {
-//        //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
-////        if(!login.isEmpty() && !password.isEmpty()){
-//        if(flagWindow.get()){
-//
-//            //запускаем процесс авторизации
-//            storageClient.startAuthorization();
-//        //если окно закрыто по крестику выхода
-//        } else {
-//            noticeLabel.setText("");
-//        }
-//    }
     public void demandAuthorisation(String login, String password) {
         //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
         if(isLoginPasswordNotEmpty(login, password)){
@@ -142,10 +137,6 @@ public class GUIController implements Initializable {
         } else {
             noticeLabel.setText("");
         }
-    }
-
-    private boolean isLoginPasswordNotEmpty(String login, String password){
-        return !login.isEmpty() && !password.isEmpty();
     }
 
     /**
@@ -549,11 +540,8 @@ public class GUIController implements Initializable {
 
             //определяем действия по событию закрыть окно по крестику через лямбда
             stage.setOnCloseRequest(event -> {
-//                GUIController.this.openAuthWindow();
-                GUIController.this.dispose();
-                System.out.println("GUIController.openAuthWindow() - " +
-                        "the AuthWindow was closed forcibly!" +
-                        ". flagWindow.get()" + flagWindow.get());
+                //вызываем разрыв соединения, если выйти по крестику
+                GUIController.this.storageClient.demandDisconnecting();
             });
 
             stage.setTitle("Authorisation to the Cloud Storage by LYS");
@@ -669,32 +657,19 @@ public class GUIController implements Initializable {
         storageItemListView.setVisible(isAuthMode);
     }
 
+    /**
+     * МЕтод проверяет не пустые ли поля логин и пароля, чтобы отлавливать закрытие окна
+     * авторизации силой и не отправлять пустую форму на сервер.
+     * @param login - логин пользователя
+     * @param password - пароль пользователя
+     * @return - true, оба не пустые
+     */
+    private boolean isLoginPasswordNotEmpty(String login, String password){
+        return !login.isEmpty() && !password.isEmpty();
+    }
+
     public void setNewName(String newName) {
         this.newName = newName;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setLogin(String text) {
-        login = text;
-    }
-
-    public void setPassword(String text) {
-        password = text;
-    }
-
-    public AtomicBoolean getFlagWindow() {
-        return flagWindow;
-    }
-
-    public void setFlagWindow(boolean flagWindow) {
-        this.flagWindow = new AtomicBoolean(flagWindow);
     }
 
     //Метод отправки запроса об отключении на сервер

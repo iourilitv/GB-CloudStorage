@@ -104,6 +104,11 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
                 updateStorageItemListInGUI(commandMessage);
                 break;
+            //обрабатываем полученное от сервера сообщение об ошибке регистрации в облачное хранилище
+            case Commands.SERVER_RESPONSE_REGISTRATION_ERROR:
+                //вызываем метод обработки ответа сервера
+                onRegistrationErrorServerResponse(commandMessage);
+                break;
             //обрабатываем полученное от сервера сообщение об ошибке авторизации в облачное хранилище
             case Commands.SERVER_RESPONSE_AUTH_ERROR:
                 //вызываем метод обработки ответа сервера
@@ -151,11 +156,22 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     private void onRegistrationOKServerResponse(CommandMessage commandMessage) {
         //устанавливаем режим отображения "Авторизован"
         guiController.setAuthMode(true);
-
-//        //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
-//        updateStorageItemListInGUI(commandMessage);
-
+        //выводим сообщение в метку уведомлений в GUI
         showTextInGUI("You have registered in the Cloud Storage. Press \"Authorization\" button.");
+    }
+
+    /**
+     * Метод обрабатывает полученное от сервера сообщение об ошибке регистрации
+     * нового пользователя в облачное хранилище.
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onRegistrationErrorServerResponse(CommandMessage commandMessage) {
+        //выводим сообщение в нижнюю метку GUI
+        showTextInGUI("Something wrong with your registration data! Insert them again.");
+        //открываем окно авторизации
+        guiController.openAuthWindowInGUI();
+
+        //FIXME включить режим регистрационной формы
     }
 
     /**
