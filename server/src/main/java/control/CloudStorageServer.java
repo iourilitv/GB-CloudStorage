@@ -13,8 +13,6 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This server's class for operating with a cloud storage.
@@ -30,10 +28,6 @@ public class CloudStorageServer {
     private final String STORAGE_DEFAULT_DIR = "";
     //объявляем объекты директории пользователя по умолчанию в серверной части GUI
     private Item storageDefaultDirItem;
-    //объявляем множество авторизованных клиентов <соединение, логин>
-    //TODO перенести их storageServer в UsersAuthController
-    private Map<ChannelHandlerContext, String> authorizedUsers;
-
     //объявляем объект контроллера авторизации клиента
     private UsersAuthController usersAuthController;
     //объявляем объект файлового обработчика
@@ -42,10 +36,6 @@ public class CloudStorageServer {
     private final ItemUtils itemUtils = ItemUtils.getOwnObject();
 
     public void run() throws Exception {
-//        //инициируем множество авторизованных клиентов
-//        //TODO перенести их storageServer в UsersAuthController
-//        authorizedUsers = new HashMap<>();
-
         //инициируем объект контроллера авторизации пользователей
         usersAuthController = UsersAuthController.getOunInstance(this);
         //устанавливаем связь с БД в момент запуска сервера
@@ -255,13 +245,6 @@ public class CloudStorageServer {
     public String getSTORAGE_DEFAULT_DIR() {
         return STORAGE_DEFAULT_DIR;
     }
-
-//    public Map<ChannelHandlerContext, String> getAuthorizedUsers() {
-//        return authorizedUsers;
-//    }
-//    public Map<ChannelHandlerContext, String> getAuthorizedUsers() {
-//        return usersAuthController.getAuthorizedUsers();
-//    }
 
     public UsersAuthController getUsersAuthController() {
         return usersAuthController;

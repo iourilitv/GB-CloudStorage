@@ -17,24 +17,17 @@ public class UsersAuthController {
     private static UsersAuthController ounInstance = new UsersAuthController();
 
     public static UsersAuthController getOunInstance(CloudStorageServer storageServer) {
-//        UsersAuthController.storageServer = storageServer;
         ounInstance.storageServer = storageServer;
-
         //инициируем множество авторизованных клиентов
-        //TODO перенести их storageServer в UsersAuthController
         ounInstance.authorizedUsers = new HashMap<>();
-
         return ounInstance;
     }
 
     //принимаем объект сервера
-    private /*static*/ CloudStorageServer storageServer;
-
+    private CloudStorageServer storageServer;
     //объявляем множество авторизованных клиентов <соединение, логин>
-    //TODO перенести их storageServer в UsersAuthController
     private Map<ChannelHandlerContext, String> authorizedUsers;
-
-    //объект соединения с БД
+    //объявляем объект соединения с БД
     private Connection connection;
     //объект для отправки запросов в JDBC драйвер(библиотека) с помощью метода connect(),
     // который переправляет его в БД.
@@ -88,13 +81,10 @@ public class UsersAuthController {
         //если пара логина и пароля релевантна
         if(checkLoginAndPassword(authMessage.getLogin(), authMessage.getPassword())){
             //регистрируем пользователя, если он еще не зарегистрирован
-            //TODO перенести из storageServer в UsersAuthController
-//            storageServer.getAuthorizedUsers().put(ctx, authMessage.getLogin());
             authorizedUsers.put(ctx, authMessage.getLogin());
 
             //TODO temporarily
             printMsg("[server]UsersAuthController.authorizeUser - authorizedUsers: " +
-//                    storageServer.getAuthorizedUsers().toString());
                     authorizedUsers.toString());
 
             //возвращаем true, чтобы завершить процесс регистрации пользователя
@@ -112,10 +102,7 @@ public class UsersAuthController {
     private boolean isUserAuthorized(ChannelHandlerContext ctx, String login) {
         //возвращаем результат проверки есть ли уже элемент в списке авторизованных с такими
         // объектом соединения или логином
-//        return storageServer.getAuthorizedUsers().containsKey(ctx) ||
-//                storageServer.getAuthorizedUsers().containsValue(login);
-        return authorizedUsers.containsKey(ctx) ||
-                authorizedUsers.containsValue(login);
+        return authorizedUsers.containsKey(ctx) || authorizedUsers.containsValue(login);
     }
 
     /**

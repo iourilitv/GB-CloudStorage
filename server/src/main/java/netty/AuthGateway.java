@@ -52,12 +52,10 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
     public void channelInactive(ChannelHandlerContext ctx) {
         //если соединение отвалилось, удаляем объект соединения из коллекции
         printMsg("[server]AuthGateway.channelInactive() - removed client(login): " +
-//                storageServer.getAuthorizedUsers().remove(ctx));
                 usersAuthController.getAuthorizedUsers().remove(ctx));
 
         //TODO temporarily
         printMsg("[server]UsersAuthController.authorizeUser - authorizedUsers: " +
-//                storageServer.getAuthorizedUsers().toString());
                 usersAuthController.getAuthorizedUsers().toString());
     }
 
