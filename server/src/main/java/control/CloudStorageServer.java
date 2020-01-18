@@ -42,9 +42,9 @@ public class CloudStorageServer {
     private final ItemUtils itemUtils = ItemUtils.getOwnObject();
 
     public void run() throws Exception {
-        //инициируем множество авторизованных клиентов
-        //TODO перенести их storageServer в UsersAuthController
-        authorizedUsers = new HashMap<>();
+//        //инициируем множество авторизованных клиентов
+//        //TODO перенести их storageServer в UsersAuthController
+//        authorizedUsers = new HashMap<>();
 
         //инициируем объект контроллера авторизации пользователей
         usersAuthController = UsersAuthController.getOunInstance(this);
@@ -256,9 +256,12 @@ public class CloudStorageServer {
         return STORAGE_DEFAULT_DIR;
     }
 
-    public Map<ChannelHandlerContext, String> getAuthorizedUsers() {
-        return authorizedUsers;
-    }
+//    public Map<ChannelHandlerContext, String> getAuthorizedUsers() {
+//        return authorizedUsers;
+//    }
+//    public Map<ChannelHandlerContext, String> getAuthorizedUsers() {
+//        return usersAuthController.getAuthorizedUsers();
+//    }
 
     public UsersAuthController getUsersAuthController() {
         return usersAuthController;
