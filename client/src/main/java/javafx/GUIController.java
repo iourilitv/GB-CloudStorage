@@ -2,14 +2,17 @@ package javafx;
 
 import control.CloudStorageClient;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import utils.Item;
@@ -27,14 +30,14 @@ public class GUIController implements Initializable {
     @FXML
     StackPane connectToCloudStorageStackPane;
 
-    @FXML
-    Button connectToCloudStorageButton;
+//    @FXML
+//    Button connectToCloudStorageButton;
 
-    //объявляем объекты кнопок для коллекции файловых объектов клиента и сервера
-    @FXML
-    Button  clientHomeButton, storageHomeButton,//"В корневую директорию"
-            clientGoUpButton, storageGoUpButton,//"Подняться на папку выше"
-            clientNewFolderButton, storageNewFolderButton;//"Создать новую папку"
+//    //объявляем объекты кнопок для коллекции файловых объектов клиента и сервера
+//    @FXML
+//    Button  clientHomeButton, storageHomeButton,//"В корневую директорию"
+//            clientGoUpButton, storageGoUpButton,//"Подняться на папку выше"
+//            clientNewFolderButton, storageNewFolderButton;//"Создать новую папку"
     //объявляем объекты меток для коллекций файловых объектов
     @FXML
     Label clientDirLabel, storageDirLabel;
@@ -64,6 +67,8 @@ public class GUIController implements Initializable {
     //объявляем переменную введенного нового имени объекта элемента
     private String newName = "";
     private AtomicBoolean flagWindow = new AtomicBoolean(false);
+
+    Stage stage;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -388,6 +393,27 @@ public class GUIController implements Initializable {
     }
 
     /**
+     * Метод отрабатывает нажатие на пунтк меню "About".
+     * @param actionEvent - событие(здесь клик мыши)
+     */
+    @FXML
+    public void onAboutMenuItemClick(ActionEvent actionEvent) {
+        System.out.println("GUIController.onAboutLinkClick()");
+        //открываем сцену с информацией о программе
+        takeAboutScene();
+    }
+
+    /**
+     * Метод отрабатывает нажатие на пунтк меню "Disconnect".
+     * @param actionEvent - событие(здесь клик мыши)
+     */
+    @FXML
+    public void onDisconnectMenuItemClick(ActionEvent actionEvent) {
+        System.out.println("GUIController.onDisconnectLinkClick()");
+        storageClient.demandDisconnecting();
+    }
+
+    /**
      * Метод отрабатывает нажатие на кнопку "Home" в клиентской части GUI.
      * Выводит список объектов элемента в корневой директории в клиентской части
      * @param mouseEvent - любой клик мышкой
@@ -429,6 +455,36 @@ public class GUIController implements Initializable {
     public void onStorageGoUpBtnClicked(MouseEvent mouseEvent) {
         storageClient.demandDirectoryItemList(storageCurrentDirItem.getParentPathname());
     }
+
+    @FXML
+    public void onClientRefreshBtnClicked(MouseEvent mouseEvent) {
+        //обновляем список объектов элемента клиентской части
+        updateClientItemListInGUI(clientCurrentDirItem);
+    }
+
+    @FXML
+    public void onStorageRefreshBtnClicked(MouseEvent mouseEvent) {
+        //отправляем на сервер запрос на получение списка элементов заданной директории
+        //пользователя в сетевом хранилище
+        storageClient.demandDirectoryItemList(storageCurrentDirItem.getItemPathname());
+    }
+
+    @FXML
+    public void onClientNewFolderBtnClicked(MouseEvent mouseEvent) {
+        //FIXME
+        System.out.println("GUIController.onClientNewFolderBtnClicked()  - " +
+                "открыть окно с вводом имени новой папки и " +
+                "вызвать метод в storageClient создать новую папку");
+    }
+
+    @FXML
+    public void onStorageNewFolderBtnClicked(MouseEvent mouseEvent) {
+        //FIXME
+        System.out.println("GUIController.onClientNewFolderBtnClicked()  - " +
+                "открыть окно с вводом имени новой папки и " +
+                "вызвать метод в storageClient запросить сервер создать новую папку");
+    }
+
 
     /**
      * Метод открывает модальное окно для ввода логина и пароля пользователя.
@@ -505,6 +561,28 @@ public class GUIController implements Initializable {
     }
 
     /**
+     * Метод открывает сцену с информацией о программе.
+     */
+    private void takeAboutScene() {
+        //получаем объект стадии приложения
+        stage = (Stage) noticeLabel.getScene().getWindow();
+        //сохраням объект гланой сцены
+        Scene primaryScene = noticeLabel.getScene();
+        //инициируем элементы сцены
+        VBox pane = new VBox(10);
+        pane.setAlignment(Pos.TOP_CENTER);
+        Label label = new Label(new AboutText().getText());
+        label.setStyle("-fx-font-size: 14");
+        label.setWrapText(true);
+        Button backBtn = new Button("Return");
+        //устанавливаем лисенер на кнопку, чтобы вернуться с основной сцене
+        backBtn.setOnAction(e -> stage.setScene(primaryScene));
+        pane.getChildren().addAll(label, backBtn);
+        Scene aboutScene = new Scene(pane, 410, 220);
+        stage.setScene(aboutScene);
+    }
+
+    /**
      * Метод выводит в отдельном потоке(не javaFX) переданное сообщение в метку уведомлений.
      * @param text - строка сообщения
      */
@@ -562,9 +640,6 @@ public class GUIController implements Initializable {
         return flagWindow;
     }
 
-//    public void setFlagWindow(AtomicBoolean flagWindow) {
-//        this.flagWindow = flagWindow;
-//    }
     public void setFlagWindow(boolean flagWindow) {
         this.flagWindow = new AtomicBoolean(flagWindow);
     }

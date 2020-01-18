@@ -24,11 +24,6 @@ public class ClientMain extends Application {
         Parent root = loader.load(getClass().getResourceAsStream("/MainClient.fxml"));
         contr = loader.getController();
 
-        primaryStage.setTitle("The Cloud Storage by LYS");
-        Scene scene = new Scene(root, 600, 400);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
         //определяем действия по событию закрыть окно по крестику через лямбда
         //лямбда здесь - это замена анонимного класса типа new Runnable
         //в лямбда event - аргумент(здесь некое событие), {тело лямбды - операции}
@@ -39,6 +34,12 @@ public class ClientMain extends Application {
             //указываем системе, что выход без ошибки
             System.exit(0);
         });
+
+        primaryStage.setTitle("The Cloud Storage by LYS");
+        Scene scene = new Scene(root, 600, 500);
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+        primaryStage.show();
     }
 
 }
