@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -30,14 +31,16 @@ public class GUIController implements Initializable {
     @FXML
     StackPane connectToCloudStorageStackPane;
 
-//    @FXML
-//    Button connectToCloudStorageButton;
+    @FXML
+    Button connectToCloudStorageButton;
 
-//    //объявляем объекты кнопок для коллекции файловых объектов клиента и сервера
-//    @FXML
-//    Button  clientHomeButton, storageHomeButton,//"В корневую директорию"
-//            clientGoUpButton, storageGoUpButton,//"Подняться на папку выше"
-//            clientNewFolderButton, storageNewFolderButton;//"Создать новую папку"
+    //объявляем объекты кнопок для коллекции файловых объектов клиента и сервера
+    @FXML
+    Button  clientHomeButton, storageHomeButton,//"В корневую директорию"
+            clientGoUpButton, storageGoUpButton,//"Подняться на папку выше"
+            clientRefreshButton, storageRefreshButton,//обновить папку
+            clientNewFolderButton, storageNewFolderButton;//"Создать новую папку"
+
     //объявляем объекты меток для коллекций файловых объектов
     @FXML
     Label clientDirLabel, storageDirLabel;
@@ -485,7 +488,6 @@ public class GUIController implements Initializable {
                 "вызвать метод в storageClient запросить сервер создать новую папку");
     }
 
-
     /**
      * Метод открывает модальное окно для ввода логина и пароля пользователя.
      */
@@ -608,6 +610,12 @@ public class GUIController implements Initializable {
      * @param isAuthMode - true - сервер авторизовал пользователя
      */
     public void setAuthMode(boolean isAuthMode) {
+        //активируем/деактивируем кнопки сетевого хранилища
+        storageHomeButton.setDisable(!isAuthMode);
+        storageGoUpButton.setDisable(!isAuthMode);
+        storageRefreshButton.setDisable(!isAuthMode);
+        storageNewFolderButton.setDisable(!isAuthMode);
+
         //скрываем и деактивируем(если isAuthMode = true) кнопку подключения к серверу
         connectToCloudStorageStackPane.setManaged(!isAuthMode);
         connectToCloudStorageStackPane.setVisible(!isAuthMode);
