@@ -51,20 +51,31 @@ public class CloudStorageClient {
         new NettyClient(this, IP_ADDR, PORT).run();
     }
 
-    /**
-     * Публичный метод отправляет на сервер запрос на авторизацию в облачное хранилище
-     */
-    public void startAuthorization() {
-        //отправляем на сервер запрос на авторизацию в облачное хранилище
-        requestAuthorization(guiController.getLogin(), guiController.getPassword());
+
+    public void demandRegistration(String login, String password) {
+        //отправляем на сервер объект сообщения(команды)
+        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_REGISTRATION,
+                new AuthMessage(login, password)));
     }
 
-    /**
-     * Приватный метод отправляет на сервер запрос на авторизацию в облачное хранилище
-     * @param login - логин пользователя
-     * @param password - пароль пользователя
-     */
-    private void requestAuthorization(String login, String password) {
+//    /**
+//     * Публичный метод отправляет на сервер запрос на авторизацию в облачное хранилище
+//     */
+//    public void startAuthorization() {
+//        //отправляем на сервер запрос на авторизацию в облачное хранилище
+//        requestAuthorization(guiController.getLogin(), guiController.getPassword());
+//    }
+//    /**
+//     * Приватный метод отправляет на сервер запрос на авторизацию в облачное хранилище
+//     * @param login - логин пользователя
+//     * @param password - пароль пользователя
+//     */
+//    private void requestAuthorization(String login, String password) {
+//        //отправляем на сервер объект сообщения(команды)
+//        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
+//                new AuthMessage(login, password)));
+//    }
+    public void demandAuthorization(String login, String password) {
         //отправляем на сервер объект сообщения(команды)
         ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_AUTH,
                 new AuthMessage(login, password)));
@@ -117,7 +128,6 @@ public class CloudStorageClient {
      * @param storageToDirItem - объект директори назначения в сетевом хранилище
      * @param clientItem - объект элемента в клиенте
      * @param fullFileSize - размер целого файла в байтах
-     * @throws IOException - исключение
      */
     private void uploadFileByFrags(Item storageToDirItem, Item clientItem, long fullFileSize) {
         fileUtils.cutAndSendFileByFrags(storageToDirItem, clientItem, fullFileSize,
@@ -331,4 +341,5 @@ public class CloudStorageClient {
 //        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_DELETE_ITEM,
 //                new FileMessage(storageDirectoryItem, item)));
     }
+
 }

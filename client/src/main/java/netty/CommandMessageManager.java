@@ -82,6 +82,12 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //вызываем метод обработки ответа сервера
                 onAuthOKServerResponse(commandMessage);
                 break;
+            //обрабатываем полученное от сервера подтверждение успешной регистрации
+            // нового пользователя в облачное хранилище
+            case Commands.SERVER_RESPONSE_REGISTRATION_OK:
+                //вызываем метод обработки ответа сервера
+                onRegistrationOKServerResponse(commandMessage);
+                break;
             //обрабатываем полученный ответ сервера с массивом файловых объектов в заданной
             // директории пользователя в сетевом хранилище, если нет ошибок
             case Commands.SERVER_RESPONSE_ITEMS_LIST_OK:
@@ -135,6 +141,21 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     private void onServerConnectedResponse(CommandMessage commandMessage) {
         //открываем окно авторизации
         guiController.openAuthWindowInGUI();
+    }
+
+    /**
+     * Метод обрабатывает полученное от сервера подтверждение успешной регистрации
+     * нового пользователя в облачное хранилище.
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onRegistrationOKServerResponse(CommandMessage commandMessage) {
+        //устанавливаем режим отображения "Авторизован"
+        guiController.setAuthMode(true);
+
+//        //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
+//        updateStorageItemListInGUI(commandMessage);
+
+        showTextInGUI("You have registered in the Cloud Storage. Press \"Authorization\" button.");
     }
 
     /**

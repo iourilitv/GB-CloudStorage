@@ -9,11 +9,18 @@ public class Commands {
     public static final int SERVER_NOTIFICATION_CLIENT_CONNECTED = 911000;
 
     //запрос на сервер на авторизацию пользователя с таким логином и паролем
-    public static final int REQUEST_SERVER_AUTH = 911101;
+    public static final int REQUEST_SERVER_REGISTRATION = 911101;
     //ответ сервера, что авторизация прошла успешно
-    public static final int SERVER_RESPONSE_AUTH_OK = 911202;
+    public static final int SERVER_RESPONSE_REGISTRATION_OK = 911202;
     //ответ сервера, что авторизация прошла успешно
-    public static final int SERVER_RESPONSE_AUTH_ERROR = 911209;
+    public static final int SERVER_RESPONSE_REGISTRATION_ERROR = 911209;
+
+    //запрос на сервер на авторизацию пользователя с таким логином и паролем
+    public static final int REQUEST_SERVER_AUTH = 922101;
+    //ответ сервера, что авторизация прошла успешно
+    public static final int SERVER_RESPONSE_AUTH_OK = 922202;
+    //ответ сервера, что авторизация прошла успешно
+    public static final int SERVER_RESPONSE_AUTH_ERROR = 922209;
 
     //запрос на сервер загрузить(сохранить) объект элемента списка
     public static final int REQUEST_SERVER_UPLOAD_ITEM = 101101;

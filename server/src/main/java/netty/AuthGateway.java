@@ -4,10 +4,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import messages.AuthMessage;
-import utils.CloudStorageServer;
+import control.CloudStorageServer;
 import utils.CommandMessage;
 import utils.Commands;
-import utils.UsersAuthController;
+import jdbc.UsersAuthController;
 
 import java.nio.file.Path;
 
@@ -71,15 +71,47 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
         try {
             //инициируем объект команды из объекта сообщения
             CommandMessage commandMessage = (CommandMessage) msgObject;
-            //если это не команда на авторизацию
-            if(commandMessage.getCommand() != Commands.REQUEST_SERVER_AUTH){
-                return;
+            //если это команда на регистрацию нового пользователя в сетевом хранилище
+            if(commandMessage.getCommand() == Commands.REQUEST_SERVER_REGISTRATION){
+                //вызываем метод обработки запроса от клиента
+                onRegistrationUserClientRequest(ctx, commandMessage);
+            //если это команда на авторизацию пользователя в сетевом хранилище
+            } else if(commandMessage.getCommand() == Commands.REQUEST_SERVER_AUTH){
+                //вызываем метод обработки запроса от клиента
+                onAuthClientRequest(ctx, commandMessage);
             }
-            //вызываем метод обработки запроса от клиента
-            onAuthClientRequest(ctx, commandMessage);
         } finally {
             ReferenceCountUtil.release(msgObject);
         }
+    }
+
+    private void onRegistrationUserClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) {
+        //вынимаем объект авторизационного сообщения из объекта сообщения(команды)
+        AuthMessage authMessage = (AuthMessage) commandMessage.getMessageObject();
+
+        //TODO temporarily
+        printMsg("[server]AuthGateway.onRegistrationUserClientRequest() - " +
+                "login: " + authMessage.getLogin() + ", password: " + authMessage.getPassword());
+
+        //если регистрация клиента в облачном хранилище прошла удачно
+        if(usersAuthController.registerUser(ctx, authMessage)){
+            //меняем команду на успешную
+            command = Commands.SERVER_RESPONSE_REGISTRATION_OK;
+        //если регистрация клиента в облачном хранилище не прошла
+        } else {
+            //инициируем переменную типа команды - ответ об ошибке
+            //в этом случае, в объекте сообщения(команды) вернем принятый от клиента объект авторизационного сообщения
+            command = Commands.SERVER_RESPONSE_REGISTRATION_ERROR;
+        }
+
+        //TODO temporarily
+        printMsg("[server]AuthGateway.onRegistrationUserClientRequest() - ctx: " + ctx +
+                ", command: " + commandMessage.getCommand());
+
+        //инициируем новый объект сообщения(команды)
+        commandMessage = new CommandMessage(command, authMessage);
+        //отправляем объект сообщения(команды) клиенту
+        ctx.writeAndFlush(commandMessage);
     }
 
     /**

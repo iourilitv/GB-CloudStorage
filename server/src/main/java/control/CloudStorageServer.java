@@ -1,9 +1,11 @@
-package utils;
+package control;
 
 import io.netty.channel.ChannelHandlerContext;
+import jdbc.UsersAuthController;
 import messages.FileFragmentMessage;
 import messages.FileMessage;
 import netty.NettyServer;
+import utils.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +31,9 @@ public class CloudStorageServer {
     //объявляем объекты директории пользователя по умолчанию в серверной части GUI
     private Item storageDefaultDirItem;
     //объявляем множество авторизованных клиентов <соединение, логин>
+    //TODO перенести их storageServer в UsersAuthController
     private Map<ChannelHandlerContext, String> authorizedUsers;
+
     //объявляем объект контроллера авторизации клиента
     private UsersAuthController usersAuthController;
     //объявляем объект файлового обработчика
@@ -39,9 +43,13 @@ public class CloudStorageServer {
 
     public void run() throws Exception {
         //инициируем множество авторизованных клиентов
+        //TODO перенести их storageServer в UsersAuthController
         authorizedUsers = new HashMap<>();
+
         //инициируем объект контроллера авторизации пользователей
-        usersAuthController = new UsersAuthController(this);
+        usersAuthController = UsersAuthController.getOunInstance(this);
+        //устанавливаем связь с БД в момент запуска сервера
+        usersAuthController.connect();
         //инициируем объект директории по умолчанию в серверной части GUI
         storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);
         //инициируем объект сетевого подключения
@@ -172,7 +180,7 @@ public class CloudStorageServer {
      */
     private void downloadFileByFrags(Item clientToDirItem, Item storageItem,
                                      long fullFileSize, Path userStorageRoot,
-                                     ChannelHandlerContext ctx) throws IOException {
+                                     ChannelHandlerContext ctx) {
         fileUtils.cutAndSendFileByFrags(clientToDirItem, storageItem, fullFileSize,
                 userStorageRoot, ctx, Commands.SERVER_RESPONSE_DOWNLOAD_FILE_FRAG_OK);
     }

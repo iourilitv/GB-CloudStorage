@@ -1,4 +1,4 @@
-import utils.CloudStorageServer;
+import control.CloudStorageServer;
 
 /**
  * The main class of server cloudstorage applet.

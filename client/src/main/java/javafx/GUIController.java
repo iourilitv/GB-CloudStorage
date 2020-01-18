@@ -106,20 +106,46 @@ public class GUIController implements Initializable {
         }).start();
     }
 
-    /**
-     * Метод запускает процесс показа основного окна и процесс авторизации в сетевом хранилище.
-     */
-    public void startAuthorisation() {
-        //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
-//        if(!login.isEmpty() && !password.isEmpty()){
-        if(flagWindow.get()){
 
+    public void demandRegistration(String login, String password) {
+        //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
+        if(isLoginPasswordNotEmpty(login, password)){
             //запускаем процесс авторизации
-            storageClient.startAuthorization();
-        //если окно закрыто по крестику выхода
+            storageClient.demandRegistration(login, password);
+            //если окно закрыто по крестику выхода
         } else {
             noticeLabel.setText("");
         }
+    }
+
+    /**
+     * Метод-прокладка запускает процесс показа основного окна и процесс авторизации в сетевом хранилище.
+     */
+//    public void startAuthorisation() {
+//        //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
+////        if(!login.isEmpty() && !password.isEmpty()){
+//        if(flagWindow.get()){
+//
+//            //запускаем процесс авторизации
+//            storageClient.startAuthorization();
+//        //если окно закрыто по крестику выхода
+//        } else {
+//            noticeLabel.setText("");
+//        }
+//    }
+    public void demandAuthorisation(String login, String password) {
+        //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
+        if(isLoginPasswordNotEmpty(login, password)){
+            //запускаем процесс авторизации
+            storageClient.demandAuthorization(login, password);
+            //если окно закрыто по крестику выхода
+        } else {
+            noticeLabel.setText("");
+        }
+    }
+
+    private boolean isLoginPasswordNotEmpty(String login, String password){
+        return !login.isEmpty() && !password.isEmpty();
     }
 
     /**
