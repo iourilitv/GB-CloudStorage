@@ -37,7 +37,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx){
         //принимаем объект соединения
         this.ctx = ctx;
-
+        //передаем объект соединения в объект клиента сетевого хранилища
         storageClient.setCtx(ctx);
     }
 
