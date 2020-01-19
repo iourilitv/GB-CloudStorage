@@ -279,18 +279,31 @@ public class CloudStorageClient {
                 new FileMessage(storageDirectoryItem, item)));
     }
 
-    //если создание корневой директории для нового пользователя прошла не удачно
-    public boolean createNewFolder(String currentDirPathname, String newDirName) {
+    /**
+     * Метод-прокладка запускаем процесс создания новой папки в текущей директории в клиенте.
+     * @param clientCurrentDirPathname - строка рути к текущей директории в клиенте
+     * @param newDirName - строка имени новой папки
+     * @return - результат создания новой папки в текущей директории в клиенте
+     */
+    public boolean createNewFolder(String clientCurrentDirPathname, String newDirName) {
+        //инициируем строку реального пути к текущей папке
         String realCurrentDirPathname = itemUtils.getRealPath(
-                currentDirPathname, CLIENT_ROOT_PATH).toString();
+                clientCurrentDirPathname, CLIENT_ROOT_PATH).toString();
+        //инициируем строку реального пути к новой папке
         String realNewDirPathname = Paths.get(realCurrentDirPathname, newDirName).toString();
+        //запускаем процесс создания новой папки в текущей директории в клиенте
         return fileUtils.createNewFolder(realNewDirPathname);
     }
 
-    public void demandCreateNewDirectory(String parentDirPathname, String newName) {
+    /**
+     * Метод отправляет на сервер запрос на объекта новой папки в текущей директории в облачном хранилище.
+     * @param storageCurrentDirPathname - строка рути к текущей директории в облачном хранилище
+     * @param newDirName - строка имени новой папки
+     */
+    public void demandCreateNewDirectory(String storageCurrentDirPathname, String newDirName) {
         //отправляем на сервер объект сообщения(команды)
         ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_CREATE_NEW_FOLDER,
-                new DirectoryMessage(parentDirPathname, newName)));
+                new DirectoryMessage(storageCurrentDirPathname, newDirName)));
     }
 
     /**

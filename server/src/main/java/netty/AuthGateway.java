@@ -8,8 +8,6 @@ import control.CloudStorageServer;
 import utils.CommandMessage;
 import utils.Commands;
 import jdbc.UsersAuthController;
-
-import java.io.IOException;
 import java.nio.file.Path;
 
 /**

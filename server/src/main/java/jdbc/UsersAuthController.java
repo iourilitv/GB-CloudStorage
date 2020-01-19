@@ -3,10 +3,6 @@ package jdbc;
 import io.netty.channel.ChannelHandlerContext;
 import messages.AuthMessage;
 import control.CloudStorageServer;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,29 +87,6 @@ public class UsersAuthController {
      * @param authMessage - объект авторизационного сообщения
      * @return true, если авторизация прошла успешно
      */
-//    public boolean authorizeUser(ChannelHandlerContext ctx, AuthMessage authMessage){
-//        //если пользователь уже авторизован
-//        if(isUserAuthorized(ctx, authMessage.getLogin())){
-//            //выводим сообщение в консоль
-//            printMsg("[server]UsersAuthController.authorizeUser - This user has been authorised already!");
-//            //и выходим с false
-//            return false;
-//        }
-//
-//        //если пара логина и пароля релевантна
-//        if(checkLoginAndPassword(authMessage.getLogin(), authMessage.getPassword())){
-//            //авторизуем пользователя, если он еще не авторизован
-//            authorizedUsers.put(ctx, authMessage.getLogin());
-//
-//            //TODO temporarily
-//            printMsg("[server]UsersAuthController.authorizeUser - authorizedUsers: " +
-//                    authorizedUsers.toString());
-//
-//            //возвращаем true, чтобы завершить процесс регистрации пользователя
-//            return true;
-//        }
-//        return false;
-//    }
     public boolean authorizeUser(ChannelHandlerContext ctx, AuthMessage authMessage){
 
 //        printMsg("UsersAuthController.getUsersListFromDB() return: " + getUsersListFromDB());
@@ -137,25 +110,6 @@ public class UsersAuthController {
         authorizedUsers.put(ctx, authMessage.getLogin());
         return true;
     }
-
-//    /**
-//     * Заготовка метода для проверки релевантности пары логина и пароля
-//     * @param login - полученный логин пользователя
-//     * @param password - полученный пароль пользователя
-//     * @return true, если проверка пары прошла успешно
-//     */
-//    private boolean checkLoginAndPassword(String login, String password) {
-//        //FIXME запросить jdbс проверить логин и пароль
-//        //если порт соединения совпадает с портом полученного объекта авторизационного запроса
-//        //листаем массив пар логинов и паролей
-//        for (int i = 0; i < UsersDB.users.length; i++) {
-//            //если нашли соответствующую пару логина и пароля
-//            if(login.equals(UsersDB.users[i][0]) && password.equals(UsersDB.users[i][1])){
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 
     //Метод добавления данных пользователя в БД
     public boolean addUserIntoDB(String login, String password){

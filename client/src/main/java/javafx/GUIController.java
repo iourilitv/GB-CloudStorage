@@ -347,7 +347,7 @@ public class GUIController implements Initializable {
             Item origin = listView.getSelectionModel().getSelectedItem();
             //открываем диалоговое окно переименования файлового объекта
             //если окно было просто закрыто по крестику, то выходим без действий
-            if(!takeNewNameWindow(origin)){
+            if(!openNewNameWindow(origin)){
                 return;
             }
 
@@ -505,19 +505,18 @@ public class GUIController implements Initializable {
      */
     @FXML
     public void onClientNewFolderBtnClicked(MouseEvent mouseEvent) {
-        //FIXME
-        System.out.println("GUIController.onClientNewFolderBtnClicked()  - " +
-                "открыть окно с вводом имени новой папки и " +
-                "вызвать метод в storageClient создать новую папку");
-
-        takeNewNameWindow();
+        //открываем модальное окно для ввода нового имени
+        openNewNameWindow();
+        //если окно было закрыто штатно, а не по крестику выхода
         if(newName.isEmpty()){
             return;
         }
+        //если новая папка создана удачно
         if(!storageClient.createNewFolder(storageCurrentDirItem.getItemPathname(), newName)){
             noticeLabel.setText("A folder has not created!");
             return;
         }
+        //обновляем список объектов в текущей клиентской директории
         updateClientItemListInGUI(clientCurrentDirItem);
     }
 
@@ -528,12 +527,9 @@ public class GUIController implements Initializable {
      */
     @FXML
     public void onStorageNewFolderBtnClicked(MouseEvent mouseEvent) {
-        //FIXME
-        System.out.println("GUIController.onClientNewFolderBtnClicked()  - " +
-                "открыть окно с вводом имени новой папки и " +
-                "вызвать метод в storageClient запросить сервер создать новую папку");
-
-        takeNewNameWindow();
+        //открываем модальное окно для ввода нового имени
+        openNewNameWindow();
+        //если окно было закрыто штатно, а не по крестику выхода
         if(newName.isEmpty()){
             return;
         }
@@ -574,10 +570,9 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод открывает модальное окно для ввода нового имени элемента списка.
-//     * @return false - если закрыть окно принудительно, true - при штатном вводе
+     * Перегруженный метод открывает модальное окно для ввода нового имени элемента списка.
      */
-    private void takeNewNameWindow() {
+    private void openNewNameWindow() {
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
@@ -605,11 +600,11 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод открывает модальное окно для ввода нового имени элемента списка.
+     * Перегруженный метод открывает модальное окно для ввода нового имени элемента списка.
      * @param origin - объект элемента - оригинал
      * @return false - если закрыть окно принудительно, true - при штатном вводе
      */
-    private boolean takeNewNameWindow(Item origin) {
+    private boolean openNewNameWindow(Item origin) {
         AtomicBoolean flag = new AtomicBoolean(false);
         try {
             Stage stage = new Stage();
