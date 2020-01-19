@@ -2,6 +2,7 @@ package control;
 
 import io.netty.channel.ChannelHandlerContext;
 import jdbc.UsersAuthController;
+import messages.DirectoryMessage;
 import messages.FileFragmentMessage;
 import messages.FileMessage;
 import netty.NettyServer;
@@ -222,6 +223,35 @@ public class CloudStorageServer {
         File newFileObject = new File(newPath.toString());
         //возвращаем результат переименования файлового объекта
         return originFileObject.renameTo(newFileObject);
+    }
+
+    /**
+     * Метод создает новую папку в текущей директории в сетевом хранилище.
+     * @param directoryMessage - сообщение о директории
+     * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище
+     * @return - результат создания новой папки в текущей директории в сетевом хранилище
+     */
+    public boolean createNewFolder(DirectoryMessage directoryMessage, Path userStorageRoot) {
+        //инициируем объект пути к родительской директории
+        Path realParentDirPath = itemUtils.getRealPath(
+                directoryMessage.getDirectoryPathname(), userStorageRoot);
+        //инициируем объект пути к новой папке
+        String realNewDirPathname = Paths.get(
+                realParentDirPath.toString(), directoryMessage.getNewDirName()).toString();
+        //возвращаем результат создания новой папки
+        return fileUtils.createNewFolder(realNewDirPathname);
+    }
+
+    /**
+     * Метод создает новую корневую директорию для нового пользователя.
+     * @param login - логин нового пользователя
+     * @return - результат создания новой корневой директории для нового пользователя
+     */
+    public boolean createNewUserRootFolder(String login) {
+        //инициируем объект пути к новой корневой директории нового пользователя
+        String realDirPathname = Paths.get(STORAGE_ROOT_PATH.toString(), login).toString();
+        //возвращаем результат создания новой папки
+        return fileUtils.createNewFolder(realDirPathname);
     }
 
     /**

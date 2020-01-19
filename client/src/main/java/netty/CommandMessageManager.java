@@ -77,20 +77,23 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //вызываем метод обработки ответа сервера
                 onServerConnectedResponse(commandMessage);
                 break;
-            //обрабатываем полученное от сервера подтверждение успешной авторизации в облачное хранилище
-            case Commands.SERVER_RESPONSE_AUTH_OK:
-                //вызываем метод обработки ответа сервера
-                onAuthOKServerResponse(commandMessage);
-                break;
             //обрабатываем полученное от сервера подтверждение успешной регистрации
             // нового пользователя в облачное хранилище
             case Commands.SERVER_RESPONSE_REGISTRATION_OK:
                 //вызываем метод обработки ответа сервера
                 onRegistrationOKServerResponse(commandMessage);
                 break;
+            //обрабатываем полученное от сервера подтверждение успешной авторизации в облачное хранилище
+            case Commands.SERVER_RESPONSE_AUTH_OK:
+                //вызываем метод обработки ответа сервера
+                onAuthOKServerResponse(commandMessage);
+                break;
             //обрабатываем полученный ответ сервера с массивом файловых объектов в заданной
             // директории пользователя в сетевом хранилище, если нет ошибок
             case Commands.SERVER_RESPONSE_ITEMS_LIST_OK:
+            //обрабатываем полученное от сервера подтверждение успешного создания новой папки
+            //с массивом файловых объектов в текущей директории пользователя в облачном хранилище
+            case Commands.SERVER_RESPONSE_CREATE_NEW_FOLDER_OK:
             //обрабатываем полученное от сервера подтверждение успешной загрузке(сохранении)
             // файла в облачное хранилище
             case Commands.SERVER_RESPONSE_UPLOAD_ITEM_OK:
@@ -113,6 +116,12 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             case Commands.SERVER_RESPONSE_AUTH_ERROR:
                 //вызываем метод обработки ответа сервера
                 onAuthErrorServerResponse(commandMessage);
+                break;
+            //обрабатываем полученное от сервера сообщение об ошибке при создании новой папки
+            //в текущей директории пользователя в облачном хранилище
+            case Commands.SERVER_RESPONSE_CREATE_NEW_FOLDER_ERROR:
+                //вызываем метод обработки ответа сервера
+                onCreateNewFolderErrorServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке загрузки(сохранения)
             // файла в облачное хранилище
@@ -194,6 +203,16 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         showTextInGUI("Something wrong with your login or password! Insert them again.");
         //открываем окно авторизации
         guiController.openAuthWindowInGUI();
+    }
+
+    /**
+     * Метод обрабатывает полученное от сервера сообщение об ошибке при создании новой папки
+     * в текущей директории пользователя в облачном хранилище.
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onCreateNewFolderErrorServerResponse(CommandMessage commandMessage) {
+        //выводим сообщение в нижнюю метку GUI
+        showTextInGUI("Something wrong with a new folder creating! Try it again.");
     }
 
     /**

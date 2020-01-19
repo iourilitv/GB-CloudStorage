@@ -334,6 +334,24 @@ public class FileUtils {
         return Objects.requireNonNull(folder.listFiles()).length == 0 && folder.delete();
     }
 
+    /**
+     * Метод создает файловый объект новой папки.
+     * @param realDirPathname - строка пути к новой папке
+     * @return - результат создания файлового объекта новой папки
+     */
+    public boolean createNewFolder(String realDirPathname) {
+        //инициируем новый файловый объект
+        File dir = new File(realDirPathname);
+        //если такая папке уже существует
+        if(dir.exists()){
+            //выходим с false
+            System.out.println("CloudStorageServer.createNewFolder() - A folder with this name exists.");
+            return false;
+        }
+        //возвращаем результат сохдания новой папки
+        return dir.mkdir();
+    }
+
     public String getMsg() {
         return msg;
     }

@@ -279,6 +279,20 @@ public class CloudStorageClient {
                 new FileMessage(storageDirectoryItem, item)));
     }
 
+    //если создание корневой директории для нового пользователя прошла не удачно
+    public boolean createNewFolder(String currentDirPathname, String newDirName) {
+        String realCurrentDirPathname = itemUtils.getRealPath(
+                currentDirPathname, CLIENT_ROOT_PATH).toString();
+        String realNewDirPathname = Paths.get(realCurrentDirPathname, newDirName).toString();
+        return fileUtils.createNewFolder(realNewDirPathname);
+    }
+
+    public void demandCreateNewDirectory(String parentDirPathname, String newName) {
+        //отправляем на сервер объект сообщения(команды)
+        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_CREATE_NEW_FOLDER,
+                new DirectoryMessage(parentDirPathname, newName)));
+    }
+
     /**
      * Метод-прокладка возвращает объект элемента родительской директории объекта элемента текущей директории.
      * @param directoryItem - объект элемента текущей директории

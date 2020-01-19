@@ -509,6 +509,16 @@ public class GUIController implements Initializable {
         System.out.println("GUIController.onClientNewFolderBtnClicked()  - " +
                 "открыть окно с вводом имени новой папки и " +
                 "вызвать метод в storageClient создать новую папку");
+
+        takeNewNameWindow();
+        if(newName.isEmpty()){
+            return;
+        }
+        if(!storageClient.createNewFolder(storageCurrentDirItem.getItemPathname(), newName)){
+            noticeLabel.setText("A folder has not created!");
+            return;
+        }
+        updateClientItemListInGUI(clientCurrentDirItem);
     }
 
     /**
@@ -522,6 +532,14 @@ public class GUIController implements Initializable {
         System.out.println("GUIController.onClientNewFolderBtnClicked()  - " +
                 "открыть окно с вводом имени новой папки и " +
                 "вызвать метод в storageClient запросить сервер создать новую папку");
+
+        takeNewNameWindow();
+        if(newName.isEmpty()){
+            return;
+        }
+        //отправляем на сервер запрос на получение списка элементов заданной директории
+        //пользователя в сетевом хранилище
+        storageClient.demandCreateNewDirectory(storageCurrentDirItem.getItemPathname(), newName);
     }
 
     /**
@@ -546,6 +564,37 @@ public class GUIController implements Initializable {
 
             stage.setTitle("Authorisation to the Cloud Storage by LYS");
             stage.setScene(new Scene(root, 300, 200));
+            stage.isAlwaysOnTop();
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Метод открывает модальное окно для ввода нового имени элемента списка.
+//     * @return false - если закрыть окно принудительно, true - при штатном вводе
+     */
+    private void takeNewNameWindow() {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
+            Parent root = loader.load();
+            RenameController renameController = loader.getController();
+
+            //определяем действия по событию закрыть окно по крестику через лямбда
+            stage.setOnCloseRequest(event -> {
+                System.out.println("GUIController.menuItemRename() - " +
+                        "the newNameWindow was closed forcibly!");
+                //сбрасываем текстовое поле имени
+                GUIController.this.newName = "";
+            });
+            renameController.backController = this;
+
+            stage.setTitle("insert a new name");
+            stage.setScene(new Scene(root, 200, 50));
             stage.isAlwaysOnTop();
             stage.setResizable(false);
             stage.initModality(Modality.APPLICATION_MODAL);

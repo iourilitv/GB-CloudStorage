@@ -3,6 +3,7 @@ package netty;
 import control.CloudStorageServer;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import messages.AuthMessage;
 import messages.DirectoryMessage;
 import messages.FileFragmentMessage;
 import messages.FileMessage;
@@ -55,6 +56,11 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             case Commands.REQUEST_SERVER_ITEMS_LIST:
                 //вызываем метод обработки запроса от клиента
                 onDirectoryItemsListClientRequest(commandMessage);
+                break;
+            //обрабатываем полученный от клиента запрос на создание новой директории в облачном хранилище
+            case Commands.REQUEST_SERVER_CREATE_NEW_FOLDER:
+                //вызываем метод обработки запроса от клиента
+                onCreateNewFolderClientRequest(commandMessage);
                 break;
             //обрабатываем полученный от клиента запрос на загрузку(сохранение) файла в облачное хранилище
             case Commands.REQUEST_SERVER_UPLOAD_ITEM:
@@ -109,6 +115,32 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //отправляем объект сообщения(команды) клиенту со списком объектов(файлов и папок) в
         // заданной директории клиента в сетевом хранилище
         sendItemsList(storageDirItem, Commands.SERVER_RESPONSE_ITEMS_LIST_OK);
+    }
+
+    /**
+     * обрабатываем полученный от клиента запрос на создание новой директории в облачном хранилище
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onCreateNewFolderClientRequest(CommandMessage commandMessage) {
+        //вынимаем объект сообщения о директории из объекта сообщения(команды)
+        DirectoryMessage directoryMessage = (DirectoryMessage) commandMessage.getMessageObject();
+        //если новая папка создана удачно
+        if(storageServer.createNewFolder(directoryMessage, userStorageRoot)){
+            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+            command = Commands.SERVER_RESPONSE_CREATE_NEW_FOLDER_OK;
+            //если что-то пошло не так
+        } else {
+            //выводим сообщение
+            printMsg("[server]" + fileUtils.getMsg());
+            //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+            command = Commands.SERVER_RESPONSE_CREATE_NEW_FOLDER_ERROR;
+        }
+        //инициируем объект для принятой директории сетевого хранилища
+        Item storageDirItem = storageServer.createStorageDirectoryItem(
+                directoryMessage.getDirectoryPathname(), userStorageRoot);
+        //отправляем объект сообщения(команды) клиенту со списком объектов(файлов и папок) в
+        // заданной директории клиента в сетевом хранилище
+        sendItemsList(storageDirItem, command);
     }
 
     /**

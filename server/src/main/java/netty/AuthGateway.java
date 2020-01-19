@@ -9,6 +9,7 @@ import utils.CommandMessage;
 import utils.Commands;
 import jdbc.UsersAuthController;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -91,7 +92,8 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
      * @param ctx - объект соединения netty, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
-    private void onRegistrationUserClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) {
+    private void onRegistrationUserClientRequest(ChannelHandlerContext ctx,
+                                                 CommandMessage commandMessage) {
         //вынимаем объект авторизационного сообщения из объекта сообщения(команды)
         AuthMessage authMessage = (AuthMessage) commandMessage.getMessageObject();
 

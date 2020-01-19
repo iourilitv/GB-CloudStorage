@@ -77,7 +77,15 @@ public class Commands {
     //ответ сервера, что при удаления объекта элемента списка в облачном хранилище произошла ошибка
     public static final int SERVER_RESPONSE_DELETE_ITEM_ERROR = 505109;
 
+    //запрос на сервер создать папку в сетевом хранилище
+    public static final int REQUEST_SERVER_CREATE_NEW_FOLDER = 606101;
+    //ответ сервера с массивом объектов в заданной директории пользователя
+    // в сетевом хранилище, если нет ошибок
+    public static final int SERVER_RESPONSE_CREATE_NEW_FOLDER_OK = 606102;
+    //ответ сервера, что при удаления создании папки в облачном хранилище произошла ошибка
+    public static final int SERVER_RESPONSE_CREATE_NEW_FOLDER_ERROR = 606109;
+
     //переместить файл в другую папку
-    public static final int REQUEST_SERVER_MOVE_FILE = 606101;
+    public static final int REQUEST_SERVER_MOVE_FILE = 707101;
 
 }
