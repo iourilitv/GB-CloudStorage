@@ -3,6 +3,7 @@ package jdbc;
 import io.netty.channel.ChannelHandlerContext;
 import messages.AuthMessage;
 import control.CloudStorageServer;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,8 +26,13 @@ public class UsersAuthController {
     private CloudStorageServer storageServer;
     //объявляем множество авторизованных клиентов <соединение, логин>
     private Map<ChannelHandlerContext, String> authorizedUsers;
-    //инициируем объект имитации соединения с БД
-    UsersDB usersDB = UsersDB.getOwnInstance();
+    //объявляем объект соединения с БД
+    // !_ note _! this is just init, it will not create a connection
+    MySQLConnect mysqlConnect = new MySQLConnect();
+    //объект для отправки запросов в JDBC драйвер(библиотека) с помощью метода connect(),
+    // который переправляет его в БД.
+    // И получает результат (объект класса ResultSet) с помощью executeQuery(sql)
+    private Statement stmt;
 
     /**
      * Метод-прокладка запускает процесс регистрации нового пользователя в БД
@@ -87,12 +93,39 @@ public class UsersAuthController {
 
     //Метод добавления данных пользователя в БД
     public boolean addUserIntoDB(String login, String password){
-        return usersDB.addUserIntoMap(login, password);
+        // формирование запроса. '%s' - для последовательного подставления значений в соотвествующее место
+        //записываем данные нового юзера в БД
+        String sql = String.format("INSERT INTO main (login, password) VALUES ('%s', '%s')", login, password);
+        try {
+            // оправка запроса и получение ответа из БД
+            int rs = stmt.executeUpdate(sql);
+            // если строка добавлена, то возвращается 1, если нет, то вернеться 0?
+            if(rs != 0) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     //Метод проверки введенного логина в БД на уникальность(зарегистрирован уже такой логин?)
     public boolean isUserRegistered(String login) {
-        return usersDB.isUserExistInMap(login);
+        // формирование запроса. '%s' - для последовательного подставления значений в соотвествующее место
+        String sql = String.format("SELECT id FROM main where login = '%s'", login);
+        try {
+            // оправка запроса и получение ответа из БД
+            ResultSet rs = stmt.executeQuery(sql);
+
+            // если есть строка возвращаем результат, если нет, то вернеться null
+            if(!rs.next()) {
+                //таких логина или ник в БД нет
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
