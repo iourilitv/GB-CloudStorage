@@ -47,21 +47,24 @@ public class UsersAuthController {
         //если пользователь с таким логином уже зарегистрирован в БД
         if(isUserRegistered(authMessage.getLogin())){
             //выводим сообщение в консоль
-            printMsg("[server]UsersAuthController.registerUser() - A user with this login has been registered already!");
+            printMsg("[server]UsersAuthController.registerUser() - " +
+                    "A user with this login has been registered already!");
             //и выходим с false
             return false;
         }
         //если регистрация нового пользователя в БД прошла не удачно
         if(!addUserIntoDB(authMessage.getLogin(), authMessage.getPassword())){
             //выводим сообщение в консоль
-            printMsg("[server]UsersAuthController.authorizeUser() - This user has not been registered yet!");
+            printMsg("[server]UsersAuthController.authorizeUser() - " +
+                    "This user has not been registered yet!");
             //и выходим с false
             return false;
         }
         //если создание конрневой директории для нового пользователяпрошла не удачно
         if(!storageServer.createNewUserRootFolder(authMessage.getLogin())){
             //выводим сообщение в консоль
-            printMsg("[server]UsersAuthController.authorizeUser() - This user's root directory exists already!");
+            printMsg("[server]UsersAuthController.authorizeUser() - " +
+                    "This user's root directory exists already!");
             //и выходим с false
             return false;
         }
@@ -78,18 +81,19 @@ public class UsersAuthController {
         //если пользователь еще не зарегистрирован в БД
         if(!isUserRegistered(authMessage.getLogin())){
             //выводим сообщение в консоль
-            printMsg("[server]UsersAuthController.authorizeUser() - This user has not been registered yet!");
+            printMsg("[server]UsersAuthController.authorizeUser() - " +
+                    "This user has not been registered yet!");
             //и выходим с false
             return false;
         }
         //если пользователь с таким логином уже авторизован
         if(isUserAuthorized(ctx, authMessage.getLogin())){
             //выводим сообщение в консоль
-            printMsg("[server]UsersAuthController.authorizeUser - This user has been authorised already!");
+            printMsg("[server]UsersAuthController.authorizeUser - " +
+                    "This user has been authorised already!");
             //и выходим с false
             return false;
         }
-
         //если пара логина и пароля релевантна
         if(checkLoginAndPassword(authMessage.getLogin(), authMessage.getPassword())){
             //добавляем пользователя в список авторизованных
@@ -97,13 +101,6 @@ public class UsersAuthController {
             //возвращаем true, чтобы завершить процесс регистрации пользователя
             return true;
         }
-
-//        //авторизуем пользователя, если он еще не авторизован
-//        authorizedUsers.put(ctx, authMessage.getLogin());
-
-//        //возвращаем true, чтобы завершить процесс регистрации пользователя
-//        return true;
-
         return false;
     }
 

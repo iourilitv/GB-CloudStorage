@@ -15,7 +15,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 
 /**
- * The common class for operating with fileMessages and fileFragmentMessages.
+ * The common class for operating with fileObjects.
  */
 public class FileUtils {
     //инициируем синглтон(объект класса)

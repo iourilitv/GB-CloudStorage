@@ -23,42 +23,37 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * The client class for operating with directoryMessages.
+ * The client class for operating with GUI.
  */
 public class GUIController implements Initializable {
 
     @FXML
-    StackPane connectToCloudStorageStackPane;
+    private StackPane connectToCloudStorageStackPane;
 
     @FXML
-    Button connectToCloudStorageButton;
+    private Button connectToCloudStorageButton;
 
     //объявляем объекты кнопок для коллекции файловых объектов клиента и сервера
     @FXML
-    Button  clientHomeButton, storageHomeButton,//"В корневую директорию"
+    private Button  clientHomeButton, storageHomeButton,//"В корневую директорию"
             clientGoUpButton, storageGoUpButton,//"Подняться на папку выше"
             clientRefreshButton, storageRefreshButton,//обновить папку
             clientNewFolderButton, storageNewFolderButton;//"Создать новую папку"
 
     //объявляем объекты меток для коллекций файловых объектов
     @FXML
-    Label clientDirLabel, storageDirLabel;
+    private Label clientDirLabel, storageDirLabel;
 
     //объявляем объекты коллекций объектов элементов
     @FXML
-    ListView<Item> clientItemListView, storageItemListView;
+    private ListView<Item> clientItemListView, storageItemListView;
 
     //объявляем объект метки уведомлений
     @FXML
-    Label noticeLabel;
+    private Label noticeLabel;
 
     //объявляем объект контроллера клиента облачного хранилища
     private CloudStorageClient storageClient;
-
-//    //объявляем переменные логина и пароля пользователя
-//    private String login;
-//    private String password;
-
     //инициируем константу строки названия директории по умолчанию относительно корневой директории
     // для списка в клиентской части GUI
     private final String CLIENT_DEFAULT_DIR = "";
@@ -553,8 +548,8 @@ public class GUIController implements Initializable {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Login.fxml"));
             Parent root = loader.load();
-            /*LoginController */loginController = loader.getController();
-
+            loginController = loader.getController();
+            //сохраняем ссылку на контроллер открываемого окна авторизации/регистрации
             loginController.setBackController(this);
 
             //определяем действия по событию закрыть окно по крестику через лямбда
@@ -710,6 +705,9 @@ public class GUIController implements Initializable {
         }
     }
 
+    /**
+     * Метод устанавливает открытое авторизационное окно в режим показа Авторизация.
+     */
     public void setRegisteredModeInAuthWindow() {
         //в окне Login(AuthWindow) открываем режим показа Авторизация
         loginController.setRegistrationMode(false);
@@ -730,6 +728,10 @@ public class GUIController implements Initializable {
 
     public void setNewName(String newName) {
         this.newName = newName;
+    }
+
+    public Label getNoticeLabel() {
+        return noticeLabel;
     }
 
     //Метод отправки запроса об отключении на сервер

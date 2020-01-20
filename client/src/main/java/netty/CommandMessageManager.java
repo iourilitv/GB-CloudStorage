@@ -163,13 +163,9 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * @param commandMessage - объект сообщения(команды)
      */
     private void onRegistrationOKServerResponse(CommandMessage commandMessage) {
-//        //устанавливаем режим отображения "Авторизован"
-//        guiController.setAuthorizedMode(true);
-
         //выводим сообщение в метку уведомлений в GUI
         showTextInGUI("You have registered in the Cloud Storage. Press \"Authorization\" button.");
-
-        //FIXME включить режим авторизационной формы в незакрытом окне регистрации/авторизации
+        //устанавливаем открытое авторизационное окно в режим показа Авторизация
         guiController.setRegisteredModeInAuthWindow();
     }
 
@@ -181,10 +177,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     private void onRegistrationErrorServerResponse(CommandMessage commandMessage) {
         //выводим сообщение в нижнюю метку GUI
         showTextInGUI("Probably this login has been registered before! Try again.");
-//        //открываем окно авторизации
-//        guiController.openAuthWindowInGUI();
-
-        //FIXME включить режим регистрационной формы
     }
 
     /**
@@ -205,10 +197,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     private void onAuthErrorServerResponse(CommandMessage commandMessage) {
         //выводим сообщение в нижнюю метку GUI
         showTextInGUI("Something wrong with your login or password! Are you registered?");
-
-//        //открываем окно авторизации
-//        guiController.openAuthWindowInGUI();
-
     }
 
     /**

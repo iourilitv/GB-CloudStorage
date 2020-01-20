@@ -27,15 +27,7 @@ public class UsersDB {
     public boolean addUserIntoMap(String login, String password){
         //добавляем пользователя в множество
         registeredUsers.put(login, password);
-
-//        System.out.println("UsersDB.addUserIntoMap() - " +
-////                "registeredUsers.put(login, password): " + registeredUsers.put(login, password) +
-//                ", registeredUsers.get(login): " + registeredUsers.get(login) +
-////                ", registeredUsers.get(login).equals(password): " + registeredUsers.get(login).equals(password) +
-//                ", registeredUsers.toString(): " + registeredUsers.toString());
-
         //возвращаем результат проверки действительно ли пользователь правильно добавлен в множество
-//        return registeredUsers.get(login) != null && registeredUsers.get(login).equals(password);
         return checkLoginAndPassword(login, password);
     }
 
@@ -45,9 +37,6 @@ public class UsersDB {
      * @return - результат проверки
      */
     public boolean isUserExistInMap(String login) {
-        System.out.println("UsersDB.isUserExistInMap() - " +
-                "registeredUsers.containsKey(login): " + registeredUsers.containsKey(login) +
-                ", registeredUsers.toString(): " + registeredUsers.toString());
         return registeredUsers.containsKey(login);
     }
 

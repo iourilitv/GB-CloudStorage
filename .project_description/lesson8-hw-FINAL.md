@@ -73,9 +73,9 @@ MySQL при любой попытке обращения к БД выдает �
 
 ###Финальные исправления и доработки.
 14.	DONE. See the branch 4-after-CodeReview-final-fixing.
-В классы [client] GUIController, LoginController, CommandMessageManager, 
-[server] CloudStorageServer, UsersAuthController, UserDB и
-[shared] FileUtils для процесса авторизации и регистрации:
+В файл [client]Login.fxml классы [client]GUIController, LoginController, CommandMessageManager, 
+[server]CloudStorageServer, UsersAuthController, UserDB и
+[shared]FileUtils для процесса авторизации и регистрации:
 - добавлены/исправлены методы в режиме имитации работы с БД; 
 - добавлены дополнительные проверки;
 - обновлена логика работы GUI.

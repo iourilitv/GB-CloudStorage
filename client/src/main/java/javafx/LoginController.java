@@ -44,7 +44,8 @@ public class LoginController {
 
     /**
      * Метод отрабатывает клик кнопки на кнопку "Registration".
-     * Открывает Авторизационную форму и запускает процесс регистрации в сетевом хранилище.
+     * Открывает Авторизационную форму и запускает процесс отправки запроса на сервер
+     * для регистрации в сетевом хранилище.
      * @param actionEvent - событие клик мыши
      */
     @FXML
@@ -55,12 +56,6 @@ public class LoginController {
             backController.showTextInGUI("Your registration data has been sent. Wait please...");
             //запускаем процесс регистрации в сетевом хранилище
             backController.demandRegistration(login.getText(), password.getText());
-
-//            //устанавливаем режим отображения "Регистрационная форма"
-//            setRegistrationMode(false);
-
-//            //очищаем текстовое поле "подтверждение пароля" регистрационной формы
-//            passwordConfirm.setText("");
         }
     }
 
@@ -71,7 +66,8 @@ public class LoginController {
      */
     @FXML
     public void onAuthorizationLinkClick(ActionEvent actionEvent) {
-        backController.noticeLabel.setText("Insert your login and password");
+        //выводим сообщение в метку уведомлений
+        backController.getNoticeLabel().setText("Insert your login and password");
         //очищаем все поля формы авторизации/регистрации
         clearRegAuthFields();
         //возвращаемся в режим авторизации
@@ -79,7 +75,8 @@ public class LoginController {
     }
 
     /**
-     * Метод обрабатывает клик мыши по кнопке "Authorization" в диалоговом окне ввода нового имени
+     * Метод обрабатывает клик мыши по кнопке "Authorization" в диалоговом окне.
+     * Запускает процесс отправки данных на сервер для автторизации.
      * @param actionEvent - клик мыши по кнопке "Authorization"
      */
     @FXML
@@ -88,10 +85,6 @@ public class LoginController {
         if(isLoginPasswordCorrect(login.getText(), password.getText())){
             //запускаем процесс авторизации
             backController.demandAuthorisation(login.getText(), password.getText());
-
-//            //закрываем окно
-//            globParent.getScene().getWindow().hide();
-
         }
     }
 
@@ -133,11 +126,13 @@ public class LoginController {
         //скрываем и деактивируем(если isRegMode = true) кнопку подключения к серверу
         authorizationVBox.setManaged(!isRegMode);
         authorizationVBox.setVisible(!isRegMode);
+        //активируем/деактивируем обработку нажатия кнопки Enter на клавиатуре
         authorizationButton.setDefaultButton(!isRegMode);
 
         //показываем и активируем(если isRegMode = true) список объектов в сетевом хранилище
         registrationVBox.setManaged(isRegMode);
         registrationVBox.setVisible(isRegMode);
+        //активируем/деактивируем обработку нажатия кнопки Enter на клавиатуре
         registrationButton.setDefaultButton(isRegMode);
     }
 
@@ -150,6 +145,9 @@ public class LoginController {
         passwordConfirm.setText("");
     }
 
+    /**
+     * Метод закрывает окно.
+     */
     public void hideWindow(){
         //если окно показывается
         if(globParent.getScene().getWindow().isShowing()){
