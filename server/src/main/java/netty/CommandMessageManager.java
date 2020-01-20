@@ -11,6 +11,7 @@ import utils.*;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Timer;
 
 /**
  * The server's class for recognizing command messages and control command handlers.
@@ -50,6 +51,17 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //***блок обработки объектов сообщений(команд), полученных от клиента***
         //выполняем операции в зависимости от типа полученного не сервисного сообщения(команды)
         switch (commandMessage.getCommand()) {
+            //обрабатываем полученный от AuthGateway проброшенный запрос на авторизацию клиента в облачное хранилище
+            //возвращаем список объектов в корневой директорию пользователя в сетевом хранилище.
+            case Commands.SERVER_RESPONSE_AUTH_OK:
+                //вызываем метод обработки запроса от AuthGateway
+                onAuthClientRequest(commandMessage);
+                break;
+            //обрабатываем полученный от клиента запрос на отсоединение пользователя от сервера
+            case Commands.REQUEST_SERVER_DISCONNECT:
+                //вызываем метод обработки запроса от AuthGateway
+                onDisconnectClientRequest(commandMessage);
+                break;
             //обрабатываем полученный от клиента запрос на список объектов файлов и папок
             // в заданной директории в облачном хранилище
             case Commands.REQUEST_SERVER_ITEMS_LIST:
@@ -91,13 +103,40 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //вызываем метод обработки запроса от клиента
                 onDeleteItemClientRequest(commandMessage);
                 break;
-            //обрабатываем полученный от AuthGateway проброшенный запрос на авторизацию клиента в облачное хранилище
-            //возвращаем список объектов в корневой директорию пользователя в сетевом хранилище.
-            case Commands.SERVER_RESPONSE_AUTH_OK:
-                //вызываем метод обработки запроса от AuthGateway
-                onAuthClientRequest(commandMessage);
-                break;
         }
+    }
+
+    /**
+     * Метод обрабатывает полученный от AuthGateway проброшенный запрос на авторизацию клиента в облачное хранилище
+     * Возвращает список объектов в корневой директорию пользователя в сетевом хранилище.
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onAuthClientRequest(CommandMessage commandMessage) {
+        //вынимаем объект реального пути к его корневой директории клиента в сетевом хранилище
+        userStorageRoot = Paths.get(commandMessage.getDirectory());
+        //инициируем объект для принятой директории сетевого хранилища
+        Item storageDirItem = new Item(storageServer.getSTORAGE_DEFAULT_DIR());
+        //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
+        // заданной директории клиента в сетевом хранилище
+        sendItemsList(storageDirItem, commandMessage.getCommand());
+        //удаляем входящий хэндлер AuthGateway, т.к. после авторизации он больше не нужен
+        printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
+                "removed pipeline: " + ctx.channel().pipeline().remove(AuthGateway.class));
+    }
+
+    /**
+     * Метод обрабатывает полученный от клиента запрос на отсоединение пользователя от сервера.
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onDisconnectClientRequest(CommandMessage commandMessage) {
+        //отправляем объект сообщения(команды) клиенту
+        ctx.writeAndFlush(new CommandMessage(Commands.SERVER_RESPONSE_DISCONNECT_OK));
+        //выделяем логин пользователя из его корневой директории
+        String login = storageServer.getSTORAGE_ROOT_PATH().relativize(userStorageRoot).toString();
+        //удаляем пользователя из списка авторизованных, если он был авторизован
+        storageServer.getUsersAuthController().deAuthorizeUser(login);
+        //закрываем соединение с клиентом(вроде на ctx.close(); не отключал соединение?)
+        ctx.channel().close();
     }
 
     /**
@@ -131,7 +170,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         } else {
             //выводим сообщение
             printMsg("[server]" + fileUtils.getMsg());
-            //инициируем переменную типа команды(по умолчанию - ответ об ошибке)
+            //инициируем переменную типа команды
             command = Commands.SERVER_RESPONSE_CREATE_NEW_FOLDER_ERROR;
         }
         //инициируем объект для принятой директории сетевого хранилища
@@ -283,24 +322,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //отправляем объект сообщения(команды) клиенту со списком объектов(файлов и папок) в
         // заданной директории клиента в сетевом хранилище
         sendItemsList(fileMessage.getStorageDirectoryItem(), command);
-    }
-
-    /**
-     * Метод обрабатывает полученный от AuthGateway проброшенный запрос на авторизацию клиента в облачное хранилище
-     * Возвращает список объектов в корневой директорию пользователя в сетевом хранилище.
-     * @param commandMessage - объект сообщения(команды)
-     */
-    private void onAuthClientRequest(CommandMessage commandMessage) {
-        //вынимаем объект реального пути к его корневой директории клиента в сетевом хранилище
-        userStorageRoot = Paths.get(commandMessage.getDirectory());
-        //инициируем объект для принятой директории сетевого хранилища
-        Item storageDirItem = new Item(storageServer.getSTORAGE_DEFAULT_DIR());
-        //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
-        // заданной директории клиента в сетевом хранилище
-        sendItemsList(storageDirItem, commandMessage.getCommand());
-        //удаляем входящий хэндлер AuthGateway, т.к. после авторизации он больше не нужен
-        printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
-                "removed pipeline: " + ctx.channel().pipeline().remove(AuthGateway.class));
     }
 
     /**

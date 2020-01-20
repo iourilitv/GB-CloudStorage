@@ -77,6 +77,16 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //вызываем метод обработки ответа сервера
                 onServerConnectedResponse(commandMessage);
                 break;
+            //обрабатываем полученное от сервера подтверждение готовности отключения клиента
+            case Commands.SERVER_RESPONSE_DISCONNECT_OK:
+                //вызываем метод обработки ответа сервера
+                onServerDisconnectOKServerResponse(commandMessage);
+                break;
+            //обрабатываем полученное от сервера сообщение об ошибке при попытке отключения клиента
+            case Commands.SERVER_RESPONSE_DISCONNECT_ERROR:
+                //вызываем метод обработки ответа сервера
+                onServerDisconnectErrorServerResponse(commandMessage);
+                break;
             //обрабатываем полученное от сервера подтверждение успешной регистрации
             // нового пользователя в облачное хранилище
             case Commands.SERVER_RESPONSE_REGISTRATION_OK:
@@ -155,6 +165,30 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     private void onServerConnectedResponse(CommandMessage commandMessage) {
         //открываем окно авторизации
         guiController.openAuthWindowInGUI();
+        //устанавливаем режим отображения GUI "Подключен"
+        guiController.setDisconnectedMode(false);
+    }
+
+    /**
+     * Метод обрабатывает полученное от сервера подтверждение готовности отключения клиента.
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onServerDisconnectOKServerResponse(CommandMessage commandMessage) {
+        //запускаем процесс отключения от сервера и переход в автономный режим или закрытия приложения
+        showTextInGUI("The disconnecting from server is allowed!");
+        //запускаем процесс отключения от сервера
+        storageClient.disconnect();
+        //выводим текст в метку
+        showTextInGUI("Server disconnected. Press \"Connect to the Cloud Storage\" button.");
+
+    }
+
+    /**
+     * Метод обрабатывает полученное от сервера сообщение об ошибке при попытке отключения клиента.
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onServerDisconnectErrorServerResponse(CommandMessage commandMessage) {
+        showTextInGUI("The disconnecting from server is not allowed!");
     }
 
     /**

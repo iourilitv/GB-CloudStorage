@@ -50,8 +50,9 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
         //если соединение отвалилось, удаляем объект соединения из коллекции
-        printMsg("[server]AuthGateway.channelInactive() - removed client(login): " +
-                usersAuthController.getAuthorizedUsers().remove(ctx));
+//        printMsg("[server]AuthGateway.channelInactive() - removed client(login): " +
+//                usersAuthController.getAuthorizedUsers().remove(ctx));
+        usersAuthController.deAuthorizeUser(ctx);
 
         //TODO temporarily
         printMsg("[server]UsersAuthController.authorizeUser - authorizedUsers: " +
@@ -100,7 +101,8 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
                 "login: " + authMessage.getLogin() + ", password: " + authMessage.getPassword());
 
         //если регистрация клиента в облачном хранилище прошла удачно
-        if(usersAuthController.registerUser(ctx, authMessage)){
+//        if(usersAuthController.registerUser(ctx, authMessage)){
+        if(usersAuthController.registerUser(authMessage)){
             //меняем команду на успешную
             command = Commands.SERVER_RESPONSE_REGISTRATION_OK;
         //если регистрация клиента в облачном хранилище не прошла
@@ -134,7 +136,8 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
                 "login: " + authMessage.getLogin() + ", password: " + authMessage.getPassword());
 
         //если авторизации клиента в облачном хранилище прошла удачно
-        if(usersAuthController.authorizeUser(ctx, authMessage)){
+//        if(usersAuthController.authorizeUser(ctx, authMessage)){
+        if(usersAuthController.authorizeUser(authMessage, ctx)){
             //меняем команду на успешную
             command = Commands.SERVER_RESPONSE_AUTH_OK;
 

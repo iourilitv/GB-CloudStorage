@@ -8,19 +8,26 @@ public class Commands {
     //оповещение от сервера, что клиент подключился
     public static final int SERVER_NOTIFICATION_CLIENT_CONNECTED = 911000;
 
-    //запрос на сервер на авторизацию пользователя с таким логином и паролем
-    public static final int REQUEST_SERVER_REGISTRATION = 911101;
-    //ответ сервера, что авторизация прошла успешно
-    public static final int SERVER_RESPONSE_REGISTRATION_OK = 911202;
-    //ответ сервера, что авторизация прошла успешно
-    public static final int SERVER_RESPONSE_REGISTRATION_ERROR = 911209;
+    //запрос на сервер на отсоединение пользователя от сервера
+    public static final int REQUEST_SERVER_DISCONNECT = 911101;
+    //ответ сервера, что отсоединение прошло успешно
+    public static final int SERVER_RESPONSE_DISCONNECT_OK = 911102;
+    //ответ сервера, что при отсоединении произошла ошибка
+    public static final int SERVER_RESPONSE_DISCONNECT_ERROR = 911109;
+
+    //запрос на сервер на регистрация пользователя с таким логином и паролем
+    public static final int REQUEST_SERVER_REGISTRATION = 922201;
+    //ответ сервера, что регистрация прошла успешно
+    public static final int SERVER_RESPONSE_REGISTRATION_OK = 922202;
+    //ответ сервера, что при регистрации произошла ошибка
+    public static final int SERVER_RESPONSE_REGISTRATION_ERROR = 922209;
 
     //запрос на сервер на авторизацию пользователя с таким логином и паролем
-    public static final int REQUEST_SERVER_AUTH = 922101;
+    public static final int REQUEST_SERVER_AUTH = 933101;
     //ответ сервера, что авторизация прошла успешно
-    public static final int SERVER_RESPONSE_AUTH_OK = 922202;
-    //ответ сервера, что авторизация прошла успешно
-    public static final int SERVER_RESPONSE_AUTH_ERROR = 922209;
+    public static final int SERVER_RESPONSE_AUTH_OK = 933202;
+    //ответ сервера, что при авторизации произошла ошибка
+    public static final int SERVER_RESPONSE_AUTH_ERROR = 933209;
 
     //запрос на сервер загрузить(сохранить) объект элемента списка
     public static final int REQUEST_SERVER_UPLOAD_ITEM = 101101;

@@ -28,6 +28,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class GUIController implements Initializable {
 
     @FXML
+    private MenuItem disconnectMenuItem;
+
+    @FXML
     private StackPane connectToCloudStorageStackPane;
 
     @FXML
@@ -90,7 +93,7 @@ public class GUIController implements Initializable {
      * подключения к серверу облачного хранилища.
      */
     @FXML
-    private void startConnectingToServer() {
+    private void onConnectToCloudStorageButtonClick() {
         //выводим текст в метку
         noticeLabel.setText("Connecting to the Cloud Storage server, please wait..");
         //в отдельном потоке
@@ -418,7 +421,7 @@ public class GUIController implements Initializable {
     public void onAboutMenuItemClick(ActionEvent actionEvent) {
         System.out.println("GUIController.onAboutLinkClick()");
         //открываем сцену с информацией о программе
-        takeAboutScene();
+        openAboutScene();
     }
 
     /**
@@ -428,7 +431,8 @@ public class GUIController implements Initializable {
     @FXML
     public void onDisconnectMenuItemClick(ActionEvent actionEvent) {
         System.out.println("GUIController.onDisconnectLinkClick()");
-        storageClient.demandDisconnecting();
+        //запускаем процесс отправки запроса на отключение
+        storageClient.demandDisconnect();
     }
 
     /**
@@ -555,7 +559,7 @@ public class GUIController implements Initializable {
             //определяем действия по событию закрыть окно по крестику через лямбда
             stage.setOnCloseRequest(event -> {
                 //вызываем разрыв соединения, если выйти по крестику
-                GUIController.this.storageClient.demandDisconnecting();
+                GUIController.this.storageClient.demandDisconnect();
             });
 
             stage.setTitle("Authorisation to the Cloud Storage by LYS");
@@ -642,7 +646,7 @@ public class GUIController implements Initializable {
     /**
      * Метод открывает сцену с информацией о программе.
      */
-    private void takeAboutScene() {
+    private void openAboutScene() {
         //получаем объект стадии приложения
         stage = (Stage) noticeLabel.getScene().getWindow();
         //сохраням объект гланой сцены
@@ -680,6 +684,31 @@ public class GUIController implements Initializable {
         //в отдельном потоке запускаем обновление интерфейса
         //открываем окно авторизации
         Platform.runLater(this::openAuthWindow);
+    }
+
+    /**
+     * Метод устанавливает режим отображения GUI "Отсоединен" или "Подсоединен".
+     * @param isDisconnectedMode - если true - "Отсоединен"
+     */
+    public void setDisconnectedMode(boolean isDisconnectedMode) {
+        //показываем и активируем(если isDisconnectedMode = true)
+        // панель с кнопкой подключения к серверу
+        connectToCloudStorageStackPane.setManaged(isDisconnectedMode);
+        connectToCloudStorageStackPane.setVisible(isDisconnectedMode);
+        //активируем кнопку connectToCloudStorageButton
+        connectToCloudStorageButton.setDisable(!isDisconnectedMode);
+
+        //скрываем и деактивируем (если isDisconnectedMode = true)
+        //деактивируем кнопки сетевого хранилища
+        storageHomeButton.setDisable(isDisconnectedMode);
+        storageGoUpButton.setDisable(isDisconnectedMode);
+        storageRefreshButton.setDisable(isDisconnectedMode);
+        storageNewFolderButton.setDisable(isDisconnectedMode);
+        // список объектов в сетевом хранилище
+        storageItemListView.setManaged(!isDisconnectedMode);
+        storageItemListView.setVisible(!isDisconnectedMode);
+        //деактивируем пункт меню Disconnect
+        disconnectMenuItem.setDisable(isDisconnectedMode);
     }
 
     /**
@@ -736,20 +765,14 @@ public class GUIController implements Initializable {
 
     //Метод отправки запроса об отключении на сервер
     public void dispose() {
-        System.out.println("GUIController.dispose() - Отправляем сообщение о закрытии");
-
-        noticeLabel.setText("Disconnecting the Cloud Storage server...");
         //запускаем процесс отправки запроса серверу на разрыв соединения
-        storageClient.demandDisconnecting();
-
-//        try {
-//            //проверяем подключен ли клиент
-//            if (out != null && !socket.isClosed()) {
-//                out.writeUTF("/end");
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        storageClient.demandDisconnect();
+        //делаем паузу 2 сек, чтобы процесс успел завершиться до закрытия окна
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }

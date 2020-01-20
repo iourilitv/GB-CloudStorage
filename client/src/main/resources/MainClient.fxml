@@ -18,7 +18,7 @@
     <MenuBar>
         <Menu mnemonicParsing="false" text="Menu">
             <MenuItem mnemonicParsing="false" onAction="#onAboutMenuItemClick" text="About"/>
-            <MenuItem mnemonicParsing="false" onAction="#onDisconnectMenuItemClick" text="Disconnect"/>
+            <MenuItem fx:id="disconnectMenuItem" mnemonicParsing="false" disable="true" onAction="#onDisconnectMenuItemClick" text="Disconnect"/>
         </Menu>
     </MenuBar>
     <HBox VBox.vgrow="ALWAYS">
@@ -164,7 +164,7 @@
                     <Insets bottom="2.0" left="2.0" right="2.0" />
                 </VBox.margin></ListView>
             <StackPane fx:id="connectToCloudStorageStackPane" prefHeight="403.0" style="-fx-background-image: url(images/wall.png);">
-                <Button fx:id="connectToCloudStorageButton" defaultButton="true" onAction="#startConnectingToServer" prefHeight="26.0" prefWidth="180.0" text="Connect to the Cloud Storage">
+                <Button fx:id="connectToCloudStorageButton" defaultButton="true" onAction="#onConnectToCloudStorageButtonClick" prefHeight="26.0" prefWidth="180.0" text="Connect to the Cloud Storage">
                     <padding>
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                     </padding>

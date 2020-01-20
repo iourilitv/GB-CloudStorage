@@ -352,13 +352,33 @@ public class CloudStorageClient {
         guiController.showTextInGUI(text);
     }
 
-    public void demandDisconnecting() {
-
-        System.out.println("CloudStorageClient.demandDisconnecting() - Отправляем серверу запрос о разрыве соединения");
-        //отправляем на сервер объект сообщения(команды)
-        //FIXME
-//        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_DELETE_ITEM,
-//                new FileMessage(storageDirectoryItem, item)));
+    /**
+     * Метод отправляет на сервер запрос об отключении.
+     */
+    public void demandDisconnect() {
+        //если соединение установлено
+        if(ctx != null && !ctx.isRemoved()){
+            //выводим сообщение в метку уведомлений
+            showTextInGUI("Disconnecting the Cloud Storage server...");
+            //и в лог
+            printMsg("CloudStorageClient.demandDisconnecting() - Отправляем серверу запрос о разрыве соединения");
+            //отправляем на сервер объект сообщения(команды)
+//            ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_DISCONNECT));
+            ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_DISCONNECT,
+                    new AuthMessage()));
+        }
     }
 
+    /**
+     * Метод закрывает соединение с сервером и устанавливает режим отображения GUI "Отсоединен".
+     */
+    public void disconnect() {
+        //если соединение установлено
+        if(ctx != null && !ctx.isRemoved()){
+            //закрываем соединение
+            ctx.close();
+        }
+        //устанавливаем режим отображения GUI "Отсоединен"
+        guiController.setDisconnectedMode(true);
+    }
 }
