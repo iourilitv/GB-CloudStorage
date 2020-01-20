@@ -39,8 +39,11 @@ public class CloudStorageServer {
     public void run() throws Exception {
         //инициируем объект контроллера авторизации пользователей
         usersAuthController = UsersAuthController.getOunInstance(this);
-        //устанавливаем связь с БД в момент запуска сервера
-        usersAuthController.connect();
+
+//        //устанавливаем связь с БД в момент запуска сервера
+//        usersAuthController.connect();
+
+
         //инициируем объект директории по умолчанию в серверной части GUI
         storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);
         //инициируем объект сетевого подключения
