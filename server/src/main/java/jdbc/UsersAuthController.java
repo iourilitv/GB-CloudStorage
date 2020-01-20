@@ -23,15 +23,13 @@ public class UsersAuthController {
 
     //принимаем объект сервера
     private CloudStorageServer storageServer;
-    //объявляем множество авторизованных клиентов <соединение, логин>
-//    private Map<ChannelHandlerContext, String> authorizedUsers;
+    //объявляем множество авторизованных клиентов <логин, соединение>
     private Map<String, ChannelHandlerContext> authorizedUsers;
     //инициируем объект имитации соединения с БД
     UsersDB usersDB = UsersDB.getOwnInstance();
 
     /**
      * Метод-прокладка запускает процесс регистрации нового пользователя в БД
-//     * @param ctx - сетевое соединение
      * @param authMessage - объект авторизационного сообщения
      * @return - результат операции регистрации в БД
      */
@@ -88,7 +86,6 @@ public class UsersAuthController {
             return false;
         }
         //если пользователь с таким логином уже авторизован
-//        if(isUserAuthorized(ctx, authMessage.getLogin())){
         if(isUserAuthorized(authMessage.getLogin(), ctx)){
             //выводим сообщение в консоль
             printMsg("[server]UsersAuthController.authorizeUser - " +
@@ -99,7 +96,6 @@ public class UsersAuthController {
         //если пара логина и пароля релевантна
         if(checkLoginAndPassword(authMessage.getLogin(), authMessage.getPassword())){
             //добавляем пользователя в список авторизованных
-//            authorizedUsers.put(ctx, authMessage.getLogin());
             authorizedUsers.put(authMessage.getLogin(), ctx);
             //возвращаем true, чтобы завершить процесс регистрации пользователя
             return true;
@@ -108,17 +104,17 @@ public class UsersAuthController {
     }
 
     /**
-     * Метод удаляет соединение клиента из списка авторизованных, если оно было авторизовано.
-     * @param login - логин пользователя
+     * Перегруженный метод удаляет клиента из списка авторизованных(по ключу), если оно было авторизовано.
+     * @param login - -ключ - логин пользователя
      */
     public void deAuthorizeUser(String login) {
-
+        //и удаляем пользователя из списка
         authorizedUsers.remove(login);
     }
 
     /**
-     * Метод удаляет соединение клиента из списка авторизованных, если оно было авторизовано.
-     * @param ctx - сетевое соединение клиента
+     * Перегруженный метод удаляет клиента из списка авторизованных(по значению), если оно было авторизовано.
+     * @param ctx - значение - сетевое соединение клиента
      */
     public void deAuthorizeUser(ChannelHandlerContext ctx) {
         //в цикле ищем ключ со значение заданого логина
@@ -154,17 +150,12 @@ public class UsersAuthController {
         return usersDB.isUserExistInMap(login);
     }
 
-//    /**
-//     * Метод проверяет не авторизован ли уже пользовательс таким логином.
-//     * @param ctx - сетевое соединение
-//     * @param login - логин пользователя
-//     * @return - результат проверки
-//     */
-//    private boolean isUserAuthorized(ChannelHandlerContext ctx, String login) {
-//        //возвращаем результат проверки есть ли уже элемент в списке авторизованных с такими
-//        // объектом соединения или логином
-//        return authorizedUsers.containsKey(ctx) || authorizedUsers.containsValue(login);
-//    }
+    /**
+     * Метод проверяет не авторизован ли уже пользователь с таким логином.
+     * @param login - логин пользователя
+     * @param ctx - сетевое соединение
+     * @return - результат проверки
+     */
     private boolean isUserAuthorized(String login, ChannelHandlerContext ctx) {
         //возвращаем результат проверки есть ли уже элемент в списке авторизованных с такими
         // объектом соединения или логином
