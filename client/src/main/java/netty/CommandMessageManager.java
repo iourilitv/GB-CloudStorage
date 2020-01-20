@@ -163,10 +163,14 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * @param commandMessage - объект сообщения(команды)
      */
     private void onRegistrationOKServerResponse(CommandMessage commandMessage) {
-        //устанавливаем режим отображения "Авторизован"
-        guiController.setAuthMode(true);
+//        //устанавливаем режим отображения "Авторизован"
+//        guiController.setAuthorizedMode(true);
+
         //выводим сообщение в метку уведомлений в GUI
         showTextInGUI("You have registered in the Cloud Storage. Press \"Authorization\" button.");
+
+        //FIXME включить режим авторизационной формы в незакрытом окне регистрации/авторизации
+        guiController.setRegisteredModeInAuthWindow();
     }
 
     /**
@@ -176,9 +180,9 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      */
     private void onRegistrationErrorServerResponse(CommandMessage commandMessage) {
         //выводим сообщение в нижнюю метку GUI
-        showTextInGUI("Something wrong with your registration data! Insert them again.");
-        //открываем окно авторизации
-        guiController.openAuthWindowInGUI();
+        showTextInGUI("Probably this login has been registered before! Try again.");
+//        //открываем окно авторизации
+//        guiController.openAuthWindowInGUI();
 
         //FIXME включить режим регистрационной формы
     }
@@ -189,7 +193,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      */
     private void onAuthOKServerResponse(CommandMessage commandMessage) {
         //устанавливаем режим отображения "Авторизован"
-        guiController.setAuthMode(true);
+        guiController.setAuthorizedMode(true);
         //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
         updateStorageItemListInGUI(commandMessage);
     }
@@ -200,9 +204,11 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      */
     private void onAuthErrorServerResponse(CommandMessage commandMessage) {
         //выводим сообщение в нижнюю метку GUI
-        showTextInGUI("Something wrong with your login or password! Insert them again.");
-        //открываем окно авторизации
-        guiController.openAuthWindowInGUI();
+        showTextInGUI("Something wrong with your login or password! Are you registered?");
+
+//        //открываем окно авторизации
+//        guiController.openAuthWindowInGUI();
+
     }
 
     /**

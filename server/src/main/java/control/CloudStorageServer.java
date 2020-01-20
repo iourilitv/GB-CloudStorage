@@ -253,6 +253,18 @@ public class CloudStorageServer {
     }
 
     /**
+     * Метод-прокладка запускает проверку есть ли уже корневая директория для заданного логина.
+     * @param login - логин нового пользователя
+     * @return - результат проверки есть ли уже корневая директория для заданного логина
+     */
+    public boolean isUserRootDirExist(String login) {
+        //инициируем объект пути к новой корневой директории нового пользователя
+        String realDirPathname = Paths.get(STORAGE_ROOT_PATH.toString(), login).toString();
+        //возвращаем результат проверки присутствия папки
+        return fileUtils.isDirectoryExist(realDirPathname);
+    }
+
+    /**
      * Метод удаляет объект элемента списка(файл или папку) в текущей директории в серверном хранилище.
      * @param item - объект списка в серверном хранилище
      * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище

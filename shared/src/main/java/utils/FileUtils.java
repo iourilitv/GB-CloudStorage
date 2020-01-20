@@ -348,11 +348,22 @@ public class FileUtils {
             System.out.println("CloudStorageServer.createNewFolder() - A folder with this name exists.");
             return false;
         }
-        //возвращаем результат сохдания новой папки
+        //возвращаем результат создания новой папки
         return dir.mkdir();
+    }
+
+    /**
+     * Метод проверяет есть ли уже директория с заданным именем.
+     * @param realDirPathname - строка пути к новой папке
+     * @return - результат проверки
+     */
+    public boolean isDirectoryExist(String realDirPathname) {
+        //возвращаем результат проверки
+        return new File(realDirPathname).exists();
     }
 
     public String getMsg() {
         return msg;
     }
+
 }

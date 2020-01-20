@@ -54,9 +54,11 @@ public class GUIController implements Initializable {
 
     //объявляем объект контроллера клиента облачного хранилища
     private CloudStorageClient storageClient;
-    //объявляем переменные логина и пароля пользователя
-    private String login;
-    private String password;
+
+//    //объявляем переменные логина и пароля пользователя
+//    private String login;
+//    private String password;
+
     //инициируем константу строки названия директории по умолчанию относительно корневой директории
     // для списка в клиентской части GUI
     private final String CLIENT_DEFAULT_DIR = "";
@@ -70,6 +72,8 @@ public class GUIController implements Initializable {
     private String newName = "";
     //объявляем переменную стадии приложения
     private Stage stage;
+    //объявляем объект контроллера окна авторизации
+    private LoginController loginController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -549,8 +553,9 @@ public class GUIController implements Initializable {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Login.fxml"));
             Parent root = loader.load();
-            LoginController loginController = loader.getController();
-            loginController.backController = this;
+            /*LoginController */loginController = loader.getController();
+
+            loginController.setBackController(this);
 
             //определяем действия по событию закрыть окно по крестику через лямбда
             stage.setOnCloseRequest(event -> {
@@ -686,19 +691,30 @@ public class GUIController implements Initializable {
      * Метод устанавливает GUI в режим авторизован или нет, в зависимости от параметра
      * @param isAuthMode - true - сервер авторизовал пользователя
      */
-    public void setAuthMode(boolean isAuthMode) {
+    public void setAuthorizedMode(boolean isAuthMode) {
         //активируем/деактивируем кнопки сетевого хранилища
         storageHomeButton.setDisable(!isAuthMode);
         storageGoUpButton.setDisable(!isAuthMode);
         storageRefreshButton.setDisable(!isAuthMode);
         storageNewFolderButton.setDisable(!isAuthMode);
-
         //скрываем и деактивируем(если isAuthMode = true) кнопку подключения к серверу
         connectToCloudStorageStackPane.setManaged(!isAuthMode);
         connectToCloudStorageStackPane.setVisible(!isAuthMode);
         //показываем и активируем(если isAuthMode = true) список объектов в сетевом хранилище
         storageItemListView.setManaged(isAuthMode);
         storageItemListView.setVisible(isAuthMode);
+        //если авторизация получена
+        if(isAuthMode){
+            //закрываем окно авторизации в потоке JavaFX
+            Platform.runLater(() -> loginController.hideWindow());
+        }
+    }
+
+    public void setRegisteredModeInAuthWindow() {
+        //в окне Login(AuthWindow) открываем режим показа Авторизация
+        loginController.setRegistrationMode(false);
+        //очищаем текстовое поле "подтверждение пароля" регистрационной формы
+        loginController.getPasswordConfirm().setText("");
     }
 
     /**

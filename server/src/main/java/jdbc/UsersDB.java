@@ -35,7 +35,8 @@ public class UsersDB {
 //                ", registeredUsers.toString(): " + registeredUsers.toString());
 
         //возвращаем результат проверки действительно ли пользователь правильно добавлен в множество
-        return registeredUsers.get(login) != null && registeredUsers.get(login).equals(password);
+//        return registeredUsers.get(login) != null && registeredUsers.get(login).equals(password);
+        return checkLoginAndPassword(login, password);
     }
 
     /**
@@ -48,5 +49,15 @@ public class UsersDB {
                 "registeredUsers.containsKey(login): " + registeredUsers.containsKey(login) +
                 ", registeredUsers.toString(): " + registeredUsers.toString());
         return registeredUsers.containsKey(login);
+    }
+
+    /**
+     * Метод проверяет релевантность пары логина и пароля
+     * @param login - полученный логин пользователя
+     * @param password - полученный пароль пользователя
+     * @return результат проверки
+     */
+    public boolean checkLoginAndPassword(String login, String password) {
+        return registeredUsers.get(login) != null && registeredUsers.get(login).equals(password);
     }
 }

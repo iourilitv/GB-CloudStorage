@@ -35,6 +35,15 @@ public class UsersAuthController {
      * @return - результат операции регистрации в БД
      */
     public boolean registerUser(ChannelHandlerContext ctx, AuthMessage authMessage) {
+        //если директория с таким логином уже есть в сетевом хранилище
+        if(isUserRootDirExist(authMessage.getLogin())){
+            //выводим сообщение в консоль
+            printMsg("[server]UsersAuthController.registerUser() - " +
+                    "A user's root directory for this login exists!");
+            //и выходим с false
+            return false;
+        }
+
         //если пользователь с таким логином уже зарегистрирован в БД
         if(isUserRegistered(authMessage.getLogin())){
             //выводим сообщение в консоль
@@ -73,16 +82,29 @@ public class UsersAuthController {
             //и выходим с false
             return false;
         }
-        //если пользователь уже авторизован
+        //если пользователь с таким логином уже авторизован
         if(isUserAuthorized(ctx, authMessage.getLogin())){
             //выводим сообщение в консоль
             printMsg("[server]UsersAuthController.authorizeUser - This user has been authorised already!");
             //и выходим с false
             return false;
         }
-        //авторизуем пользователя, если он еще не авторизован
-        authorizedUsers.put(ctx, authMessage.getLogin());
-        return true;
+
+        //если пара логина и пароля релевантна
+        if(checkLoginAndPassword(authMessage.getLogin(), authMessage.getPassword())){
+            //добавляем пользователя в список авторизованных
+            authorizedUsers.put(ctx, authMessage.getLogin());
+            //возвращаем true, чтобы завершить процесс регистрации пользователя
+            return true;
+        }
+
+//        //авторизуем пользователя, если он еще не авторизован
+//        authorizedUsers.put(ctx, authMessage.getLogin());
+
+//        //возвращаем true, чтобы завершить процесс регистрации пользователя
+//        return true;
+
+        return false;
     }
 
     //Метод добавления данных пользователя в БД
@@ -90,7 +112,21 @@ public class UsersAuthController {
         return usersDB.addUserIntoMap(login, password);
     }
 
-    //Метод проверки введенного логина в БД на уникальность(зарегистрирован уже такой логин?)
+    /**
+     * Метод-прокладка запускает проверку есть ли уже корневая директория для заданного логина.
+     * @param login - логин нового пользователя
+     * @return - результат проверки есть ли уже корневая директория для заданного логина
+     */
+    private boolean isUserRootDirExist(String login) {
+        return storageServer.isUserRootDirExist(login);
+    }
+
+    /**
+     * Метод-прокладка запускает процесс проверки введенного логина в БД на уникальность
+     * (зарегистрирован уже такой логин?).
+     * @param login - проверяемый логин
+     * @return - результат проверки
+     */
     public boolean isUserRegistered(String login) {
         return usersDB.isUserExistInMap(login);
     }
@@ -105,6 +141,16 @@ public class UsersAuthController {
         //возвращаем результат проверки есть ли уже элемент в списке авторизованных с такими
         // объектом соединения или логином
         return authorizedUsers.containsKey(ctx) || authorizedUsers.containsValue(login);
+    }
+
+    /**
+     * Метод-прокладка для проверки релевантности пары логина и пароля
+     * @param login - полученный логин пользователя
+     * @param password - полученный пароль пользователя
+     * @return true, если проверка пары прошла успешно
+     */
+    private boolean checkLoginAndPassword(String login, String password) {
+        return usersDB.checkLoginAndPassword(login, password);
     }
 
     public void printMsg(String msg){

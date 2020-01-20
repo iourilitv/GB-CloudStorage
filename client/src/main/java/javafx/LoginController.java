@@ -2,6 +2,7 @@ package javafx;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -9,19 +10,22 @@ import javafx.scene.layout.VBox;
 public class LoginController {
 
     @FXML
-    VBox authorizationVBox, registrationVBox;
+    private VBox globParent;
 
     @FXML
-    TextField login;
+    private VBox authorizationVBox, registrationVBox;
 
     @FXML
-    PasswordField password, passwordConfirm;
+    private TextField login;
 
     @FXML
-    VBox globParent;
+    private PasswordField password, passwordConfirm;
+
+    @FXML
+    private Button registrationButton, authorizationButton;
 
     //главный контроллер GUI
-    public GUIController backController;
+    private GUIController backController;
 
     /**
      * Метод отрабатывает клик линка "Registration" в авторизационной форме.
@@ -51,10 +55,12 @@ public class LoginController {
             backController.showTextInGUI("Your registration data has been sent. Wait please...");
             //запускаем процесс регистрации в сетевом хранилище
             backController.demandRegistration(login.getText(), password.getText());
-            //устанавливаем режим отображения "Регистрационная форма"
-            setRegistrationMode(false);
-            //очищаем текстовое поле "подтверждение пароля" регистрационной формы
-            passwordConfirm.setText("");
+
+//            //устанавливаем режим отображения "Регистрационная форма"
+//            setRegistrationMode(false);
+
+//            //очищаем текстовое поле "подтверждение пароля" регистрационной формы
+//            passwordConfirm.setText("");
         }
     }
 
@@ -82,8 +88,10 @@ public class LoginController {
         if(isLoginPasswordCorrect(login.getText(), password.getText())){
             //запускаем процесс авторизации
             backController.demandAuthorisation(login.getText(), password.getText());
-            //закрываем окно
-            globParent.getScene().getWindow().hide();
+
+//            //закрываем окно
+//            globParent.getScene().getWindow().hide();
+
         }
     }
 
@@ -121,13 +129,16 @@ public class LoginController {
      * Метод устанавливает GUI в режим авторизован или нет, в зависимости от параметра
      * @param isRegMode - true - сервер авторизовал пользователя
      */
-    private void setRegistrationMode(boolean isRegMode) {
+    public void setRegistrationMode(boolean isRegMode) {
         //скрываем и деактивируем(если isRegMode = true) кнопку подключения к серверу
         authorizationVBox.setManaged(!isRegMode);
         authorizationVBox.setVisible(!isRegMode);
+        authorizationButton.setDefaultButton(!isRegMode);
+
         //показываем и активируем(если isRegMode = true) список объектов в сетевом хранилище
         registrationVBox.setManaged(isRegMode);
         registrationVBox.setVisible(isRegMode);
+        registrationButton.setDefaultButton(isRegMode);
     }
 
     /**
@@ -139,4 +150,19 @@ public class LoginController {
         passwordConfirm.setText("");
     }
 
+    public void hideWindow(){
+        //если окно показывается
+        if(globParent.getScene().getWindow().isShowing()){
+            //закрываем окно
+            globParent.getScene().getWindow().hide();
+        }
+    }
+
+    public PasswordField getPasswordConfirm() {
+        return passwordConfirm;
+    }
+
+    public void setBackController(GUIController backController) {
+        this.backController = backController;
+    }
 }
