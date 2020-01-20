@@ -1,0 +1,90 @@
+# Урок 8. Домашнее задание. Итоговый проект.
+@Litvinenko Yuriy
+
+## Что сделано дополнительно к lesson7-hw после Code Review..
+###Update операций с файлами.
+1.	DONE. See the branch 1-after-CodeReview-fragmentCutting-to-FileUtils. 
+Перенести в [shared]FileUtils два одинаковых метода [client]uploadFileByFrags и [server] downloadFileByFrags.
+Теперь это возможно, т.к. в парметрах можно передать соответствующий ctx.
+
+2.	REJECTED. See the branch 1-after-CodeReview-fragmentCutting-to-FileUtils.
+В методе saveFileFragment() в строке 
+Files.write(realToFragPath, fileFragMsg.getData(), StandardOpenOption.CREATE); 
+опцию CREATE заменить на CREATE_NEW.
+Отклонено, т.к. по логике моего приложения фрагмент файла нужно перезаписывать, чтобы не оставались старые файлы-фрагменты во временной папке(при разрыве связи например).
+CREATE - Create a new file if it does not exist.
+CREATE_NEW - Create a new file, failing if the file already exists.
+Но на всяккий случай переделал создание временной директории. 
+DONE Добавил, чтобы это происходило только на первом фрагменте. А то у меня на каждом фрагменте создавался файловый объект для временной директории для того чтобы только проверить нет ли временной папки.
+И добавил удаление временной папки, если она есть, со всеми файлами внутри и создание новой.
+
+3.	DONE. See the branch 1-after-CodeReview-fragmentCutting-to-FileUtils.
+В методе compileFileFragments() в классе [shared]FileUtils переписать метод copyData(source, destination); - вместо создания байтбуфера применить инструмент java.nio.channels.filechannel transferto(). 
+Результат: при загрузке и считывании файла 300Мб(по 10Мб) заметных улучшений использования памяти или ускорения процесса не зафиксировано.
+
+###Update операций с GUI.
+4.	DONE. See the branch 2-after-CodeReview-GUI-updating.
+В классах [client]GUIController и  [client] CommandMessageManager исправлена проблема с не выводом стартового сообщения в noticeLabel в GUI.
+
+5.	DONE. See the branch 2-after-CodeReview-GUI-updating.
+В методе takeNewNameWindow() в классе [client]GUIController исправлена проблема с принудительным закрыванием NewNameWindow.
+
+6.	DONE. See the branch 2-after-CodeReview-GUI-updating.
+В методе cutAndSendFileByFrags() в классе [shared]FileUtils перенес процесс нарезки и отправки большого файла в отдельный поток. Теперь интерфейс не подвисает в момент upload.
+Но это все равно не исправило ситуацию с ошибкой файла при загрузке. Причем при скачивании или при загрузке небольших файлов такого не наблюдалось ни разу. И также до добавления GUI загрузка также проходила без единой ошибки, а теперь удачно загружается 1 раз из многих(так и не понял, что на это влияет).
+
+7.	DONE. See the branch 2-after-CodeReview-GUI-updating.
+В классах [client]GUIController и  [client] CommandMessageManager добавлен вывод оповещения о процессах загрузки и скачивания и очистки noticeLabel в GUI.
+После этого и при скачивании большого файла появилась такая же проблема целостности итогового файла, как это наблюдалось только при загрузке. Код живет своей жизнью...
+
+8.	DONE. See the branch 2-after-CodeReview-GUI-updating.
+В файле [client]MainClient.fxml и в классах [client]GUIController и [client] CommandMessageManager реализована логика изменения GUI в режиме авторизован, добавлены элементы для подключения к серверу и запроса авторизации.
+Исправил ошибочную отправку запроса на авторизацию при закрытии окна авторизации по крестику выхода.
+
+9.	DONE. See the branch 2-after-CodeReview-GUI-updating.
+В файле [client]Login.fxml и в классах [client]GUIController, LoginController, [client]CloudStorageClient добавил поля регистрации в authWindow и даработал логику взаимодействия в общем. И добавил в класс[client]CloudStorageClient черновик метода demandDisconnecting(). Осталось проработать взаимодействие с сервером и БД и доработать GUI окончательно.
+
+10.	DONE. See the branch 2-after-CodeReview-GUI-updating.
+В файле [client]MainClient.fxml и в классах [client]GUIController, CloudStorageClient и новом AboutText реализовано меню с пунктами: About и Disconnect. 
+Пункт About открывает в новой сцене информацию о приложении. 
+Пункт Disconnect – пока только сделана заглушка.
+Также добавил блокировку/разблокировку кнопок сетевого хранилища в зависимости от режима авторизации.
+
+###Добавление регистрации в БД.
+11.	DONE. See the branch 3-after-CodeReview-JDBC-adding.
+В файле [client]Login.fxml и в классах [client] LoginController, GUIController, CloudStorageClient добавил/изменил методы для отображения процессов регистрации и авторизации. 
+Также добавил новые команды в класс [shared]Commands и их обработку классах [client]/[server] [client] CommandMessageManager. Переорганизовал и переименовал класс [server] UsersAuthController - добавил в нем коммуникацию с БД sqlite и черновики методов взаимодействия с БД.
+Перенес Map<ChannelHandlerContext, String> authorizedUsers из класса [server]CloudStorageServer в класс [server]UsersAuthController.
+
+12.	DONE. See the branch 3-after-CodeReview-JDBC-adding.
+В классы [client] GUIController, CloudStorageClient, CommandMessageManager, 
+[server] CloudStorageServer, CommandMessageManager, UsersAuthController, AuthGateway и
+[shared] DirectoryMessage, Commands, FileUtils добавлены методы для обработки нажатия кнопки “NewFolder”, отправки запроса и получения ответа, новые команды и конструктор. 
+Также добавлено создание новой корневой директории нового пользователя в сетевом хранилище и методы для регистрации нового пользователя.
+
+13.	NOT DONE. See the branch 3-after-CodeReview-JDBC-adding.
+Вынес из класса [server]UsersAuthController в отдельный класс [server] MySQLConnect все что связано с подключением к БД. Так и не удалось подключить БД корректно, ни SQLite, ни MySQL. Оба подключаются из в IDEA data source, но в коде работать не хотят. 
+SQLite на простой запрос, типа String sql = "SELECT * FROM main";, требует сконфигурировать data source, а на запрос, типа String sql = String.format("SELECT * FROM '%s'", "main");, ничего не находит. Это все странно, потому, что я взял это блок кода и БД из моего рабочего проекта “network chat” и там все работало прекрасно.
+MySQL при любой попытке обращения к БД выдает исключение java.sql.SQLNonTransientConnectionException: CLIENT_PLUGIN_AUTH is required. 
+Потратил на безуспешные попытки 12 рабочих часов!
+пришлось сделать имитацию работы с БД на HashMap в классе [server] UsersDB, чтобы сдать проект.
+Оставил копию класса [server]UsersAuthController (UsersAuthController.java.txt) с кодом подключения к MySQLConnect.
+
+
+Добавление регистрации в БД.
+14.	NOT DONE. See the branch 4-after-CodeReview-final-fixing.
+Вынес из класса [server]UsersAuthController
+
+15. 
+
+## Вопросы
+1. 
+
+Вообще тема с настройкой откружения Java не такая простая. 
+Постоянно какие-то проблемы с Maven(это вроде уже освоил), 
+подключением к БД и т.п.
+К сожалению нет курса, на котором бы рассматривалась настройка окружения и рабочих инструментов 
+в комплекте, а не отдельно отладчик InteliJ IDEA, система контроля версий GIT, 
+база данных(популярная и универсальная для всего года обучения) и т.п.
+}
+
