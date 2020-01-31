@@ -133,3 +133,25 @@ Download, при этом, работал идеально. Но после до
 8. DB. Добавить базу данных в процесс регистрации пользователей.
 	- скрывать пароли
 	- применить хэширование для ускорения поиска?
+9. Заменить класс команд на enum. По примеру:
+    public enum Data {
+        A, B, C;
+    }
+    public static void main(String[] args) {
+        test(Data.A);
+        test(Data.B);
+        test(Data.C);
+    }
+    public static void test(Data e_num){
+        switch (e_num) {
+            case A:
+                System.out.println(e_num);//A
+                break;
+            case B:
+                System.out.println(e_num);//B
+                break;
+            case C:
+                System.out.println(e_num);//C
+                break;
+        }
+    }
