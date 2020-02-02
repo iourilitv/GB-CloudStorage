@@ -30,8 +30,6 @@ public class CloudStorageClient {
     private static final int PORT = 8189;
     //инициируем переменную для печати сообщений в консоль
     private final PrintStream log = System.out;
-//    //инициируем константу объект пути к корневой директории для списка в клиентской части GUI
-//    public static final Path CLIENT_ROOT_PATH = Paths.get("storage","client_storage");
     //инициируем переменную объект пути к корневой директории для списка в клиентской части GUI
     public static Path CLIENT_ROOT_PATH = Paths.get("storage","client_storage");
 

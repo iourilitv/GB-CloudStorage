@@ -5,6 +5,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
+/**
+ * This class responds for control the "new client root path window" operations.
+ */
 public class ChangeRootController {
 
     @FXML
