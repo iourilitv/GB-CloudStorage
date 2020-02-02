@@ -19,15 +19,13 @@ import utils.Item;
 
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The client class for operating with GUI.
  */
-public class GUIController implements Initializable {
+public class GUIController2 implements Initializable {
 
     @FXML
     private MenuItem disconnectMenuItem;
@@ -78,7 +76,7 @@ public class GUIController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //инициируем объект клиента облачного хранилища
-        storageClient = new CloudStorageClient(GUIController.this);
+        storageClient = new CloudStorageClient(GUIController2.this);
         //инициируем объекты директории по умолчанию в клиентской и серверной части GUI
         clientDefaultDirItem = new Item(CLIENT_DEFAULT_DIR);
         storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);
@@ -427,41 +425,6 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод отрабатывает нажатие на пунтк меню "Change Client Root".
-     * @param actionEvent - событие(здесь клик мыши)
-     */
-    @FXML
-    public void onChangeClientRootMenuItemClick(ActionEvent actionEvent) {
-        try {
-            Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/changeRoot.fxml"));
-            Parent root = loader.load();
-            ChangeRootController changeRootController = loader.getController();
-
-            //определяем действия по событию закрыть окно по крестику через лямбда
-            stage.setOnCloseRequest(event -> {
-                System.out.println("GUIController.menuItemRename() - " +
-                        "the newNameWindow was closed forcibly!");
-                //сбрасываем текстовое поле имени пути
-                changeRootController.setNewPathnameText("");
-            });
-
-            //записываем текущее имя в текстовое поле
-            changeRootController.setNewPathnameText(CloudStorageClient.CLIENT_ROOT_PATH.toAbsolutePath().toString());
-            changeRootController.setBackController(this);
-
-            stage.setTitle("insert a new root pathname");
-            stage.setScene(new Scene(root, 800, 50));
-            stage.isAlwaysOnTop();
-            stage.setResizable(false);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Метод отрабатывает нажатие на пунтк меню "Disconnect".
      * @param actionEvent - событие(здесь клик мыши)
      */
@@ -596,7 +559,7 @@ public class GUIController implements Initializable {
             //определяем действия по событию закрыть окно по крестику через лямбда
             stage.setOnCloseRequest(event -> {
                 //вызываем разрыв соединения, если выйти по крестику
-                GUIController.this.storageClient.demandDisconnect();
+                GUIController2.this.storageClient.demandDisconnect();
             });
 
             stage.setTitle("Authorisation to the Cloud Storage by LYS");
@@ -625,7 +588,7 @@ public class GUIController implements Initializable {
                 System.out.println("GUIController.menuItemRename() - " +
                         "the newNameWindow was closed forcibly!");
                 //сбрасываем текстовое поле имени
-                GUIController.this.newName = "";
+                GUIController2.this.newName = "";
             });
             renameController.backController = this;
 
@@ -660,7 +623,7 @@ public class GUIController implements Initializable {
                 //сбрасываем флаг
                 flag.set(false);
                 //сбрасываем текстовое поле имени
-                GUIController.this.newName = "";
+                GUIController2.this.newName = "";
             });
 
             //записываем текущее имя в текстовое поле
@@ -794,29 +757,6 @@ public class GUIController implements Initializable {
 
     public void setNewName(String newName) {
         this.newName = newName;
-    }
-
-    /**
-     * Метод записывает новое значение абсолютного пути к корневой папке клиента.
-     * @param newPathname - новое значение абсолютного пути
-     */
-    public void setNewRootPathname(String newPathname) {
-        //если введенное имя пути пустое, то выходим
-        if(newPathname.trim().isEmpty()){
-            return;
-        }
-        Path newPath = Paths.get(newPathname);
-        //если новая директория существует и это действительно директория
-        if(newPath.toFile().exists() && newPath.toFile().isDirectory()){
-            //записываем новое значение в переменную корневой директории
-            CloudStorageClient.CLIENT_ROOT_PATH = Paths.get(newPathname);
-            //устанавливаем текущей директорией директорию по умолчанию
-            updateClientItemListInGUI(clientDefaultDirItem);
-            //устанавливаем текст в метку уведомлений
-            noticeLabel.setText("The Client Root path has been changed!");
-        } else {
-            noticeLabel.setText("Something wrong with a new Client Root path!");
-        }
     }
 
     public Label getNoticeLabel() {

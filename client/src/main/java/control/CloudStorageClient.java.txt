@@ -19,7 +19,7 @@ import java.nio.file.Paths;
 /**
  * This client's class is responded for operation with storage by communication with command handlers.
  */
-public class CloudStorageClient {
+public class CloudStorageClient2 {
     //принимаем объект хендлера для операций с директориями
     private GUIController guiController;
     //принимаем объект соединения
@@ -30,17 +30,14 @@ public class CloudStorageClient {
     private static final int PORT = 8189;
     //инициируем переменную для печати сообщений в консоль
     private final PrintStream log = System.out;
-//    //инициируем константу объект пути к корневой директории для списка в клиентской части GUI
-//    public static final Path CLIENT_ROOT_PATH = Paths.get("storage","client_storage");
-    //инициируем переменную объект пути к корневой директории для списка в клиентской части GUI
-    public static Path CLIENT_ROOT_PATH = Paths.get("storage","client_storage");
-
+    //инициируем константу объект пути к корневой директории для списка в клиентской части GUI
+    public static final Path CLIENT_ROOT_PATH = Paths.get("storage","client_storage");
     //объявляем объект файлового обработчика
     private FileUtils fileUtils = FileUtils.getOwnObject();
     //принимаем объект обработчика операций с объектами элементов списков в GUI
     private final ItemUtils itemUtils = ItemUtils.getOwnObject();
 
-    public CloudStorageClient(GUIController guiController) {
+    public CloudStorageClient2(GUIController guiController) {
         //принимаем объект контроллера GUI
         this.guiController = guiController;
     }

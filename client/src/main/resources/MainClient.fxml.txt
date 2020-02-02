@@ -18,7 +18,6 @@
     <MenuBar>
         <Menu mnemonicParsing="false" text="Menu">
             <MenuItem mnemonicParsing="false" onAction="#onAboutMenuItemClick" text="About"/>
-            <MenuItem mnemonicParsing="false" onAction="#onChangeClientRootMenuItemClick" text="Change Client Root"/>
             <MenuItem fx:id="disconnectMenuItem" mnemonicParsing="false" disable="true" onAction="#onDisconnectMenuItemClick" text="Disconnect"/>
         </Menu>
     </MenuBar>
