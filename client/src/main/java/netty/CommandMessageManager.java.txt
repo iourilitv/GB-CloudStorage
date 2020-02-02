@@ -15,7 +15,7 @@ import utils.FileUtils;
 /**
  * The client class for recognizing command messages and control command handlers.
  */
-public class CommandMessageManager extends ChannelInboundHandlerAdapter {
+public class CommandMessageManager2 extends ChannelInboundHandlerAdapter {
     //принимаем объект исходящего хэндлера
     private CloudStorageClient storageClient;
     //принимаем объект файлового обработчика
@@ -25,7 +25,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     //принимаем объект контроллера GUI
     private GUIController guiController;
 
-    public CommandMessageManager(CloudStorageClient storageClient) {
+    public CommandMessageManager2(CloudStorageClient storageClient) {
         this.storageClient = storageClient;
         //принимаем объект файлового обработчика
         fileUtils = storageClient.getFileUtils();
@@ -66,91 +66,91 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * Метод распознает тип команды и обрабатывает ее.
+     * Метот распознает тип команды и обрабатывает ее.
      * @param commandMessage - объект сообщения(команды)
      */
     public void recognizeAndArrangeMessageObject(CommandMessage commandMessage) {
         //выполняем операции в зависимости от типа полученного сообщения(команды)
         switch (commandMessage.getCommand()) {
             //обрабатываем полученное от сервера подтверждение успешного подключения клиента
-            case SERVER_NOTIFICATION_CLIENT_CONNECTED:
+            case Commands.SERVER_NOTIFICATION_CLIENT_CONNECTED:
                 //вызываем метод обработки ответа сервера
                 onServerConnectedResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера подтверждение готовности отключения клиента
-            case SERVER_RESPONSE_DISCONNECT_OK:
+            case Commands.SERVER_RESPONSE_DISCONNECT_OK:
                 //вызываем метод обработки ответа сервера
                 onServerDisconnectOKServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке при попытке отключения клиента
-            case SERVER_RESPONSE_DISCONNECT_ERROR:
+            case Commands.SERVER_RESPONSE_DISCONNECT_ERROR:
                 //вызываем метод обработки ответа сервера
                 onServerDisconnectErrorServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера подтверждение успешной регистрации
             // нового пользователя в облачное хранилище
-            case SERVER_RESPONSE_REGISTRATION_OK:
+            case Commands.SERVER_RESPONSE_REGISTRATION_OK:
                 //вызываем метод обработки ответа сервера
                 onRegistrationOKServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера подтверждение успешной авторизации в облачное хранилище
-            case SERVER_RESPONSE_AUTH_OK:
+            case Commands.SERVER_RESPONSE_AUTH_OK:
                 //вызываем метод обработки ответа сервера
                 onAuthOKServerResponse(commandMessage);
                 break;
             //обрабатываем полученный ответ сервера с массивом файловых объектов в заданной
             // директории пользователя в сетевом хранилище, если нет ошибок
-            case SERVER_RESPONSE_ITEMS_LIST_OK:
+            case Commands.SERVER_RESPONSE_ITEMS_LIST_OK:
             //обрабатываем полученное от сервера подтверждение успешного создания новой папки
             //с массивом файловых объектов в текущей директории пользователя в облачном хранилище
-            case SERVER_RESPONSE_CREATE_NEW_FOLDER_OK:
+            case Commands.SERVER_RESPONSE_CREATE_NEW_FOLDER_OK:
             //обрабатываем полученное от сервера подтверждение успешной загрузке(сохранении)
             // файла в облачное хранилище
-            case SERVER_RESPONSE_UPLOAD_ITEM_OK:
+            case Commands.SERVER_RESPONSE_UPLOAD_ITEM_OK:
             //обрабатываем полученное от сервера подтверждение успешной загрузке(сохранении)
             // всего большого файла(по фрагментно) в облачное хранилище
-            case SERVER_RESPONSE_UPLOAD_FILE_FRAGS_OK:
+            case Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAGS_OK:
             //обрабатываем полученный от сервера ответ об успешном переименовании файла или папки в облачном хранилище
-            case SERVER_RESPONSE_RENAME_ITEM_OK:
+            case Commands.SERVER_RESPONSE_RENAME_ITEM_OK:
             //обрабатываем полученный от сервера ответ об успешном удалении файла или папки в облачном хранилище
-            case SERVER_RESPONSE_DELETE_ITEM_OK:
+            case Commands.SERVER_RESPONSE_DELETE_ITEM_OK:
                 //выводим в GUI список файлов и папок в корневой пользовательской директории в сетевом хранилище
                 updateStorageItemListInGUI(commandMessage);
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке регистрации в облачное хранилище
-            case SERVER_RESPONSE_REGISTRATION_ERROR:
+            case Commands.SERVER_RESPONSE_REGISTRATION_ERROR:
                 //вызываем метод обработки ответа сервера
                 onRegistrationErrorServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке авторизации в облачное хранилище
-            case SERVER_RESPONSE_AUTH_ERROR:
+            case Commands.SERVER_RESPONSE_AUTH_ERROR:
                 //вызываем метод обработки ответа сервера
                 onAuthErrorServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке при создании новой папки
             //в текущей директории пользователя в облачном хранилище
-            case SERVER_RESPONSE_CREATE_NEW_FOLDER_ERROR:
+            case Commands.SERVER_RESPONSE_CREATE_NEW_FOLDER_ERROR:
                 //вызываем метод обработки ответа сервера
                 onCreateNewFolderErrorServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке загрузки(сохранения)
             // файла в облачное хранилище
-            case SERVER_RESPONSE_UPLOAD_ITEM_ERROR:
+            case Commands.SERVER_RESPONSE_UPLOAD_ITEM_ERROR:
                 //вызываем метод обработки ответа сервера
                 onUploadItemErrorServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера подтверждение успешного скачивания файла из облачного хранилища
-            case SERVER_RESPONSE_DOWNLOAD_ITEM_OK:
+            case Commands.SERVER_RESPONSE_DOWNLOAD_ITEM_OK:
                 //вызываем метод обработки ответа сервера со скачанным целым файлом внутри
                 onDownloadItemOkServerResponse(commandMessage);
                 break;
             //обрабатываем полученное от сервера сообщение об ошибке скачивания файла из облачного хранилища
-            case SERVER_RESPONSE_DOWNLOAD_ITEM_ERROR:
+            case Commands.SERVER_RESPONSE_DOWNLOAD_ITEM_ERROR:
                 //вызываем метод обработки ответа сервера
                 onDownloadFileErrorServerResponse(commandMessage);
                 break;
             //обрабатываем полученный от сервера ответ на запрос на скачивание с фрагментом файла из облачного хранилища
-            case SERVER_RESPONSE_DOWNLOAD_FILE_FRAG_OK:
+            case Commands.SERVER_RESPONSE_DOWNLOAD_FILE_FRAG_OK:
                 //вызываем метод обработки ответа от сервера с файлом-фрагментом
                 //в директорию клиента
                 onDownloadFileFragOkServerResponse(commandMessage);
@@ -296,8 +296,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         FileFragmentMessage fileFragMsg = (FileFragmentMessage) commandMessage.getMessageObject();
         //если сохранение полученного фрагмента файла во временную папку клиента прошло удачно
         //объявляем переменную типа команды
-        Commands command;
-
+        int command;
         if(storageClient.downloadItemFragment(fileFragMsg)){
             //отправляем сообщение на сервер: подтверждение, что все прошло успешно
             command = Commands.CLIENT_RESPONSE_DOWNLOAD_FILE_FRAG_OK;

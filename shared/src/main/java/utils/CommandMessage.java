@@ -9,28 +9,28 @@ import java.io.Serializable;
  */
 public class CommandMessage implements Serializable {
     //принимаем переменную типа операции(команды) на выполнение
-    private int command;
+    private Commands command;
     //принимаем объект сообщения(команды) операции
     private AbstractMessage messageObject;
 
     //принимаем объект пути к заданной директории
     private String directory;
 
-    public CommandMessage(int command) {
+    public CommandMessage(Commands command) {
         this.command = command;
     }
 
-    public CommandMessage(int command, String directory) {
+    public CommandMessage(Commands command, String directory) {
         this.command = command;
         this.directory = directory;
     }
 
-    public CommandMessage(int command, AbstractMessage messageObject) {
+    public CommandMessage(Commands command, AbstractMessage messageObject) {
         this.command = command;
         this.messageObject = messageObject;
     }
 
-    public int getCommand() {
+    public Commands getCommand() {
         return command;
     }
 

@@ -67,7 +67,7 @@ public class FileUtils {
      */
     public void cutAndSendFileByFrags(Item toDirItem, Item item,
                                       long fullFileSize, Path rootPath,
-                                      ChannelHandlerContext ctx, int command) {
+                                      ChannelHandlerContext ctx, Commands command) {
         //TODO temporarily
         long start = System.currentTimeMillis();
         //запускаем в отдельном процессе, чтобы не тормозить основные процессы(подвисает GUI)

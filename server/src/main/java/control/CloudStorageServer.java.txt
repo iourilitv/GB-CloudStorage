@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 /**
  * This server's class for operating with a cloud storage.
  */
-public class CloudStorageServer {
+public class CloudStorageServer2 {
     //инициируем константу порта сервера
     private final int PORT = 8189;
     //инициируем переменную для печати сообщений в консоль
@@ -186,7 +186,7 @@ public class CloudStorageServer {
                        long fileSize, Path userStorageRoot, ChannelHandlerContext ctx){
         //создаем объект файлового сообщения
         FileMessage fileMessage = new FileMessage(storageItem, clientToDirItem, item, fileSize);
-        Commands command;
+        int command;
         //если скачивание прошло удачно
         if(fileUtils.readFile(itemUtils.getRealPath(storageItem.getItemPathname(), userStorageRoot),
                 fileMessage)){

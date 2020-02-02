@@ -6,7 +6,10 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import messages.DirectoryMessage;
 import messages.FileFragmentMessage;
 import messages.FileMessage;
-import utils.*;
+import utils.CommandMessage;
+import utils.Commands;
+import utils.FileUtils;
+import utils.Item;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -15,7 +18,7 @@ import java.nio.file.Paths;
 /**
  * The server's class for recognizing command messages and control command handlers.
  */
-public class CommandMessageManager extends ChannelInboundHandlerAdapter {
+public class CommandMessageManager2 extends ChannelInboundHandlerAdapter {
     //принимаем объект соединения
     private ChannelHandlerContext ctx;
     //принимаем объект контроллера сетевого хранилища
@@ -26,9 +29,9 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
     //объявляем переменную типа команды
-    private Commands command;
+    private int command;
 
-    public CommandMessageManager(CloudStorageServer storageServer) {
+    public CommandMessageManager2(CloudStorageServer storageServer) {
         this.storageServer = storageServer;
         //принимаем объект файлового обработчика
         fileUtils = storageServer.getFileUtils();
@@ -52,53 +55,53 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         switch (commandMessage.getCommand()) {
             //обрабатываем полученный от AuthGateway проброшенный запрос на авторизацию клиента в облачное хранилище
             //возвращаем список объектов в корневой директорию пользователя в сетевом хранилище.
-            case SERVER_RESPONSE_AUTH_OK:
+            case Commands.SERVER_RESPONSE_AUTH_OK:
                 //вызываем метод обработки запроса от AuthGateway
                 onAuthClientRequest(commandMessage);
                 break;
             //обрабатываем полученный от клиента запрос на отсоединение пользователя от сервера
-            case REQUEST_SERVER_DISCONNECT:
+            case Commands.REQUEST_SERVER_DISCONNECT:
                 //вызываем метод обработки запроса от AuthGateway
                 onDisconnectClientRequest(commandMessage);
                 break;
             //обрабатываем полученный от клиента запрос на список объектов файлов и папок
             // в заданной директории в облачном хранилище
-            case REQUEST_SERVER_ITEMS_LIST:
+            case Commands.REQUEST_SERVER_ITEMS_LIST:
                 //вызываем метод обработки запроса от клиента
                 onDirectoryItemsListClientRequest(commandMessage);
                 break;
             //обрабатываем полученный от клиента запрос на создание новой директории в облачном хранилище
-            case REQUEST_SERVER_CREATE_NEW_FOLDER:
+            case Commands.REQUEST_SERVER_CREATE_NEW_FOLDER:
                 //вызываем метод обработки запроса от клиента
                 onCreateNewFolderClientRequest(commandMessage);
                 break;
             //обрабатываем полученный от клиента запрос на загрузку(сохранение) файла в облачное хранилище
-            case REQUEST_SERVER_UPLOAD_ITEM:
+            case Commands.REQUEST_SERVER_UPLOAD_ITEM:
                 //вызываем метод обработки запроса от клиента на загрузку целого файла клиента
                 // в директорию в сетевом хранилище.
                 onUploadItemClientRequest(commandMessage);
                 break;
             //обрабатываем полученный от клиента запрос на скачивание целого файла из облачного хранилища
-            case REQUEST_SERVER_DOWNLOAD_ITEM:
+            case Commands.REQUEST_SERVER_DOWNLOAD_ITEM:
                 //вызываем метод обработки запроса от клиента на скачивание целого файла клиента
                 // из директории в сетевом хранилище
                 onDownloadItemClientRequest(commandMessage);
                 break;
             //обрабатываем полученный от клиента запрос на загрузку(сохранение) фрагмента файла в облачное хранилище
-            case REQUEST_SERVER_UPLOAD_FILE_FRAG:
+            case Commands.REQUEST_SERVER_UPLOAD_FILE_FRAG:
                 //вызываем метод обработки запроса от клиента на загрузку файла-фрагмента
                 //в директорию в сетевом хранилище.
                 onUploadFileFragClientRequest(commandMessage);
                 break;
             //обрабатываем полученный от клиента запрос на переименование файла или папки
             // в заданной директории в сетевом хранилище
-            case REQUEST_SERVER_RENAME_ITEM:
+            case Commands.REQUEST_SERVER_RENAME_ITEM:
                 //вызываем метод обработки запроса от клиента
                 onRenameItemClientRequest(commandMessage);
                 break;
             //обрабатываем полученный от клиента запрос на удаление файла или папки
             // в заданной директории в сетевом хранилище
-            case REQUEST_SERVER_DELETE_ITEM:
+            case Commands.REQUEST_SERVER_DELETE_ITEM:
                 //вызываем метод обработки запроса от клиента
                 onDeleteItemClientRequest(commandMessage);
                 break;
@@ -329,7 +332,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * @param storageDirItem - объект заданной директории пользователя в сетевом хранилище
      * @param command - комманда об успешном или не успешном формировании списка
      */
-    private void sendItemsList(Item storageDirItem, Commands command) {
+    private void sendItemsList(Item storageDirItem, int command) {
         //инициируем объект сообщения о директории с массивом объектов
         // в заданной директории клиента в сетевом хранилище
         DirectoryMessage directoryMessage = new DirectoryMessage(storageDirItem,
