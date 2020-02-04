@@ -25,6 +25,14 @@
             <artifactId>netty-all</artifactId>
             <version>4.1.41.Final</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.testng/testng -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.14.3</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>
