@@ -1,4 +1,5 @@
 import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -79,15 +80,19 @@ public class TestStreamAPI {
     private static void streamFromFilesEx() {
         try {
 //            Files.lines(Paths.get("123.txt")).map(String::length).
-//                    forEach(System.out::println);
-            Files.lines(Paths.get(String.valueOf(TestStreamAPI.class.getResource("123.txt"))))
+//                    forEach(System.out::println);////java.nio.file.NoSuchFileException: 123.txt
+
+            Files.lines(Paths.get(ClassLoader.getSystemResource("123.txt").toURI()))
                     .map(String::length)
                     .forEach(System.out::println);
+            //26
+            //20
+
 //            Files.lines(Paths.get("D:\\GeekBrains\\20191130_GB-Разработка_сетевого_хранилища_на_Java\\cloudstorage\\client\\target\\test-classes\\123.txt")).map(String::length).
 //                    forEach(System.out::println);
 
 
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
