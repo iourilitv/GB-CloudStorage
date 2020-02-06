@@ -12,16 +12,14 @@ import utils.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 /**
  * This client's class is responded for operation with storage by communication with command handlers.
  */
-public class CloudStorageClient {
+public class CloudStorageClient2 {
     //принимаем объект хендлера для операций с директориями
     private GUIController guiController;
     //принимаем объект соединения
@@ -40,33 +38,9 @@ public class CloudStorageClient {
     //принимаем объект обработчика операций с объектами элементов списков в GUI
     private final ItemUtils itemUtils = ItemUtils.getOwnObject();
 
-    //TODO temporarily for test only
-    public CloudStorageClient() {
-        initConfiguration("client_default.cfg", "client.cfg");
-    }
-
-    public CloudStorageClient(GUIController guiController) {
+    public CloudStorageClient2(GUIController guiController) {
         //принимаем объект контроллера GUI
         this.guiController = guiController;
-
-        initConfiguration("client_default.cfg", "client.cfg");
-    }
-
-    private void initConfiguration(String defaultFileName, String fileName) {
-        File defCfgFile = new File(defaultFileName);
-        File cfgFile = new File(fileName);
-        try {
-            if (!cfgFile.exists()) {
-
-                System.out.println("CloudStorageClient.initConfiguration() " +
-                        "- cfgFile.createNewFile(): " + cfgFile.createNewFile());
-            }
-
-            Files.copy(Paths.get(ClassLoader.getSystemResource(defCfgFile.getPath()).toURI()),
-                    cfgFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException | URISyntaxException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
