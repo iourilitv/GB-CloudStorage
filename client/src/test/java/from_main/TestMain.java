@@ -1,3 +1,5 @@
+package from_main;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -8,16 +10,16 @@ public class TestMain {
     public static void main(String[] args) {
         //файл должен лежать в директории resources той части модуля, где находится этот класс
         //в main или test
-        File fileMain = new File("client_main.cfg");
+        File fileMain = new File("from_main/resources/client_main.cfg");
         File fileTest = new File("client_test.cfg");
 
-        System.out.println("[main]TestMain. - fileMain.getName(): " + fileMain.getName() +
+        System.out.println("[main]from_main.TestMain. - fileMain.getName(): " + fileMain.getName() +
                 ", fileMain.toPath(): " + fileMain.toPath());
-        //[main]TestMain. - fileMain.getName(): client_main.cfg, fileMain.toPath(): client_main.cfg
+        //[main]from_main.TestMain. - fileMain.getName(): client_main.cfg, fileMain.toPath(): client_main.cfg
 
-        System.out.println("[main]TestMain. - fileTest.getName(): " + fileTest.getName() +
+        System.out.println("[main]from_main.TestMain. - fileTest.getName(): " + fileTest.getName() +
                 ", fileTest.toPath(): " + fileTest.toPath());
-        //[main]TestMain. - fileTest.getName(): client_test.cfg, fileTest.toPath(): client_test.cfg
+        //[main]from_main.TestMain. - fileTest.getName(): client_test.cfg, fileTest.toPath(): client_test.cfg
 
         try {
 //            Files.lines(Paths.get("client.cfg")).map(String::length).
@@ -25,7 +27,7 @@ public class TestMain {
 
             //как прочитать по линейно файл в директории resources модуля проекта
             //ресурс должен лежать в main/resources даже, если сам класс находится в test/java
-            Files.lines(Paths.get(ClassLoader.getSystemResource("client_main.cfg").toURI())).
+            Files.lines(Paths.get(ClassLoader.getSystemResource("from_main/resources/client_main.cfg").toURI())).
                     forEach(System.out::println);
             //<Module>main</>
             //<Root_default>"storage"</>

@@ -1,3 +1,5 @@
+package from_main;
+
 import utils.FileUtils;
 
 import java.io.*;
@@ -5,7 +7,7 @@ import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
 import java.nio.file.*;
 
-public class TestConfig {
+public class TestConfigMain {
 
     private static FileUtils fileUtils = FileUtils.getOwnObject();
 

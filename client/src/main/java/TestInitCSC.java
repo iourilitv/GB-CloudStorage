@@ -1,7 +1,5 @@
 import control.CloudStorageClient;
 
-import java.io.IOException;
-
 public class TestInitCSC {
 
     public static void main(String[] args) {

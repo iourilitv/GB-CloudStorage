@@ -13,9 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.*;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.stream.Collectors;
 
 /**
  * This client's class is responded for operation with storage by communication with command handlers.
@@ -49,20 +46,53 @@ public class CloudStorageClient {
 
     //TODO temporarily for test only
     public CloudStorageClient() {
-//        initConfiguration("client_default.cfg", "client.cfg");
-//        initConfiguration("client.cfg", Arrays.asList("hello", "world"));
-//        AppProperties.getProperties().add("Этого не должно быть, если работает инкапсуляция!");
-        //final работает
 
-//        initConfiguration("client.cfg", AppProperties.getDefaultProperties());
-//        initConfiguration("client.cfg", appProperties.getDefaultProperties());
-//        CountDownLatch downLatch = new CountDownLatch(1);
-        appProperties.initConfiguration(/*downLatch*/);
-//        try {
-//            downLatch.await();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
+//        appProperties.initConfiguration();
+//
+//        //инициируем переменную IP адреса сервера
+//        IP_ADDR = appProperties.getProperty("IP_ADDR");
+//
+//        System.out.println("CloudStorageClient() - IP_ADDR: " + IP_ADDR);
+//
+//        //инициируем переменную порта соединения
+//        String port = appProperties.getProperty("PORT");
+//        System.out.println("CloudStorageClient() - port: " + port);
+//
+//        PORT = Integer.parseInt(port);
+//
+//        //инициируем переменную объект пути к корневой директории для списка в клиентской части GUI
+//        String root_absolute = appProperties.getProperty("Root_absolute");
+//        if(root_absolute.isEmpty()){
+//
+//            CLIENT_ROOT_PATH = Paths.get(appProperties.getProperty("Root_default"));
+//        } else {
+//            CLIENT_ROOT_PATH = Paths.get(root_absolute);
 //        }
+//
+//        System.out.println("CloudStorageClient() - CLIENT_ROOT_PATH: " + CLIENT_ROOT_PATH);
+//
+//        File rootFolder = new File(CLIENT_ROOT_PATH.toString());
+//        if(!rootFolder.exists()){
+//
+//            System.out.println("CloudStorageClient() - " +
+//                    "rootFolder.mkdir(): " + rootFolder.mkdir());
+//        }
+
+        initConfiguration();
+
+    }
+
+    public CloudStorageClient(GUIController guiController) {
+        //принимаем объект контроллера GUI
+        this.guiController = guiController;
+
+//        initConfiguration("client_default.cfg", "client.cfg");
+//        initConfiguration();
+    }
+
+    private void initConfiguration() {
+
+        appProperties.setConfiguration();
 
         //инициируем переменную IP адреса сервера
         IP_ADDR = appProperties.getProperty("IP_ADDR");
@@ -70,8 +100,6 @@ public class CloudStorageClient {
         System.out.println("CloudStorageClient() - IP_ADDR: " + IP_ADDR);
 
         //инициируем переменную порта соединения
-//        PORT = Integer.parseInt(appProperties.getProperty("PORT"));
-
         String port = appProperties.getProperty("PORT");
         System.out.println("CloudStorageClient() - port: " + port);
 
@@ -97,65 +125,12 @@ public class CloudStorageClient {
 
     }
 
-    public CloudStorageClient(GUIController guiController) {
-        //принимаем объект контроллера GUI
-        this.guiController = guiController;
-
-//        initConfiguration("client_default.cfg", "client.cfg");
-    }
-
-//    private void initConfiguration(String defaultFileName, String fileName) {
-//        File defCfgFile = new File(defaultFileName);
-//        File cfgFile = new File(fileName);
-//        try {
-//            if (!cfgFile.exists()) {
-//
-//                System.out.println("CloudStorageClient.initConfiguration() " +
-//                        "- cfgFile.createNewFile(): " + cfgFile.createNewFile());
-//            }
-//
-//            Files.copy(Paths.get(ClassLoader.getSystemResource(defCfgFile.getPath()).toURI()),
-//                    cfgFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-////            Files.copy(defCfgFile.toPath(),
-////                    cfgFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-//        } catch (IOException | URISyntaxException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//    //первом запуске приложения создаем новый конфигурационный файл и копируем
-//    // в него коллекцию свойств по строчно
-//    private void initConfiguration(String fileName, List<String> properties) {
-//        File cfgFile = new File(fileName);
-//        try {
-//            //если это первый запуск приложения
-//            if (!cfgFile.exists()) {
-//                //создаем конфигурационный файл и копируем в него коллекцию свойств
-//                Files.write(cfgFile.toPath(), properties, StandardOpenOption.CREATE);
-//            //если это не первый запуск приложения
-//            } else {
-//                //читаем данные построчно из файла в коллекцию
-//                appProperties.getCurrentProperties().addAll(Files.lines(cfgFile.toPath())
-//                    .collect(Collectors.toList()));
-//
-//                System.out.println("CloudStorageClient.initConfiguration() " +
-//                        "- currentProperties: " + appProperties.getCurrentProperties());
-//
-//            }
-//
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-
     /**
      * Метод начала работы клиента сетевого зранилища.
      * @throws Exception - исключение
      */
     public void run() throws Exception {
         //инициируем объект соединения
-//        new NettyClient(this, IP_ADDR, PORT).run();
         new NettyClient(this, IP_ADDR, PORT).run();
     }
 

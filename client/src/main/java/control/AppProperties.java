@@ -7,7 +7,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 public class AppProperties {
@@ -30,7 +29,7 @@ public class AppProperties {
 
     //первом запуске приложения создаем новый конфигурационный файл и копируем
     // в него коллекцию свойств по строчно
-    void initConfiguration(/*CountDownLatch downLatch*/) {
+    void setConfiguration() {
         File cfgFile = new File(filePathname);
         try {
             //если это первый запуск приложения
@@ -39,15 +38,6 @@ public class AppProperties {
                 Files.write(cfgFile.toPath(), defaultProperties, StandardOpenOption.CREATE);
                 //если это не первый запуск приложения
             }
-//            else {
-//                //читаем данные построчно из файла в коллекцию
-//                currentProperties.addAll(Files.lines(cfgFile.toPath())
-//                        .collect(Collectors.toList()));
-//
-//                System.out.println("CloudStorageClient.initConfiguration() " +
-//                        "- currentProperties: " + currentProperties);
-//
-//            }
             //читаем данные построчно из файла в коллекцию
             currentProperties.addAll(Files.lines(cfgFile.toPath())
                     .collect(Collectors.toList()));
@@ -57,8 +47,6 @@ public class AppProperties {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-//        downLatch.countDown();
     }
 
     /**
@@ -105,11 +93,6 @@ public class AppProperties {
                 }
             }
         }
-
-//        System.out.println("AppProperties.stringScissors() - " +
-//                " origin: " + origin +
-//                "\n, startIndex: " + startIndex + ", stopIndex: " + stopIndex);
-
         //дополнительная проверка, чтобы избежать исключения
         if(startIndex == -1 || stopIndex == -1){
             System.out.println("AppProperties.stringScissors() - Wrong format of the origin string!");

@@ -1,16 +1,13 @@
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class TestReadFilePredicate {
     public static void main(String[] args) {
@@ -18,7 +15,7 @@ public class TestReadFilePredicate {
         //в main или test
         URI uri;
         try {
-            uri = ClassLoader.getSystemResource("client_main.cfg").toURI();
+            uri = ClassLoader.getSystemResource("from_main/resources/client_main.cfg").toURI();
 
 //            File fileMain = new File(uri);
 //            System.out.println("TestReadFilePredicate - fileMain.toPath(): " + fileMain.toPath());
