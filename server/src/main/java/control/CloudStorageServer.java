@@ -39,11 +39,6 @@ public class CloudStorageServer {
     //инициируем объект хендлера настроек приложения
     PropertiesHandler propertiesHandler = PropertiesHandler.getOwnObject();
 
-//    public CloudStorageServer() {
-//        //инициируем процесс настройки приложения
-//        initConfiguration();
-//    }
-
     /**
      * Метод инициирует процесс настройки приложения.
      */
