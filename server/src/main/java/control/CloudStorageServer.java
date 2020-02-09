@@ -21,10 +21,6 @@ import java.nio.file.Paths;
 public class CloudStorageServer {
     //инициируем переменную для печати сообщений в консоль
     private final PrintStream log = System.out;
-//    //инициируем константу порта сервера
-//    private final int PORT = 8189;
-//    //инициируем объект пути к корневой директории облачного хранилища(сервера) для хранения файлов клиентов
-//    private static final Path STORAGE_ROOT_PATH = Paths.get("storage","server_storage");
     //объявляем переменную порта сервера
     private int PORT;
     //объявляем объект пути к корневой директории облачного хранилища(сервера) для хранения файлов клиентов
@@ -40,45 +36,58 @@ public class CloudStorageServer {
     private FileUtils fileUtils = FileUtils.getOwnObject();
     //принимаем объект обработчика операций с объектами элементов списков в GUI
     private final ItemUtils itemUtils = ItemUtils.getOwnObject();
-
+    //инициируем объект хендлера настроек приложения
     PropertiesHandler propertiesHandler = PropertiesHandler.getOwnObject();
 
-    public CloudStorageServer() {
-        initConfiguration();
-    }
+//    public CloudStorageServer() {
+//        //инициируем процесс настройки приложения
+//        initConfiguration();
+//    }
 
-    private void initConfiguration() {
-
+    /**
+     * Метод инициирует процесс настройки приложения.
+     */
+    public void initConfiguration() {
+        //запускаем процесс применения конфигурации приложения
         propertiesHandler.setConfiguration();
-
         //инициируем переменную порта соединения
         int port = propertiesHandler.getCurrentProperties().getPort_custom();
+        //если пользователем задано другое значение порта
         if(port > 0){
-
+            //применяем значение пользователя
             PORT = port;
         } else {
+            //в противном случае применяем дефорлтное значение порта
             PORT = propertiesHandler.getCurrentProperties().getPORT_DEFAULT();
         }
-        System.out.println("CloudStorageClient() - PORT: " + PORT);
+        //выводим в лог примененное значение порта
+        printMsg("CloudStorageClient() - PORT: " + PORT);
 
-        //инициируем переменную объект пути к корневой директории для списка в клиентской части GUI
+        //инициируем строку установленного пользователем пути к корневой директории
         String root_absolute = propertiesHandler.getCurrentProperties().getRoot_absolute();
+        //если пользователем задано другое значение пути к корневой папке хранилища
         if(!root_absolute.isEmpty()){
+            //применяем значение пользователя
             STORAGE_ROOT_PATH = Paths.get(root_absolute);
         } else {
+            //в противном случае применяем дефорлтное значение пути к корню
             STORAGE_ROOT_PATH = Paths.get(propertiesHandler.getCurrentProperties().getROOT_DEFAULT());
         }
-        System.out.println("CloudStorageClient() - STORAGE_ROOT_PATH: " + STORAGE_ROOT_PATH);
-
+        //выводим в лог примененное значение пути к корню
+        printMsg("CloudStorageClient() - STORAGE_ROOT_PATH: " + STORAGE_ROOT_PATH);
+        //создаем объект файла корневой директории хранилища
         File rootFolder = new File(STORAGE_ROOT_PATH.toString());
+        //если деректория еще не создана
         if(!rootFolder.exists()){
-
-            System.out.println("CloudStorageClient() - " +
+            //создаем новую корневую директорию и выводим результат в лог
+            printMsg("CloudStorageServer() - " +
                     "rootFolder.mkdir(): " + rootFolder.mkdir());
         }
-
     }
 
+    /**
+     * Метод запускает приложение сервера.
+     */
     public void run() throws Exception {
         //инициируем объект контроллера авторизации пользователей
         usersAuthController = UsersAuthController.getOunInstance(this);

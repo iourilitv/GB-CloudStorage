@@ -6,6 +6,8 @@ import control.CloudStorageServer;
 public class ServerMain {
 
     public static void main(String[] args) throws Exception {
-        new CloudStorageServer().run();
+        CloudStorageServer css = new CloudStorageServer();
+        css.initConfiguration();
+        css.run();
     }
 }
