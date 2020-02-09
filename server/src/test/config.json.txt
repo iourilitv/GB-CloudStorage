@@ -1,0 +1,1 @@
+{"PORT_DEFAULT":8189,"ROOT_DEFAULT":"storage","port_custom":9999,"root_absolute":"D:\\GeekBrains\\20191130_GB-Разработка_сетевого_хранилища_на_Java\\cloudstorage\\server\\target"}
