@@ -15,7 +15,7 @@ public class TestReadFilePredicate {
         //в main или test
         URI uri;
         try {
-            uri = ClassLoader.getSystemResource("from_main/resources/client_main.cfg").toURI();
+            uri = ClassLoader.getSystemResource("to_main/resources/client_main.cfg").toURI();
 
 //            File fileMain = new File(uri);
 //            System.out.println("TestReadFilePredicate - fileMain.toPath(): " + fileMain.toPath());
@@ -195,15 +195,15 @@ public class TestReadFilePredicate {
         return origin.substring(startIndex, stopIndex);
     }
 
-    public static <T> List<T> myOwnFilter(List<T> list, Predicate<T> predicate) {
-        List<T> copy = new ArrayList<>(list);
-        Iterator<T> iter = copy.iterator();
-        while (iter.hasNext()) {
-            T o = iter.next();
-            if (!predicate.test(o)) {
-                iter.remove();
-            }
-        }
-        return copy;
-    }
+//    public static <T> List<T> myOwnFilter(List<T> list, Predicate<T> predicate) {
+//        List<T> copy = new ArrayList<>(list);
+//        Iterator<T> iter = copy.iterator();
+//        while (iter.hasNext()) {
+//            T o = iter.next();
+//            if (!predicate.test(o)) {
+//                iter.remove();
+//            }
+//        }
+//        return copy;
+//    }
 }

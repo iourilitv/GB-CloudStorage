@@ -9,39 +9,46 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AppProperties {
-    private static final AppProperties ownObject = new AppProperties();
+/**
+ * This class responds for operations with client app's properties.
+ */
+public class PropertiesHandler {
+    //инициируем синглтон хендлера настроек
+    private static final PropertiesHandler ownObject = new PropertiesHandler();
 
-    public static AppProperties getOwnObject() {
+    public static PropertiesHandler getOwnObject() {
         return ownObject;
     }
-
+    //инициируем константу строки пути к файлу настроек(в папке, где разварачивается jar-архив)
     private final String filePathname = "client.cfg";
+    //инициируем коллекцию дефолтных настроек приложения
     private final List<String> defaultProperties = Arrays.asList(
-            "<Module>client_main</Module>",
-            "<IP_ADDR>192.168.1.103</IP_ADDR><--192.168.1.102-->",
-            "<PORT>8189</PORT>",
+            "<Module>client</Module>",
+            "<IP_ADDR_DEFAULT>192.168.1.103</IP_ADDR_DEFAULT>",
+            "<IP_ADDR></IP_ADDR>",
+            "<PORT_DEFAULT>8189</PORT_DEFAULT>",
+            "<PORT></PORT>",
             "<Root_default>client_storage</Root_default>",
             "<Root_absolute></Root_absolute>"
     );
-
+    //инициируем коллекцию текущих настроек приложения
     private List<String> currentProperties = new ArrayList<>();
 
     //первом запуске приложения создаем новый конфигурационный файл и копируем
     // в него коллекцию свойств по строчно
     void setConfiguration() {
+        //инициируем объект файла
         File cfgFile = new File(filePathname);
         try {
             //если это первый запуск приложения
             if (!cfgFile.exists()) {
                 //создаем конфигурационный файл и копируем в него коллекцию свойств
                 Files.write(cfgFile.toPath(), defaultProperties, StandardOpenOption.CREATE);
-                //если это не первый запуск приложения
             }
             //читаем данные построчно из файла в коллекцию
             currentProperties.addAll(Files.lines(cfgFile.toPath())
                     .collect(Collectors.toList()));
-
+            //выводим в лог коллекцию текущих свойств приложения
             System.out.println("CloudStorageClient.initConfiguration() " +
                     "- currentProperties: " + currentProperties);
         } catch (IOException e) {

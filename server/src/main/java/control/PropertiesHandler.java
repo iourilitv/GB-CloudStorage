@@ -9,7 +9,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.stream.Collectors;
 
 /**
- * This class responds for operations with app's properties.
+ * This class responds for operations with server app's properties.
  */
 public class PropertiesHandler {
     //инициируем синглтон хендлера настроек

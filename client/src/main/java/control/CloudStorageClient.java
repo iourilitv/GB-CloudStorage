@@ -24,12 +24,6 @@ public class CloudStorageClient {
     private GUIController guiController;
     //принимаем объект соединения
     private ChannelHandlerContext ctx;
-//    //инициируем константу IP адреса сервера(здесь - адрес моего ноута в домашней локальной сети)
-//    private static final String IP_ADDR = "localhost";//"192.168.1.102";//89.222.249.131(внешний белый адрес)
-//    //инициируем константу порта соединения
-//    private static final int PORT = 8189;
-//    //инициируем переменную объект пути к корневой директории для списка в клиентской части GUI
-//    public static Path CLIENT_ROOT_PATH = Paths.get("storage","client_storage");
     //объявляем переменную IP адреса сервера
     private static String IP_ADDR;
     //объявляем переменную порта соединения
@@ -41,85 +35,63 @@ public class CloudStorageClient {
     private FileUtils fileUtils = FileUtils.getOwnObject();
     //принимаем объект обработчика операций с объектами элементов списков в GUI
     private final ItemUtils itemUtils = ItemUtils.getOwnObject();
-
-    private final AppProperties appProperties = AppProperties.getOwnObject();
-
-    //TODO temporarily for test only
-    public CloudStorageClient() {
-
-//        appProperties.initConfiguration();
-//
-//        //инициируем переменную IP адреса сервера
-//        IP_ADDR = appProperties.getProperty("IP_ADDR");
-//
-//        System.out.println("CloudStorageClient() - IP_ADDR: " + IP_ADDR);
-//
-//        //инициируем переменную порта соединения
-//        String port = appProperties.getProperty("PORT");
-//        System.out.println("CloudStorageClient() - port: " + port);
-//
-//        PORT = Integer.parseInt(port);
-//
-//        //инициируем переменную объект пути к корневой директории для списка в клиентской части GUI
-//        String root_absolute = appProperties.getProperty("Root_absolute");
-//        if(root_absolute.isEmpty()){
-//
-//            CLIENT_ROOT_PATH = Paths.get(appProperties.getProperty("Root_default"));
-//        } else {
-//            CLIENT_ROOT_PATH = Paths.get(root_absolute);
-//        }
-//
-//        System.out.println("CloudStorageClient() - CLIENT_ROOT_PATH: " + CLIENT_ROOT_PATH);
-//
-//        File rootFolder = new File(CLIENT_ROOT_PATH.toString());
-//        if(!rootFolder.exists()){
-//
-//            System.out.println("CloudStorageClient() - " +
-//                    "rootFolder.mkdir(): " + rootFolder.mkdir());
-//        }
-
-        initConfiguration();
-
-    }
+    //инициируем объект хендлера настроек приложения
+    private final PropertiesHandler propertiesHandler = PropertiesHandler.getOwnObject();
 
     public CloudStorageClient(GUIController guiController) {
         //принимаем объект контроллера GUI
         this.guiController = guiController;
-
-//        initConfiguration("client_default.cfg", "client.cfg");
-//        initConfiguration();
     }
 
-    private void initConfiguration() {
-
-        appProperties.setConfiguration();
-
+    /**
+     * Метод инициирует процесс настройки серверного приложения.
+     */
+    public void initConfiguration() {
+        //запускаем процесс применения конфигурации приложения
+        propertiesHandler.setConfiguration();
         //инициируем переменную IP адреса сервера
-        IP_ADDR = appProperties.getProperty("IP_ADDR");
-
-        System.out.println("CloudStorageClient() - IP_ADDR: " + IP_ADDR);
+        String ip_addr = propertiesHandler.getProperty("IP_ADDR");
+        //если пользователем задано другое значение IP адреса
+        if(!ip_addr.isEmpty()){
+            //применяем значение пользователя
+            IP_ADDR = ip_addr;
+        } else {
+            //в противном случае применяем дефорлтное значение IP адреса
+            IP_ADDR = propertiesHandler.getProperty("IP_ADDR_DEFAULT");
+        }
+        //выводим в лог значение ip-адреса сервера
+        printMsg("CloudStorageClient.initConfiguration() - IP_ADDR: " + IP_ADDR);
 
         //инициируем переменную порта соединения
-        String port = appProperties.getProperty("PORT");
-        System.out.println("CloudStorageClient() - port: " + port);
-
-        PORT = Integer.parseInt(port);
+        String port = propertiesHandler.getProperty("PORT");
+        //если пользователем задано другое значение порта
+        if(!port.isEmpty()){
+            //применяем значение пользователя
+            PORT = Integer.parseInt(port);
+        } else {
+            //в противном случае применяем дефорлтное значение порта
+            PORT = Integer.parseInt(propertiesHandler.getProperty("PORT_DEFAULT"));
+        }
+        //выводим в лог значение порта сервера
+        printMsg("CloudStorageClient.initConfiguration() - PORT: " + PORT);
 
         //инициируем переменную объект пути к корневой директории для списка в клиентской части GUI
-        String root_absolute = appProperties.getProperty("Root_absolute");
-        if(root_absolute.isEmpty()){
-
-            CLIENT_ROOT_PATH = Paths.get(appProperties.getProperty("Root_default"));
-        } else {
+        String root_absolute = propertiesHandler.getProperty("Root_absolute");
+        if(!root_absolute.isEmpty()){
+            //применяем значение пользователя
             CLIENT_ROOT_PATH = Paths.get(root_absolute);
+        } else {
+            //в противном случае применяем дефорлтное значение пути к корневой директории
+            CLIENT_ROOT_PATH = Paths.get(propertiesHandler.getProperty("Root_default"));
         }
-
-        System.out.println("CloudStorageClient() - CLIENT_ROOT_PATH: " + CLIENT_ROOT_PATH);
-
+        //выводим в лог значение корневой директории клиента
+        printMsg("CloudStorageClient.initConfiguration() - CLIENT_ROOT_PATH: " + CLIENT_ROOT_PATH);
+        //создаем объект файла корневой директории клиента
         File rootFolder = new File(CLIENT_ROOT_PATH.toString());
+        //если деректория еще не создана
         if(!rootFolder.exists()){
-
-            System.out.println("CloudStorageClient() - " +
+            //создаем новую корневую директорию и выводим результат в лог
+            printMsg("CloudStorageClient.initConfiguration() - " +
                     "rootFolder.mkdir(): " + rootFolder.mkdir());
         }
 

@@ -21,21 +21,8 @@
     </dependencies>
 
     <build>
-        <finalName>TestInitCSC</finalName>
+        <finalName>CloudStorageClient_LYS</finalName>
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-jar-plugin</artifactId>-->
-<!--                <version>2.4</version>-->
-<!--                <configuration>-->
-<!--                    <archive>-->
-<!--                        <manifest>-->
-<!--                            <mainClass>main/java/ClientMain</mainClass>-->
-<!--                        </manifest>-->
-<!--                    </archive>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
-
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.2.0</version>
@@ -45,7 +32,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>TestInitCSC</mainClass>
+                            <mainClass>ClientMain</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -64,15 +51,6 @@
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
-<!--            <resource>-->
-<!--                <directory>src/main/java</directory>-->
-<!--                <includes>-->
-<!--                    <include>**/*.*</include>-->
-<!--                </includes>-->
-<!--&lt;!&ndash;                <excludes>&ndash;&gt;-->
-<!--&lt;!&ndash;                    <exclude>my-config.properties</exclude>&ndash;&gt;-->
-<!--&lt;!&ndash;                </excludes>&ndash;&gt;-->
-<!--            </resource>-->
         </resources>
     </build>
 

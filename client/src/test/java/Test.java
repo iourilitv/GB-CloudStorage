@@ -8,7 +8,7 @@ public class Test {
     public static void main(String[] args) {
         //файл должен лежать в директории resources той части модуля, где находится этот класс
         //в main или test
-        File fileMain = new File("from_main/resources/client_main.cfg");
+        File fileMain = new File("to_main/resources/client_main.cfg");
         File fileTest = new File("client_test.cfg");
 
         System.out.println("[test]Test. - fileMain.getName(): " + fileMain.getName() +
@@ -29,7 +29,7 @@ public class Test {
 
 //            Files.lines(file.toPath()).forEach(System.out::println);//java.nio.file.NoSuchFileException: client.cfg
 
-            Files.lines(Paths.get(ClassLoader.getSystemResource("from_main/resources/client_main.cfg").toURI())).
+            Files.lines(Paths.get(ClassLoader.getSystemResource("to_main/resources/client_main.cfg").toURI())).
                     forEach(System.out::println);
             //<Module>main</>
             //<Root_default>"storage"</>

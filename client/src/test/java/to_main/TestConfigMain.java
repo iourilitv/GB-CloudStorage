@@ -1,4 +1,4 @@
-package from_main;
+package to_main;
 
 import utils.FileUtils;
 

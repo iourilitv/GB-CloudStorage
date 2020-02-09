@@ -1,4 +1,4 @@
-package from_main;
+package to_main;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,7 @@ public class TestMain {
     public static void main(String[] args) {
         //файл должен лежать в директории resources той части модуля, где находится этот класс
         //в main или test
-        File fileMain = new File("from_main/resources/client_main.cfg");
+        File fileMain = new File("to_main/resources/client_main.cfg");
         File fileTest = new File("client_test.cfg");
 
         System.out.println("[main]from_main.TestMain. - fileMain.getName(): " + fileMain.getName() +
@@ -27,7 +27,7 @@ public class TestMain {
 
             //как прочитать по линейно файл в директории resources модуля проекта
             //ресурс должен лежать в main/resources даже, если сам класс находится в test/java
-            Files.lines(Paths.get(ClassLoader.getSystemResource("from_main/resources/client_main.cfg").toURI())).
+            Files.lines(Paths.get(ClassLoader.getSystemResource("to_main/resources/client_main.cfg").toURI())).
                     forEach(System.out::println);
             //<Module>main</>
             //<Root_default>"storage"</>

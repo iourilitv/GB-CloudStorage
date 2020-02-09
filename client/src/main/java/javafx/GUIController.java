@@ -79,6 +79,8 @@ public class GUIController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         //инициируем объект клиента облачного хранилища
         storageClient = new CloudStorageClient(GUIController.this);
+        //устанавливаем настройки приложения
+        storageClient.initConfiguration();
         //инициируем объекты директории по умолчанию в клиентской и серверной части GUI
         clientDefaultDirItem = new Item(CLIENT_DEFAULT_DIR);
         storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);

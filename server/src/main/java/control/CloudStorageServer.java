@@ -37,7 +37,7 @@ public class CloudStorageServer {
     //принимаем объект обработчика операций с объектами элементов списков в GUI
     private final ItemUtils itemUtils = ItemUtils.getOwnObject();
     //инициируем объект хендлера настроек приложения
-    PropertiesHandler propertiesHandler = PropertiesHandler.getOwnObject();
+    private final PropertiesHandler propertiesHandler = PropertiesHandler.getOwnObject();
 
     /**
      * Метод инициирует процесс настройки приложения.
