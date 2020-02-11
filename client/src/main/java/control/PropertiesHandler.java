@@ -24,7 +24,7 @@ public class PropertiesHandler {
     //инициируем коллекцию дефолтных настроек приложения
     private final List<String> defaultProperties = Arrays.asList(
             "<Module>client</Module>",
-            "<IP_ADDR_DEFAULT>192.168.1.103</IP_ADDR_DEFAULT>",
+            "<IP_ADDR_DEFAULT>localhost</IP_ADDR_DEFAULT><--192.168.1.103-->",
             "<IP_ADDR></IP_ADDR>",
             "<PORT_DEFAULT>8189</PORT_DEFAULT>",
             "<PORT></PORT>",

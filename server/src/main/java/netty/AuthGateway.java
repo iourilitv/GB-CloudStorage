@@ -8,6 +8,8 @@ import control.CloudStorageServer;
 import utils.CommandMessage;
 import utils.Commands;
 import jdbc.UsersAuthController;
+
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -124,6 +126,41 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
      * @param ctx - объект соединения netty, установленного с клиентом
      * @param commandMessage - объект сообщения(команды)
      */
+//    private void onAuthClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) {
+//        //вынимаем объект авторизационного сообщения из объекта сообщения(команды)
+//        AuthMessage authMessage = (AuthMessage) commandMessage.getMessageObject();
+//
+//        //TODO temporarily
+//        printMsg("[server]AuthGateway.onAuthClientRequest() - " +
+//                "login: " + authMessage.getLogin() + ", password: " + authMessage.getPassword());
+//
+//        //если авторизации клиента в облачном хранилище прошла удачно
+//        if(usersAuthController.authorizeUser(authMessage, ctx)){
+//            //меняем команду на успешную
+//            command = Commands.SERVER_RESPONSE_AUTH_OK;
+//
+//            //TODO проверить как будут влиять несколько клиентов друг на друга
+//            //добавляем логин пользователя(имя его папки в сетевом хранилище)
+//            // к корневой директории клиента по умолчанию
+//            Path userStorageRoot = storageServer.getSTORAGE_ROOT_PATH();
+//            userStorageRoot = userStorageRoot.resolve(authMessage.getLogin());
+//            //пробрасываем дальше объект сообщения об успешной авторизации клиента
+//            ctx.fireChannelRead(new CommandMessage(command, userStorageRoot.toString()));
+//        //если авторизации клиента в облачном хранилище не прошла
+//        } else {
+//            //инициируем переменную типа команды - ответ об ошибке
+//            //в этом случае, в объекте сообщения(команды) вернем принятый от клиента объект авторизационного сообщения
+//            command = Commands.SERVER_RESPONSE_AUTH_ERROR;
+//            //инициируем новый объект сообщения(команды)
+//            commandMessage = new CommandMessage(command, authMessage);
+//            //отправляем объект сообщения(команды) клиенту
+//            ctx.writeAndFlush(commandMessage);
+//
+//            //TODO temporarily
+//            printMsg("[server]AuthGateway.onAuthClientRequest() - ctx: " + ctx +
+//                    ", command: " + commandMessage.getCommand());
+//        }
+//    }
     private void onAuthClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) {
         //вынимаем объект авторизационного сообщения из объекта сообщения(команды)
         AuthMessage authMessage = (AuthMessage) commandMessage.getMessageObject();
@@ -132,19 +169,28 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
         printMsg("[server]AuthGateway.onAuthClientRequest() - " +
                 "login: " + authMessage.getLogin() + ", password: " + authMessage.getPassword());
 
-        //если авторизации клиента в облачном хранилище прошла удачно
-        if(usersAuthController.authorizeUser(authMessage, ctx)){
+        //если есть директория с именем логина пользователя и
+        // авторизации клиента в облачном хранилище прошла удачно
+        if(usersAuthController.isUserRootDirExist(authMessage.getLogin()) &&
+                usersAuthController.authorizeUser(authMessage, ctx)){
             //меняем команду на успешную
             command = Commands.SERVER_RESPONSE_AUTH_OK;
 
-            //TODO проверить как будут влиять несколько клиентов друг на друга
-            //добавляем логин пользователя(имя его папки в сетевом хранилище)
-            // к корневой директории клиента по умолчанию
-            Path userStorageRoot = storageServer.getSTORAGE_ROOT_PATH();
-            userStorageRoot = userStorageRoot.resolve(authMessage.getLogin());
+//            //TODO проверить как будут влиять несколько клиентов друг на друга
+//            //добавляем логин пользователя(имя его папки в сетевом хранилище)
+//            // к корневой директории клиента по умолчанию
+//            Path userStorageRoot = storageServer.getSTORAGE_ROOT_PATH();
+//            userStorageRoot = userStorageRoot.resolve(authMessage.getLogin());
+//            //если есть директория с именем логина пользователя
+//            if(Files.exists(userStorageRoot)){
+//                //пробрасываем дальше объект сообщения об успешной авторизации клиента
+//                ctx.fireChannelRead(new CommandMessage(command, userStorageRoot.toString()));
+//                return;
+//            }
             //пробрасываем дальше объект сообщения об успешной авторизации клиента
-            ctx.fireChannelRead(new CommandMessage(command, userStorageRoot.toString()));
-        //если авторизации клиента в облачном хранилище не прошла
+            ctx.fireChannelRead(new CommandMessage(command, authMessage.getLogin()));
+        //если авторизации клиента в облачном хранилище не прошла или
+        // директория с именем логина отсутствует
         } else {
             //инициируем переменную типа команды - ответ об ошибке
             //в этом случае, в объекте сообщения(команды) вернем принятый от клиента объект авторизационного сообщения

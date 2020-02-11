@@ -136,7 +136,7 @@ public class UsersAuthController {
      * @param login - логин нового пользователя
      * @return - результат проверки есть ли уже корневая директория для заданного логина
      */
-    private boolean isUserRootDirExist(String login) {
+    public boolean isUserRootDirExist(String login) {
         return storageServer.isUserRootDirExist(login);
     }
 

@@ -23,6 +23,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
 
     //принимаем объект реального пути к корневой директории пользователя в сетевом хранилище
     private Path userStorageRoot;
+    //принимаем логин пользователя
+    private String login;
     //объявляем объект файлового обработчика
     private FileUtils fileUtils;
     //объявляем переменную типа команды
@@ -110,9 +112,23 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * Возвращает список объектов в корневой директорию пользователя в сетевом хранилище.
      * @param commandMessage - объект сообщения(команды)
      */
+//    private void onAuthClientRequest(CommandMessage commandMessage) {
+//        //вынимаем объект реального пути к его корневой директории клиента в сетевом хранилище
+//        userStorageRoot = Paths.get(commandMessage.getDirectory());
+//        //инициируем объект для принятой директории сетевого хранилища
+//        Item storageDirItem = new Item(storageServer.getSTORAGE_DEFAULT_DIR());
+//        //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
+//        // заданной директории клиента в сетевом хранилище
+//        sendItemsList(storageDirItem, commandMessage.getCommand());
+//        //удаляем входящий хэндлер AuthGateway, т.к. после авторизации он больше не нужен
+//        printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
+//                "removed pipeline: " + ctx.channel().pipeline().remove(AuthGateway.class));
+//    }
     private void onAuthClientRequest(CommandMessage commandMessage) {
-        //вынимаем объект реального пути к его корневой директории клиента в сетевом хранилище
-        userStorageRoot = Paths.get(commandMessage.getDirectory());
+        //принимаем логин пользователя
+        login = commandMessage.getMessage();
+        //формируем объект реального пути к его корневой директории клиента в сетевом хранилище
+        userStorageRoot = Paths.get(storageServer.getSTORAGE_ROOT_PATH().toString(), login);
         //инициируем объект для принятой директории сетевого хранилища
         Item storageDirItem = new Item(storageServer.getSTORAGE_DEFAULT_DIR());
         //отправляем объект сообщения(команды) клиенту со списком файлов и папок в
@@ -130,8 +146,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     private void onDisconnectClientRequest(CommandMessage commandMessage) {
         //отправляем объект сообщения(команды) клиенту
         ctx.writeAndFlush(new CommandMessage(Commands.SERVER_RESPONSE_DISCONNECT_OK));
-        //выделяем логин пользователя из его корневой директории
-        String login = storageServer.getSTORAGE_ROOT_PATH().relativize(userStorageRoot).toString();
+
+//        //выделяем логин пользователя из его корневой директории
+//        String login = storageServer.getSTORAGE_ROOT_PATH().relativize(userStorageRoot).toString();
+
         //удаляем пользователя из списка авторизованных, если он был авторизован
         storageServer.getUsersAuthController().deAuthorizeUser(login);
         //закрываем соединение с клиентом(вроде на ctx.close(); не отключал соединение?)
