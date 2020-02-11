@@ -12,9 +12,6 @@ public class CommandMessage implements Serializable {
     private Commands command;
     //принимаем объект сообщения(команды) операции
     private AbstractMessage messageObject;
-
-//    //принимаем объект пути к заданной директории
-//    private String directory;
     //принимаем объект пути к заданной директории
     private String message;
 
@@ -22,10 +19,6 @@ public class CommandMessage implements Serializable {
         this.command = command;
     }
 
-//    public CommandMessage(Commands command, String directory) {
-//        this.command = command;
-//        this.directory = directory;
-//    }
     public CommandMessage(Commands command, String message) {
         this.command = command;
         this.message = message;
@@ -44,9 +37,6 @@ public class CommandMessage implements Serializable {
         return messageObject;
     }
 
-//    public String getDirectory() {
-//        return directory;
-//    }
     public String getMessage() {
         return message;
     }
