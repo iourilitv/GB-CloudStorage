@@ -2,8 +2,7 @@ package control;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,8 +35,42 @@ public class PropertiesHandler {
 
     //первом запуске приложения создаем новый конфигурационный файл и копируем
     // в него коллекцию свойств по строчно
+//    void setConfiguration() {
+//        //инициируем объект файла
+//        File cfgFile = new File(filePathname);
+//        try {
+//            //если это первый запуск приложения
+//            if (!cfgFile.exists()) {
+//                //создаем конфигурационный файл и копируем в него коллекцию свойств
+//                Files.write(cfgFile.toPath(), defaultProperties, StandardOpenOption.CREATE);
+//            }
+//            //читаем данные построчно из файла в коллекцию
+//            currentProperties.addAll(Files.lines(cfgFile.toPath())
+//                    .collect(Collectors.toList()));
+//            //выводим в лог коллекцию текущих свойств приложения
+//            System.out.println("CloudStorageClient.initConfiguration() " +
+//                    "- currentProperties: " + currentProperties);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
     void setConfiguration() {
-        //инициируем объект файла
+        //инициируем объект файла источника
+        File readmeFromFile = new File(
+                getClass().getClassLoader().getResource("readme.txt").getFile()
+        );
+        System.out.println("[client]PropertiesHandler.setConfiguration() - " +
+                "readmeFromFile.exists(): " + readmeFromFile.exists());
+        //в JIDEA: [client]PropertiesHandler.setConfiguration() - file.exists(): false
+        //в jar: [client]PropertiesHandler.setConfiguration() - readmeFromFile.exists(): false
+
+//        try {
+//            Files.copy(readmeFromFile.toPath(), Paths.get("readme_out.txt"), StandardCopyOption.REPLACE_EXISTING);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+        //инициируем объект файла приемника
         File cfgFile = new File(filePathname);
         try {
             //если это первый запуск приложения

@@ -4,7 +4,11 @@ import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.stream.Collectors;
 
@@ -47,7 +51,53 @@ public class PropertiesHandler {
             currentProperties = gson.fromJson(fromJsonString, Properties.class);
             //выводим в лог конфигурацию настроек приложения
             printConfiguration(currentProperties);
-        } catch (IOException e) {
+
+            //***Trying to read a file in the resource***
+            //Variant #1. Wrong!
+//            InputStream inputStream = getClass().getResourceAsStream("readme.txt");
+//            System.out.println("PropertiesHandler.setConfiguration() - " +
+//                    "inputStream: " + inputStream);
+//            //в JIDEA: PropertiesHandler.setConfiguration() - inputStream: null
+//            //в jar: PropertiesHandler.setConfiguration() - inputStream: null
+//            Files.copy(inputStream,
+//                    Paths.get("readme.txt"), StandardCopyOption.REPLACE_EXISTING);
+//            //в JIDEA: Exception in thread "main" java.lang.NullPointerException
+//            //в jar: Exception in thread "main" java.lang.NullPointerException
+
+            //Variant #2. Wrong!
+//            Files.lines(Paths.get(ClassLoader.getSystemResource("readme.txt").toURI())).
+//                    forEach(System.out::println);
+//            //в JIDEA: работает
+//            //в jar: Exception in thread "main" java.lang.NullPointerException
+
+            //Variant #3. Wrong!
+//            Files.lines(Paths.get(getClass().getResource("readme.txt").toURI())).
+//                    forEach(System.out::println);
+//            //в JIDEA: Exception in thread "main" java.lang.NullPointerException
+//            //в jar: Exception in thread "main" java.lang.NullPointerException
+
+            //Variant #4.1 - Wrong!
+//            File file = new File(
+//                    getClass().getClassLoader().getResource("/" + "readme.txt").getFile()
+//            );
+//            //в JIDEA: Exception in thread "main" java.lang.NullPointerException
+//            //в jar: Exception in thread "main" java.lang.NullPointerException
+//            System.out.println("PropertiesHandler.setConfiguration() - " +
+//                    "file.getName(): " + file.getName());
+//            //в JIDEA: не дошел до этой строки
+//            //в jar: не дошел до этой строки
+
+            //Variant #4.2. Wrong!
+            File file = new File(
+                    getClass().getClassLoader().getResource("readme.txt").getFile()
+            );
+            System.out.println("PropertiesHandler.setConfiguration() - " +
+                    "file.getName(): " + file.getName() +
+                    ", file.exists(): " + file.exists());
+//            //в JIDEA: PropertiesHandler.setConfiguration() - file.getName(): readme.txt, file.exists(): false
+//            //в jar: PropertiesHandler.setConfiguration() - file.getName(): readme.txt, file.exists(): false
+
+        } catch (IOException/* | URISyntaxException*/ e) {
             e.printStackTrace();
         }
     }
