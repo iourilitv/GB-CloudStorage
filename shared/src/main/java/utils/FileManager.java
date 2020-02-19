@@ -24,8 +24,7 @@ public class FileManager {
      * @param fileName - имя файла источника в jar-архиве в папке utils/
      */
     public void copyFileToRuntimeRoot(String fileName){
-        try {
-            InputStream inputStream = getClass().getResourceAsStream(fileName);
+        try (InputStream inputStream = getClass().getResourceAsStream(fileName)){
             Files.copy(inputStream,
                     Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
