@@ -38,15 +38,8 @@ public class UsersAuthController {
         ownInstance.storageServer = storageServer;
         //инициируем множество авторизованных клиентов
         ownInstance.authorizedUsers = new HashMap<>();
-        // create the java statement
-//        Statement st = conn.createStatement();
+        //инициируем объект запроса в БД
         stmt = mysqlConnect.connect().createStatement();
-
-        //TODO temporarily
-        printMsg("UsersAuthController.init() - " +
-                "isUserRegistered(\"login1\"): " + isUserRegistered("login1"));
-        //UsersAuthController.init() - isUserRegistered("login1"): false
-
     }
 
     /**
@@ -183,26 +176,13 @@ public class UsersAuthController {
      * @param login - проверяемый логин
      * @return - результат проверки
      */
-//    public boolean isUserRegistered(String login) {
-//        return usersDB.isUserExistInMap(login);
-//    }
     public boolean isUserRegistered(String login) {
         // формирование запроса. '%s' - для последовательного подставления значений в соотвествующее место
         String sql = String.format("SELECT user_id FROM users WHERE login = '%s'", login);
         try {
             // оправка запроса и получение ответа из БД
             ResultSet rs = stmt.executeQuery(sql);
-            //java.lang.NullPointerException - нет инициализации stmt!
-
-//            printMsg("UsersAuthController.isUserRegistered() - rs: " + rs);
-            //UsersAuthController.isUserRegistered() - rs: com.mysql.cj.jdbc.result.ResultSetImpl@51b7e5df
-//            printMsg("UsersAuthController.isUserRegistered() - rs.next(): " + rs.next());
-            //UsersAuthController.isUserRegistered() - rs.next(): true
-            //и с ним
-            //UsersAuthController.init() - isUserRegistered("login1"): true
-
             // если есть строка, то rs.next() возвращает true, если нет - false
-//            if(!rs.next()) {
             if(rs.next()) {
                 //такой логин есть в БД
                 return true;
@@ -231,16 +211,12 @@ public class UsersAuthController {
      * @param password - полученный пароль пользователя
      * @return true, если проверка пары прошла успешно
      */
-//    private boolean checkLoginAndPassword(String login, String password) {
-//        return usersDB.checkLoginAndPassword(login, password);
-//    }
     private boolean checkLoginAndPassword(String login, String password) {
         // формирование запроса. '%s' - для последовательного подставления значений в соотвествующее место
         String sql = String.format("SELECT user_id FROM users WHERE login = '%s' AND password = '%s'", login, password);
         try {
             // оправка запроса и получение ответа из БД
             ResultSet rs = stmt.executeQuery(sql);
-
             // если есть строка, то rs.next() возвращает true, если нет - false
             if(rs.next()) {
                 //такая пара логина и пароля есть в БД

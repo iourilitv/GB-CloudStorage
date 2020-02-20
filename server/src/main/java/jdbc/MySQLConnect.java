@@ -5,13 +5,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+/**
+ * This class responds for database connection.
+ */
 public class MySQLConnect {
     // init database constants
     private static final String DATABASE_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/cloudstoragedb?serverTimezone=Europe/Moscow";
-//    TODO Не помогло
-//     URL = "jdbc:mysql://localhost:3306/mydbtest?useUnicode=true&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
-//    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/mysqltestdb?useUnicode=true&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 
     private static final String USERNAME = "root";
     private static final String PASSWORD = "mysql!1qwertY";
