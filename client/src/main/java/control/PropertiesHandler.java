@@ -24,7 +24,7 @@ public class PropertiesHandler {
     //инициируем переменную для печати сообщений в консоль
     private final PrintStream log = System.out;
     //инициируем константу строки пути к файлу настроек(в папке, где разварачивается jar-архив)
-    private final String filePathname = "client.cfg";
+    private final String cfgFilePathname = "client.cfg";
     //инициируем коллекцию текущих настроек приложения
     private List<String> currentProperties = new ArrayList<>();
     //инициируем объект менеджера для работы с файлами в jar-архиве
@@ -39,21 +39,24 @@ public class PropertiesHandler {
         // копию файла из jar-архива
         //ВНИМАНИЕ! Файл источник должен находиться в [server]src/main/resources/ в папке с именем таким же,
         // как и у класса откуда вызывается этот файла (в данном примере utils/)
-        fileManager.copyFileToRuntimeRoot("readme.txt");
+//        fileManager.copyFileToRuntimeRoot("readme.txt");
+        fileManager.copyFileToRuntimeRoot("readme.txt", "readme.txt");
 
         //инициируем объект файла приемника
-        File cfgFile = new File(filePathname);
+        File cfgFile = new File(cfgFilePathname);
         try {
             //если это первый запуск приложения
             if (!cfgFile.exists()) {
                 //создаем конфигурационный файл и копируем в него коллекцию свойств
-                fileManager.copyFileToRuntimeRoot("client.cfg");
+//                fileManager.copyFileToRuntimeRoot("client.cfg");
+                fileManager.copyFileToRuntimeRoot(cfgFilePathname, cfgFilePathname);
+
             }
             //читаем данные построчно из файла в коллекцию
             currentProperties.addAll(Files.lines(cfgFile.toPath())
                     .collect(Collectors.toList()));
             //выводим в лог коллекцию текущих свойств приложения
-            printMsg("CloudStorageClient.initConfiguration() " +
+            printMsg("PropertiesHandler.setConfiguration() " +
                     "- currentProperties: " + currentProperties);
         } catch (IOException e) {
             e.printStackTrace();
@@ -108,7 +111,7 @@ public class PropertiesHandler {
         }
         //дополнительная проверка, чтобы избежать исключения
         if(startIndex == -1 || stopIndex == -1){
-            System.out.println("AppProperties.stringScissors() - Wrong format of the origin string!");
+            printMsg("PropertiesHandler.stringScissors() - Wrong format of the origin string!");
             return null;
         }
         //возвращаем строку, вырезанную между двух строк-ограничителей
@@ -132,6 +135,36 @@ public class PropertiesHandler {
             }
         }
         return "";
+    }
+
+    void savePropertyIntoConfigFile(String propertyName, String propertyValue){
+//        String leftStone = "<" + propertyName + ">";
+//        String rightStone = "</" + propertyName + ">";
+//        String newElement = leftStone + propertyValue + rightStone;
+        String newElement = "<" + propertyName + ">" + propertyValue + "</" + propertyName + ">";
+
+        for (int i = 0; i < currentProperties.size(); i++) {
+//            if(currentProperties.get(i).startsWith(leftStone)){
+//                currentProperties.set(i, newElement);
+//            }
+            if(currentProperties.get(i).contains(propertyName)){
+                currentProperties.set(i, newElement);
+
+                printMsg("PropertiesHandler.savePropertyIntoConfigFile() - " +
+                        "currentProperties.get(" + i + "): " + currentProperties.get(i));
+            }
+        }
+
+        printMsg("PropertiesHandler.savePropertyIntoConfigFile() - " +
+                "currentProperties: " + currentProperties);
+
+        //переписываем конфигурационный файл, копируем в него текущую коллекцию свойств
+        try {
+            Files.write(Paths.get(cfgFilePathname), currentProperties, StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void printMsg(String msg){

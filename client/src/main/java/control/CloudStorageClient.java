@@ -94,7 +94,6 @@ public class CloudStorageClient {
             printMsg("CloudStorageClient.initConfiguration() - " +
                     "rootFolder.mkdir(): " + rootFolder.mkdir());
         }
-
     }
 
     /**
@@ -380,6 +379,14 @@ public class CloudStorageClient {
      */
     public Item[] clientItemsList(Item clientCurrentDirItem) {
         return itemUtils.getItemsList(clientCurrentDirItem, CLIENT_ROOT_PATH);
+    }
+
+    /**
+     * Метод-прокладка запускает процесс сохранения в конфигурационный файл
+     * нового значения абсолютного пути к корневой директории клиента.
+     */
+    public void saveClientRootPathProperty(String propertyValue){
+        propertiesHandler.savePropertyIntoConfigFile("Root_absolute", propertyValue);
     }
 
     public FileUtils getFileUtils() {

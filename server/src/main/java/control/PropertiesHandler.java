@@ -37,7 +37,9 @@ public class PropertiesHandler {
         // копию файла из jar-архива
         //ВНИМАНИЕ! Файл источник должен находиться в [server]src/main/resources/ в папке с именем таким же,
         // как и у класса откуда вызывается этот файла (в данном примере utils/)
-        fileManager.copyFileToRuntimeRoot("readme.txt");
+//        fileManager.copyFileToRuntimeRoot("readme.txt");
+        fileManager.copyFileToRuntimeRoot("readme.txt", "readme.txt");
+
         //инициируем объект файла
         File cfgFile = new File(filePathname);
         try {

@@ -1,3 +1,5 @@
+Client readme.
+
 ATTENTION!!!
 Don't change any DEFAULT properties.
 Don't insert manually into <Root_absolute></Root_absolute>
@@ -12,9 +14,3 @@ For instance:
 
 A default directory is the "client_storage" in the folder
 where the jar-archive has been executed.
-
-
-
-Also "Root_absolute" should be used only with "\\" instead of "\"!
-for instance:
-D:\\GeekBrains\\20191130_GB-Разработка_сетевого_хранилища_на_Java\\cloudstorage\\server\\target
