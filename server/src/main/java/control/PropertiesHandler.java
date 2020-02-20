@@ -1,6 +1,7 @@
 package control;
 
 import com.google.gson.Gson;
+import utils.FileManager;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -8,7 +9,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.stream.Collectors;
 
 /**
- * This class responds for operations with server app's properties.
+ * This server's class responds for operations with server app's properties.
  */
 public class PropertiesHandler {
     //инициируем синглтон хендлера настроек
@@ -24,12 +25,19 @@ public class PropertiesHandler {
     private final Gson gson = new Gson();
     //объявляем объект текущих свойств приложения
     private Properties currentProperties;
+    //инициируем объект менеджера для работы с файлами в jar-архиве
+    private final FileManager fileManager = FileManager.getOwnObject();
 
     /**
      * Метод первом запуске приложения создает новый конфигурационный json-файл и записывает
      * в него дефолтные настройки приложения и десериализует объект настроек при последующих.
      */
     void setConfiguration() {
+        //создаем в корневой папке приложения(где разворачивается jar-файл)
+        // копию файла из jar-архива
+        //ВНИМАНИЕ! Файл источник должен находиться в [server]src/main/resources/ в папке с именем таким же,
+        // как и у класса откуда вызывается этот файла (в данном примере utils/)
+        fileManager.copyFileToRuntimeRoot("readme.txt");
         //инициируем объект файла
         File cfgFile = new File(filePathname);
         try {

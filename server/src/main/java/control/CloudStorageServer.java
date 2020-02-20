@@ -38,18 +38,11 @@ public class CloudStorageServer {
     private final ItemUtils itemUtils = ItemUtils.getOwnObject();
     //инициируем объект хендлера настроек приложения
     private final PropertiesHandler propertiesHandler = PropertiesHandler.getOwnObject();
-    //инициируем объект менеджера для работы с файлами в jar-архиве
-    private final FileManager fileManager = FileManager.getOwnObject();
 
     /**
      * Метод инициирует процесс настройки приложения.
      */
     public void initConfiguration() {
-        //создаем в корневой папке приложения(где разворачивается jar-файл)
-        // копию файла из jar-архива
-        //ВНИМАНИЕ! Файл источник должен находиться в [server]src/main/resources/ в папке с именем таким же,
-        // как и у класса откуда вызывается этот файла (в данном примере utils/)
-        fileManager.copyFileToRuntimeRoot("readme.txt");
         //запускаем процесс применения конфигурации приложения
         propertiesHandler.setConfiguration();
         //инициируем переменную порта соединения
