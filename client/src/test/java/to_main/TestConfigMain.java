@@ -12,7 +12,7 @@ public class TestConfigMain {
     private static FileUtils fileUtils = FileUtils.getOwnObject();
 
     public static void main(String[] args) {
-        initConfiguration("client_default.cfg", "client.cfg");
+        initConfiguration("utils/client_default.cfg", "client.cfg");
 //        initConfiguration("client_default2.cfg", "client.cfg");
     }
 

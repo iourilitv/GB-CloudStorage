@@ -1,7 +1,10 @@
 package control;
 
+import utils.FileManager;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * This class responds for operations with client app's properties.
+ * This client's class responds for operations with client app's properties.
  */
 public class PropertiesHandler {
     //инициируем синглтон хендлера настроек
@@ -18,20 +21,25 @@ public class PropertiesHandler {
     public static PropertiesHandler getOwnObject() {
         return ownObject;
     }
+
+    //инициируем переменную для печати сообщений в консоль
+    private final PrintStream log = System.out;
     //инициируем константу строки пути к файлу настроек(в папке, где разварачивается jar-архив)
     private final String filePathname = "client.cfg";
-    //инициируем коллекцию дефолтных настроек приложения
-    private final List<String> defaultProperties = Arrays.asList(
-            "<Module>client</Module>",
-            "<IP_ADDR_DEFAULT>localhost</IP_ADDR_DEFAULT><--192.168.1.103-->",
-            "<IP_ADDR></IP_ADDR>",
-            "<PORT_DEFAULT>8189</PORT_DEFAULT>",
-            "<PORT></PORT>",
-            "<Root_default>client_storage</Root_default>",
-            "<Root_absolute></Root_absolute>"
-    );
+//    //инициируем коллекцию дефолтных настроек приложения
+//    private final List<String> defaultProperties = Arrays.asList(
+//            "<Module>client</Module>",
+//            "<IP_ADDR_DEFAULT>localhost</IP_ADDR_DEFAULT><--192.168.1.103-->",
+//            "<IP_ADDR></IP_ADDR>",
+//            "<PORT_DEFAULT>8189</PORT_DEFAULT>",
+//            "<PORT></PORT>",
+//            "<Root_default>client_storage</Root_default>",
+//            "<Root_absolute></Root_absolute>"
+//    );
     //инициируем коллекцию текущих настроек приложения
     private List<String> currentProperties = new ArrayList<>();
+    //инициируем объект менеджера для работы с файлами в jar-архиве
+    private final FileManager fileManager = FileManager.getOwnObject();
 
     //первом запуске приложения создаем новый конфигурационный файл и копируем
     // в него коллекцию свойств по строчно
@@ -55,20 +63,11 @@ public class PropertiesHandler {
 //        }
 //    }
     void setConfiguration() {
-        //инициируем объект файла источника
-        File readmeFromFile = new File(
-                getClass().getClassLoader().getResource("readme.txt").getFile()
-        );
-        System.out.println("[client]PropertiesHandler.setConfiguration() - " +
-                "readmeFromFile.exists(): " + readmeFromFile.exists());
-        //в JIDEA: [client]PropertiesHandler.setConfiguration() - file.exists(): false
-        //в jar: [client]PropertiesHandler.setConfiguration() - readmeFromFile.exists(): false
-
-//        try {
-//            Files.copy(readmeFromFile.toPath(), Paths.get("readme_out.txt"), StandardCopyOption.REPLACE_EXISTING);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        //создаем в корневой папке приложения(где разворачивается jar-файл)
+        // копию файла из jar-архива
+        //ВНИМАНИЕ! Файл источник должен находиться в [server]src/main/resources/ в папке с именем таким же,
+        // как и у класса откуда вызывается этот файла (в данном примере utils/)
+        fileManager.copyFileToRuntimeRoot("readme.txt");
 
         //инициируем объект файла приемника
         File cfgFile = new File(filePathname);
@@ -76,13 +75,14 @@ public class PropertiesHandler {
             //если это первый запуск приложения
             if (!cfgFile.exists()) {
                 //создаем конфигурационный файл и копируем в него коллекцию свойств
-                Files.write(cfgFile.toPath(), defaultProperties, StandardOpenOption.CREATE);
+//                Files.write(cfgFile.toPath(), defaultProperties, StandardOpenOption.CREATE);
+                fileManager.copyFileToRuntimeRoot("client.cfg");
             }
             //читаем данные построчно из файла в коллекцию
             currentProperties.addAll(Files.lines(cfgFile.toPath())
                     .collect(Collectors.toList()));
             //выводим в лог коллекцию текущих свойств приложения
-            System.out.println("CloudStorageClient.initConfiguration() " +
+            printMsg("CloudStorageClient.initConfiguration() " +
                     "- currentProperties: " + currentProperties);
         } catch (IOException e) {
             e.printStackTrace();
@@ -142,6 +142,10 @@ public class PropertiesHandler {
         return origin.substring(startIndex, stopIndex);
     }
 
+    public void printMsg(String msg){
+        log.append(msg).append("\n");
+    }
+
     String getProperty(String propertyName){
         String leftStone = "<" + propertyName + ">";
         String rightStone = "</" + propertyName + ">";
@@ -154,11 +158,11 @@ public class PropertiesHandler {
         return "";
     }
 
-    public List<String> getDefaultProperties() {
-        return defaultProperties;
-    }
+//    public List<String> getDefaultProperties() {
+//        return defaultProperties;
+//    }
 
-    public List<String> getCurrentProperties() {
-        return currentProperties;
-    }
+//    public List<String> getCurrentProperties() {
+//        return currentProperties;
+//    }
 }

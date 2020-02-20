@@ -88,7 +88,7 @@ public class CloudStorageClient {
         printMsg("CloudStorageClient.initConfiguration() - CLIENT_ROOT_PATH: " + CLIENT_ROOT_PATH);
         //создаем объект файла корневой директории клиента
         File rootFolder = new File(CLIENT_ROOT_PATH.toString());
-        //если деректория еще не создана
+        //если директория еще не создана
         if(!rootFolder.exists()){
             //создаем новую корневую директорию и выводим результат в лог
             printMsg("CloudStorageClient.initConfiguration() - " +
