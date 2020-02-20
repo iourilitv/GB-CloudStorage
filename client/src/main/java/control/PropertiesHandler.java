@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,42 +25,15 @@ public class PropertiesHandler {
     private final PrintStream log = System.out;
     //инициируем константу строки пути к файлу настроек(в папке, где разварачивается jar-архив)
     private final String filePathname = "client.cfg";
-//    //инициируем коллекцию дефолтных настроек приложения
-//    private final List<String> defaultProperties = Arrays.asList(
-//            "<Module>client</Module>",
-//            "<IP_ADDR_DEFAULT>localhost</IP_ADDR_DEFAULT><--192.168.1.103-->",
-//            "<IP_ADDR></IP_ADDR>",
-//            "<PORT_DEFAULT>8189</PORT_DEFAULT>",
-//            "<PORT></PORT>",
-//            "<Root_default>client_storage</Root_default>",
-//            "<Root_absolute></Root_absolute>"
-//    );
     //инициируем коллекцию текущих настроек приложения
     private List<String> currentProperties = new ArrayList<>();
     //инициируем объект менеджера для работы с файлами в jar-архиве
     private final FileManager fileManager = FileManager.getOwnObject();
 
-    //первом запуске приложения создаем новый конфигурационный файл и копируем
-    // в него коллекцию свойств по строчно
-//    void setConfiguration() {
-//        //инициируем объект файла
-//        File cfgFile = new File(filePathname);
-//        try {
-//            //если это первый запуск приложения
-//            if (!cfgFile.exists()) {
-//                //создаем конфигурационный файл и копируем в него коллекцию свойств
-//                Files.write(cfgFile.toPath(), defaultProperties, StandardOpenOption.CREATE);
-//            }
-//            //читаем данные построчно из файла в коллекцию
-//            currentProperties.addAll(Files.lines(cfgFile.toPath())
-//                    .collect(Collectors.toList()));
-//            //выводим в лог коллекцию текущих свойств приложения
-//            System.out.println("CloudStorageClient.initConfiguration() " +
-//                    "- currentProperties: " + currentProperties);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    /**
+     * Метод первом запуске приложения создает копию конфигурационного файла и файла readme.
+     * При повторином запуске копирует настройки в коллекцию текущих настроек.
+     */
     void setConfiguration() {
         //создаем в корневой папке приложения(где разворачивается jar-файл)
         // копию файла из jar-архива
@@ -75,7 +47,6 @@ public class PropertiesHandler {
             //если это первый запуск приложения
             if (!cfgFile.exists()) {
                 //создаем конфигурационный файл и копируем в него коллекцию свойств
-//                Files.write(cfgFile.toPath(), defaultProperties, StandardOpenOption.CREATE);
                 fileManager.copyFileToRuntimeRoot("client.cfg");
             }
             //читаем данные построчно из файла в коллекцию
@@ -90,6 +61,8 @@ public class PropertiesHandler {
     }
 
     /**
+     * TODO. This way is for studying only.
+     *  It could be solved easily by using approach like in the [server]module.
      * Метод из произвольной строки вырезает строку между двумя заданными строками.
      * @param origin - заданная произвольная строка
      * @param leftStone - левая(начальная) строка-метка, должна встречаться 1 раз в заданной строке
@@ -142,10 +115,13 @@ public class PropertiesHandler {
         return origin.substring(startIndex, stopIndex);
     }
 
-    public void printMsg(String msg){
-        log.append(msg).append("\n");
-    }
-
+    /**
+     * TODO. This way is for studying only.
+     *  It could be solved easily by using approach like in the [server]module.
+     * Метод возвращает значение свойства из коллекции текущих настроек приложения.
+     * @param propertyName - имя свойства
+     * @return строку значения свойства из коллекции текущих настроек приложения
+     */
     String getProperty(String propertyName){
         String leftStone = "<" + propertyName + ">";
         String rightStone = "</" + propertyName + ">";
@@ -158,11 +134,7 @@ public class PropertiesHandler {
         return "";
     }
 
-//    public List<String> getDefaultProperties() {
-//        return defaultProperties;
-//    }
-
-//    public List<String> getCurrentProperties() {
-//        return currentProperties;
-//    }
+    public void printMsg(String msg){
+        log.append(msg).append("\n");
+    }
 }
