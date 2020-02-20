@@ -8,9 +8,9 @@ import java.util.Properties;
 public class MySQLConnect {
     // init database constants
     private static final String DATABASE_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/mysqltestdb?useSSL=false";//"jdbc:mysql://localhost:3306/database_name";
-    //TODO Не помогло
-    // URL = "jdbc:mysql://localhost:3306/mydbtest?useUnicode=true&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/cloudstoragedb?serverTimezone=Europe/Moscow";
+//    TODO Не помогло
+//     URL = "jdbc:mysql://localhost:3306/mydbtest?useUnicode=true&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 //    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/mysqltestdb?useUnicode=true&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 
     private static final String USERNAME = "root";

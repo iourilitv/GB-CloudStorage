@@ -30,13 +30,13 @@ public class CloudStorageServer {
     private final String STORAGE_DEFAULT_DIR = "";
     //объявляем объекты директории пользователя по умолчанию в серверной части GUI
     private Item storageDefaultDirItem;
-    //объявляем объект контроллера авторизации клиента
-    private UsersAuthController usersAuthController;
+    //принимаем объект контроллера авторизации пользователей
+    private final UsersAuthController usersAuthController = UsersAuthController.getOwnInstance();
     //объявляем объект файлового обработчика
-    private FileUtils fileUtils = FileUtils.getOwnObject();
+    private final FileUtils fileUtils = FileUtils.getOwnObject();
     //принимаем объект обработчика операций с объектами элементов списков в GUI
     private final ItemUtils itemUtils = ItemUtils.getOwnObject();
-    //инициируем объект хендлера настроек приложения
+    //принимаем объект хендлера настроек приложения
     private final PropertiesHandler propertiesHandler = PropertiesHandler.getOwnObject();
 
     /**
@@ -84,8 +84,8 @@ public class CloudStorageServer {
      * Метод запускает приложение сервера.
      */
     public void run() throws Exception {
-        //инициируем объект контроллера авторизации пользователей
-        usersAuthController = UsersAuthController.getOunInstance(this);
+        //инициируем настройки контроллера авторизации пользователей
+        usersAuthController.init(this);
         //инициируем объект директории по умолчанию в серверной части GUI
         storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);
         //инициируем объект сетевого подключения

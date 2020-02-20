@@ -3,6 +3,10 @@ package jdbc;
 import io.netty.channel.ChannelHandlerContext;
 import messages.AuthMessage;
 import control.CloudStorageServer;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,21 +16,38 @@ import java.util.Map;
  */
 public class UsersAuthController {
     //инициируем объект класса
-    private static UsersAuthController ounInstance = new UsersAuthController();
+    private static UsersAuthController ownInstance = new UsersAuthController();
 
-    public static UsersAuthController getOunInstance(CloudStorageServer storageServer) {
-        ounInstance.storageServer = storageServer;
-        //инициируем множество авторизованных клиентов
-        ounInstance.authorizedUsers = new HashMap<>();
-        return ounInstance;
+    public static UsersAuthController getOwnInstance() {
+        return ownInstance;
     }
 
     //принимаем объект сервера
     private CloudStorageServer storageServer;
     //объявляем множество авторизованных клиентов <логин, соединение>
     private Map<String, ChannelHandlerContext> authorizedUsers;
-    //инициируем объект имитации соединения с БД
-    UsersDB usersDB = UsersDB.getOwnInstance();
+    //объявляем объект соединения с БД
+    // !_ note _! this is just init, it will not create a connection
+    MySQLConnect mysqlConnect = new MySQLConnect();
+    //объект для отправки запросов в JDBC драйвер(библиотека) с помощью метода connect(),
+    // который переправляет его в БД.
+    // И получает результат (объект класса ResultSet) с помощью executeQuery(sql)
+    private Statement stmt;
+
+    public void init(CloudStorageServer storageServer) throws SQLException {
+        ownInstance.storageServer = storageServer;
+        //инициируем множество авторизованных клиентов
+        ownInstance.authorizedUsers = new HashMap<>();
+        // create the java statement
+//        Statement st = conn.createStatement();
+        stmt = mysqlConnect.connect().createStatement();
+
+        //TODO temporarily
+        printMsg("UsersAuthController.init() - " +
+                "isUserRegistered(\"login1\"): " + isUserRegistered("login1"));
+        //UsersAuthController.init() - isUserRegistered("login1"): false
+
+    }
 
     /**
      * Метод-прокладка запускает процесс регистрации нового пользователя в БД
@@ -127,8 +148,24 @@ public class UsersAuthController {
     }
 
     //Метод добавления данных пользователя в БД
+//    public boolean addUserIntoDB(String login, String password){
+//        return usersDB.addUserIntoMap(login, password);
+//    }
     public boolean addUserIntoDB(String login, String password){
-        return usersDB.addUserIntoMap(login, password);
+        // формирование запроса. '%s' - для последовательного подставления значений в соотвествующее место
+        //записываем данные нового юзера в БД
+        String sql = String.format("INSERT INTO users (login, password) VALUES ('%s', '%s')", login, password);
+        try {
+            // оправка запроса и получение ответа из БД
+            int rs = stmt.executeUpdate(sql);
+            // если строка добавлена, то возвращается 1, если нет, то вернеться 0?
+            if(rs != 0) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
@@ -146,8 +183,34 @@ public class UsersAuthController {
      * @param login - проверяемый логин
      * @return - результат проверки
      */
+//    public boolean isUserRegistered(String login) {
+//        return usersDB.isUserExistInMap(login);
+//    }
     public boolean isUserRegistered(String login) {
-        return usersDB.isUserExistInMap(login);
+        // формирование запроса. '%s' - для последовательного подставления значений в соотвествующее место
+        String sql = String.format("SELECT user_id FROM users WHERE login = '%s'", login);
+        try {
+            // оправка запроса и получение ответа из БД
+            ResultSet rs = stmt.executeQuery(sql);
+            //java.lang.NullPointerException - нет инициализации stmt!
+
+//            printMsg("UsersAuthController.isUserRegistered() - rs: " + rs);
+            //UsersAuthController.isUserRegistered() - rs: com.mysql.cj.jdbc.result.ResultSetImpl@51b7e5df
+//            printMsg("UsersAuthController.isUserRegistered() - rs.next(): " + rs.next());
+            //UsersAuthController.isUserRegistered() - rs.next(): true
+            //и с ним
+            //UsersAuthController.init() - isUserRegistered("login1"): true
+
+            // если есть строка, то rs.next() возвращает true, если нет - false
+//            if(!rs.next()) {
+            if(rs.next()) {
+                //такой логин есть в БД
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
@@ -168,8 +231,25 @@ public class UsersAuthController {
      * @param password - полученный пароль пользователя
      * @return true, если проверка пары прошла успешно
      */
+//    private boolean checkLoginAndPassword(String login, String password) {
+//        return usersDB.checkLoginAndPassword(login, password);
+//    }
     private boolean checkLoginAndPassword(String login, String password) {
-        return usersDB.checkLoginAndPassword(login, password);
+        // формирование запроса. '%s' - для последовательного подставления значений в соотвествующее место
+        String sql = String.format("SELECT user_id FROM users WHERE login = '%s' AND password = '%s'", login, password);
+        try {
+            // оправка запроса и получение ответа из БД
+            ResultSet rs = stmt.executeQuery(sql);
+
+            // если есть строка, то rs.next() возвращает true, если нет - false
+            if(rs.next()) {
+                //такая пара логина и пароля есть в БД
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public void printMsg(String msg){
