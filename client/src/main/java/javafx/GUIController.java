@@ -811,11 +811,9 @@ public class GUIController implements Initializable {
         //если новая директория существует и это действительно директория
         if(newPath.toFile().exists() && newPath.toFile().isDirectory()){
             //записываем новое значение в переменную корневой директории
-//            CloudStorageClient.CLIENT_ROOT_PATH = Paths.get(newPathname);
             CloudStorageClient.CLIENT_ROOT_PATH = newPath;
             //сохраняем новое значение абсолютного пути
             storageClient.saveClientRootPathProperty(newPath.toString());
-
             //устанавливаем текущей директорией директорию по умолчанию
             updateClientItemListInGUI(clientDefaultDirItem);
             //устанавливаем текст в метку уведомлений

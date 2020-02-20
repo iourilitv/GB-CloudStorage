@@ -39,7 +39,6 @@ public class PropertiesHandler {
         // копию файла из jar-архива
         //ВНИМАНИЕ! Файл источник должен находиться в [server]src/main/resources/ в папке с именем таким же,
         // как и у класса откуда вызывается этот файла (в данном примере utils/)
-//        fileManager.copyFileToRuntimeRoot("readme.txt");
         fileManager.copyFileToRuntimeRoot("readme.txt", "readme.txt");
 
         //инициируем объект файла приемника
@@ -48,9 +47,7 @@ public class PropertiesHandler {
             //если это первый запуск приложения
             if (!cfgFile.exists()) {
                 //создаем конфигурационный файл и копируем в него коллекцию свойств
-//                fileManager.copyFileToRuntimeRoot("client.cfg");
                 fileManager.copyFileToRuntimeRoot(cfgFilePathname, cfgFilePathname);
-
             }
             //читаем данные построчно из файла в коллекцию
             currentProperties.addAll(Files.lines(cfgFile.toPath())
@@ -137,24 +134,29 @@ public class PropertiesHandler {
         return "";
     }
 
+    /**
+     * TODO. This way is for studying only.
+     *  It could be solved easily by using approach like in the [server]module.
+     * Метод заменяет элемент свойства в текущей коллекции настроек и
+     * перезаписывает концигурационный файл.
+     * @param propertyName - имя свойства
+     * @param propertyValue - новое значение свойства
+     */
     void savePropertyIntoConfigFile(String propertyName, String propertyValue){
-//        String leftStone = "<" + propertyName + ">";
-//        String rightStone = "</" + propertyName + ">";
-//        String newElement = leftStone + propertyValue + rightStone;
+        //собираем новое значение свойства
         String newElement = "<" + propertyName + ">" + propertyValue + "</" + propertyName + ">";
-
+        //в цикле листаем коллекцию текущих настроек
         for (int i = 0; i < currentProperties.size(); i++) {
-//            if(currentProperties.get(i).startsWith(leftStone)){
-//                currentProperties.set(i, newElement);
-//            }
+            //если в строке элемента есть заданное имя свойства
             if(currentProperties.get(i).contains(propertyName)){
+                //заменяем элемент на новый
                 currentProperties.set(i, newElement);
-
+                //выводим в лог измененный элемент
                 printMsg("PropertiesHandler.savePropertyIntoConfigFile() - " +
                         "currentProperties.get(" + i + "): " + currentProperties.get(i));
             }
         }
-
+        //выводим в лог измененную коллекцию текущих настроек
         printMsg("PropertiesHandler.savePropertyIntoConfigFile() - " +
                 "currentProperties: " + currentProperties);
 
@@ -164,7 +166,6 @@ public class PropertiesHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void printMsg(String msg){
