@@ -174,7 +174,7 @@ public class UsersAuthController {
             //инициируем объект запроса в БД
             Statement statement = connection.createStatement();
             // формирование запроса. '%s' - для последовательного подставления значений в соотвествующее место
-            String sql = String.format("SELECT user_id FROM users WHERE login = '%s'", login);
+            String sql = String.format("SELECT login FROM users WHERE login = '%s'", login);
             // оправка запроса и получение ответа из БД
             ResultSet rs = statement.executeQuery(sql);
             // если есть строка, то rs.next() возвращает true, если нет - false
@@ -243,15 +243,20 @@ public class UsersAuthController {
             //TODO не обращать внимание!
             // работает, но IDEA выдает ошибку -
             // не видит таблицу "users", хотя тут же создал новую как предложение исправить ошибку
-            String sql = "INSERT INTO users (login, secure_hash, secure_salt) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO users (login, username, email, secure_hash, secure_salt) " +
+                    "VALUES (?, ?, ?, ?, ?)";
             //инициируем объект подготовленнного запроса
             preparedStatement = connection.prepareStatement(sql);
             //добавляем в запрос параметр 1 - строку логина
             preparedStatement.setString(1, login);
-            //добавляем в запрос параметр 2 - байтовый массив безопасного хэша
-            preparedStatement.setBinaryStream(2, new ByteArrayInputStream(secure_hash));
-            //добавляем в запрос параметр 3 - байтовый массив "соли"
-            preparedStatement.setBinaryStream(3, new ByteArrayInputStream(secure_salt));
+            //добавляем в запрос параметр 2 - строку имени пользователя
+            preparedStatement.setString(2, login + "_name"); //FIXME add username into the method's parameter
+            //добавляем в запрос параметр 3 - строку email пользователя
+            preparedStatement.setString(3, login + "@email.com"); //FIXME add email into the method's parameter
+            //добавляем в запрос параметр 4 - байтовый массив безопасного хэша
+            preparedStatement.setBinaryStream(4, new ByteArrayInputStream(secure_hash));
+            //добавляем в запрос параметр 5 - байтовый массив "соли"
+            preparedStatement.setBinaryStream(5, new ByteArrayInputStream(secure_salt));
             //оправляем запрос и получяем ответ из БД
             int rs = preparedStatement.executeUpdate();
             // если строка добавлена, то возвращается 1, если нет, то вернеться 0?
