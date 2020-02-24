@@ -112,22 +112,31 @@ public class CloudStorageServer {
         return itemUtils.createDirectoryItem(storageDirPathname, storageDefaultDirItem, userStorageRoot);
     }
 
-    /**
-     * Метод запускает процесс сохранения полученного от клиента объекта(файла)
-     * в заданную директорию в сетевом хранилище.
-     * @param storageToDirItem - объект заданной директории в сетевом хранилище
-     * @param item - объект элемента от клиента
-     * @param data - массив байт из файла
-     * @param fileSize - размер файла
-     * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище
-     * @return - результат сохранения объекта
-     */
-    public boolean uploadItem(Item storageToDirItem, Item item, byte[] data, long fileSize, Path userStorageRoot){
+//    /**
+//     * Метод запускает процесс сохранения полученного от клиента объекта(файла)
+//     * в заданную директорию в сетевом хранилище.
+//     * @param storageToDirItem - объект заданной директории в сетевом хранилище
+//     * @param item - объект элемента от клиента
+//     * @param data - массив байт из файла
+//     * @param fileSize - размер файла
+//     * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище
+//     * @return - результат сохранения объекта
+//     */
+//    public boolean uploadItem(Item storageToDirItem, Item item, byte[] data, long fileSize, Path userStorageRoot){
+//        //инициируем новый объект пути к объекту
+//        Path realNewToItemPath = Paths.get(
+//                itemUtils.getRealPath(storageToDirItem.getItemPathname(), userStorageRoot).toString(),
+//                item.getItemName());
+//        return fileUtils.saveFile(realNewToItemPath, data, fileSize);
+//    }
+    public boolean uploadItem(FileMessage fileMessage, Path userStorageRoot){
+        //инициируем локальную переменную объекта директории назначения в сетевом хранилище
+        Item storageToDirItem = fileMessage.getStorageDirectoryItem();
         //инициируем новый объект пути к объекту
         Path realNewToItemPath = Paths.get(
                 itemUtils.getRealPath(storageToDirItem.getItemPathname(), userStorageRoot).toString(),
-                item.getItemName());
-        return fileUtils.saveFile(realNewToItemPath, data, fileSize);
+                fileMessage.getItem().getItemName());
+        return fileUtils.saveFile(fileMessage, realNewToItemPath);
     }
 
     /**

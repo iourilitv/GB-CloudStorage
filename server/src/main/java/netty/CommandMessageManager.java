@@ -191,8 +191,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
         //если сохранение прошло удачно
-        if(storageServer.uploadItem(fileMessage.getStorageDirectoryItem(), fileMessage.getItem(),
-                fileMessage.getData(), fileMessage.getFileSize(), userStorageRoot)){
+//        if(storageServer.uploadItem(fileMessage.getStorageDirectoryItem(), fileMessage.getItem(),
+//                fileMessage.getData(), fileMessage.getFileSize(), userStorageRoot)){
+        if(storageServer.uploadItem(fileMessage, userStorageRoot)){
+
             //отправляем сообщение на сервер: подтверждение, что все прошло успешно
             command = Commands.SERVER_RESPONSE_UPLOAD_ITEM_OK;
             //если что-то пошло не так

@@ -23,6 +23,8 @@ public class FileMessage extends AbstractMessage {
     private Item item;
     //принимаем переменную нового имени файла
     private String newName;
+    //объявляем переменную контрольной суммы целого файла
+    private String fileChecksum;
 
     //this constructor is for uploadEntireFile operation
     public FileMessage(Item storageDirectoryItem, Item item, long fileSize) {
@@ -95,5 +97,13 @@ public class FileMessage extends AbstractMessage {
 
     public byte[] getData() {
         return data;
+    }
+
+    public String getFileChecksum() {
+        return fileChecksum;
+    }
+
+    public void setFileChecksum(String fileChecksum) {
+        this.fileChecksum = fileChecksum;
     }
 }

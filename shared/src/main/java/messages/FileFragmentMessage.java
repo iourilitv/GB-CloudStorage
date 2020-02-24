@@ -33,6 +33,10 @@ public class FileFragmentMessage extends AbstractMessage {
     private String toTempDirName;
     //объявляем переменную имени фрагмента файла
     private String fragName;
+    //объявляем переменную контрольной суммы фрагмента файла
+    private String fragChecksum;
+    //объявляем переменную контрольной суммы целого файла
+    private String fullFileChecksum;
 
     //this constructor is for upload and download FileByFrags operation
     public FileFragmentMessage(
@@ -148,5 +152,21 @@ public class FileFragmentMessage extends AbstractMessage {
 
     public String getFragName() {
         return fragName;
+    }
+
+    public String getFragChecksum() {
+        return fragChecksum;
+    }
+
+    public void setFragChecksum(String fragChecksum) {
+        this.fragChecksum = fragChecksum;
+    }
+
+    public String getFullFileChecksum() {
+        return fullFileChecksum;
+    }
+
+    public void setFullFileChecksum(String fullFileChecksum) {
+        this.fullFileChecksum = fullFileChecksum;
     }
 }
