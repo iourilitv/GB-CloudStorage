@@ -11,7 +11,6 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
@@ -47,20 +46,10 @@ public class FileUtils {
             String fileChecksum = hashUtils.hashFile(realItemPath.toFile());
             //сохраняем в объект сообщения контрольной суммы целого файла
             fileMessage.setFileChecksum(fileChecksum);
-
             //считываем данные из файла и записываем их в объект файлового сообщения
             fileMessage.readFileData(realItemPath.toString());
             //записываем размер файла для скачивания
             fileMessage.setFileSize(Files.size(realItemPath));
-
-            //TODO лишняя проверка?
-            //если длина байтового массива в объекте сообщении отличается от длины исходного файла
-            if(fileMessage.getFileSize() != fileMessage.getData().length){
-                msg = "FileUtils.readFile() - Wrong the read file size!";
-                return false;
-            }
-
-
         } catch (IOException | NoSuchAlgorithmException e) {
             msg = "FileUtils.readFile() - Something wrong with the directory or the file!";
             e.printStackTrace();
@@ -175,38 +164,12 @@ public class FileUtils {
         System.out.println("FileUtils.cutAndSendFileByFrags() - duration(mc): " + finish);
     }
 
-//    /**
-//     * Метод сохраняет данные из байтового массива в целый файл.
-//     * @param realItemPath - объект реального пути к объекту элемента
-//     * @param data - байтовый массив из источника
-//     * @param fileSize - размер источника
-//     * @return - результат сохранения данных из байтового массива в целый файл
-//     */
-//    public boolean saveFile(Path realItemPath, byte[] data, long fileSize) {
-//        try {
-//            //создаем новый файл и записываем в него данные из объекта файлового сообщения
-//            Files.write(realItemPath, data, StandardOpenOption.CREATE);
-//            //если длина сохраненного файла отличается от длины принятого файла
-//            if(Files.size(realItemPath) != fileSize){
-//                msg = "FileUtils.saveFile() - Wrong the saved file size!";
-//                return false;
-//
-//                //FIXME добавить
-//            //если контрольная сумма сохраненного файла отличается от исходной контрольной суммы
-//            } else if(!fileFragMsg.getFragChecksum().
-//                    equals(hashUtils.hashFile(realToFragPath.toFile()))){
-//                msg = "FileUtils.compileFileFragments() - " +
-//                        "Wrong checksum of the saved file fragment file!";
-//                return false;
-//            }
-//
-//        } catch (IOException e) {
-//            msg = "FileUtils.saveFile() - Something wrong with the directory or the file!";
-//            e.printStackTrace();
-//            return false;
-//        }
-//        return true;
-//    }
+    /**
+     * Метод сохраняет данные из полученного байтового массива в целый файл.
+     * @param fileMessage - объект файлового сообщения
+     * @param realItemPath - объект реального пути к объекту элемента
+     * @return - результат сохранения данных из байтового массива в файл
+     */
     public boolean saveFile(FileMessage fileMessage, Path realItemPath) {
         try {
             //создаем новый файл и записываем в него данные из объекта файлового сообщения
@@ -215,16 +178,13 @@ public class FileUtils {
             if(Files.size(realItemPath) != fileMessage.getFileSize()){
                 msg = "FileUtils.saveFile() - Wrong the saved file size!";
                 return false;
-
-                //FIXME добавить
-                //если контрольная сумма сохраненного файла отличается от исходной контрольной суммы
+            //если контрольная сумма сохраненного файла отличается от исходной контрольной суммы
             } else if(!fileMessage.getFileChecksum().
                     equals(hashUtils.hashFile(realItemPath.toFile()))){
                 msg = "FileUtils.saveFile() - " +
                         "Wrong checksum of the saved file!";
                 return false;
             }
-
         } catch (IOException | NoSuchAlgorithmException e) {
             msg = "FileUtils.saveFile() - Something wrong with the directory or the file!";
             e.printStackTrace();
@@ -254,14 +214,10 @@ public class FileUtils {
                     deleteFolder(dir);
                 }
                 //и создаем новую временную директорию
-//                System.out.println("FileUtils.saveFileFragment() - " +
-//                        "dir." + dir.getPath() +
-//                        ", dir.mkdir(): " + dir.mkdir());
                 msg = "FileUtils.saveFileFragment() - " +
                         "dir." + dir.getPath() +
                         ", dir.mkdir(): " + dir.mkdir();
             }
-
             //создаем новый файл-фрагмент и записываем в него данные из объекта файлового сообщения
             Files.write(realToFragPath, fileFragMsg.getData(), StandardOpenOption.CREATE);
             //если длина сохраненного файла-фрагмента отличается от длины принятого фрагмента файла
@@ -269,8 +225,6 @@ public class FileUtils {
                 msg = "FileUtils.saveFileFragment() - " +
                         "Wrong the saved file fragment size!";
                 return false;
-
-                //FIXME добавить
             //если контрольная сумма сохраненного файла-фрагмента отличается от исходной контрольной суммы
             } else if(!fileFragMsg.getFragChecksum().
                     equals(hashUtils.hashFile(realToFragPath.toFile()))){
@@ -278,7 +232,6 @@ public class FileUtils {
                         "Wrong checksum of the saved file fragment #" +
                         fileFragMsg.getCurrentFragNumber() + "!";
                 return false;
-
             }
         } catch (IOException | NoSuchAlgorithmException e) {
             msg = "FileUtils.saveFileFragment() - " +
@@ -307,8 +260,6 @@ public class FileUtils {
             File tempDirFileObject = new File(realToTempDirPath.toString());
             //инициируем массив файлов-фрагментов во временной папке
             File[] fragFiles = tempDirFileObject.listFiles();
-
-//            assert fragFiles != null;
             //если количество файлов-фрагментов не совпадает с требуемым
             if(fragFiles == null ||
                     fragFiles.length != fileFragMsg.getTotalFragsNumber()){
@@ -330,8 +281,7 @@ public class FileUtils {
                 msg = "FileUtils.compileFileFragments() - " +
                         "Wrong checksum of the saved entire file!";
                 return false;
-
-                //если файл собран без ошибок
+            //если файл собран без ошибок
             } else {
                 //***удаляем временную папку***
                 if(!deleteFolder(tempDirFileObject)){

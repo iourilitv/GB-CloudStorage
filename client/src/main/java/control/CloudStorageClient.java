@@ -220,22 +220,12 @@ public class CloudStorageClient {
                 fileMessage));
     }
 
-//    /**
-//     * Метод запускает процесс сохранения полученного от сервера объекта(файла)
-//     * в заданную директорию в сетевом хранилище.
-//     * @param clientToDirItem - объект заданной директории в клиенте
-//     * @param item - объект элемента о сервера
-//     * @param data - массив байт из файла
-//     * @param fileSize - размер файла
-//     * @return - результат сохранения объекта
-//     */
-//    public boolean downloadItem(Item clientToDirItem, Item item, byte[] data, long fileSize){
-//        //инициируем строку имени реального пути к папке с объектом элемента
-//        String realDirPathname = itemUtils.getRealPath(clientToDirItem.getItemPathname(), CLIENT_ROOT_PATH).toString();
-//        //инициируем новый объект пути к объекту
-//        Path realNewToItemPath = Paths.get(realDirPathname, item.getItemName());
-//        return fileUtils.saveFile(realNewToItemPath, data, fileSize);
-//    }
+    /**
+     * Метод запускает процесс сохранения полученного от сервера объекта(файла)
+     * в заданную директорию в клиенте.
+     * @param fileMessage - объект фалового сообщения
+     * @return - результат сохранения объекта
+     */
     public boolean downloadItem(FileMessage fileMessage){
         //инициируем локальную переменную объекта директории назначения в клиенте
         Item clientToDirItem = fileMessage.getClientDirectoryItem();

@@ -25,7 +25,6 @@ public class CloudStorageServer {
     private int PORT;
     //объявляем объект пути к корневой директории облачного хранилища(сервера) для хранения файлов клиентов
     private static Path STORAGE_ROOT_PATH;
-
     //инициируем константу строки названия корневой директории для списка в серверной части GUI
     private final String STORAGE_DEFAULT_DIR = "";
     //объявляем объекты директории пользователя по умолчанию в серверной части GUI
@@ -112,23 +111,13 @@ public class CloudStorageServer {
         return itemUtils.createDirectoryItem(storageDirPathname, storageDefaultDirItem, userStorageRoot);
     }
 
-//    /**
-//     * Метод запускает процесс сохранения полученного от клиента объекта(файла)
-//     * в заданную директорию в сетевом хранилище.
-//     * @param storageToDirItem - объект заданной директории в сетевом хранилище
-//     * @param item - объект элемента от клиента
-//     * @param data - массив байт из файла
-//     * @param fileSize - размер файла
-//     * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище
-//     * @return - результат сохранения объекта
-//     */
-//    public boolean uploadItem(Item storageToDirItem, Item item, byte[] data, long fileSize, Path userStorageRoot){
-//        //инициируем новый объект пути к объекту
-//        Path realNewToItemPath = Paths.get(
-//                itemUtils.getRealPath(storageToDirItem.getItemPathname(), userStorageRoot).toString(),
-//                item.getItemName());
-//        return fileUtils.saveFile(realNewToItemPath, data, fileSize);
-//    }
+    /**
+     * Метод запускает процесс сохранения полученного от клиента объекта(файла)
+     * в заданную директорию в сетевом хранилище.
+     * @param fileMessage - объект фалового сообщения
+     * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище
+     * @return - результат сохранения объекта
+     */
     public boolean uploadItem(FileMessage fileMessage, Path userStorageRoot){
         //инициируем локальную переменную объекта директории назначения в сетевом хранилище
         Item storageToDirItem = fileMessage.getStorageDirectoryItem();
@@ -187,7 +176,6 @@ public class CloudStorageServer {
      * @param fileMessage - объект фалового сообщения
      * @param userStorageRoot - объект пути к корневой директории пользователя в сетевом хранилище
      * @param ctx - объект сетевого соединения
-     * @throws IOException - исключение ввода-вывода
      */
     public void downloadItem(FileMessage fileMessage, Path userStorageRoot,
                              ChannelHandlerContext ctx) throws IOException {

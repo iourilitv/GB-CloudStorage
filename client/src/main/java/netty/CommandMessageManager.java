@@ -261,10 +261,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileMessage fileMessage = (FileMessage) commandMessage.getMessageObject();
         //если сохранение прошло удачно
-//        if(storageClient.downloadItem(fileMessage.getClientDirectoryItem(), fileMessage.getItem(),
-//                fileMessage.getData(), fileMessage.getFileSize())){
         if(storageClient.downloadItem(fileMessage)){
-
             //очищаем метку уведомлений
             showTextInGUI("");
             //обновляем список файловых объектов на клиенте
