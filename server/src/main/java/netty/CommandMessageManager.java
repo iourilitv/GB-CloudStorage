@@ -242,40 +242,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * в директорию в сетевом хранилище.
      * @param commandMessage - объект сообщения(команды)
      */
-//    private void onUploadFileFragClientRequest(CommandMessage commandMessage) {
-//        //вынимаем объект файлового сообщения из объекта сообщения(команды)
-//        FileFragmentMessage fileFragMsg = (FileFragmentMessage) commandMessage.getMessageObject();
-//        //если сохранение полученного фрагмента файла во временную папку сетевого хранилища прошло удачно
-//        if(storageServer.uploadItemFragment(fileFragMsg, userStorageRoot)){
-//            //инициируем переменную типа команды: подтверждение, что все прошло успешно
-//            command = Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAG_OK;
-//            //если что-то пошло не так
-//        } else {
-//            //выводим сообщение
-//            printMsg("[server]" + fileUtils.getMsg());
-//            //инициируем переменную типа команды - ответ об ошибке
-//            command = Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAG_ERROR;
-//        }
-//        //если это последний фрагмент
-//        if(fileFragMsg.isFinalFileFragment()){
-//            //если корректно собран файл из фрагментов сохраненных во временную папку
-//            if(storageServer.compileItemFragments(fileFragMsg, userStorageRoot)){
-//                //ответ сервера, что сборка файла из загруженных фрагментов прошла успешно
-//                command = Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAGS_OK;
-//            //если что-то пошло не так
-//            } else {
-//                //выводим сообщение
-//                printMsg("[server]" + fileUtils.getMsg());
-//                //инициируем переменную типа команды - ответ об ошибке
-//                command = Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAGS_ERROR;
-//            }
-//            //отправляем объект сообщения(команды) клиенту со списком объектов(файлов и папок) в
-//            // заданной директории клиента в сетевом хранилище
-//            sendItemsList(fileFragMsg.getToDirectoryItem(), command);
-//        }
-//    }
     private void onUploadFileFragClientRequest(CommandMessage commandMessage) {
-        //вынимаем объект файлового сообщения из объекта сообщения(команды)
+        //вынимаем объект сообщения фрагмента файла из объекта сообщения(команды)
         FileFragmentMessage fileFragMsg = (FileFragmentMessage) commandMessage.getMessageObject();
         //если сохранение полученного фрагмента файла во временную папку сетевого хранилища прошло удачно
         if(storageServer.uploadItemFragment(fileFragMsg, userStorageRoot)){
@@ -288,11 +256,16 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             //инициируем переменную типа команды - ответ об ошибке
             command = Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAG_ERROR;
         }
+
+        //обнуляем байтовый массив в объект сообщения фрагмента файла
+        fileFragMsg.setData(null);
         //отправляем объект сообщения(команды) клиенту
-        ctx.writeAndFlush(new CommandMessage(command,
-                new FileFragmentMessage(fileFragMsg.getToDirectoryItem(),
-                        fileFragMsg.getItem(), fileFragMsg.getCurrentFragNumber(),
-                        fileFragMsg.getTotalFragsNumber())));
+//        ctx.writeAndFlush(new CommandMessage(command,
+//                new FileFragmentMessage(fileFragMsg.getToDirectoryItem(),
+//                        fileFragMsg.getItem(), fileFragMsg.getCurrentFragNumber(),
+//                        fileFragMsg.getTotalFragsNumber())));
+        ctx.writeAndFlush(new CommandMessage(command, fileFragMsg));
+
         //если это последний фрагмент
         if(fileFragMsg.isFinalFileFragment()){
             //если корректно собран файл из фрагментов сохраненных во временную папку

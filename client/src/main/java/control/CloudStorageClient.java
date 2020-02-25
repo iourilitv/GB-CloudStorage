@@ -15,7 +15,7 @@ import java.io.PrintStream;
 import java.nio.file.*;
 
 /**
- * This client's class is responded for operation with storage by communication with command handlers.
+ * This client's class is responsible for operation with storage by communication with command handlers.
  */
 public class CloudStorageClient {
     //инициируем переменную для печати сообщений в консоль
@@ -30,7 +30,6 @@ public class CloudStorageClient {
     private static int PORT;
     //объявляем переменную объект пути к корневой директории для списка в клиентской части GUI
     public static Path CLIENT_ROOT_PATH;
-
     //объявляем объект файлового обработчика
     private FileUtils fileUtils = FileUtils.getOwnObject();
     //принимаем объект обработчика операций с объектами элементов списков в GUI
@@ -170,7 +169,7 @@ public class CloudStorageClient {
 
     /**
      * Метод-прокладка запускает процесс нарезки и отправки клиенту по частям большого файла
-     * размером более константы максмального размера фрагмента файла
+     * размером более константы максимального размера фрагмента файла.
      * @param storageToDirItem - объект директори назначения в сетевом хранилище
      * @param clientItem - объект элемента в клиенте
      * @param fullFileSize - размер целого файла в байтах
@@ -178,6 +177,24 @@ public class CloudStorageClient {
     private void uploadFileByFrags(Item storageToDirItem, Item clientItem, long fullFileSize) {
         fileUtils.cutAndSendFileByFrags(storageToDirItem, clientItem, fullFileSize,
                 CLIENT_ROOT_PATH, ctx, Commands.REQUEST_SERVER_UPLOAD_FILE_FRAG);
+    }
+
+    /**
+     * Метод-прокладка запускает процесс отправки отдельного фрагмента файла в сетевое хранилище.
+     * @param fileFragMsg - объект сообщения фрагмента файла из объекта сообщения(команды)
+     * @param command - переменная типа команды
+     */
+    public void sendFileFragment(FileFragmentMessage fileFragMsg, Commands command) {
+        //инициируем новый байтовый массив
+        byte[] data = new byte[fileFragMsg.getFileFragmentSize()];
+        //вычисляем индекс стартового байта фрагмента в целом файле
+        long startByte = FileFragmentMessage.CONST_FRAG_SIZE * fileFragMsg.getCurrentFragNumber();
+        //вызываем метод отправки объекта сообщения с новым байтовым массивом данных фрагмента
+        fileUtils.sendFileFragment(fileFragMsg.getToDirectoryItem(), fileFragMsg.getItem(),
+                fileFragMsg.getFullFileSize(), fileFragMsg.getCurrentFragNumber(),
+                fileFragMsg.getTotalFragsNumber(), fileFragMsg.getFileFragmentSize(),
+                data, startByte, fileFragMsg.getFullFileChecksum(),
+                CLIENT_ROOT_PATH, ctx, command);
     }
 
     /**
@@ -441,4 +458,5 @@ public class CloudStorageClient {
         //устанавливаем режим отображения GUI "Отсоединен"
         guiController.setDisconnectedMode(true);
     }
+
 }

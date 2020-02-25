@@ -273,19 +273,19 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * @param commandMessage - объект сообщения(команды)
      */
     private void onUploadFileFragOkServerResponse(CommandMessage commandMessage) {
-        //
+        //вынимаем объект сообщения фрагмента файла из объекта сообщения(команды)
         FileFragmentMessage fileFragMsg = (FileFragmentMessage) commandMessage.getMessageObject();
-        //
-        //TODO добавить обновить счетчик загруженных фрагментров
 
-        //
+        //TODO
         printMsg("CommandMessageManager.onUploadFileFragOkServerResponse() - " +
                 "uploaded fragments: " + fileFragMsg.getCurrentFragNumber() +
                 "/" + fileFragMsg.getTotalFragsNumber());
+
+        //выводим в GUI информацию с номером загруженного фрагмента файла
         storageClient.showTextInGUI("Uploading a file... Completed fragment: " +
                 fileFragMsg.getCurrentFragNumber() +
                 "/" + fileFragMsg.getTotalFragsNumber());
-        //
+        //сбрасываем защелку в цикле отправки фрагментов
         fileUtils.getCountDownLatch().countDown();
     }
 
@@ -295,16 +295,16 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * @param commandMessage - объект сообщения(команды)
      */
     private void onUploadFileFragErrorServerResponse(CommandMessage commandMessage) {
-        //
+        //вынимаем объект сообщения фрагмента файла из объекта сообщения(команды)
         FileFragmentMessage fileFragMsg = (FileFragmentMessage) commandMessage.getMessageObject();
-        //
+
+        //TODO
         printMsg("CommandMessageManager.onUploadFileFragErrorServerResponse() - " +
                 "Error of downloading the fragment: " + fileFragMsg.getCurrentFragNumber() +
                 "/" + fileFragMsg.getTotalFragsNumber());
 
-        //
         //TODO повторить отправку на загрузку этого фрагмента или всех заново?
-
+        storageClient.sendFileFragment(fileFragMsg, Commands.REQUEST_SERVER_UPLOAD_FILE_FRAG);
     }
 
     /**

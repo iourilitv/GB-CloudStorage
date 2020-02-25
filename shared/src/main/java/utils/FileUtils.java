@@ -33,7 +33,7 @@ public class FileUtils {
     private final HashUtils hashUtils = HashUtils.getInstance();
     //инициируем строковую переменную для вывода сообщений
     private String msg;
-
+    //объявляем объект защелки
     private CountDownLatch countDownLatch;
 
     /**
@@ -61,7 +61,7 @@ public class FileUtils {
     }
 
     /**
-     * Метод отправки по частям большого файла размером более константы максмального размера фрагмента файла
+     * Метод отправки по частям большого файла размером более константы максмального размера фрагмента файла.
      * @param toDirItem - объект директории назначения
      * @param item - объект элемента(исходный файл)
      * @param fullFileSize - размер целого файла в байтах
@@ -69,107 +69,6 @@ public class FileUtils {
      * @param ctx - сетевое соединение
      * @param command - конастанта типа команды
      */
-//    public void cutAndSendFileByFrags(Item toDirItem, Item item,
-//                                      long fullFileSize, Path rootPath,
-//                                      ChannelHandlerContext ctx, Commands command) {
-//        //TODO temporarily
-//        long start = System.currentTimeMillis();
-//        //запускаем в отдельном процессе, чтобы не тормозить основные процессы(подвисает GUI)
-//        new Thread(() -> {
-//
-//            try {
-//                //инициируем локальную переменную контрольной суммы целого файла
-//                String fullFileChecksum = hashUtils.hashFile(
-//                        itemUtils.getRealPath(item.getItemPathname(), rootPath).toFile());
-//
-//                //***разбиваем файл на фрагменты***
-//                //рассчитываем количество полных фрагментов файла
-//                int totalEntireFragsNumber = (int) fullFileSize / FileFragmentMessage.CONST_FRAG_SIZE;
-//                //рассчитываем размер последнего фрагмента файла
-//                int finalFileFragmentSize = (int) fullFileSize - FileFragmentMessage.CONST_FRAG_SIZE * totalEntireFragsNumber;
-//                //рассчитываем общее количество фрагментов файла
-//                //если есть последний фрагмент, добавляем 1 к количеству полных фрагментов файла
-//                int totalFragsNumber = (finalFileFragmentSize == 0) ?
-//                        totalEntireFragsNumber : totalEntireFragsNumber + 1;
-//
-//                //TODO temporarily
-//                System.out.println("FileUtils.cutAndSendFileByFrags() - fullFileSize: " + fullFileSize);
-//                System.out.println("FileUtils.cutAndSendFileByFrags() - totalFragsNumber: " + totalFragsNumber);
-//                System.out.println("FileUtils.cutAndSendFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
-//
-//                //устанавливаем начальные значения номера текущего фрагмента и стартового байта
-//                long startByte = 0;
-//
-//                //TODO TEST:wrong a big file transferring.Deleted
-//                //инициируем байтовый массив для чтения данных для полных фрагментов
-//                byte[] data = new byte[FileFragmentMessage.CONST_FRAG_SIZE];
-//
-//                //***в цикле создаем целые фрагменты, читаем в них данные и отправляем***
-//                for (int i = 1; i <= totalEntireFragsNumber; i++) {
-//
-//                    //TODO TEST:wrong a big file transferring.Added.FIXED but not acceptable
-////                    byte[] data = new byte[FileFragmentMessage.CONST_FRAG_SIZE];
-//
-//                    //инициируем объект фрагмента файлового сообщения
-//                    FileFragmentMessage fileFragmentMessage = new FileFragmentMessage(
-//                            toDirItem, item, fullFileSize, i, totalFragsNumber,
-//                            FileFragmentMessage.CONST_FRAG_SIZE, data);
-//                    //читаем данные во фрагмент с определенного места файла
-//                    fileFragmentMessage.readFileDataToFragment(
-//                            itemUtils.getRealPath(item.getItemPathname(), rootPath).toString(),
-//                            startByte);
-//                    //вычисляем и сохраняем в объект сообщения контрольную сумму
-//                    // байтового массива фрагмента файла
-//                    fileFragmentMessage.setFragChecksum(
-//                            hashUtils.hashBytes(fileFragmentMessage.getData()));
-//                    //сохраняем в объект сообщения контрольной суммы целого файла
-//                    fileFragmentMessage.setFullFileChecksum(fullFileChecksum);
-//
-//                    //увеличиваем указатель стартового байта на размер фрагмента
-//                    startByte += FileFragmentMessage.CONST_FRAG_SIZE;
-//                    //отправляем на сервер объект сообщения(команды)
-//                    ctx.writeAndFlush(new CommandMessage(command, fileFragmentMessage));
-//
-//                    //инициируем защелку и ждем получения подтверждения получателя
-//                    countDownLatch = new CountDownLatch(1);
-//                    countDownLatch.await();
-//                }
-//
-//                //TODO temporarily
-//                System.out.println("FileUtils.cutAndSendFileByFrags() - currentFragNumber: " + totalFragsNumber);
-//                System.out.println("FileUtils.cutAndSendFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
-//
-//                //***отправляем последний фрагмент, если он есть***
-//                if(totalFragsNumber > totalEntireFragsNumber){
-//                    //инициируем байтовый массив для чтения данных для последнего фрагмента
-//                    byte[] dataFinal = new byte[finalFileFragmentSize];
-//                    //инициируем объект фрагмента файлового сообщения
-//                    FileFragmentMessage fileFragmentMessage = new FileFragmentMessage(
-//                            toDirItem, item, fullFileSize, totalFragsNumber,
-//                            totalFragsNumber, finalFileFragmentSize, dataFinal);
-//                    //читаем данные во фрагмент с определенного места файла
-//                    fileFragmentMessage.readFileDataToFragment(
-//                            itemUtils.getRealPath(item.getItemPathname(), rootPath).toString(),
-//                            startByte);
-//                    //вычисляем и сохраняем в объект сообщения контрольную сумму
-//                    // байтового массива фрагмента файла
-//                    fileFragmentMessage.setFragChecksum(
-//                            hashUtils.hashBytes(fileFragmentMessage.getData()));
-//                    //сохраняем в объект сообщения контрольной суммы целого файла
-//                    fileFragmentMessage.setFullFileChecksum(fullFileChecksum);
-//
-//                    //отправляем на сервер объект сообщения(команды)
-//                    ctx.writeAndFlush(new CommandMessage(command, fileFragmentMessage));
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
-//
-//        //TODO temporarily
-//        long finish = System.currentTimeMillis() - start;
-//        System.out.println("FileUtils.cutAndSendFileByFrags() - duration(mc): " + finish);
-//    }
     public void cutAndSendFileByFrags(Item toDirItem, Item item,
                                       long fullFileSize, Path rootPath,
                                       ChannelHandlerContext ctx, Commands command) {
@@ -202,30 +101,11 @@ public class FileUtils {
                 byte[] data = new byte[FileFragmentMessage.CONST_FRAG_SIZE];
                 //***в цикле создаем целые фрагменты, читаем в них данные и отправляем***
                 for (int i = 1; i <= totalEntireFragsNumber; i++) {
-
-//                    //инициируем объект фрагмента файлового сообщения
-//                    FileFragmentMessage fileFragmentMessage = new FileFragmentMessage(
-//                            toDirItem, item, fullFileSize, i, totalFragsNumber,
-//                            FileFragmentMessage.CONST_FRAG_SIZE, data);
-//                    //читаем данные во фрагмент с определенного места файла
-//                    fileFragmentMessage.readFileDataToFragment(
-//                            itemUtils.getRealPath(item.getItemPathname(), rootPath).toString(),
-//                            startByte);
-//                    //вычисляем и сохраняем в объект сообщения контрольную сумму
-//                    // байтового массива фрагмента файла
-//                    fileFragmentMessage.setFragChecksum(
-//                            hashUtils.hashBytes(fileFragmentMessage.getData()));
-//                    //сохраняем в объект сообщения контрольной суммы целого файла
-//                    fileFragmentMessage.setFullFileChecksum(fullFileChecksum);
-//                    //отправляем на сервер объект сообщения(команды)
-//                    ctx.writeAndFlush(new CommandMessage(command, fileFragmentMessage));
-
                     //вызываем метод отправки сообщения
-                    sendFileFrag(toDirItem, item, fullFileSize,
+                    sendFileFragment(toDirItem, item, fullFileSize,
                             i, totalFragsNumber, FileFragmentMessage.CONST_FRAG_SIZE,
                             data, startByte, fullFileChecksum,
                             rootPath, ctx, command);
-
                     //инициируем защелку и ждем получения подтверждения получателя
                     countDownLatch = new CountDownLatch(1);
                     countDownLatch.await();
@@ -241,26 +121,8 @@ public class FileUtils {
                 if(totalFragsNumber > totalEntireFragsNumber){
                     //инициируем байтовый массив для чтения данных для последнего фрагмента
                     byte[] dataFinal = new byte[finalFileFragmentSize];
-
-//                    //инициируем объект фрагмента файлового сообщения
-//                    FileFragmentMessage fileFragmentMessage = new FileFragmentMessage(
-//                            toDirItem, item, fullFileSize, totalFragsNumber,
-//                            totalFragsNumber, finalFileFragmentSize, dataFinal);
-//                    //читаем данные во фрагмент с определенного места файла
-//                    fileFragmentMessage.readFileDataToFragment(
-//                            itemUtils.getRealPath(item.getItemPathname(), rootPath).toString(),
-//                            startByte);
-//                    //вычисляем и сохраняем в объект сообщения контрольную сумму
-//                    // байтового массива фрагмента файла
-//                    fileFragmentMessage.setFragChecksum(
-//                            hashUtils.hashBytes(fileFragmentMessage.getData()));
-//                    //сохраняем в объект сообщения контрольной суммы целого файла
-//                    fileFragmentMessage.setFullFileChecksum(fullFileChecksum);
-//                    //отправляем на сервер объект сообщения(команды)
-//                    ctx.writeAndFlush(new CommandMessage(command, fileFragmentMessage));
-
                     //вызываем метод отправки сообщения
-                    sendFileFrag(toDirItem, item, fullFileSize,
+                    sendFileFragment(toDirItem, item, fullFileSize,
                             totalFragsNumber, totalFragsNumber, finalFileFragmentSize,
                             dataFinal, startByte, fullFileChecksum,
                             rootPath, ctx, command);
@@ -275,10 +137,25 @@ public class FileUtils {
         System.out.println("FileUtils.cutAndSendFileByFrags() - duration(mc): " + finish);
     }
 
-    private void sendFileFrag(Item toDirItem, Item item, long fullFileSize,
-                              int fragNumber, int totalFragsNumber, int fileFragSize,
-                              byte[] data, long startByte, String fullFileChecksum,
-                              Path rootPath, ChannelHandlerContext ctx, Commands command){
+    /**
+     * Метод отправки объекта сообщения с объектом фрагментом файла.
+     * @param toDirItem - объект директории назначения
+     * @param item - объект элемента(исходный файл)
+     * @param fullFileSize - размер целого файла в байтах
+     * @param fragNumber - номер фрагмента
+     * @param totalFragsNumber - общее количество фрагментов
+     * @param fileFragSize - размер фрагмента в байтах
+     * @param data - байтовый массив с данными фрагмента файла
+     * @param startByte - индекс начального байта фрагмента в целом файле
+     * @param fullFileChecksum - контрольная сумма целого файла
+     * @param rootPath - объект пути к корневой папке
+     * @param ctx - сетевое соединение
+     * @param command - конастанта типа команды
+     */
+    public void sendFileFragment(Item toDirItem, Item item, long fullFileSize,
+                                  int fragNumber, int totalFragsNumber, int fileFragSize,
+                                  byte[] data, long startByte, String fullFileChecksum,
+                                  Path rootPath, ChannelHandlerContext ctx, Commands command){
         try {
             //инициируем объект фрагмента файлового сообщения
             FileFragmentMessage fileFragmentMessage = new FileFragmentMessage(
