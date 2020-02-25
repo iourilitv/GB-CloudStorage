@@ -280,11 +280,17 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 "/" + fileFragMsg.getTotalFragsNumber());
 
         //выводим в GUI информацию с номером загруженного фрагмента файла
-        storageClient.showTextInGUI("Uploading a file... Completed fragment: " +
+        storageClient.showTextInGUI("File Uploading. Completed fragment: " +
                 fileFragMsg.getCurrentFragNumber() +
                 "/" + fileFragMsg.getTotalFragsNumber());
         //сбрасываем защелку в цикле отправки фрагментов
         fileUtils.getCountDownLatch().countDown();
+
+        //если это финальный фрагмент
+        if(fileFragMsg.getCurrentFragNumber() == fileFragMsg.getTotalFragsNumber()){
+            //выводим в GUI информацию о компиляции итогового файла из фрагментов в сетевом хранилише
+            storageClient.showTextInGUI("File Uploading. Final compiling entire file...");
+        }
     }
 
     /**

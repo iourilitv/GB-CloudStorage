@@ -175,6 +175,8 @@ public class CloudStorageClient {
      * @param fullFileSize - размер целого файла в байтах
      */
     private void uploadFileByFrags(Item storageToDirItem, Item clientItem, long fullFileSize) {
+        //выводим сообщение в GUI
+        showTextInGUI("File Uploading. Cutting into fragments...");
         fileUtils.cutAndSendFileByFrags(storageToDirItem, clientItem, fullFileSize,
                 CLIENT_ROOT_PATH, ctx, Commands.REQUEST_SERVER_UPLOAD_FILE_FRAG);
     }
