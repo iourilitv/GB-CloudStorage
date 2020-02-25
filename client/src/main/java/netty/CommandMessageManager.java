@@ -104,10 +104,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             //обрабатываем полученное от сервера подтверждение успешного создания новой папки
             //с массивом файловых объектов в текущей директории пользователя в облачном хранилище
             case SERVER_RESPONSE_CREATE_NEW_FOLDER_OK:
-            //обрабатываем полученное от сервера подтверждение успешной загрузке(сохранении)
+            //обрабатываем полученное от сервера подтверждение успешной загрузки(сохранении)
             // файла в облачное хранилище
             case SERVER_RESPONSE_UPLOAD_ITEM_OK:
-            //обрабатываем полученное от сервера подтверждение успешной загрузке(сохранении)
+            //обрабатываем полученное от сервера подтверждение успешной загрузки(сохранении)
             // всего большого файла(по фрагментно) в облачное хранилище
             case SERVER_RESPONSE_UPLOAD_FILE_FRAGS_OK:
             //обрабатываем полученный от сервера ответ об успешном переименовании файла или папки в облачном хранилище
@@ -139,6 +139,20 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //вызываем метод обработки ответа сервера
                 onUploadItemErrorServerResponse(commandMessage);
                 break;
+
+            //обрабатываем полученное от сервера подтверждение успешной загрузки(сохранении)
+            // фрагмента файла в облачное хранилище
+            case SERVER_RESPONSE_UPLOAD_FILE_FRAG_OK:
+                //вызываем метод обработки ответа сервера
+                onUploadFileFragOkServerResponse(commandMessage);
+                break;
+            //обрабатываем полученное от сервера сообщение об ошибке загрузки(сохранения)
+            // фрагмента файла в облачное хранилище
+            case SERVER_RESPONSE_UPLOAD_FILE_FRAG_ERROR:
+                //вызываем метод обработки ответа сервера
+                onUploadFileFragErrorServerResponse(commandMessage);
+                break;
+
             //обрабатываем полученное от сервера подтверждение успешного скачивания файла из облачного хранилища
             case SERVER_RESPONSE_DOWNLOAD_ITEM_OK:
                 //вызываем метод обработки ответа сервера со скачанным целым файлом внутри
@@ -251,6 +265,46 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     private void onUploadItemErrorServerResponse(CommandMessage commandMessage) {
         //FIXME fill me!
         printMsg("[client]CommandMessageManager.onUploadFileErrorServerResponse() command: " + commandMessage.getCommand());
+    }
+
+    /**
+     * Метод обрабатывает полученное от сервера подтверждение
+     * успешной загрузки(сохранении) фрагмента файла в облачное хранилище.
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onUploadFileFragOkServerResponse(CommandMessage commandMessage) {
+        //
+        FileFragmentMessage fileFragMsg = (FileFragmentMessage) commandMessage.getMessageObject();
+        //
+        //TODO добавить обновить счетчик загруженных фрагментров
+
+        //
+        printMsg("CommandMessageManager.onUploadFileFragOkServerResponse() - " +
+                "uploaded fragments: " + fileFragMsg.getCurrentFragNumber() +
+                "/" + fileFragMsg.getTotalFragsNumber());
+        storageClient.showTextInGUI("Uploading a file... Completed fragment: " +
+                fileFragMsg.getCurrentFragNumber() +
+                "/" + fileFragMsg.getTotalFragsNumber());
+        //
+        fileUtils.getCountDownLatch().countDown();
+    }
+
+    /**
+     * Метод обрабатывает полученное от сервера сообщение
+     * об ошибке загрузки(сохранения) фрагмента файла в облачное хранилище.
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onUploadFileFragErrorServerResponse(CommandMessage commandMessage) {
+        //
+        FileFragmentMessage fileFragMsg = (FileFragmentMessage) commandMessage.getMessageObject();
+        //
+        printMsg("CommandMessageManager.onUploadFileFragErrorServerResponse() - " +
+                "Error of downloading the fragment: " + fileFragMsg.getCurrentFragNumber() +
+                "/" + fileFragMsg.getTotalFragsNumber());
+
+        //
+        //TODO повторить отправку на загрузку этого фрагмента или всех заново?
+
     }
 
     /**

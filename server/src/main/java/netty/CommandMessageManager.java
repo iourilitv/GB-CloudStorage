@@ -13,14 +13,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * The server's class for recognizing command messages and control command handlers.
+ * The server's class is for recognizing command messages and control command handlers.
  */
 public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     //принимаем объект соединения
     private ChannelHandlerContext ctx;
     //принимаем объект контроллера сетевого хранилища
     private final CloudStorageServer storageServer;
-
     //принимаем объект реального пути к корневой директории пользователя в сетевом хранилище
     private Path userStorageRoot;
     //принимаем логин пользователя
@@ -243,12 +242,44 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * в директорию в сетевом хранилище.
      * @param commandMessage - объект сообщения(команды)
      */
+//    private void onUploadFileFragClientRequest(CommandMessage commandMessage) {
+//        //вынимаем объект файлового сообщения из объекта сообщения(команды)
+//        FileFragmentMessage fileFragMsg = (FileFragmentMessage) commandMessage.getMessageObject();
+//        //если сохранение полученного фрагмента файла во временную папку сетевого хранилища прошло удачно
+//        if(storageServer.uploadItemFragment(fileFragMsg, userStorageRoot)){
+//            //инициируем переменную типа команды: подтверждение, что все прошло успешно
+//            command = Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAG_OK;
+//            //если что-то пошло не так
+//        } else {
+//            //выводим сообщение
+//            printMsg("[server]" + fileUtils.getMsg());
+//            //инициируем переменную типа команды - ответ об ошибке
+//            command = Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAG_ERROR;
+//        }
+//        //если это последний фрагмент
+//        if(fileFragMsg.isFinalFileFragment()){
+//            //если корректно собран файл из фрагментов сохраненных во временную папку
+//            if(storageServer.compileItemFragments(fileFragMsg, userStorageRoot)){
+//                //ответ сервера, что сборка файла из загруженных фрагментов прошла успешно
+//                command = Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAGS_OK;
+//            //если что-то пошло не так
+//            } else {
+//                //выводим сообщение
+//                printMsg("[server]" + fileUtils.getMsg());
+//                //инициируем переменную типа команды - ответ об ошибке
+//                command = Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAGS_ERROR;
+//            }
+//            //отправляем объект сообщения(команды) клиенту со списком объектов(файлов и папок) в
+//            // заданной директории клиента в сетевом хранилище
+//            sendItemsList(fileFragMsg.getToDirectoryItem(), command);
+//        }
+//    }
     private void onUploadFileFragClientRequest(CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileFragmentMessage fileFragMsg = (FileFragmentMessage) commandMessage.getMessageObject();
         //если сохранение полученного фрагмента файла во временную папку сетевого хранилища прошло удачно
         if(storageServer.uploadItemFragment(fileFragMsg, userStorageRoot)){
-            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+            //инициируем переменную типа команды: подтверждение, что все прошло успешно
             command = Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAG_OK;
             //если что-то пошло не так
         } else {
@@ -257,6 +288,11 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             //инициируем переменную типа команды - ответ об ошибке
             command = Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAG_ERROR;
         }
+        //отправляем объект сообщения(команды) клиенту
+        ctx.writeAndFlush(new CommandMessage(command,
+                new FileFragmentMessage(fileFragMsg.getToDirectoryItem(),
+                        fileFragMsg.getItem(), fileFragMsg.getCurrentFragNumber(),
+                        fileFragMsg.getTotalFragsNumber())));
         //если это последний фрагмент
         if(fileFragMsg.isFinalFileFragment()){
             //если корректно собран файл из фрагментов сохраненных во временную папку

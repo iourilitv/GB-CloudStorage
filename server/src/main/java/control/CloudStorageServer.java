@@ -14,9 +14,10 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.CountDownLatch;
 
 /**
- * This server's class for operating with a cloud storage.
+ * This server's class is for operations with a cloud storage.
  */
 public class CloudStorageServer {
     //инициируем переменную для печати сообщений в консоль
@@ -336,6 +337,10 @@ public class CloudStorageServer {
 
     public FileUtils getFileUtils() {
         return fileUtils;
+    }
+
+    public void downLatch() {
+        fileUtils.getCountDownLatch().countDown();
     }
 
     public void printMsg(String msg){
