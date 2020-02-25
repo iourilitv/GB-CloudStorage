@@ -176,7 +176,7 @@ public class CloudStorageClient {
      */
     private void uploadFileByFrags(Item storageToDirItem, Item clientItem, long fullFileSize) {
         //выводим сообщение в GUI
-        showTextInGUI("File Uploading. Cutting into fragments...");
+        showTextInGUI("File uploading. Cutting into fragments...");
         fileUtils.cutAndSendFileByFrags(storageToDirItem, clientItem, fullFileSize,
                 CLIENT_ROOT_PATH, ctx, Commands.REQUEST_SERVER_UPLOAD_FILE_FRAG);
     }
