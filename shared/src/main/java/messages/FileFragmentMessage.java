@@ -38,20 +38,10 @@ public class FileFragmentMessage extends AbstractMessage {
     //объявляем переменную контрольной суммы целого файла
     private String fullFileChecksum;
 
-//    //this constructor is for response on upload or download FileByFrags operation
-//    public FileFragmentMessage(
-//            Item toDirectoryItem, Item item, int currentFragNumber, int totalFragsNumber) {
-//        this.toDirectoryItem = toDirectoryItem;
-//        this.item = item;
-//        this.currentFragNumber = currentFragNumber;
-//        this.totalFragsNumber = totalFragsNumber;
-//    }
-
-
     //this constructor is for upload or download FileByFrags operation
-    public FileFragmentMessage(
-            Item toDirectoryItem, Item item, long fullFileSize,
-            int currentFragNumber, int totalFragsNumber, int fileFragmentSize, byte[] data) {
+    public FileFragmentMessage(Item toDirectoryItem, Item item, long fullFileSize,
+                               int currentFragNumber, int totalFragsNumber,
+                               int fileFragmentSize, byte[] data) {
         this.toDirectoryItem = toDirectoryItem;
         this.item = item;
         this.fullFileSize = fullFileSize;

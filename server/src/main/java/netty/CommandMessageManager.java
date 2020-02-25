@@ -256,16 +256,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             //инициируем переменную типа команды - ответ об ошибке
             command = Commands.SERVER_RESPONSE_UPLOAD_FILE_FRAG_ERROR;
         }
-
         //обнуляем байтовый массив в объект сообщения фрагмента файла
         fileFragMsg.setData(null);
         //отправляем объект сообщения(команды) клиенту
-//        ctx.writeAndFlush(new CommandMessage(command,
-//                new FileFragmentMessage(fileFragMsg.getToDirectoryItem(),
-//                        fileFragMsg.getItem(), fileFragMsg.getCurrentFragNumber(),
-//                        fileFragMsg.getTotalFragsNumber())));
         ctx.writeAndFlush(new CommandMessage(command, fileFragMsg));
-
         //если это последний фрагмент
         if(fileFragMsg.isFinalFileFragment()){
             //если корректно собран файл из фрагментов сохраненных во временную папку

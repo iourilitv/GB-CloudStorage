@@ -139,7 +139,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //вызываем метод обработки ответа сервера
                 onUploadItemErrorServerResponse(commandMessage);
                 break;
-
             //обрабатываем полученное от сервера подтверждение успешной загрузки(сохранении)
             // фрагмента файла в облачное хранилище
             case SERVER_RESPONSE_UPLOAD_FILE_FRAG_OK:
@@ -152,7 +151,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //вызываем метод обработки ответа сервера
                 onUploadFileFragErrorServerResponse(commandMessage);
                 break;
-
             //обрабатываем полученное от сервера подтверждение успешного скачивания файла из облачного хранилища
             case SERVER_RESPONSE_DOWNLOAD_ITEM_OK:
                 //вызываем метод обработки ответа сервера со скачанным целым файлом внутри
@@ -303,7 +301,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 "Error of downloading the fragment: " + fileFragMsg.getCurrentFragNumber() +
                 "/" + fileFragMsg.getTotalFragsNumber());
 
-        //TODO повторить отправку на загрузку этого фрагмента или всех заново?
+        //повторяем отправку на загрузку этого фрагмента заново
         storageClient.sendFileFragment(fileFragMsg, Commands.REQUEST_SERVER_UPLOAD_FILE_FRAG);
     }
 
