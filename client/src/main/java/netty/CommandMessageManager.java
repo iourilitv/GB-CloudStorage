@@ -13,7 +13,7 @@ import utils.Commands;
 import utils.FileUtils;
 
 /**
- * The client class for recognizing command messages and control command handlers.
+ * The client's class for recognizing command messages and control command handlers.
  */
 public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     //принимаем объект исходящего хэндлера
@@ -339,47 +339,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * Метод обработки ответа от сервера на загрузку файла-фрагмента
+     * Метод обработки ответа от сервера на скачивание файла-фрагмента
      * в директорию в клиенте.
      * @param commandMessage - объект сообщения(команды)
      */
-//    private void onDownloadFileFragOkServerResponse(CommandMessage commandMessage) {
-//        //вынимаем объект файлового сообщения из объекта сообщения(команды)
-//        FileFragmentMessage fileFragMsg = (FileFragmentMessage) commandMessage.getMessageObject();
-//        //если сохранение полученного фрагмента файла во временную папку клиента прошло удачно
-//        //объявляем переменную типа команды
-//        Commands command;
-//
-//        if(storageClient.downloadItemFragment(fileFragMsg)){
-//            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
-//            command = Commands.CLIENT_RESPONSE_DOWNLOAD_FILE_FRAG_OK;
-//            //если что-то пошло не так
-//        } else {
-//            //печатаем сообщение в консоль
-//            printMsg("[client]" + fileUtils.getMsg());
-//            //выводим сообщение в GUI
-//            showTextInGUI(fileUtils.getMsg());
-//            //инициируем переменную типа команды - ответ об ошибке
-//            command = Commands.CLIENT_RESPONSE_DOWNLOAD_FILE_FRAG_ERROR;
-//        }
-//        //если это последний фрагмент
-//        if(fileFragMsg.isFinalFileFragment()){
-//            //если корректно собран файл из фрагментов сохраненных во временную папку
-//            if(storageClient.compileItemFragments(fileFragMsg)){
-//                //очищаем метку уведомлений
-//                showTextInGUI("");
-//                //обновляем список файловых объектов на клиенте
-//                guiController.updateClientItemListInGUI(
-//                        fileFragMsg.getToDirectoryItem());
-//                //если что-то пошло не так
-//            } else {
-//                //печатаем сообщение в консоль
-//                printMsg("[client]" + fileUtils.getMsg());
-//                //выводим сообщение в GUI
-//                showTextInGUI(fileUtils.getMsg());
-//            }
-//        }
-//    }
     private void onDownloadFileFragOkServerResponse(CommandMessage commandMessage) {
         //вынимаем объект файлового сообщения из объекта сообщения(команды)
         FileFragmentMessage fileFragMsg = (FileFragmentMessage) commandMessage.getMessageObject();
@@ -387,12 +350,10 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         Commands command;
         //если сохранение полученного фрагмента файла во временную папку клиента прошло удачно
         if(storageClient.downloadItemFragment(fileFragMsg)){
-
             //выводим в GUI информацию с номером загруженного фрагмента файла
             storageClient.showTextInGUI("File downloading. Completed fragment: " +
                     fileFragMsg.getCurrentFragNumber() +
                     "/" + fileFragMsg.getTotalFragsNumber());
-
             //отправляем сообщение на сервер: подтверждение, что все прошло успешно
             command = Commands.CLIENT_RESPONSE_DOWNLOAD_FILE_FRAG_OK;
             //если что-то пошло не так
@@ -404,18 +365,14 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             //инициируем переменную типа команды - ответ об ошибке
             command = Commands.CLIENT_RESPONSE_DOWNLOAD_FILE_FRAG_ERROR;
         }
-
         //обнуляем байтовый массив в объект сообщения фрагмента файла
         fileFragMsg.setData(null);
         //отправляем объект сообщения(команды) серверу
         ctx.writeAndFlush(new CommandMessage(command, fileFragMsg));
-
         //если это последний фрагмент
         if(fileFragMsg.isFinalFileFragment()){
-
             //выводим в GUI информацию о компиляции итогового файла из фрагментов в сетевом хранилише
             storageClient.showTextInGUI("File downloading. Final compiling entire file...");
-
             //если корректно собран файл из фрагментов сохраненных во временную папку
             if(storageClient.compileItemFragments(fileFragMsg)){
                 //очищаем метку уведомлений

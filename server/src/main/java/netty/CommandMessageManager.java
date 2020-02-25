@@ -91,7 +91,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 // из директории в сетевом хранилище
                 onDownloadItemClientRequest(commandMessage);
                 break;
-
             //обрабатываем полученное от клиента подтверждение
             //успешного скачивания(сохранения) фрагмента файла в клиента.
             case CLIENT_RESPONSE_DOWNLOAD_FILE_FRAG_OK:
@@ -104,7 +103,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //вызываем метод обработки ответа сервера
                 onDownloadFileFragErrorClientResponse(commandMessage);
                 break;
-
             //обрабатываем полученный от клиента запрос на переименование файла или папки
             // в заданной директории в сетевом хранилище
             case REQUEST_SERVER_RENAME_ITEM:
@@ -273,15 +271,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         storageServer.downloadItem(fileMessage, userStorageRoot, ctx);
     }
 
-//    /**
-//     * Метод обрабатывает полученное от клиента подтверждение успешного сохранения целого файла,
-//     * скачанного из облачного хранилища
-//     * @param commandMessage - объект сообщения(команды)
-//     */
-//    private void onDownloadFileOkClientResponse(CommandMessage commandMessage) {
-//        //FIXME fill me!
-//        printMsg("[server]CommandMessageManager.onDownloadFileOkClientResponse() command: " + commandMessage.getCommand());
-//    }
     /**
      * Метод обрабатывает полученное от клиента подтверждение
      * успешного скачивания(сохранения) фрагмента файла в клиента.
@@ -290,25 +279,14 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     private void onDownloadFileFragOkClientResponse(CommandMessage commandMessage) {
         //вынимаем объект сообщения фрагмента файла из объекта сообщения(команды)
         FileFragmentMessage fileFragMsg = (FileFragmentMessage) commandMessage.getMessageObject();
-
         //выводим сообщение в лог
         printMsg("[server]CommandMessageManager.onDownloadFileFragOkClientResponse() - " +
                 "uploaded fragments: " + fileFragMsg.getCurrentFragNumber() +
                 "/" + fileFragMsg.getTotalFragsNumber());
-
         //сбрасываем защелку в цикле отправки фрагментов
         fileUtils.getCountDownLatch().countDown();
     }
 
-//    /**
-//     * Метод обрабатывает полученное от клиента сообщение об ошибке сохранения целого файла,
-//     * скачанного из облачного хранилища
-//     * @param commandMessage - объект сообщения(команды)
-//     */
-//    private void onDownloadFileErrorClientResponse(CommandMessage commandMessage) {
-//        //FIXME fill me!
-//        printMsg("[server]CommandMessageManager.onDownloadFileErrorClientResponse() command: " + commandMessage.getCommand());
-//    }
     /**
      * Метод обрабатывает полученное от клиента сообщение
      * об ошибке скачивания(сохранения) фрагмента файла в клиента.
@@ -325,7 +303,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         storageServer.sendFileFragment(fileFragMsg, Commands.REQUEST_SERVER_UPLOAD_FILE_FRAG,
                 userStorageRoot, ctx);
     }
-
 
     /**
      * Метод обрабатываем полученный от клиента запрос на переименование объекта элемента

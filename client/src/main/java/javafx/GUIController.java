@@ -330,9 +330,7 @@ public class GUIController implements Initializable {
             //запоминаем кликнутый элемент списка
             Item item = listView.getSelectionModel().getSelectedItem();
             //выводим сообщение в нижнюю метку
-//            noticeLabel.setText("Downloading a file...");
             noticeLabel.setText("File downloading. Waiting for a cloud server response...");
-
             //отправляем на сервер запрос на скачивание файла из облачного хранилища
             storageClient.demandDownloadItem(storageCurrentDirItem, clientCurrentDirItem, item);
             //сбрасываем выделение после действия
