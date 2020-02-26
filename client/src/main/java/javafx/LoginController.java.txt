@@ -7,7 +7,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
-public class LoginController {
+public class LoginController2 {
 
     @FXML
     private VBox globParent;
@@ -55,12 +55,7 @@ public class LoginController {
             //выводим сообщение в метку оповещения в GUI
             backController.showTextInGUI("Your registration data has been sent. Wait please...");
             //запускаем процесс регистрации в сетевом хранилище
-//            backController.demandRegistration(login.getText(), password.getText());
-            //TODO заглушка - сделать отдельную рег.форму
-            backController.demandRegistration(login.getText(),
-                    login.getText() + "_first_name", login.getText() + "_last_name",
-                    login.getText() + "@email.com", password.getText());
-
+            backController.demandRegistration(login.getText(), password.getText());
         }
     }
 

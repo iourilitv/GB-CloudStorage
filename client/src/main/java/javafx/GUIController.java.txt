@@ -25,9 +25,9 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * The client class is for operations with GUI.
+ * The client class for operating with GUI.
  */
-public class GUIController implements Initializable {
+public class GUIController2 implements Initializable {
 
     @FXML
     private MenuItem disconnectMenuItem;
@@ -78,7 +78,7 @@ public class GUIController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //инициируем объект клиента облачного хранилища
-        storageClient = new CloudStorageClient(GUIController.this);
+        storageClient = new CloudStorageClient(GUIController2.this);
         //устанавливаем настройки приложения
         storageClient.initConfiguration();
         //инициируем объекты директории по умолчанию в клиентской и серверной части GUI
@@ -111,29 +111,17 @@ public class GUIController implements Initializable {
         }).start();
     }
 
-//    /**
-//     * Метод-прокладка запускает процессы: показа окна авторизации в режиме авторизации
-//     * и процесс регистрации пользователя в сетевом хранилище.
-//     * @param login - логин пользователя
-//     * @param password - пароль пользователя
-//     */
-//    public void demandRegistration(String login, String password) {
-//        //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
-//        if(isLoginPasswordNotEmpty(login, password)){
-//            //запускаем процесс авторизации
-//            storageClient.demandRegistration(login, password);
-//            //если окно закрыто по крестику выхода
-//        } else {
-//            noticeLabel.setText("");
-//        }
-//    }
-    public void demandRegistration(String login, String first_name, String last_name,
-                                   String email, String password) {
+    /**
+     * Метод-прокладка запускает процессы: показа окна авторизации в режиме авторизации
+     * и процесс регистрации пользователя в сетевом хранилище.
+     * @param login - логин пользователя
+     * @param password - пароль пользователя
+     */
+    public void demandRegistration(String login, String password) {
         //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
-        //FIXME добавить проверку всех полей формы
         if(isLoginPasswordNotEmpty(login, password)){
             //запускаем процесс авторизации
-            storageClient.demandRegistration(login, first_name, last_name, email, password);
+            storageClient.demandRegistration(login, password);
             //если окно закрыто по крестику выхода
         } else {
             noticeLabel.setText("");
@@ -440,7 +428,7 @@ public class GUIController implements Initializable {
         openAboutScene();
     }
 
-    /** //FIXME Убрать задвоение - вызвать перегруженный метод openNewNameWindow(Item origin)
+    /**
      * Метод отрабатывает нажатие на пунтк меню "Change Client Root".
      * @param actionEvent - событие(здесь клик мыши)
      */
@@ -485,8 +473,6 @@ public class GUIController implements Initializable {
         //запускаем процесс отправки запроса на отключение
         storageClient.demandDisconnect();
     }
-
-
 
     /**
      * Метод отрабатывает нажатие на кнопку "Home" в клиентской части GUI.
@@ -612,7 +598,7 @@ public class GUIController implements Initializable {
             //определяем действия по событию закрыть окно по крестику через лямбда
             stage.setOnCloseRequest(event -> {
                 //вызываем разрыв соединения, если выйти по крестику
-                GUIController.this.storageClient.demandDisconnect();
+                GUIController2.this.storageClient.demandDisconnect();
             });
 
             stage.setTitle("Authorisation to the Cloud Storage by LYS");
@@ -626,7 +612,7 @@ public class GUIController implements Initializable {
         }
     }
 
-    /** //FIXME Убрать задвоение - вызвать перегруженный метод openNewNameWindow(Item origin)
+    /**
      * Перегруженный метод открывает модальное окно для ввода нового имени элемента списка.
      */
     private void openNewNameWindow() {
@@ -641,7 +627,7 @@ public class GUIController implements Initializable {
                 System.out.println("GUIController.menuItemRename() - " +
                         "the newNameWindow was closed forcibly!");
                 //сбрасываем текстовое поле имени
-                GUIController.this.newName = "";
+                GUIController2.this.newName = "";
             });
             renameController.backController = this;
 
@@ -676,7 +662,7 @@ public class GUIController implements Initializable {
                 //сбрасываем флаг
                 flag.set(false);
                 //сбрасываем текстовое поле имени
-                GUIController.this.newName = "";
+                GUIController2.this.newName = "";
             });
 
             //записываем текущее имя в текстовое поле

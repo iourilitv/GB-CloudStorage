@@ -12,12 +12,14 @@ import utils.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * This client's class is responsible for operation with storage by communication with command handlers.
  */
-public class CloudStorageClient {
+public class CloudStorageClient2 {
     //инициируем переменную для печати сообщений в консоль
     private final PrintStream log = System.out;
     //принимаем объект хендлера для операций с директориями
@@ -37,7 +39,7 @@ public class CloudStorageClient {
     //инициируем объект хендлера настроек приложения
     private final PropertiesHandler propertiesHandler = PropertiesHandler.getOwnObject();
 
-    public CloudStorageClient(GUIController guiController) {
+    public CloudStorageClient2(GUIController guiController) {
         //принимаем объект контроллера GUI
         this.guiController = guiController;
     }
@@ -104,21 +106,15 @@ public class CloudStorageClient {
         new NettyClient(this, IP_ADDR, PORT).run();
     }
 
-//    /**
-//     * Метод отправляет на сервер запрос на регистрацию нового пользователя в облачное хранилище.
-//     * @param login - логин пользователя
-//     * @param password - пароль пользователя
-//     */
-//    public void demandRegistration(String login, String password) {
-//        //отправляем на сервер объект сообщения(команды)
-//        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_REGISTRATION,
-//                new AuthMessage(login, password)));
-//    }
-    public void demandRegistration(String login, String first_name, String last_name,
-                                   String email, String password) {
+    /**
+     * Метод отправляет на сервер запрос на регистрацию нового пользователя в облачное хранилище.
+     * @param login - логин пользователя
+     * @param password - пароль пользователя
+     */
+    public void demandRegistration(String login, String password) {
         //отправляем на сервер объект сообщения(команды)
         ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_REGISTRATION,
-                new AuthMessage(login, first_name, last_name, email, password)));
+                new AuthMessage(login, password)));
     }
 
     /**
