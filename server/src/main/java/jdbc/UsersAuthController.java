@@ -68,14 +68,6 @@ public class UsersAuthController {
             //и выходим с false
             return false;
         }
-//        //если регистрация нового пользователя в БД прошла не удачно
-//        if(!insertUserIntoDBSecurely(authMessage.getLogin(), authMessage.getPassword())){
-//            //выводим сообщение в консоль
-//            printMsg("[server]UsersAuthController.authorizeUser() - " +
-//                    "This user has not been registered yet!");
-//            //и выходим с false
-//            return false;
-//        }
         //если регистрация нового пользователя в БД прошла не удачно
         if(!insertUserIntoDBSecurely(authMessage.getLogin(), authMessage.getFirst_name(),
                 authMessage.getLast_name(), authMessage.getEmail(), authMessage.getPassword())){
@@ -262,48 +254,15 @@ public class UsersAuthController {
         return false;
     }
 
-//    /**
-//     * Метод безопасного добавляет нового пользователя в БД.
-//     * @param login - заданный логин пользователя
-//     * @param password - заданный пароль пользователя
-//     * @return - результат добавляения новой строки в БД.
-//     */
-//    public boolean insertUserIntoDBSecurely(String login, String password){
-//        try {
-//           //генерирует "соль" - случайный байтовый массив
-//            byte[] secure_salt = secureHasher.generateSalt();
-//            //генерируем байтовый массив - безопасный хэш с "солью" для заданного пароля и "соли"
-//            byte[] secure_hash = secureHasher.generateSecureHash(password, secure_salt);
-//            // формируем строку для запроса PreparedStatement
-//            // ? - для последовательного подставления значений в соотвествующее место
-//            //TODO не обращать внимание!
-//            // работает, но IDEA выдает ошибку -
-//            // не видит таблицу "users", хотя тут же создал новую как предложение исправить ошибку
-//            String sql = "INSERT INTO users (login, username, email, secure_hash, secure_salt) " +
-//                    "VALUES (?, ?, ?, ?, ?)";
-//            //инициируем объект подготовленнного запроса
-//            preparedStatement = connection.prepareStatement(sql);
-//            //добавляем в запрос параметр 1 - строку логина
-//            preparedStatement.setString(1, login);
-//            //добавляем в запрос параметр 2 - строку имени пользователя
-//            preparedStatement.setString(2, login + "_name"); //FIXME add username into the method's parameter
-//            //добавляем в запрос параметр 3 - строку email пользователя
-//            preparedStatement.setString(3, login + "@email.com"); //FIXME add email into the method's parameter
-//            //добавляем в запрос параметр 4 - байтовый массив безопасного хэша
-//            preparedStatement.setBinaryStream(4, new ByteArrayInputStream(secure_hash));
-//            //добавляем в запрос параметр 5 - байтовый массив "соли"
-//            preparedStatement.setBinaryStream(5, new ByteArrayInputStream(secure_salt));
-//            //оправляем запрос и получяем ответ из БД
-//            int rs = preparedStatement.executeUpdate();
-//            // если строка добавлена, то возвращается 1, если нет, то вернеться 0?
-//            if(rs != 0) {
-//                return true;
-//            }
-//        } catch (SQLException | InvalidKeySpecException e) {
-//            e.printStackTrace();
-//        }
-//        return false;
-//    }
+    /**
+     * Метод безопасно добавляет нового пользователя в БД.
+     * @param login - логин пользователя
+     * @param first_name - имя пользователя
+     * @param last_name - фамилия пользователя
+     * @param email - email пользователя
+     * @param password - пароль пользователя
+     * @return - результат добавляения новой строки в БД.
+     */
     private boolean insertUserIntoDBSecurely(String login, String first_name, String last_name,
                                             String email, String password){
         try {

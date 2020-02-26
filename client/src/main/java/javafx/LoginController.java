@@ -51,11 +51,11 @@ public class LoginController {
     @FXML
     public void onRegistrationBtnClick(ActionEvent actionEvent) {
         //если введенные регистрационные данные корректны
+        ////TODO добавить email etc. для отдельной рег.формы
         if(isRegistrationDataCorrect(login.getText(), password.getText(), passwordConfirm.getText())){
             //выводим сообщение в метку оповещения в GUI
             backController.showTextInGUI("Your registration data has been sent. Wait please...");
             //запускаем процесс регистрации в сетевом хранилище
-//            backController.demandRegistration(login.getText(), password.getText());
             //TODO заглушка - сделать отдельную рег.форму
             backController.demandRegistration(login.getText(),
                     login.getText() + "_first_name", login.getText() + "_last_name",
@@ -118,7 +118,7 @@ public class LoginController {
 
         System.out.println("LoginController.isLoginPasswordCorrect() - login: " + login
                 + ", password: " + password + ", passwordConfirm: " + passwordConfirm);
-        //FIXME усилить проверку
+        //TODO добавить email для отдельной рег.формы
         return !login.trim().isEmpty() && !password.trim().isEmpty() && !passwordConfirm.trim().isEmpty() &&
                 password.equals(passwordConfirm);
     }
@@ -146,6 +146,9 @@ public class LoginController {
      */
     private void clearRegAuthFields(){
         login.setText("");
+        //first_name.setText("");//TODO добавить для отдельной рег.формы
+        //last_name.setText("");//TODO добавить для отдельной рег.формы
+        //email.setText("");//TODO добавить для отдельной рег.формы
         password.setText("");
         passwordConfirm.setText("");
     }

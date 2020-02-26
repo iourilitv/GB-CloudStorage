@@ -111,22 +111,15 @@ public class GUIController implements Initializable {
         }).start();
     }
 
-//    /**
-//     * Метод-прокладка запускает процессы: показа окна авторизации в режиме авторизации
-//     * и процесс регистрации пользователя в сетевом хранилище.
-//     * @param login - логин пользователя
-//     * @param password - пароль пользователя
-//     */
-//    public void demandRegistration(String login, String password) {
-//        //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
-//        if(isLoginPasswordNotEmpty(login, password)){
-//            //запускаем процесс авторизации
-//            storageClient.demandRegistration(login, password);
-//            //если окно закрыто по крестику выхода
-//        } else {
-//            noticeLabel.setText("");
-//        }
-//    }
+    /**
+     * Метод-прокладка запускает процессы: показа окна авторизации в режиме авторизации
+     * и процесс регистрации пользователя в сетевом хранилище.
+     * @param login - логин пользователя
+     * @param first_name - имя пользователя
+     * @param last_name - фамилия пользователя
+     * @param email - email пользователя
+     * @param password - пароль пользователя
+     */
     public void demandRegistration(String login, String first_name, String last_name,
                                    String email, String password) {
         //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
