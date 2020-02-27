@@ -17,6 +17,10 @@ public enum Commands {
     SERVER_RESPONSE_AUTH_OK,//ответ сервера, что авторизация прошла успешно
     SERVER_RESPONSE_AUTH_ERROR,//ответ сервера, что при авторизации произошла ошибка
 
+    REQUEST_SERVER_CHANGE_PASSWORD,//запрос на сервер на изменение пароля пользователя
+    SERVER_RESPONSE_CHANGE_PASSWORD_OK,//ответ сервера, что изменение пароля прошло успешно
+    SERVER_RESPONSE_CHANGE_PASSWORD_ERROR,//ответ сервера, что при изменении пароля произошла ошибка
+
     REQUEST_SERVER_UPLOAD_ITEM,//запрос на сервер загрузить(сохранить) объект элемента списка
     SERVER_RESPONSE_UPLOAD_ITEM_OK,//ответ сервера, что объект успешно загружен(сохранен)
     SERVER_RESPONSE_UPLOAD_ITEM_ERROR,//ответ сервера, что при загрузке(сохранении) объекта произошла ошибка
@@ -74,4 +78,5 @@ public enum Commands {
 
     //переместить файл в другую папку
     REQUEST_SERVER_MOVE_FILE
+
 }

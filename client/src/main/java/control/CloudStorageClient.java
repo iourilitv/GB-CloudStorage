@@ -131,6 +131,18 @@ public class CloudStorageClient {
     }
 
     /**
+     * Метод отправляет запрос на изменение пароля пользователя в сетевое хранилище.
+     * @param login - логин пользователя
+     * @param password - текущий пароль пользователя
+     * @param newPassword - новый пароль пользователя
+     */
+    public void demandChangePassword(String login, String password, String newPassword) {
+        //отправляем на сервер объект сообщения(команды)
+        ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_CHANGE_PASSWORD,
+                new AuthMessage(login, password, newPassword)));
+    }
+
+    /**
      * Метод отправляет на сервер запрос на получение списка элементов заданной директории
      * пользователя в сетевом хранилище
      * @param directoryPathname - строка заданной относительной директории пользователя
@@ -464,5 +476,6 @@ public class CloudStorageClient {
         //устанавливаем режим отображения GUI "Отсоединен"
         guiController.setDisconnectedMode(true);
     }
+
 
 }

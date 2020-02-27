@@ -2,6 +2,7 @@ package control;
 
 import io.netty.channel.ChannelHandlerContext;
 import jdbc.UsersAuthController;
+import messages.AuthMessage;
 import messages.DirectoryMessage;
 import messages.FileFragmentMessage;
 import messages.FileMessage;
@@ -89,6 +90,40 @@ public class CloudStorageServer {
         storageDefaultDirItem = new Item(STORAGE_DEFAULT_DIR);
         //инициируем объект сетевого подключения
         new NettyServer(this, PORT).run();
+    }
+
+    /**
+     * Метод-прокладка запускае процесс изменения пароля пользователя в БД.
+     * @param authMessage - объект фвторизационного сообщения
+     * @param ctx - объект соединения с клиентом
+     * @return - результат изменения пароля пользователя в БД
+     */
+    public boolean changeUserPassword(AuthMessage authMessage, ChannelHandlerContext ctx) {
+        //инициируем объект контрольного соединения(для заданного логина)
+        ChannelHandlerContext checkedCtx = usersAuthController.getAuthorizedUsers()
+                .get(authMessage.getLogin());
+        //если в списке зарегистрированных пользователей есть такой логин и
+        // если объект его соединения совпадает с соединением текущего пользователя
+//        if(checkedCtx != null &&
+//                checkedCtx.channel().id().equals(ctx.channel().id())){
+        if(checkedCtx != null &&
+                checkedCtx.channel().equals(ctx.channel())){
+
+            //выполняем и возвращаем результат изменения пароля пользователя в БД
+            return usersAuthController.changeUserPassword(authMessage.getLogin(),
+                    authMessage.getPassword(), authMessage.getNewPassword());
+        //в противном случае
+        } else {
+            //выводим сообщение в лог и возвращаем false
+//            printMsg("CloudStorageServer.changeUserPassword() - Wrong login! " +
+//                    ". login: " + authMessage.getLogin() +
+//                    ". ctx.name(): " + ctx.name() + ". ctx.channel().id(): " + ctx.channel().id());
+            printMsg("CloudStorageServer.changeUserPassword() - Wrong login! " +
+                    ". login: " + authMessage.getLogin() +
+                    ". ctx.channel(): " + ctx.channel());
+
+            return false;
+        }
     }
 
     /**

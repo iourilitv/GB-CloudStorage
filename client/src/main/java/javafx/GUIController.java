@@ -28,9 +28,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * The client class is for operations with GUI.
  */
 public class GUIController implements Initializable {
-
+    //объявляем объекты пунктов верхнего меню
     @FXML
-    private MenuItem disconnectMenuItem;
+    private MenuItem disconnectMenuItem, changePasswordMenuItem;
 
     @FXML
     private StackPane connectToCloudStorageStackPane;
@@ -74,6 +74,8 @@ public class GUIController implements Initializable {
     private Stage stage;
     //объявляем объект контроллера окна авторизации
     private LoginController loginController;
+    //объявляем объект контроллера окна авторизации
+    private ChangePasswordController changePasswordController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -124,7 +126,7 @@ public class GUIController implements Initializable {
                                    String email, String password) {
         //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
         //FIXME добавить проверку всех полей формы
-        if(isLoginPasswordNotEmpty(login, password)){
+        if(isLoginPasswordNotEmpty(login, password)){//TODO лишняя проверка? (см.demandChangePassword)
             //запускаем процесс авторизации
             storageClient.demandRegistration(login, first_name, last_name, email, password);
             //если окно закрыто по крестику выхода
@@ -141,13 +143,24 @@ public class GUIController implements Initializable {
      */
     public void demandAuthorisation(String login, String password) {
         //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
-        if(isLoginPasswordNotEmpty(login, password)){
+        if(isLoginPasswordNotEmpty(login, password)){//TODO лишняя проверка? (см.demandChangePassword)
             //запускаем процесс авторизации
             storageClient.demandAuthorization(login, password);
             //если окно закрыто по крестику выхода
         } else {
             noticeLabel.setText("");
         }
+    }
+
+    /**
+     * Метод-прокладка запускает процесс отправки запроса на изменение пароля пользователя
+     * в сетевое хранилище.
+     * @param login - логин пользователя
+     * @param password - текущий пароль пользователя
+     * @param newPassword - новый пароль пользователя
+     */
+    public void demandChangePassword(String login, String password, String newPassword) {
+        storageClient.demandChangePassword(login, password, newPassword);
     }
 
     /**
@@ -428,7 +441,6 @@ public class GUIController implements Initializable {
      */
     @FXML
     public void onAboutMenuItemClick(ActionEvent actionEvent) {
-        System.out.println("GUIController.onAboutLinkClick()");
         //открываем сцену с информацией о программе
         openAboutScene();
     }
@@ -469,7 +481,20 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод отрабатывает нажатие на пунтк меню "Disconnect".
+     * Метод отрабатывает нажатие на пункт меню "ChangePassword".
+     * @param actionEvent - событие(здесь клик мыши)
+     */
+    @FXML
+    public void onChangePasswordMenuItemClick(ActionEvent actionEvent) {
+        //TODO temporarily
+        System.out.println("GUIController.onChangePasswordMenuItemClick() - opening a form...");
+
+        //запускаем процесс отправки запроса на изменение пароля пользователя
+        openChangingPasswordWindow();
+    }
+
+    /**
+     * Метод отрабатывает нажатие на пункт меню "Disconnect".
      * @param actionEvent - событие(здесь клик мыши)
      */
     @FXML
@@ -478,8 +503,6 @@ public class GUIController implements Initializable {
         //запускаем процесс отправки запроса на отключение
         storageClient.demandDisconnect();
     }
-
-
 
     /**
      * Метод отрабатывает нажатие на кнопку "Home" в клиентской части GUI.
@@ -619,6 +642,37 @@ public class GUIController implements Initializable {
         }
     }
 
+    /** //FIXME Убрать задвоение - вызвать универсальный метод открытия модального окна
+     * Метод открывает модальное окно с формой изменения пароля.
+     */
+    private void openChangingPasswordWindow() {
+        //выводим сообщение в нижнюю метку GUI
+        noticeLabel.setText("Fill a Changing Password Form please.");
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/changePassword.fxml"));
+            Parent root = loader.load();
+            changePasswordController = loader.getController();
+            //сохраняем ссылку на контроллер открываемого окна авторизации/регистрации
+            changePasswordController.setBackController(this);
+
+            //определяем действия по событию закрыть окно по крестику через лямбда
+            stage.setOnCloseRequest(event -> {
+                //вызываем разрыв соединения, если выйти по крестику
+                GUIController.this.setAuthorizedMode(true);
+            });
+
+            stage.setTitle("Changing Password Form to the Cloud Storage by LYS");
+            stage.setScene(new Scene(root, 300, 200));
+            stage.isAlwaysOnTop();
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /** //FIXME Убрать задвоение - вызвать перегруженный метод openNewNameWindow(Item origin)
      * Перегруженный метод открывает модальное окно для ввода нового имени элемента списка.
      */
@@ -712,18 +766,6 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод выводит в отдельном потоке(не javaFX) переданное сообщение в метку уведомлений.
-     * @param text - строка сообщения
-     */
-    public void showTextInGUI(String text){
-        //в отдельном потоке запускаем обновление интерфейса
-        Platform.runLater(() -> {
-            //выводим сообщение в нижнюю метку GUI
-            noticeLabel.setText(text);
-        });
-    }
-
-    /**
      * Метод-прокладка, чтобы открывать окно GUI в других потоках
      */
     public void openAuthWindowInGUI() {
@@ -753,8 +795,11 @@ public class GUIController implements Initializable {
         // список объектов в сетевом хранилище
         storageItemListView.setManaged(!isDisconnectedMode);
         storageItemListView.setVisible(!isDisconnectedMode);
+
         //деактивируем пункт меню Disconnect
         disconnectMenuItem.setDisable(isDisconnectedMode);
+        //деактивируем пункт меню ChangePassword
+        changePasswordMenuItem.setDisable(isDisconnectedMode);
     }
 
     /**
@@ -775,8 +820,16 @@ public class GUIController implements Initializable {
         storageItemListView.setVisible(isAuthMode);
         //если авторизация получена
         if(isAuthMode){
-            //закрываем окно авторизации в потоке JavaFX
-            Platform.runLater(() -> loginController.hideWindow());
+            //если объект контроллера авторизации не нулевой
+            if(loginController != null){
+                //закрываем окно формы в потоке JavaFX
+                Platform.runLater(() -> loginController.hideWindow());
+            }
+            //если объект контроллера изменения пароля пользователя не нулевой
+            if(changePasswordController != null){
+                //закрываем окно формы в потоке JavaFX
+                Platform.runLater(() -> changePasswordController.hideWindow());
+            }
         }
     }
 
@@ -799,6 +852,18 @@ public class GUIController implements Initializable {
      */
     private boolean isLoginPasswordNotEmpty(String login, String password){
         return !login.isEmpty() && !password.isEmpty();
+    }
+
+    /**
+     * Метод выводит в отдельном потоке(не javaFX) переданное сообщение в метку уведомлений.
+     * @param text - строка сообщения
+     */
+    public void showTextInGUI(String text){
+        //в отдельном потоке запускаем обновление интерфейса
+        Platform.runLater(() -> {
+            //выводим сообщение в нижнюю метку GUI
+            noticeLabel.setText(text);
+        });
     }
 
     public void setNewName(String newName) {
@@ -845,5 +910,6 @@ public class GUIController implements Initializable {
             e.printStackTrace();
         }
     }
+
 
 }

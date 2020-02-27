@@ -15,7 +15,7 @@ import utils.FileUtils;
 /**
  * The client's class for recognizing command messages and control command handlers.
  */
-public class CommandMessageManager extends ChannelInboundHandlerAdapter {
+public class CommandMessageManager2 extends ChannelInboundHandlerAdapter {
     //принимаем объект исходящего хэндлера
     private CloudStorageClient storageClient;
     //принимаем объект файлового обработчика
@@ -25,7 +25,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     //принимаем объект контроллера GUI
     private GUIController guiController;
 
-    public CommandMessageManager(CloudStorageClient storageClient) {
+    public CommandMessageManager2(CloudStorageClient storageClient) {
         this.storageClient = storageClient;
         //принимаем объект файлового обработчика
         fileUtils = storageClient.getFileUtils();
@@ -97,17 +97,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             case SERVER_RESPONSE_AUTH_OK:
                 //вызываем метод обработки ответа сервера
                 onAuthOKServerResponse(commandMessage);
-                break;
-            //обрабатываем полученное от сервера подтверждение успешного
-            // изменения пароля пользователя в облачное хранилище
-            case SERVER_RESPONSE_CHANGE_PASSWORD_OK:
-                //вызываем метод обработки ответа сервера
-                onChangePasswordServerResponse(commandMessage);
-                break;
-            //обрабатываем полученное от сервера сообщение об ошибке изменения пароля пользователя в облачное хранилище
-            case SERVER_RESPONSE_CHANGE_PASSWORD_ERROR:
-                //вызываем метод обработки ответа сервера
-                onChangePasswordErrorServerResponse(commandMessage);
                 break;
             //обрабатываем полученный ответ сервера с массивом файловых объектов в заданной
             // директории пользователя в сетевом хранилище, если нет ошибок
@@ -254,27 +243,6 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     private void onAuthErrorServerResponse(CommandMessage commandMessage) {
         //выводим сообщение в нижнюю метку GUI
         showTextInGUI("Something wrong with your login or password! Are you registered?");
-    }
-
-    /**
-     * Метод обрабатывает полученное от сервера подтверждение успешного
-     * изменения пароля пользователя в облачное хранилище.
-     * @param commandMessage - объект сообщения(команды)
-     */
-    private void onChangePasswordServerResponse(CommandMessage commandMessage) {
-        //выводим сообщение в GUI
-        showTextInGUI("Your password has been changed successfully!");
-        //возвращаем режим отображения GUI в режим "авторизован"
-        guiController.setAuthorizedMode(true);
-    }
-
-    /**
-     * Метод обрабатывает полученное от сервера сообщение об ошибке изменения пароля пользователя в облачное хранилище
-     * @param commandMessage - объект сообщения(команды)
-     */
-    private void onChangePasswordErrorServerResponse(CommandMessage commandMessage) {
-        //выводим сообщение в GUI
-        showTextInGUI("Your new data has not been accepted. Try again!");
     }
 
     /**

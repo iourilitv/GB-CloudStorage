@@ -3,6 +3,7 @@ package netty;
 import control.CloudStorageServer;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import messages.AuthMessage;
 import messages.DirectoryMessage;
 import messages.FileFragmentMessage;
 import messages.FileMessage;
@@ -11,6 +12,7 @@ import utils.*;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 /**
  * The server's class is for recognizing command messages and control command handlers.
@@ -57,9 +59,14 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 //вызываем метод обработки запроса от AuthGateway
                 onAuthClientRequest(commandMessage);
                 break;
+            //обрабатываем полученный от клиента запрос на изменение пароля пользователя в сетевом хранилище
+            case REQUEST_SERVER_CHANGE_PASSWORD:
+                //вызываем метод обработки запроса от клиента
+                onChangePasswordClientRequest(commandMessage);
+                break;
             //обрабатываем полученный от клиента запрос на отсоединение пользователя от сервера
             case REQUEST_SERVER_DISCONNECT:
-                //вызываем метод обработки запроса от AuthGateway
+                //вызываем метод обработки запроса от клиента
                 onDisconnectClientRequest(commandMessage);
                 break;
             //обрабатываем полученный от клиента запрос на список объектов файлов и папок
@@ -136,6 +143,26 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //удаляем входящий хэндлер AuthGateway, т.к. после авторизации он больше не нужен
         printMsg("[server]CommandMessageManager.onAuthClientRequest() - " +
                 "removed pipeline: " + ctx.channel().pipeline().remove(AuthGateway.class));
+    }
+
+    /**
+     * Метод обрабатывает полученный от клиента запрос на изменение пароля пользователя в сетевом хранилище.
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onChangePasswordClientRequest(CommandMessage commandMessage) {
+        //вынимаем объект авторизационного сообщения из объекта сообщения(команды)
+        AuthMessage authMessage = (AuthMessage)commandMessage.getMessageObject();
+        //если пароль изменен в БД успешно
+        if(storageServer.changeUserPassword(authMessage, ctx)){
+            //отправляем сообщение на сервер: подтверждение, что все прошло успешно
+            command = Commands.SERVER_RESPONSE_CHANGE_PASSWORD_OK;
+            //если что-то пошло не так
+        } else {
+            //инициируем переменную типа команды
+            command = Commands.SERVER_RESPONSE_CHANGE_PASSWORD_ERROR;
+        }
+        //отправляем объект сообщения(команды) клиенту
+        ctx.writeAndFlush(new CommandMessage(command));
     }
 
     /**
