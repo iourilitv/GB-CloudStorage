@@ -181,15 +181,25 @@ public class UsersAuthController {
     }
 
     /**
-     * Метод проверяет не авторизован ли уже пользователь с таким логином.
+     * Метод проверяет не авторизован ли уже пользователь с таким логином и объектом соединения.
      * @param login - логин пользователя
      * @param ctx - сетевое соединение
      * @return - результат проверки
      */
     private boolean isUserAuthorized(String login, ChannelHandlerContext ctx) {
-        //возвращаем результат проверки есть ли уже элемент в списке авторизованных с такими
-        // объектом соединения или логином
-        return authorizedUsers.containsKey(login) || authorizedUsers.containsValue(ctx);
+        //если есть элемент с таким логином в списке авторизованных пользователей
+        if(authorizedUsers.containsKey(login)){
+            return true;
+        }
+        //проверяем все элементы списка по значениям(на всякий случай)
+        for (Map.Entry<String, ChannelHandlerContext> user: authorizedUsers.entrySet()) {
+            //если есть элемент в списке авторизованных с такими объектом соединения
+            if(user.getValue().channel().equals(ctx.channel())){
+                return true;
+            }
+        }
+        //возвращаем результат проверки  или логином
+        return false;
     }
 
     /**
