@@ -6,13 +6,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import utils.Item;
@@ -22,7 +20,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -123,17 +120,21 @@ public class GUIController implements Initializable {
      * @param email - email пользователя
      * @param password - пароль пользователя
      */
+//    public void demandRegistration(String login, String first_name, String last_name,
+//                                   String email, String password) {
+//        //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
+//        //FIXME добавить проверку всех полей формы
+//        if(isLoginPasswordNotEmpty(login, password)){//TODO лишняя проверка? (см.demandChangePassword)
+//            //запускаем процесс авторизации
+//            storageClient.demandRegistration(login, first_name, last_name, email, password);
+//            //если окно закрыто по крестику выхода
+//        } else {
+//            noticeLabel.setText("");
+//        }
+//    }
     public void demandRegistration(String login, String first_name, String last_name,
                                    String email, String password) {
-        //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
-        //FIXME добавить проверку всех полей формы
-        if(isLoginPasswordNotEmpty(login, password)){//TODO лишняя проверка? (см.demandChangePassword)
-            //запускаем процесс авторизации
-            storageClient.demandRegistration(login, first_name, last_name, email, password);
-            //если окно закрыто по крестику выхода
-        } else {
-            noticeLabel.setText("");
-        }
+        storageClient.demandRegistration(login, first_name, last_name, email, password);
     }
 
     /**
@@ -142,15 +143,18 @@ public class GUIController implements Initializable {
      * @param login - логин пользователя
      * @param password - пароль пользователя
      */
+//    public void demandAuthorisation(String login, String password) {
+//        //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
+//        if(isLoginPasswordNotEmpty(login, password)){//TODO лишняя проверка? (см.demandChangePassword)
+//            //запускаем процесс авторизации
+//            storageClient.demandAuthorization(login, password);
+//            //если окно закрыто по крестику выхода
+//        } else {
+//            noticeLabel.setText("");
+//        }
+//    }
     public void demandAuthorisation(String login, String password) {
-        //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
-        if(isLoginPasswordNotEmpty(login, password)){//TODO лишняя проверка? (см.demandChangePassword)
-            //запускаем процесс авторизации
-            storageClient.demandAuthorization(login, password);
-            //если окно закрыто по крестику выхода
-        } else {
-            noticeLabel.setText("");
-        }
+        storageClient.demandAuthorization(login, password);
     }
 
     /**
@@ -793,6 +797,10 @@ public class GUIController implements Initializable {
 
     public Label getNoticeLabel() {
         return noticeLabel;
+    }
+
+    public CloudStorageClient getStorageClient() {
+        return storageClient;
     }
 
     //Метод отправки запроса об отключении на сервер

@@ -14,6 +14,8 @@ import jdbc.UsersAuthController;
  * It discards not Auth commandMessages from not authorized clients.
  */
 public class AuthGateway extends ChannelInboundHandlerAdapter {
+    //принимаем объект соединения
+    private ChannelHandlerContext ctx;
     //принимаем объект контроллера сетевого хранилища
     private final CloudStorageServer storageServer;
     //принимаем объект контроллера авторизации клиента
@@ -34,6 +36,8 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
+        //принимаем объект соединения
+        this.ctx = ctx;
         //если соединение установлено, отправляем клиенту сообщение
         ctx.writeAndFlush(new CommandMessage(Commands.SERVER_NOTIFICATION_CLIENT_CONNECTED));
 
@@ -64,15 +68,37 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
      * @param msgObject - десериализованный объект сообщения
      */
     @Override
+//    public void channelRead(ChannelHandlerContext ctx, Object msgObject) {
+//        try {
+//            //инициируем объект команды из объекта сообщения
+//            CommandMessage commandMessage = (CommandMessage) msgObject;
+//            //если это команда на регистрацию нового пользователя в сетевом хранилище
+//            if(commandMessage.getCommand() == Commands.REQUEST_SERVER_REGISTRATION){
+//                //вызываем метод обработки запроса от клиента
+//                onRegistrationUserClientRequest(ctx, commandMessage);
+//            //если это команда на авторизацию пользователя в сетевом хранилище
+//            } else if(commandMessage.getCommand() == Commands.REQUEST_SERVER_AUTH){
+//                //вызываем метод обработки запроса от клиента
+//                onAuthClientRequest(ctx, commandMessage);
+//            }
+//        } finally {
+//            ReferenceCountUtil.release(msgObject);
+//        }
+//    }
     public void channelRead(ChannelHandlerContext ctx, Object msgObject) {
         try {
             //инициируем объект команды из объекта сообщения
             CommandMessage commandMessage = (CommandMessage) msgObject;
-            //если это команда на регистрацию нового пользователя в сетевом хранилище
-            if(commandMessage.getCommand() == Commands.REQUEST_SERVER_REGISTRATION){
+            //если это команда на отсоединение клиента от сервера
+            //в авторизованном режиме
+            if(commandMessage.getCommand() == Commands.REQUEST_SERVER_DISCONNECT){
+                //вызываем метод обработки запроса от клиента
+                onDisconnectClientRequest(commandMessage);
+                //если это команда на регистрацию нового пользователя в сетевом хранилище
+            } else if(commandMessage.getCommand() == Commands.REQUEST_SERVER_REGISTRATION){
                 //вызываем метод обработки запроса от клиента
                 onRegistrationUserClientRequest(ctx, commandMessage);
-            //если это команда на авторизацию пользователя в сетевом хранилище
+                //если это команда на авторизацию пользователя в сетевом хранилище
             } else if(commandMessage.getCommand() == Commands.REQUEST_SERVER_AUTH){
                 //вызываем метод обработки запроса от клиента
                 onAuthClientRequest(ctx, commandMessage);
@@ -80,6 +106,23 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
         } finally {
             ReferenceCountUtil.release(msgObject);
         }
+    }
+
+    /**
+     * Метод обрабатывает полученный от клиента запрос на отсоединение пользователя
+     * от сервера в НЕ авторизованном режиме.
+     * @param commandMessage - объект сообщения(команды)
+     */
+    private void onDisconnectClientRequest(CommandMessage commandMessage) {
+        //отправляем объект сообщения(команды) клиенту
+        ctx.writeAndFlush(new CommandMessage(Commands.SERVER_RESPONSE_DISCONNECT_OK));
+
+        //TODO temporarily
+        printMsg("[server]AuthGateway.onDisconnectClientRequest() - " +
+                "Unauthorized client has been disconnected! ctx : " + ctx);
+
+        //закрываем соединение с клиентом(вроде на ctx.close(); не отключал соединение?)
+        ctx.channel().close();
     }
 
     /**

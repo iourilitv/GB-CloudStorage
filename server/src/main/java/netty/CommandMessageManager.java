@@ -64,6 +64,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
                 onChangePasswordClientRequest(commandMessage);
                 break;
             //обрабатываем полученный от клиента запрос на отсоединение пользователя от сервера
+            //в авторизованном режиме
             case REQUEST_SERVER_DISCONNECT:
                 //вызываем метод обработки запроса от клиента
                 onDisconnectClientRequest(commandMessage);
@@ -165,7 +166,8 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * Метод обрабатывает полученный от клиента запрос на отсоединение пользователя от сервера.
+     * Метод обрабатывает полученный от клиента запрос на отсоединение пользователя
+     * от сервера в авторизованном режиме.
      * @param commandMessage - объект сообщения(команды)
      */
     private void onDisconnectClientRequest(CommandMessage commandMessage) {
@@ -173,6 +175,11 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         ctx.writeAndFlush(new CommandMessage(Commands.SERVER_RESPONSE_DISCONNECT_OK));
         //удаляем пользователя из списка авторизованных, если он был авторизован
         storageServer.getUsersAuthController().deAuthorizeUser(login);
+
+        //TODO temporarily
+        printMsg("[server]AuthGateway.onDisconnectClientRequest() - " +
+                "Authorized user \"" + login + "\" has been disconnected! ctx : " + ctx);
+
         //закрываем соединение с клиентом(вроде на ctx.close(); не отключал соединение?)
         ctx.channel().close();
     }
