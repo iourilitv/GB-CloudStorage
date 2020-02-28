@@ -54,10 +54,7 @@ public class RegistrationController {
         backController.getNoticeLabel().setText("Insert your login and password please.");
         //очищаем все поля формы авторизации/регистрации
         clearRegistrationForm();
-        //
-        //FIXME проработать процесс перехода в режим авторизации
-//        backController.openAuthorisationWindow();
-//        hideWindow();
+        //переходим в режим авторизации
         backController.setAuthorizationFormMode();
     }
 
@@ -70,11 +67,6 @@ public class RegistrationController {
      */
     private boolean isRegistrationDataCorrect(String login, String first_name,
         String last_name, String email, String password, String passwordConfirm){
-        //TODO temporarily
-        System.out.println("RegistrationController.isRegistrationDataCorrect() - first_name: " + first_name +
-                ", last_name: " + last_name
-                + ", email: " + email + ", passwordConfirm: " + passwordConfirm);
-
         return isLoginPasswordCorrect(login, password) && !first_name.trim().isEmpty() &&
                 !last_name.trim().isEmpty() && !email.trim().isEmpty() &&
                 !passwordConfirm.trim().isEmpty() && password.equals(passwordConfirm);

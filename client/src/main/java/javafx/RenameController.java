@@ -8,12 +8,12 @@ import javafx.scene.layout.VBox;
 public class RenameController {
 
     @FXML
-    TextField newName;
+    private VBox globParent;
 
     @FXML
-    VBox globParent;
+    private TextField newName;
 
-    public GUIController backController;
+    private GUIController backController;
 
     /**
      * Метод обрабатывает клик мыши по кнопке "Confirm" в диалоговом окне ввода нового имени
@@ -33,5 +33,13 @@ public class RenameController {
     //FIXME
     private boolean isNewNameCorrect(String newName){
         return !newName.trim().isEmpty();
+    }
+
+    public void setNewNameString(String text) {
+        this.newName.setText(text);
+    }
+
+    public void setBackController(GUIController backController) {
+        this.backController = backController;
     }
 }

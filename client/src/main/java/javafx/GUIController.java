@@ -73,10 +73,6 @@ public class GUIController implements Initializable {
     private String newName = "";
     //объявляем переменную стадии приложения
     private Stage stage;
-
-//    //объявляем объект контроллера окна авторизации
-//    private LoginController loginController;
-
     //объявляем объект контроллера окна регистрации
     private RegistrationController registrationController;
     //объявляем объект контроллера окна авторизации
@@ -615,65 +611,18 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод открывает модальное окно для ввода логина и пароля пользователя.
+     * Перегруженный метод открывает модальное окно для ввода логина и пароля пользователя.
      */
-//    void openAuthorisationWindow() {
-//        //выводим сообщение в нижнюю метку GUI
-//        noticeLabel.setText("Server has connected, insert login and password.");
-//
-//        try {
-//            Stage stage = new Stage();
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Login.fxml"));
-//            Parent root = loader.load();
-//            loginController = loader.getController();
-//            //сохраняем ссылку на контроллер открываемого окна авторизации/регистрации
-//            loginController.setBackController(this);
-//
-//            //определяем действия по событию закрыть окно по крестику через лямбда
-//            stage.setOnCloseRequest(event -> {
-//                //вызываем разрыв соединения, если выйти по крестику
-//                GUIController.this.storageClient.demandDisconnect();
-//            });
-//
-//            stage.setTitle("Authorisation to the Cloud Storage by LYS");
-//            stage.setScene(new Scene(root, 300, 200));
-//            stage.isAlwaysOnTop();
-//            stage.setResizable(false);
-//            stage.initModality(Modality.APPLICATION_MODAL);
-//            stage.showAndWait();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
     void openAuthorisationWindow() {
-        //выводим сообщение в нижнюю метку GUI
-        noticeLabel.setText("Server has connected, insert login and password.");
-
-        try {
-            Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/authorisation.fxml"));
-            Parent root = loader.load();
-            authorisationController = loader.getController();
-            //сохраняем ссылку на контроллер открываемого окна авторизации/регистрации
-            authorisationController.setBackController(this);
-
-            //определяем действия по событию закрыть окно по крестику через лямбда
-            stage.setOnCloseRequest(event -> {
-                //вызываем разрыв соединения, если выйти по крестику
-                GUIController.this.setAuthorizedMode(false);
-            });
-
-            stage.setTitle("Authorisation to the Cloud Storage by LYS");
-            stage.setScene(new Scene(root, 300, 200));
-            stage.isAlwaysOnTop();
-            stage.setResizable(false);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //вызываем перегруженный метод с пустыми логином и паролем
+        openAuthorisationWindow("", "");
     }
 
+    /**
+     * Перегруженный метод открывает модальное окно для ввода логина и пароля пользователя.
+     * @param login - логин пользователя
+     * @param password - пароль пользователя
+     */
     void openAuthorisationWindow(String login, String password) {
         //выводим сообщение в нижнюю метку GUI
         noticeLabel.setText("Server has connected, insert login and password.");
@@ -705,7 +654,6 @@ public class GUIController implements Initializable {
             e.printStackTrace();
         }
     }
-
 
     /**
      * Метод открывает модальное окно с регистрационной формой пользователя.
@@ -787,7 +735,8 @@ public class GUIController implements Initializable {
                 //сбрасываем текстовое поле имени
                 GUIController.this.newName = "";
             });
-            renameController.backController = this;
+            //запоминаем текущий контроллер для возврата
+            renameController.setBackController(this);
 
             stage.setTitle("insert a new name");
             stage.setScene(new Scene(root, 200, 50));
@@ -822,10 +771,10 @@ public class GUIController implements Initializable {
                 //сбрасываем текстовое поле имени
                 GUIController.this.newName = "";
             });
-
             //записываем текущее имя в текстовое поле
-            renameController.newName.setText(origin.getItemName());
-            renameController.backController = this;
+            renameController.setNewNameString(origin.getItemName());
+            //запоминаем текущий контроллер для возврата
+            renameController.setBackController(this);
 
             stage.setTitle("insert a new name");
             stage.setScene(new Scene(root, 200, 50));
@@ -903,32 +852,6 @@ public class GUIController implements Initializable {
      * Метод устанавливает GUI в режим авторизован или нет, в зависимости от параметра
      * @param isAuthMode - true - сервер авторизовал пользователя
      */
-//    public void setAuthorizedMode(boolean isAuthMode) {
-//        //активируем/деактивируем кнопки сетевого хранилища
-//        storageHomeButton.setDisable(!isAuthMode);
-//        storageGoUpButton.setDisable(!isAuthMode);
-//        storageRefreshButton.setDisable(!isAuthMode);
-//        storageNewFolderButton.setDisable(!isAuthMode);
-//        //скрываем и деактивируем(если isAuthMode = true) кнопку подключения к серверу
-//        connectToCloudStorageStackPane.setManaged(!isAuthMode);
-//        connectToCloudStorageStackPane.setVisible(!isAuthMode);
-//        //показываем и активируем(если isAuthMode = true) список объектов в сетевом хранилище
-//        storageItemListView.setManaged(isAuthMode);
-//        storageItemListView.setVisible(isAuthMode);
-//        //если авторизация получена
-//        if(isAuthMode){
-//            //если объект контроллера авторизации не нулевой
-//            if(loginController != null){
-//                //закрываем окно формы в потоке JavaFX
-//                Platform.runLater(() -> loginController.hideWindow());
-//            }
-//            //если объект контроллера изменения пароля пользователя не нулевой
-//            if(changePasswordController != null){
-//                //закрываем окно формы в потоке JavaFX
-//                Platform.runLater(() -> changePasswordController.hideWindow());
-//            }
-//        }
-//    }
     public void setAuthorizedMode(boolean isAuthMode) {
         //активируем/деактивируем кнопки сетевого хранилища
         storageHomeButton.setDisable(!isAuthMode);
@@ -961,27 +884,21 @@ public class GUIController implements Initializable {
         }
     }
 
-//    /**
-//     * Метод устанавливает открытое авторизационное окно в режим показа Авторизация.
-//     */
-//    public void setRegisteredModeInAuthWindow() {
-//        //в окне Login(AuthWindow) открываем режим показа Авторизация
-//        loginController.setRegistrationMode(false);
-//        //очищаем текстовое поле "подтверждение пароля" регистрационной формы
-//        loginController.getPasswordConfirm().setText("");
-//    }
-
+    /**
+     * Метод открывает окно регистрации.
+     */
     public void setRegistrationFormMode(){
         //если объект контроллера регистрации не нулевой
         if(authorisationController != null){
             //закрываем окно формы в потоке JavaFX
             Platform.runLater(() -> authorisationController.hideWindow());
         }
+        //открываем окно регистрации с пустыми полями
         openRegistrationWindow();
     }
 
     /**
-     *
+     * Метод открывает окно авторизации.
      */
     public void setAuthorizationFormMode() {
         //если объект контроллера регистрации не нулевой
@@ -989,7 +906,40 @@ public class GUIController implements Initializable {
             //закрываем окно формы в потоке JavaFX
             Platform.runLater(() -> registrationController.hideWindow());
         }
+        //открываем окно авторизации с пустыми логином и паролем
         openAuthorisationWindow();
+    }
+
+    /**
+     * Метод устанавливает режим "Зарегистрирован, но не авторизован" - скрывает
+     * окно регистрации и открывает окно авторизации с логином и паролем,
+     * сохраненными из регистрационной формы.
+     */
+    public void setRegisteredAndUnauthorisedMode() {
+        //инициируем переменные межпотоковые переменные для логин аи пароля
+        AtomicReference<String>  loginAtomic = new AtomicReference<>();
+        AtomicReference<String>  passwordAtomic = new AtomicReference<>();
+        //если объект контроллера регистрации не нулевой
+        if(registrationController != null){
+            //закрываем окно формы в потоке JavaFX
+            Platform.runLater(() -> {
+                //сохраняем логин и пароль из регистрационной формы
+                assert false;
+                loginAtomic.set(registrationController.getLoginString());
+                passwordAtomic.set(registrationController.getPasswordString());
+                //закрываем окно регистрации
+                registrationController.hideWindow();
+            });
+        }
+        //делаем паузу мин. 100 ms, чтобы процесс успел завершиться до закрытия окна
+        //без паузы мин 100 ms - значение loginAtomic.get() = null
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        //открываем окно формы в потоке JavaFX //WORKS!
+        Platform.runLater(() -> openAuthorisationWindow(loginAtomic.get(), passwordAtomic.get()));
     }
 
     /**
@@ -1063,106 +1013,5 @@ public class GUIController implements Initializable {
     private void writeToLog(String msg){
         storageClient.writeToLog(msg);
     }
-
-    public void setRegisteredAndUnauthorisedMode() {
-        AtomicReference<String>  loginAtomic = new AtomicReference<>();
-        AtomicReference<String>  passwordAtomic = new AtomicReference<>();
-
-        //если объект контроллера регистрации не нулевой
-        if(registrationController != null){
-
-            //закрываем окно формы в потоке JavaFX
-            Platform.runLater(() -> {
-
-                writeToLog("1. GUIController.setRegisteredAndUnauthorisedMode - " +
-                        "registrationController.getLoginString(): " + registrationController.getLoginString() +
-                        ", registrationController.getPasswordString(): " + registrationController.getPasswordString() +
-                        ", registrationController.getPasswordString(): " + registrationController.getPasswordString());
-
-                assert false;
-                loginAtomic.set(registrationController.getLoginString());
-                passwordAtomic.set(registrationController.getPasswordString());
-
-                writeToLog("2. GUIController.setRegisteredAndUnauthorisedMode - " +
-                        "loginAtomic.get(): " + loginAtomic.get() +
-                        ", passwordAtomic.get(): " + passwordAtomic.get());
-
-                registrationController.hideWindow();
-
-            });
-        }
-
-        //TODO
-        //делаем паузу мин. 100 ms, чтобы процесс успел завершиться до закрытия окна
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        assert false;
-        writeToLog("3. GUIController.setRegisteredAndUnauthorisedMode - " +
-                "loginAtomic.get(): " + loginAtomic.get() +
-                ", passwordAtomic.get(): " + passwordAtomic.get());
-        //без паузы мин 100 ms - значение null
-
-//        openAuthWindowInGUI();//WORKS
-
-//        openAuthorisationWindow();
-        //Exception in thread "nioEventLoopGroup-2-1" java.lang.IllegalStateException: Not on FX application thread; currentThread = nioEventLoopGroup-2-1
-
-//        //если объект контроллера авторизации не нулевой
-//        if(authorisationController != null){
-//            authorisationController.setLoginString(loginAtomic.get());
-//            authorisationController.setPasswordString("pass3");
-//            //эти строки не срабатывают.
-//            // Не важно с какой опцией окно открывается, stage.showAndWait() или stage.show()
-//            //но работает только если это вызвать непосредственно в методе открытия окна
-//        }
-        //открываем окно формы в потоке JavaFX //WORKS!
-        Platform.runLater(() -> {
-//            assert false;
-            writeToLog("4. GUIController.setRegisteredAndUnauthorisedMode - " +
-                    "loginAtomic.get(): " + loginAtomic.get() +
-                    ", passwordAtomic.get(): " + passwordAtomic.get());
-
-            openAuthorisationWindow(loginAtomic.get(), passwordAtomic.get());
-        });
-
-    }
-    //DOES NOT WORK!
-//        public void setRegisteredAndUnauthorisedMode() {
-//        //если объект контроллера регистрации не нулевой
-//        if(registrationController != null){
-//            //закрываем окно формы в потоке JavaFX
-//            Platform.runLater(() -> {
-//                String login = registrationController.getLoginString();
-//                String password = registrationController.getPasswordString();
-//
-//                writeToLog("GUIController.setRegisteredAndUnauthorisedMode - " +
-//                        "login: " + login + ", password: " + password);
-//
-//                registrationController.hideWindow();
-//
-//                openAuthorisationWindow();
-//
-//                //если объект контроллера авторизации не нулевой
-//                if(authorisationController != null){
-//                    authorisationController.setLoginString(login);
-//                    authorisationController.setPasswordString(password);
-//                }
-//            });
-//        }
-//    }
-    //WORKS!
-//    public void setRegisteredAndUnauthorisedMode() {
-//        //если объект контроллера регистрации не нулевой
-//        if(registrationController != null){
-//            //закрываем окно формы в потоке JavaFX
-//            Platform.runLater(() -> {
-//                registrationController.hideWindow();
-//            });
-//            openAuthWindowInGUI();
-//        }
-//    }
 
 }

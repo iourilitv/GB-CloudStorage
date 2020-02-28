@@ -34,10 +34,7 @@ public class AuthorisationController {
         clearAuthorisationForm();
         //выводим сообщение в метку оповещения в GUI
         backController.showTextInGUI("Insert your new registration data please.");
-        //FIXME Закрыть окно и открыть окно регистрации
-        // проработать процесс перехода в режим авторизации
-//        backController.openRegistrationWindow();
-//        hideWindow();
+        //переходим в режим регистрации
         backController.setRegistrationFormMode();
     }
 
