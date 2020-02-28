@@ -74,6 +74,6 @@ public class NettyClient {
     }
 
     public void printMsg(String msg){
-        storageClient.printMsg(msg);
+        storageClient.writeToLog(msg);
     }
 }

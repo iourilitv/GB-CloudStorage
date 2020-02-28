@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="globParent" alignment="center" spacing="5.0" style="-fx-background-image: url(images/wall.png);" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javafx.AuthorisationController">
+    <TextField fx:id="login" focusTraversable="false" maxWidth="200" prefHeight="25.0" promptText="insert your login" />
+    <PasswordField fx:id="password" focusTraversable="false" maxWidth="200" prefHeight="25.0" promptText="insert your password" />
+    <Button alignment="CENTER" defaultButton="true" onAction="#onAuthorizationBtnClick" prefHeight="25.0" prefWidth="90.0" text="Authorization" textAlignment="CENTER" />
+    <Hyperlink alignment="CENTER" contentDisplay="CENTER" onAction="#onRegistrationLinkClick" prefHeight="25.0" prefWidth="80.0" text="Registration" textAlignment="CENTER" underline="true" visited="true" />
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</VBox>

@@ -59,7 +59,7 @@ public class CloudStorageClient {
             IP_ADDR = propertiesHandler.getProperty("IP_ADDR_DEFAULT");
         }
         //выводим в лог значение ip-адреса сервера
-        printMsg("CloudStorageClient.initConfiguration() - IP_ADDR: " + IP_ADDR);
+        writeToLog("CloudStorageClient.initConfiguration() - IP_ADDR: " + IP_ADDR);
 
         //инициируем переменную порта соединения
         String port = propertiesHandler.getProperty("PORT");
@@ -72,7 +72,7 @@ public class CloudStorageClient {
             PORT = Integer.parseInt(propertiesHandler.getProperty("PORT_DEFAULT"));
         }
         //выводим в лог значение порта сервера
-        printMsg("CloudStorageClient.initConfiguration() - PORT: " + PORT);
+        writeToLog("CloudStorageClient.initConfiguration() - PORT: " + PORT);
 
         //инициируем переменную объект пути к корневой директории для списка в клиентской части GUI
         String root_absolute = propertiesHandler.getProperty("Root_absolute");
@@ -84,13 +84,13 @@ public class CloudStorageClient {
             CLIENT_ROOT_PATH = Paths.get(propertiesHandler.getProperty("Root_default"));
         }
         //выводим в лог значение корневой директории клиента
-        printMsg("CloudStorageClient.initConfiguration() - CLIENT_ROOT_PATH: " + CLIENT_ROOT_PATH);
+        writeToLog("CloudStorageClient.initConfiguration() - CLIENT_ROOT_PATH: " + CLIENT_ROOT_PATH);
         //создаем объект файла корневой директории клиента
         File rootFolder = new File(CLIENT_ROOT_PATH.toString());
         //если директория еще не создана
         if(!rootFolder.exists()){
             //создаем новую корневую директорию и выводим результат в лог
-            printMsg("CloudStorageClient.initConfiguration() - " +
+            writeToLog("CloudStorageClient.initConfiguration() - " +
                     "rootFolder.mkdir(): " + rootFolder.mkdir());
         }
     }
@@ -235,7 +235,7 @@ public class CloudStorageClient {
             //если что-то пошло не так
         } else {
             //выводим сообщение в консоль
-            printMsg("[client]" + fileUtils.getMsg());
+            writeToLog("[client]" + fileUtils.getMsg());
             //выводим сообщение в нижнюю метку GUI
             showTextInGUI(fileUtils.getMsg());
         }
@@ -435,7 +435,7 @@ public class CloudStorageClient {
         this.ctx = ctx;
     }
 
-    public void printMsg(String msg){
+    public void writeToLog(String msg){
         log.append(msg).append("\n");
     }
 
@@ -457,7 +457,7 @@ public class CloudStorageClient {
             //выводим сообщение в метку уведомлений
             showTextInGUI("Disconnecting the Cloud Storage server...");
             //и в лог
-            printMsg("CloudStorageClient.demandDisconnecting() - Отправляем серверу запрос о разрыве соединения");
+            writeToLog("CloudStorageClient.demandDisconnecting() - Отправляем серверу запрос о разрыве соединения");
             //отправляем на сервер объект сообщения(команды)
             ctx.writeAndFlush(new CommandMessage(Commands.REQUEST_SERVER_DISCONNECT,
                     new AuthMessage()));

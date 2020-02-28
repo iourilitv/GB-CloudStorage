@@ -219,11 +219,19 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
      * нового пользователя в облачное хранилище.
      * @param commandMessage - объект сообщения(команды)
      */
+//    private void onRegistrationOKServerResponse(CommandMessage commandMessage) {
+//        //выводим сообщение в метку уведомлений в GUI
+//        showTextInGUI("You have registered in the Cloud Storage. Press \"Authorization\" button.");
+//        //устанавливаем открытое авторизационное окно в режим показа Авторизация
+//        guiController.setRegisteredModeInAuthWindow();
+//    }
     private void onRegistrationOKServerResponse(CommandMessage commandMessage) {
         //выводим сообщение в метку уведомлений в GUI
         showTextInGUI("You have registered in the Cloud Storage. Press \"Authorization\" button.");
-        //устанавливаем открытое авторизационное окно в режим показа Авторизация
-        guiController.setRegisteredModeInAuthWindow();
+        //закрываем регистрационное окно и открываем авторизационное окно
+//        guiController.setRegisteredModeInAuthWindow();
+        guiController.setRegisteredAndUnauthorisedMode();
+
     }
 
     /**
@@ -447,7 +455,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
     }
 
     public void printMsg(String msg){
-        storageClient.printMsg(msg);
+        storageClient.writeToLog(msg);
     }
 
     @Override

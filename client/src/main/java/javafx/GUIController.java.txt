@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * The client class is for operations with GUI.
  */
-public class GUIController implements Initializable {
+public class GUIController2 implements Initializable {
     //объявляем объекты пунктов верхнего меню
     @FXML
     private MenuItem disconnectMenuItem, changePasswordMenuItem;
@@ -87,7 +87,7 @@ public class GUIController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //инициируем объект клиента облачного хранилища
-        storageClient = new CloudStorageClient(GUIController.this);
+        storageClient = new CloudStorageClient(GUIController2.this);
         //устанавливаем настройки приложения
         storageClient.initConfiguration();
         //инициируем объекты директории по умолчанию в клиентской и серверной части GUI
@@ -660,7 +660,7 @@ public class GUIController implements Initializable {
             //определяем действия по событию закрыть окно по крестику через лямбда
             stage.setOnCloseRequest(event -> {
                 //вызываем разрыв соединения, если выйти по крестику
-                GUIController.this.setAuthorizedMode(false);
+                GUIController2.this.setAuthorizedMode(false);
             });
 
             stage.setTitle("Authorisation to the Cloud Storage by LYS");
@@ -692,7 +692,7 @@ public class GUIController implements Initializable {
             //определяем действия по событию закрыть окно по крестику через лямбда
             stage.setOnCloseRequest(event -> {
                 //вызываем разрыв соединения, если выйти по крестику
-                GUIController.this.setAuthorizedMode(false);
+                GUIController2.this.setAuthorizedMode(false);
             });
 
             stage.setTitle("Authorisation to the Cloud Storage by LYS");
@@ -725,7 +725,7 @@ public class GUIController implements Initializable {
             //определяем действия по событию закрыть окно по крестику через лямбда
             stage.setOnCloseRequest(event -> {
                 //вызываем разрыв соединения, если выйти по крестику
-                GUIController.this.setAuthorizedMode(false);
+                GUIController2.this.setAuthorizedMode(false);
             });
 
             stage.setTitle("Registration to the Cloud Storage by LYS");
@@ -756,7 +756,7 @@ public class GUIController implements Initializable {
             //определяем действия по событию закрыть окно по крестику через лямбда
             stage.setOnCloseRequest(event -> {
                 //вызываем разрыв соединения, если выйти по крестику
-                GUIController.this.setAuthorizedMode(true);
+                GUIController2.this.setAuthorizedMode(true);
             });
 
             stage.setTitle("Changing Password Form to the Cloud Storage by LYS");
@@ -785,7 +785,7 @@ public class GUIController implements Initializable {
                 writeToLog("GUIController.menuItemRename() - " +
                         "the newNameWindow was closed forcibly!");
                 //сбрасываем текстовое поле имени
-                GUIController.this.newName = "";
+                GUIController2.this.newName = "";
             });
             renameController.backController = this;
 
@@ -820,7 +820,7 @@ public class GUIController implements Initializable {
                 //сбрасываем флаг
                 flag.set(false);
                 //сбрасываем текстовое поле имени
-                GUIController.this.newName = "";
+                GUIController2.this.newName = "";
             });
 
             //записываем текущее имя в текстовое поле
@@ -975,7 +975,9 @@ public class GUIController implements Initializable {
         //если объект контроллера регистрации не нулевой
         if(authorisationController != null){
             //закрываем окно формы в потоке JavaFX
-            Platform.runLater(() -> authorisationController.hideWindow());
+            Platform.runLater(() -> {
+                authorisationController.hideWindow();
+            });
         }
         openRegistrationWindow();
     }
@@ -987,7 +989,9 @@ public class GUIController implements Initializable {
         //если объект контроллера регистрации не нулевой
         if(registrationController != null){
             //закрываем окно формы в потоке JavaFX
-            Platform.runLater(() -> registrationController.hideWindow());
+            Platform.runLater(() -> {
+                registrationController.hideWindow();
+            });
         }
         openAuthorisationWindow();
     }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="globParent" alignment="center" spacing="5.0" style="-fx-background-image: url(images/wall.png);" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javafx.RegistrationController">
+    <TextField fx:id="first_name" focusTraversable="false" maxWidth="200" prefHeight="25.0" promptText="insert your first_name" />
+    <TextField fx:id="last_name" focusTraversable="false" maxWidth="200" prefHeight="25.0" promptText="insert your last_name" />
+    <TextField fx:id="email" focusTraversable="false" maxWidth="200" prefHeight="25.0" promptText="insert your email" />
+    <TextField fx:id="login" focusTraversable="false" maxWidth="200" prefHeight="25.0" promptText="insert your login" />
+    <PasswordField fx:id="password" focusTraversable="false" maxWidth="200" prefHeight="25.0" promptText="insert your password" />
+    <PasswordField fx:id="passwordConfirm" focusTraversable="false" maxWidth="200" prefHeight="25.0" promptText="confirm your password" />
+    <HBox alignment="CENTER">
+        <Button alignment="CENTER" onAction="#onRegistrationBtnClick" prefHeight="25.0" prefWidth="90.0" text="Registration" textAlignment="CENTER" />
+        <Hyperlink alignment="CENTER" contentDisplay="CENTER" onAction="#onAuthorizationLinkClick" prefHeight="25.0" prefWidth="80.0" text="Authorization" textAlignment="CENTER" underline="true" visited="true" />
+    </HBox>
+</VBox>
