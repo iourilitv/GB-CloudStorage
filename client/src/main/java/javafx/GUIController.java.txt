@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * The client class is for operations with GUI.
  */
-public class GUIController implements Initializable {
+public class GUIController2 implements Initializable {
     //объявляем объекты пунктов верхнего меню
     @FXML
     private MenuItem disconnectMenuItem, changePasswordMenuItem;
@@ -58,8 +58,6 @@ public class GUIController implements Initializable {
     @FXML
     private Label noticeLabel;
 
-    //объявляем объект менеджера окон
-    private WindowsManager windowsManager;
     //объявляем объект контроллера клиента облачного хранилища
     private CloudStorageClient storageClient;
     //инициируем константу строки названия директории по умолчанию относительно корневой директории
@@ -73,24 +71,19 @@ public class GUIController implements Initializable {
     private Item clientCurrentDirItem, storageCurrentDirItem;
     //объявляем переменную введенного нового имени объекта элемента
     private String newName = "";
-
-//    //объявляем переменную стадии приложения
-//    private Stage stage;
-//    //объявляем объект контроллера окна регистрации
-//    private RegistrationController registrationController;
-//    //объявляем объект контроллера окна авторизации
-//    private AuthorisationController authorisationController;
-//    //объявляем объект контроллера окна изменения пароля пользователя
-//    private ChangePasswordController changePasswordController;
+    //объявляем переменную стадии приложения
+    private Stage stage;
+    //объявляем объект контроллера окна регистрации
+    private RegistrationController registrationController;
+    //объявляем объект контроллера окна авторизации
+    private AuthorisationController authorisationController;
+    //объявляем объект контроллера окна изменения пароля пользователя
+    private ChangePasswordController changePasswordController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //инициируем объект менеджера окон
-        windowsManager = WindowsManager.getInstance();
-        //передаем ему настройки
-        windowsManager.init(GUIController.this);
         //инициируем объект клиента облачного хранилища
-        storageClient = new CloudStorageClient(GUIController.this);
+        storageClient = new CloudStorageClient(GUIController2.this);
         //устанавливаем настройки приложения
         storageClient.initConfiguration();
         //инициируем объекты директории по умолчанию в клиентской и серверной части GUI
@@ -381,7 +374,7 @@ public class GUIController implements Initializable {
             Item origin = listView.getSelectionModel().getSelectedItem();
             //открываем диалоговое окно переименования файлового объекта
             //если окно было просто закрыто по крестику, то выходим без действий
-            if(!windowsManager.openNewNameWindow(origin)){
+            if(!openNewNameWindow(origin)){
                 return;
             }
 
@@ -452,7 +445,7 @@ public class GUIController implements Initializable {
     @FXML
     public void onAboutMenuItemClick(ActionEvent actionEvent) {
         //открываем сцену с информацией о программе
-        windowsManager.openAboutScene();
+        openAboutScene();
     }
 
     /** //FIXME Убрать задвоение - вызвать перегруженный метод openNewNameWindow(Item origin)
@@ -497,7 +490,7 @@ public class GUIController implements Initializable {
     @FXML
     public void onChangePasswordMenuItemClick(ActionEvent actionEvent) {
         //запускаем процесс отправки запроса на изменение пароля пользователя
-        windowsManager.openChangingPasswordWindow();
+        openChangingPasswordWindow();
     }
 
     /**
@@ -585,7 +578,7 @@ public class GUIController implements Initializable {
     @FXML
     public void onClientNewFolderBtnClicked(MouseEvent mouseEvent) {
         //открываем модальное окно для ввода нового имени
-        windowsManager.openNewNameWindow();
+        openNewNameWindow();
         //если окно было закрыто штатно, а не по крестику выхода
         if(newName.isEmpty()){
             return;
@@ -607,7 +600,7 @@ public class GUIController implements Initializable {
     @FXML
     public void onStorageNewFolderBtnClicked(MouseEvent mouseEvent) {
         //открываем модальное окно для ввода нового имени
-        windowsManager.openNewNameWindow();
+        openNewNameWindow();
         //если окно было закрыто штатно, а не по крестику выхода
         if(newName.isEmpty()){
             return;
@@ -617,206 +610,206 @@ public class GUIController implements Initializable {
         storageClient.demandCreateNewDirectory(storageCurrentDirItem.getItemPathname(), newName);
     }
 
-//    /**
-//     * Перегруженный метод открывает модальное окно для ввода логина и пароля пользователя.
-//     */
-//    void openAuthorisationWindow() {
-//        //вызываем перегруженный метод с пустыми логином и паролем
-//        openAuthorisationWindow("", "");
-//    }
+    /**
+     * Перегруженный метод открывает модальное окно для ввода логина и пароля пользователя.
+     */
+    void openAuthorisationWindow() {
+        //вызываем перегруженный метод с пустыми логином и паролем
+        openAuthorisationWindow("", "");
+    }
 
-//    /**
-//     * Перегруженный метод открывает модальное окно для ввода логина и пароля пользователя.
-//     * @param login - логин пользователя
-//     * @param password - пароль пользователя
-//     */
-//    void openAuthorisationWindow(String login, String password) {
-//        //выводим сообщение в нижнюю метку GUI
-//        noticeLabel.setText("Server has connected, insert login and password.");
-//
-//        try {
-//            Stage stage = new Stage();
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/authorisation.fxml"));
-//            Parent root = loader.load();
-//            authorisationController = loader.getController();
-//            //сохраняем ссылку на контроллер открываемого окна авторизации/регистрации
-//            authorisationController.setBackController(this);
-//            //устанавливаем значения из формы регистрации
-//            authorisationController.setLoginString(login);
-//            authorisationController.setPasswordString(password);
-//
-//            //определяем действия по событию закрыть окно по крестику через лямбда
-//            stage.setOnCloseRequest(event -> {
-//                //вызываем разрыв соединения, если выйти по крестику
-//                GUIController.this.setAuthorizedMode(false);
-//            });
-//
-//            stage.setTitle("Authorisation to the Cloud Storage by LYS");
-//            stage.setScene(new Scene(root, 300, 200));
-//            stage.isAlwaysOnTop();
-//            stage.setResizable(false);
-//            stage.initModality(Modality.APPLICATION_MODAL);
-//            stage.showAndWait();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    /**
+     * Перегруженный метод открывает модальное окно для ввода логина и пароля пользователя.
+     * @param login - логин пользователя
+     * @param password - пароль пользователя
+     */
+    void openAuthorisationWindow(String login, String password) {
+        //выводим сообщение в нижнюю метку GUI
+        noticeLabel.setText("Server has connected, insert login and password.");
 
-//    /**
-//     * Метод открывает модальное окно с регистрационной формой пользователя.
-//     */
-//    void openRegistrationWindow() {
-//        //выводим сообщение в нижнюю метку GUI
-//        noticeLabel.setText("Insert your data to get registration please.");
-//
-//        try {
-//            Stage stage = new Stage();
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/registration_form.fxml"));
-//            Parent root = loader.load();
-//            registrationController = loader.getController();
-//            //сохраняем ссылку на контроллер открываемого окна авторизации/регистрации
-//            registrationController.setBackController(this);
-//
-//            //определяем действия по событию закрыть окно по крестику через лямбда
-//            stage.setOnCloseRequest(event -> {
-//                //вызываем разрыв соединения, если выйти по крестику
-//                GUIController.this.setAuthorizedMode(false);
-//            });
-//
-//            stage.setTitle("Registration to the Cloud Storage by LYS");
-//            stage.setScene(new Scene(root, 300, 300));
-//            stage.isAlwaysOnTop();
-//            stage.setResizable(false);
-//            stage.initModality(Modality.APPLICATION_MODAL);
-//            stage.showAndWait();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/authorisation.fxml"));
+            Parent root = loader.load();
+            authorisationController = loader.getController();
+            //сохраняем ссылку на контроллер открываемого окна авторизации/регистрации
+            authorisationController.setBackController(this);
+            //устанавливаем значения из формы регистрации
+            authorisationController.setLoginString(login);
+            authorisationController.setPasswordString(password);
 
-//    /** //FIXME Убрать задвоение - вызвать универсальный метод открытия модального окна
-//     * Метод открывает модальное окно с формой изменения пароля.
-//     */
-//    private void openChangingPasswordWindow() {
-//        //выводим сообщение в нижнюю метку GUI
-//        noticeLabel.setText("Fill a Changing Password Form please.");
-//        try {
-//            Stage stage = new Stage();
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/changePassword.fxml"));
-//            Parent root = loader.load();
-//            changePasswordController = loader.getController();
-//            //сохраняем ссылку на контроллер открываемого окна авторизации/регистрации
-//            changePasswordController.setBackController(this);
-//
-//            //определяем действия по событию закрыть окно по крестику через лямбда
-//            stage.setOnCloseRequest(event -> {
-//                //вызываем разрыв соединения, если выйти по крестику
-//                GUIController.this.setAuthorizedMode(true);
-//            });
-//
-//            stage.setTitle("Changing Password Form to the Cloud Storage by LYS");
-//            stage.setScene(new Scene(root, 300, 200));
-//            stage.isAlwaysOnTop();
-//            stage.setResizable(false);
-//            stage.initModality(Modality.APPLICATION_MODAL);
-//            stage.showAndWait();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+            //определяем действия по событию закрыть окно по крестику через лямбда
+            stage.setOnCloseRequest(event -> {
+                //вызываем разрыв соединения, если выйти по крестику
+                GUIController2.this.setAuthorizedMode(false);
+            });
 
-//    /** //FIXME Убрать задвоение - вызвать перегруженный метод openNewNameWindow(Item origin)
-//     * Перегруженный метод открывает модальное окно для ввода нового имени элемента списка.
-//     */
-//    private void openNewNameWindow() {
-//        try {
-//            Stage stage = new Stage();
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
-//            Parent root = loader.load();
-//            RenameController renameController = loader.getController();
-//
-//            //определяем действия по событию закрыть окно по крестику через лямбда
-//            stage.setOnCloseRequest(event -> {
-//                writeToLog("GUIController.menuItemRename() - " +
-//                        "the newNameWindow was closed forcibly!");
-//                //сбрасываем текстовое поле имени
-//                GUIController.this.newName = "";
-//            });
-//            //запоминаем текущий контроллер для возврата
-//            renameController.setBackController(this);
-//
-//            stage.setTitle("insert a new name");
-//            stage.setScene(new Scene(root, 200, 50));
-//            stage.isAlwaysOnTop();
-//            stage.setResizable(false);
-//            stage.initModality(Modality.APPLICATION_MODAL);
-//            stage.showAndWait();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+            stage.setTitle("Authorisation to the Cloud Storage by LYS");
+            stage.setScene(new Scene(root, 300, 200));
+            stage.isAlwaysOnTop();
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-//    /**
-//     * Перегруженный метод открывает модальное окно для ввода нового имени элемента списка.
-//     * @param origin - объект элемента - оригинал
-//     * @return false - если закрыть окно принудительно, true - при штатном вводе
-//     */
-//    private boolean openNewNameWindow(Item origin) {
-//        AtomicBoolean flag = new AtomicBoolean(false);
-//        try {
-//            Stage stage = new Stage();
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
-//            Parent root = loader.load();
-//            RenameController renameController = loader.getController();
-//
-//            //определяем действия по событию закрыть окно по крестику через лямбда
-//            stage.setOnCloseRequest(event -> {
-//                writeToLog("GUIController.menuItemRename() - " +
-//                        "the newNameWindow was closed forcibly!");
-//                //сбрасываем флаг
-//                flag.set(false);
-//                //сбрасываем текстовое поле имени
-//                GUIController.this.newName = "";
-//            });
-//            //записываем текущее имя в текстовое поле
-//            renameController.setNewNameString(origin.getItemName());
-//            //запоминаем текущий контроллер для возврата
-//            renameController.setBackController(this);
-//
-//            stage.setTitle("insert a new name");
-//            stage.setScene(new Scene(root, 200, 50));
-//            stage.isAlwaysOnTop();
-//            stage.setResizable(false);
-//            stage.initModality(Modality.APPLICATION_MODAL);
-//            stage.showAndWait();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//        return true;
-//    }
+    /**
+     * Метод открывает модальное окно с регистрационной формой пользователя.
+     */
+    void openRegistrationWindow() {
+        //выводим сообщение в нижнюю метку GUI
+        noticeLabel.setText("Insert your data to get registration please.");
 
-//    /**
-//     * Метод открывает сцену с информацией о программе.
-//     */
-//    private void openAboutScene() {
-//        //получаем объект стадии приложения
-//        stage = (Stage) noticeLabel.getScene().getWindow();
-//        //сохраням объект гланой сцены
-//        Scene primaryScene = noticeLabel.getScene();
-//        //инициируем элементы сцены
-//        VBox pane = new VBox(10);
-//        pane.setAlignment(Pos.TOP_CENTER);
-//        Label label = new Label(new AboutText().getText());
-//        label.setStyle("-fx-font-size: 14");
-//        label.setWrapText(true);
-//        Button backBtn = new Button("Return");
-//        //устанавливаем лисенер на кнопку, чтобы вернуться с основной сцене
-//        backBtn.setOnAction(e -> stage.setScene(primaryScene));
-//        pane.getChildren().addAll(label, backBtn);
-//        Scene aboutScene = new Scene(pane, 410, 220);
-//        stage.setScene(aboutScene);
-//    }
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/registration_form.fxml"));
+            Parent root = loader.load();
+            registrationController = loader.getController();
+            //сохраняем ссылку на контроллер открываемого окна авторизации/регистрации
+            registrationController.setBackController(this);
+
+            //определяем действия по событию закрыть окно по крестику через лямбда
+            stage.setOnCloseRequest(event -> {
+                //вызываем разрыв соединения, если выйти по крестику
+                GUIController2.this.setAuthorizedMode(false);
+            });
+
+            stage.setTitle("Registration to the Cloud Storage by LYS");
+            stage.setScene(new Scene(root, 300, 300));
+            stage.isAlwaysOnTop();
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** //FIXME Убрать задвоение - вызвать универсальный метод открытия модального окна
+     * Метод открывает модальное окно с формой изменения пароля.
+     */
+    private void openChangingPasswordWindow() {
+        //выводим сообщение в нижнюю метку GUI
+        noticeLabel.setText("Fill a Changing Password Form please.");
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/changePassword.fxml"));
+            Parent root = loader.load();
+            changePasswordController = loader.getController();
+            //сохраняем ссылку на контроллер открываемого окна авторизации/регистрации
+            changePasswordController.setBackController(this);
+
+            //определяем действия по событию закрыть окно по крестику через лямбда
+            stage.setOnCloseRequest(event -> {
+                //вызываем разрыв соединения, если выйти по крестику
+                GUIController2.this.setAuthorizedMode(true);
+            });
+
+            stage.setTitle("Changing Password Form to the Cloud Storage by LYS");
+            stage.setScene(new Scene(root, 300, 200));
+            stage.isAlwaysOnTop();
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** //FIXME Убрать задвоение - вызвать перегруженный метод openNewNameWindow(Item origin)
+     * Перегруженный метод открывает модальное окно для ввода нового имени элемента списка.
+     */
+    private void openNewNameWindow() {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
+            Parent root = loader.load();
+            RenameController renameController = loader.getController();
+
+            //определяем действия по событию закрыть окно по крестику через лямбда
+            stage.setOnCloseRequest(event -> {
+                writeToLog("GUIController.menuItemRename() - " +
+                        "the newNameWindow was closed forcibly!");
+                //сбрасываем текстовое поле имени
+                GUIController2.this.newName = "";
+            });
+            //запоминаем текущий контроллер для возврата
+            renameController.setBackController(this);
+
+            stage.setTitle("insert a new name");
+            stage.setScene(new Scene(root, 200, 50));
+            stage.isAlwaysOnTop();
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Перегруженный метод открывает модальное окно для ввода нового имени элемента списка.
+     * @param origin - объект элемента - оригинал
+     * @return false - если закрыть окно принудительно, true - при штатном вводе
+     */
+    private boolean openNewNameWindow(Item origin) {
+        AtomicBoolean flag = new AtomicBoolean(false);
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
+            Parent root = loader.load();
+            RenameController renameController = loader.getController();
+
+            //определяем действия по событию закрыть окно по крестику через лямбда
+            stage.setOnCloseRequest(event -> {
+                writeToLog("GUIController.menuItemRename() - " +
+                        "the newNameWindow was closed forcibly!");
+                //сбрасываем флаг
+                flag.set(false);
+                //сбрасываем текстовое поле имени
+                GUIController2.this.newName = "";
+            });
+            //записываем текущее имя в текстовое поле
+            renameController.setNewNameString(origin.getItemName());
+            //запоминаем текущий контроллер для возврата
+            renameController.setBackController(this);
+
+            stage.setTitle("insert a new name");
+            stage.setScene(new Scene(root, 200, 50));
+            stage.isAlwaysOnTop();
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Метод открывает сцену с информацией о программе.
+     */
+    private void openAboutScene() {
+        //получаем объект стадии приложения
+        stage = (Stage) noticeLabel.getScene().getWindow();
+        //сохраням объект гланой сцены
+        Scene primaryScene = noticeLabel.getScene();
+        //инициируем элементы сцены
+        VBox pane = new VBox(10);
+        pane.setAlignment(Pos.TOP_CENTER);
+        Label label = new Label(new AboutText().getText());
+        label.setStyle("-fx-font-size: 14");
+        label.setWrapText(true);
+        Button backBtn = new Button("Return");
+        //устанавливаем лисенер на кнопку, чтобы вернуться с основной сцене
+        backBtn.setOnAction(e -> stage.setScene(primaryScene));
+        pane.getChildren().addAll(label, backBtn);
+        Scene aboutScene = new Scene(pane, 410, 220);
+        stage.setScene(aboutScene);
+    }
 
     /**
      * Метод-прокладка, чтобы открывать окно GUI в других потоках
@@ -824,7 +817,7 @@ public class GUIController implements Initializable {
     public void openAuthWindowInGUI() {
         //в отдельном потоке запускаем обновление интерфейса
         //открываем окно авторизации
-        Platform.runLater(() -> windowsManager.openAuthorisationWindow());
+        Platform.runLater(this::openAuthorisationWindow);
     }
 
     /**
@@ -874,19 +867,19 @@ public class GUIController implements Initializable {
         //если авторизация получена
         if(isAuthMode){
             //если объект контроллера регистрации не нулевой
-            if(windowsManager.getRegistrationController() != null){
+            if(registrationController != null){
                 //закрываем окно формы в потоке JavaFX
-                Platform.runLater(() -> windowsManager.getRegistrationController().hideWindow());
+                Platform.runLater(() -> registrationController.hideWindow());
             }
             //если объект контроллера авторизации не нулевой
-            if(windowsManager.getAuthorisationController() != null){
+            if(authorisationController != null){
                 //закрываем окно формы в потоке JavaFX
-                Platform.runLater(() -> windowsManager.getAuthorisationController().hideWindow());
+                Platform.runLater(() -> authorisationController.hideWindow());
             }
             //если объект контроллера изменения пароля пользователя не нулевой
-            if(windowsManager.getChangePasswordController() != null){
+            if(changePasswordController != null){
                 //закрываем окно формы в потоке JavaFX
-                Platform.runLater(() -> windowsManager.getChangePasswordController().hideWindow());
+                Platform.runLater(() -> changePasswordController.hideWindow());
             }
         }
     }
@@ -896,12 +889,12 @@ public class GUIController implements Initializable {
      */
     public void setRegistrationFormMode(){
         //если объект контроллера регистрации не нулевой
-        if(windowsManager.getAuthorisationController() != null){
+        if(authorisationController != null){
             //закрываем окно формы в потоке JavaFX
-            Platform.runLater(() -> windowsManager.getAuthorisationController().hideWindow());
+            Platform.runLater(() -> authorisationController.hideWindow());
         }
         //открываем окно регистрации с пустыми полями
-        windowsManager.openRegistrationWindow();
+        openRegistrationWindow();
     }
 
     /**
@@ -909,12 +902,12 @@ public class GUIController implements Initializable {
      */
     public void setAuthorizationFormMode() {
         //если объект контроллера регистрации не нулевой
-        if(windowsManager.getRegistrationController() != null){
+        if(registrationController != null){
             //закрываем окно формы в потоке JavaFX
-            Platform.runLater(() -> windowsManager.getRegistrationController().hideWindow());
+            Platform.runLater(() -> registrationController.hideWindow());
         }
         //открываем окно авторизации с пустыми логином и паролем
-        windowsManager.openAuthorisationWindow();
+        openAuthorisationWindow();
     }
 
     /**
@@ -927,15 +920,15 @@ public class GUIController implements Initializable {
         AtomicReference<String>  loginAtomic = new AtomicReference<>();
         AtomicReference<String>  passwordAtomic = new AtomicReference<>();
         //если объект контроллера регистрации не нулевой
-        if(windowsManager.getRegistrationController() != null){
+        if(registrationController != null){
             //закрываем окно формы в потоке JavaFX
             Platform.runLater(() -> {
                 //сохраняем логин и пароль из регистрационной формы
                 assert false;
-                loginAtomic.set(windowsManager.getRegistrationController().getLoginString());
-                passwordAtomic.set(windowsManager.getRegistrationController().getPasswordString());
+                loginAtomic.set(registrationController.getLoginString());
+                passwordAtomic.set(registrationController.getPasswordString());
                 //закрываем окно регистрации
-                windowsManager.getRegistrationController().hideWindow();
+                registrationController.hideWindow();
             });
         }
         //делаем паузу мин. 100 ms, чтобы процесс успел завершиться до закрытия окна
@@ -946,7 +939,7 @@ public class GUIController implements Initializable {
             e.printStackTrace();
         }
         //открываем окно формы в потоке JavaFX //WORKS!
-        Platform.runLater(() -> windowsManager.openAuthorisationWindow(loginAtomic.get(), passwordAtomic.get()));
+        Platform.runLater(() -> openAuthorisationWindow(loginAtomic.get(), passwordAtomic.get()));
     }
 
     /**
@@ -1017,7 +1010,7 @@ public class GUIController implements Initializable {
         }
     }
 
-    void writeToLog(String msg){
+    private void writeToLog(String msg){
         storageClient.writeToLog(msg);
     }
 
