@@ -68,23 +68,6 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
      * @param msgObject - десериализованный объект сообщения
      */
     @Override
-//    public void channelRead(ChannelHandlerContext ctx, Object msgObject) {
-//        try {
-//            //инициируем объект команды из объекта сообщения
-//            CommandMessage commandMessage = (CommandMessage) msgObject;
-//            //если это команда на регистрацию нового пользователя в сетевом хранилище
-//            if(commandMessage.getCommand() == Commands.REQUEST_SERVER_REGISTRATION){
-//                //вызываем метод обработки запроса от клиента
-//                onRegistrationUserClientRequest(ctx, commandMessage);
-//            //если это команда на авторизацию пользователя в сетевом хранилище
-//            } else if(commandMessage.getCommand() == Commands.REQUEST_SERVER_AUTH){
-//                //вызываем метод обработки запроса от клиента
-//                onAuthClientRequest(ctx, commandMessage);
-//            }
-//        } finally {
-//            ReferenceCountUtil.release(msgObject);
-//        }
-//    }
     public void channelRead(ChannelHandlerContext ctx, Object msgObject) {
         try {
             //инициируем объект команды из объекта сообщения

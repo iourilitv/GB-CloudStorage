@@ -120,18 +120,6 @@ public class GUIController implements Initializable {
      * @param email - email пользователя
      * @param password - пароль пользователя
      */
-//    public void demandRegistration(String login, String first_name, String last_name,
-//                                   String email, String password) {
-//        //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
-//        //FIXME добавить проверку всех полей формы
-//        if(isLoginPasswordNotEmpty(login, password)){//TODO лишняя проверка? (см.demandChangePassword)
-//            //запускаем процесс авторизации
-//            storageClient.demandRegistration(login, first_name, last_name, email, password);
-//            //если окно закрыто по крестику выхода
-//        } else {
-//            noticeLabel.setText("");
-//        }
-//    }
     public void demandRegistration(String login, String first_name, String last_name,
                                    String email, String password) {
         storageClient.demandRegistration(login, first_name, last_name, email, password);
@@ -143,16 +131,6 @@ public class GUIController implements Initializable {
      * @param login - логин пользователя
      * @param password - пароль пользователя
      */
-//    public void demandAuthorisation(String login, String password) {
-//        //если окно авторизации закрыто штатно(не закрыто по крестику выхода)
-//        if(isLoginPasswordNotEmpty(login, password)){//TODO лишняя проверка? (см.demandChangePassword)
-//            //запускаем процесс авторизации
-//            storageClient.demandAuthorization(login, password);
-//            //если окно закрыто по крестику выхода
-//        } else {
-//            noticeLabel.setText("");
-//        }
-//    }
     public void demandAuthorisation(String login, String password) {
         storageClient.demandAuthorization(login, password);
     }
@@ -741,17 +719,6 @@ public class GUIController implements Initializable {
         }
         //открываем окно формы в потоке JavaFX //WORKS!
         Platform.runLater(() -> windowsManager.openAuthorisationWindow(loginAtomic.get(), passwordAtomic.get()));
-    }
-
-    /**
-     * МЕтод проверяет не пустые ли поля логин и пароля, чтобы отлавливать закрытие окна
-     * авторизации силой и не отправлять пустую форму на сервер.
-     * @param login - логин пользователя
-     * @param password - пароль пользователя
-     * @return - true, оба не пустые
-     */
-    private boolean isLoginPasswordNotEmpty(String login, String password){
-        return !login.isEmpty() && !password.isEmpty();
     }
 
     /**

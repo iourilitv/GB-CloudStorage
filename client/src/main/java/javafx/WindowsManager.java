@@ -69,9 +69,7 @@ public class WindowsManager {
             //определяем действия по событию закрыть окно по крестику через лямбда
             stage.setOnCloseRequest(event -> {
                 //запускаем процесс отправки запроса на отключение
-//                guiController.setAuthorizedMode(false);
                 guiController.getStorageClient().demandDisconnect();
-
             });
 
             stage.setTitle("Authorisation to the Cloud Storage by LYS");
@@ -102,11 +100,8 @@ public class WindowsManager {
 
             //определяем действия по событию закрыть окно по крестику через лямбда
             stage.setOnCloseRequest(event -> {
-//                //вызываем разрыв соединения, если выйти по крестику
-//                guiController.setAuthorizedMode(false);
                 //запускаем процесс отправки запроса на отключение
                 guiController.getStorageClient().demandDisconnect();
-
             });
 
             stage.setTitle("Registration to the Cloud Storage by LYS");
