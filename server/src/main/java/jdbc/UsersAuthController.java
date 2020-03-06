@@ -236,9 +236,6 @@ public class UsersAuthController {
         try {
             //формируем строку для запроса PreparedStatement
             // ? - для последовательного подставления значений в соотвествующее место
-            //TODO не обращать внимание!
-            // работает, но IDEA выдает ошибку -
-            // не видит таблицу "users", хотя тут же создал новую как предложение исправить ошибку
             String sql = "SELECT * FROM users WHERE 'login' = ?";
             //инициируем объект подготовленнного запроса
             preparedStatement = connection.prepareStatement(sql);
@@ -282,9 +279,6 @@ public class UsersAuthController {
             byte[] secure_hash = secureHasher.generateSecureHash(password, secure_salt);
             // формируем строку для запроса PreparedStatement
             // ? - для последовательного подставления значений в соотвествующее место
-            //TODO не обращать внимание!
-            // работает, но IDEA выдает ошибку -
-            // не видит таблицу "users", хотя тут же создал новую как предложение исправить ошибку
             String sql = "INSERT INTO users (login, first_name, last_name, email, secure_hash, secure_salt) " +
                     "VALUES (?, ?, ?, ?, ?, ?)";
             //инициируем объект подготовленнного запроса
@@ -327,9 +321,6 @@ public class UsersAuthController {
             byte[] secure_hash = secureHasher.generateSecureHash(password, secure_salt);
             //формируем строку для запроса PreparedStatement
             // ? - для последовательного подставления значений в соотвествующее место
-            //TODO не обращать внимание!
-            // работает, но IDEA выдает ошибку -
-            // не видит таблицу "users", хотя тут же создал новую как предложение исправить ошибку
             String sql = "UPDATE users SET secure_hash = ?, secure_salt = ? WHERE login = ?";
             //инициируем объект подготовленнного запроса
             preparedStatement = connection.prepareStatement(sql);
