@@ -239,7 +239,7 @@ public class UsersAuthController {
             //TODO не обращать внимание!
             // работает, но IDEA выдает ошибку -
             // не видит таблицу "users", хотя тут же создал новую как предложение исправить ошибку
-            String sql = "SELECT * FROM users WHERE login = ?";
+            String sql = "SELECT * FROM users WHERE 'login' = ?";
             //инициируем объект подготовленнного запроса
             preparedStatement = connection.prepareStatement(sql);
             //добавляем в запрос параметр 1 - строку логина
