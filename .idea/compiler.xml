@@ -12,6 +12,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="cloudstorage" target="1.8" />
       <module name="jdbc" target="1.8" />
       <module name="network" target="1.8" />
     </bytecodeTargetLevel>

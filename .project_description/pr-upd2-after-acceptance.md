@@ -13,8 +13,9 @@ GeekBrains. Курсовая работа: Итоговый проект Cloud S
 	Добавить clientListView.setContextMenu(contextMenu) в блок if, где выбирается показывать upload/download.
 4. Netty. Добавить проверку активности соединения на стороне клиента, чтобы не вылетало исключение при отваливании сервера.
 5. Netty. При передаче файлов сериализовать только объект сообщения, а байты передавать средствами netty следом после команды.
-20. Maven. Исключить предупреждение о кодировке при сборке проекта. 
-    Возможно, нужно изменить pom.xml.
+20. DONE. Maven. Исключить предупреждение о кодировке при сборке проекта. 
+    Добавил в <properties> pom.xml[project] строку 
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>.
 21. System. Добавить логирование в файл и реорганизовать логирование в консоль.
 22. GUI. Устранить дублирование открытия модальных окон.
     DONE. Выделить сервис модальных окон в отдельный класс WindowsManager.
@@ -37,5 +38,8 @@ GeekBrains. Курсовая работа: Итоговый проект Cloud S
     int totalEntireFragsNumber = (int) (fullFileSize / FileFragmentMessage.CONST_FRAG_SIZE);
 26. System. Разобраться почему при download файла 16ГБ на другой ПК процесс нарезки и отправки 
     фрагментов просто остановился при срабатывании screensaver на сервере(а может на клиенте?).
-    
+27. NOT DONE! Maven. Разобраться почему не собирается jar without dependencies при сборке проекта. 
+    Пробовал добавить в <build><plugins> pom.xml[server] блок <plugin>, 
+    но target [server] в папке classes нет классов [shared]модуля.
+28. 
 
