@@ -120,11 +120,4 @@ public class FormChecker {
         return message;
     }
 
-//    /**
-//     * Метод вывода сообщений.
-//     * @param msg - строка сообщения.
-//     */
-//    private void showMessage(String msg){
-//        System.out.println(msg);
-//    }
 }

@@ -67,12 +67,6 @@ public class RegistrationController {
      * @param passwordConfirm - введенный второй раз пароль
      * @return - результат проверки корректности введенных данных в регистрационной форме
      */
-//    private boolean isRegistrationDataCorrect(String login, String first_name,
-//        String last_name, String email, String password, String passwordConfirm){
-//        return isLoginPasswordCorrect(login, password) && !first_name.trim().isEmpty() &&
-//                !last_name.trim().isEmpty() && !email.trim().isEmpty() &&
-//                !passwordConfirm.trim().isEmpty() && password.equals(passwordConfirm);
-//    }
     private boolean isRegistrationDataCorrect(String login, String first_name,
                                               String last_name, String email, String password, String passwordConfirm){
         return isLoginPasswordCorrect(login, password) && !first_name.trim().isEmpty() &&
@@ -86,13 +80,6 @@ public class RegistrationController {
      * @param password - введенные пароль
      * @return - результат проверки корректности введенной пары - логин и пароль
      */
-//    private boolean isLoginPasswordCorrect(String login, String password){
-//        //TODO temporarily
-//        System.out.println("LoginController.isLoginPasswordCorrect() - login: " + login
-//                + ", password: " + password);
-//        //FIXME усилить проверку
-//        return !login.trim().isEmpty() && !password.trim().isEmpty();
-//    }
     private boolean isLoginPasswordCorrect(String login, String password){
         //TODO temporarily
         writeToLog("RegistrationController.isLoginPasswordCorrect() - " +

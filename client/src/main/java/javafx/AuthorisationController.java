@@ -60,13 +60,6 @@ public class AuthorisationController {
      * @param password - введенные пароль
      * @return - результат проверки корректности введенной пары - логин и пароль
      */
-//    private boolean isLoginPasswordCorrect(String login, String password){
-//        //TODO temporarily
-//        writeToLog("AuthorisationController.isLoginPasswordCorrect() - login: " + login
-//                + ", password: " + password);
-//        //FIXME усилить проверку
-//        return !login.trim().isEmpty() && !password.trim().isEmpty();
-//    }
     private boolean isLoginPasswordCorrect(String login, String password){
         //TODO temporarily
         writeToLog("AuthorisationController.isLoginPasswordCorrect() - " +
