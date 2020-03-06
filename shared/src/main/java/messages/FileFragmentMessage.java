@@ -35,8 +35,8 @@ public class FileFragmentMessage extends AbstractMessage {
     private String fragName;
     //объявляем переменную контрольной суммы фрагмента файла
     private String fragChecksum;
-    //объявляем переменную контрольной суммы целого файла
-    private String fullFileChecksum;
+//    //объявляем переменную контрольной суммы целого файла
+//    private String fullFileChecksum;
 
     //this constructor is for upload or download FileByFrags operation
     public FileFragmentMessage(Item toDirectoryItem, Item item, long fullFileSize,
@@ -166,11 +166,11 @@ public class FileFragmentMessage extends AbstractMessage {
         this.fragChecksum = fragChecksum;
     }
 
-    public String getFullFileChecksum() {
-        return fullFileChecksum;
-    }
+//    public String getFullFileChecksum() {
+//        return fullFileChecksum;
+//    }
 
-    public void setFullFileChecksum(String fullFileChecksum) {
-        this.fullFileChecksum = fullFileChecksum;
-    }
+//    public void setFullFileChecksum(String fullFileChecksum) {
+//        this.fullFileChecksum = fullFileChecksum;
+//    }
 }

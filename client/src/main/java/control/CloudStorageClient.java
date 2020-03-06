@@ -202,6 +202,18 @@ public class CloudStorageClient {
      * @param fileFragMsg - объект сообщения фрагмента файла из объекта сообщения(команды)
      * @param command - переменная типа команды
      */
+//    public void sendFileFragment(FileFragmentMessage fileFragMsg, Commands command) {
+//        //инициируем новый байтовый массив
+//        byte[] data = new byte[fileFragMsg.getFileFragmentSize()];
+//        //вычисляем индекс стартового байта фрагмента в целом файле
+//        long startByte = FileFragmentMessage.CONST_FRAG_SIZE * fileFragMsg.getCurrentFragNumber();
+//        //вызываем метод отправки объекта сообщения с новым байтовым массивом данных фрагмента
+//        fileUtils.sendFileFragment(fileFragMsg.getToDirectoryItem(), fileFragMsg.getItem(),
+//                fileFragMsg.getFullFileSize(), fileFragMsg.getCurrentFragNumber(),
+//                fileFragMsg.getTotalFragsNumber(), fileFragMsg.getFileFragmentSize(),
+//                data, startByte, fileFragMsg.getFullFileChecksum(),
+//                CLIENT_ROOT_PATH, ctx, command);
+//    }
     public void sendFileFragment(FileFragmentMessage fileFragMsg, Commands command) {
         //инициируем новый байтовый массив
         byte[] data = new byte[fileFragMsg.getFileFragmentSize()];
@@ -211,8 +223,7 @@ public class CloudStorageClient {
         fileUtils.sendFileFragment(fileFragMsg.getToDirectoryItem(), fileFragMsg.getItem(),
                 fileFragMsg.getFullFileSize(), fileFragMsg.getCurrentFragNumber(),
                 fileFragMsg.getTotalFragsNumber(), fileFragMsg.getFileFragmentSize(),
-                data, startByte, fileFragMsg.getFullFileChecksum(),
-                CLIENT_ROOT_PATH, ctx, command);
+                data, startByte, CLIENT_ROOT_PATH, ctx, command);
     }
 
     /**

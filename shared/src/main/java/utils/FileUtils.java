@@ -69,6 +69,73 @@ public class FileUtils {
      * @param ctx - сетевое соединение
      * @param command - конастанта типа команды
      */
+//    public void cutAndSendFileByFrags(Item toDirItem, Item item,
+//                                      long fullFileSize, Path rootPath,
+//                                      ChannelHandlerContext ctx, Commands command) {
+//        //TODO temporarily
+//        long start = System.currentTimeMillis();
+//        //запускаем в отдельном процессе, чтобы не тормозить основные процессы(подвисает GUI)
+//        new Thread(() -> {
+//            try {
+//                //инициируем локальную переменную контрольной суммы целого файла
+//                String fullFileChecksum = hashUtils.hashFile(
+//                        itemUtils.getRealPath(item.getItemPathname(), rootPath).toFile());
+//                //***разбиваем файл на фрагменты***
+//                //рассчитываем количество полных фрагментов файла
+//                int totalEntireFragsNumber = (int) fullFileSize / FileFragmentMessage.CONST_FRAG_SIZE;
+//                //рассчитываем размер последнего фрагмента файла
+//                int finalFileFragmentSize = (int) fullFileSize - FileFragmentMessage.CONST_FRAG_SIZE * totalEntireFragsNumber;
+//                //рассчитываем общее количество фрагментов файла
+//                //если есть последний фрагмент, добавляем 1 к количеству полных фрагментов файла
+//                int totalFragsNumber = (finalFileFragmentSize == 0) ?
+//                        totalEntireFragsNumber : totalEntireFragsNumber + 1;
+//
+//                //TODO temporarily
+//                System.out.println("FileUtils.cutAndSendFileByFrags() - fullFileSize: " + fullFileSize);
+//                System.out.println("FileUtils.cutAndSendFileByFrags() - totalFragsNumber: " + totalFragsNumber);
+//                System.out.println("FileUtils.cutAndSendFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
+//
+//                //устанавливаем начальные значения номера текущего фрагмента и стартового байта
+//                long startByte = 0;
+//                //инициируем байтовый массив для чтения данных для полных фрагментов
+//                byte[] data = new byte[FileFragmentMessage.CONST_FRAG_SIZE];
+//                //***в цикле создаем целые фрагменты, читаем в них данные и отправляем***
+//                for (int i = 1; i <= totalEntireFragsNumber; i++) {
+//                    //вызываем метод отправки сообщения
+//                    sendFileFragment(toDirItem, item, fullFileSize,
+//                            i, totalFragsNumber, FileFragmentMessage.CONST_FRAG_SIZE,
+//                            data, startByte, fullFileChecksum,
+//                            rootPath, ctx, command);
+//                    //инициируем защелку и ждем получения подтверждения получателя
+//                    countDownLatch = new CountDownLatch(1);
+//                    countDownLatch.await();
+//                    //увеличиваем указатель стартового байта на размер фрагмента
+//                    startByte += FileFragmentMessage.CONST_FRAG_SIZE;
+//                }
+//
+//                //TODO temporarily
+//                System.out.println("FileUtils.cutAndSendFileByFrags() - currentFragNumber: " + totalFragsNumber);
+//                System.out.println("FileUtils.cutAndSendFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
+//
+//                //***отправляем последний фрагмент, если он есть***
+//                if(totalFragsNumber > totalEntireFragsNumber){
+//                    //инициируем байтовый массив для чтения данных для последнего фрагмента
+//                    byte[] dataFinal = new byte[finalFileFragmentSize];
+//                    //вызываем метод отправки сообщения
+//                    sendFileFragment(toDirItem, item, fullFileSize,
+//                            totalFragsNumber, totalFragsNumber, finalFileFragmentSize,
+//                            dataFinal, startByte, fullFileChecksum,
+//                            rootPath, ctx, command);
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
+//
+//        //TODO temporarily
+//        long finish = System.currentTimeMillis() - start;
+//        System.out.println("FileUtils.cutAndSendFileByFrags() - duration(mc): " + finish);
+//    }
     public void cutAndSendFileByFrags(Item toDirItem, Item item,
                                       long fullFileSize, Path rootPath,
                                       ChannelHandlerContext ctx, Commands command) {
@@ -77,14 +144,15 @@ public class FileUtils {
         //запускаем в отдельном процессе, чтобы не тормозить основные процессы(подвисает GUI)
         new Thread(() -> {
             try {
-                //инициируем локальную переменную контрольной суммы целого файла
-                String fullFileChecksum = hashUtils.hashFile(
-                        itemUtils.getRealPath(item.getItemPathname(), rootPath).toFile());
                 //***разбиваем файл на фрагменты***
                 //рассчитываем количество полных фрагментов файла
-                int totalEntireFragsNumber = (int) fullFileSize / FileFragmentMessage.CONST_FRAG_SIZE;
+                //ATTENTION! Приводимое выражение должно быть в скобках!
+                // Иначе сначала fullFileSize(long) приводится к int, что приводит к ошибке при больших чем int значениях.
+                int totalEntireFragsNumber = (int) (fullFileSize / FileFragmentMessage.CONST_FRAG_SIZE);
                 //рассчитываем размер последнего фрагмента файла
-                int finalFileFragmentSize = (int) fullFileSize - FileFragmentMessage.CONST_FRAG_SIZE * totalEntireFragsNumber;
+                //ATTENTION! Странно, но здесь (выражение без скобок) ошибки нет, как чуть выше.
+                //на всякий случай поставил скобки.
+                int finalFileFragmentSize = (int) (fullFileSize - FileFragmentMessage.CONST_FRAG_SIZE * totalEntireFragsNumber);
                 //рассчитываем общее количество фрагментов файла
                 //если есть последний фрагмент, добавляем 1 к количеству полных фрагментов файла
                 int totalFragsNumber = (finalFileFragmentSize == 0) ?
@@ -104,8 +172,7 @@ public class FileUtils {
                     //вызываем метод отправки сообщения
                     sendFileFragment(toDirItem, item, fullFileSize,
                             i, totalFragsNumber, FileFragmentMessage.CONST_FRAG_SIZE,
-                            data, startByte, fullFileChecksum,
-                            rootPath, ctx, command);
+                            data, startByte, rootPath, ctx, command);
                     //инициируем защелку и ждем получения подтверждения получателя
                     countDownLatch = new CountDownLatch(1);
                     countDownLatch.await();
@@ -124,8 +191,7 @@ public class FileUtils {
                     //вызываем метод отправки сообщения
                     sendFileFragment(toDirItem, item, fullFileSize,
                             totalFragsNumber, totalFragsNumber, finalFileFragmentSize,
-                            dataFinal, startByte, fullFileChecksum,
-                            rootPath, ctx, command);
+                            dataFinal, startByte, rootPath, ctx, command);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -147,15 +213,40 @@ public class FileUtils {
      * @param fileFragSize - размер фрагмента в байтах
      * @param data - байтовый массив с данными фрагмента файла
      * @param startByte - индекс начального байта фрагмента в целом файле
-     * @param fullFileChecksum - контрольная сумма целого файла
+//     * @param fullFileChecksum - контрольная сумма целого файла
      * @param rootPath - объект пути к корневой папке
      * @param ctx - сетевое соединение
      * @param command - конастанта типа команды
      */
+//    public void sendFileFragment(Item toDirItem, Item item, long fullFileSize,
+//                                  int fragNumber, int totalFragsNumber, int fileFragSize,
+//                                  byte[] data, long startByte, String fullFileChecksum,
+//                                  Path rootPath, ChannelHandlerContext ctx, Commands command){
+//        try {
+//            //инициируем объект фрагмента файлового сообщения
+//            FileFragmentMessage fileFragmentMessage = new FileFragmentMessage(
+//                    toDirItem, item, fullFileSize, fragNumber,
+//                    totalFragsNumber, fileFragSize, data);
+//            //читаем данные во фрагмент с определенного места файла
+//            fileFragmentMessage.readFileDataToFragment(
+//                    itemUtils.getRealPath(item.getItemPathname(), rootPath).toString(),
+//                    startByte);
+//            //вычисляем и сохраняем в объект сообщения контрольную сумму
+//            // байтового массива фрагмента файла
+//            fileFragmentMessage.setFragChecksum(
+//                    hashUtils.hashBytes(fileFragmentMessage.getData()));
+//            //сохраняем в объект сообщения контрольной суммы целого файла
+//            fileFragmentMessage.setFullFileChecksum(fullFileChecksum);
+//            //отправляем на сервер объект сообщения(команды)
+//            ctx.writeAndFlush(new CommandMessage(command, fileFragmentMessage));
+//        } catch (NoSuchAlgorithmException | IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
     public void sendFileFragment(Item toDirItem, Item item, long fullFileSize,
-                                  int fragNumber, int totalFragsNumber, int fileFragSize,
-                                  byte[] data, long startByte, String fullFileChecksum,
-                                  Path rootPath, ChannelHandlerContext ctx, Commands command){
+                                 int fragNumber, int totalFragsNumber, int fileFragSize,
+                                 byte[] data, long startByte, Path rootPath,
+                                 ChannelHandlerContext ctx, Commands command){
         try {
             //инициируем объект фрагмента файлового сообщения
             FileFragmentMessage fileFragmentMessage = new FileFragmentMessage(
@@ -169,8 +260,6 @@ public class FileUtils {
             // байтового массива фрагмента файла
             fileFragmentMessage.setFragChecksum(
                     hashUtils.hashBytes(fileFragmentMessage.getData()));
-            //сохраняем в объект сообщения контрольной суммы целого файла
-            fileFragmentMessage.setFullFileChecksum(fullFileChecksum);
             //отправляем на сервер объект сообщения(команды)
             ctx.writeAndFlush(new CommandMessage(command, fileFragmentMessage));
         } catch (NoSuchAlgorithmException | IOException e) {
@@ -264,6 +353,59 @@ public class FileUtils {
      * @param fileFragMsg - объект файлового сообщения
      * @return результат процесса сборки целого файла из файлов-фрагментов
      */
+//    public boolean compileFileFragments(Path realToTempDirPath, Path realToFilePath,
+//                                        FileFragmentMessage fileFragMsg) {
+//        //TODO temporarily
+//        long start = System.currentTimeMillis();
+//
+//        try {
+//            //инициируем файловый объект для временной папки
+//            File tempDirFileObject = new File(realToTempDirPath.toString());
+//            //инициируем массив файлов-фрагментов во временной папке
+//            File[] fragFiles = tempDirFileObject.listFiles();
+//            //если количество файлов-фрагментов не совпадает с требуемым
+//            if(fragFiles == null ||
+//                    fragFiles.length != fileFragMsg.getTotalFragsNumber()){
+//                msg = ("FileUtils.compileFileFragments() - " +
+//                        "Wrong the saved file fragments count!");
+//                return false;
+//            }
+//            //переписываем данные из канала-источника в канал-назначения данные
+//            // из файлов-фрагментов в итоговый файл
+//            transferDataFromFragsToFinalFile(realToFilePath, fragFiles);
+//            //если длина сохраненного файла отличается от длины полного исходного файла
+//            if(Files.size(realToFilePath) != fileFragMsg.getFullFileSize()){
+//                msg = "FileUtils.compileFileFragments() - " +
+//                        "Wrong size of the saved entire file!";
+//                return false;
+//            //если контрольная сумма сохраненного файла отличается от контрольной суммы полного исходного файла
+//            } else if(!fileFragMsg.getFullFileChecksum().
+//                            equals(hashUtils.hashFile(realToFilePath.toFile()))){
+//                msg = "FileUtils.compileFileFragments() - " +
+//                        "Wrong checksum of the saved entire file!";
+//                return false;
+//            //если файл собран без ошибок
+//            } else {
+//                //***удаляем временную папку***
+//                if(!deleteFolder(tempDirFileObject)){
+//                    msg = "FileUtils.compileFileFragments() - " +
+//                            "Something wrong with the temp folder deleting!!";
+//                    return false;
+//                }
+//            }
+//        } catch (IOException | NoSuchAlgorithmException e) {
+//            msg = "FileUtils.compileFileFragments() - " +
+//                    "Something wrong with the directory or the file!";
+//            e.printStackTrace();
+//            return false;
+//        }
+//
+//        //TODO temporarily
+//        long finish = System.currentTimeMillis() - start;
+//        System.out.println("FileUtils.compileUploadedFileFragments() - duration(mc): " + finish);
+//
+//        return true;
+//    }
     public boolean compileFileFragments(Path realToTempDirPath, Path realToFilePath,
                                         FileFragmentMessage fileFragMsg) {
         //TODO temporarily
@@ -289,12 +431,6 @@ public class FileUtils {
                 msg = "FileUtils.compileFileFragments() - " +
                         "Wrong size of the saved entire file!";
                 return false;
-            //если контрольная сумма сохраненного файла отличается от контрольной суммы полного исходного файла
-            } else if(!fileFragMsg.getFullFileChecksum().
-                            equals(hashUtils.hashFile(realToFilePath.toFile()))){
-                msg = "FileUtils.compileFileFragments() - " +
-                        "Wrong checksum of the saved entire file!";
-                return false;
             //если файл собран без ошибок
             } else {
                 //***удаляем временную папку***
@@ -304,7 +440,7 @@ public class FileUtils {
                     return false;
                 }
             }
-        } catch (IOException | NoSuchAlgorithmException e) {
+        } catch (IOException e) {
             msg = "FileUtils.compileFileFragments() - " +
                     "Something wrong with the directory or the file!";
             e.printStackTrace();
