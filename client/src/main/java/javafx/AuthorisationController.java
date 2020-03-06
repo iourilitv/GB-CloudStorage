@@ -20,8 +20,10 @@ public class AuthorisationController {
     @FXML
     private PasswordField password;
 
-    //главный контроллер GUI
+    //принимаем объект главного контроллера GUI
     private GUIController backController;
+    //принимаем объект проверяльщика форм
+    private FormChecker formChecker = FormChecker.getInstance();
 
     /**
      * Метод отрабатывает клик линка "Registration" в авторизационной форме.
@@ -58,12 +60,31 @@ public class AuthorisationController {
      * @param password - введенные пароль
      * @return - результат проверки корректности введенной пары - логин и пароль
      */
+//    private boolean isLoginPasswordCorrect(String login, String password){
+//        //TODO temporarily
+//        writeToLog("AuthorisationController.isLoginPasswordCorrect() - login: " + login
+//                + ", password: " + password);
+//        //FIXME усилить проверку
+//        return !login.trim().isEmpty() && !password.trim().isEmpty();
+//    }
     private boolean isLoginPasswordCorrect(String login, String password){
+        //TODO temporarily
+        writeToLog("AuthorisationController.isLoginPasswordCorrect() - " +
+                "login: " + login + ", password: " + password);
 
-        System.out.println("LoginController.isLoginPasswordCorrect() - login: " + login
-                + ", password: " + password);
-        //FIXME усилить проверку
-        return !login.trim().isEmpty() && !password.trim().isEmpty();
+        //если логин невалидный
+        if(formChecker.isLoginNotValid(login)){
+            //выводим соотвествующее предупреждение в лог и в метку сообщений в GUI
+            writeToLog("AuthorisationController.isLoginPasswordCorrect() - " + formChecker.getMessage());
+            showNoticeInGUI(formChecker.getMessage());
+            return false;
+            //если пароль невалидный
+        } else if (formChecker.isPasswordNotValid(password)){
+            writeToLog("AuthorisationController.isLoginPasswordCorrect() - " + formChecker.getMessage());
+            showNoticeInGUI(formChecker.getMessage());
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -103,5 +124,13 @@ public class AuthorisationController {
 
     public void setBackController(GUIController backController) {
         this.backController = backController;
+    }
+
+    private void showNoticeInGUI(String notice){
+        backController.getNoticeLabel().setText(notice);
+    }
+
+    private void writeToLog(String msg){
+        backController.writeToLog(msg);
     }
 }

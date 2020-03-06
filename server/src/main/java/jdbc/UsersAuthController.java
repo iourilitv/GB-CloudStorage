@@ -236,7 +236,7 @@ public class UsersAuthController {
         try {
             //формируем строку для запроса PreparedStatement
             // ? - для последовательного подставления значений в соотвествующее место
-            String sql = "SELECT * FROM users WHERE 'login' = ?";
+            String sql = "SELECT * FROM users WHERE login = ?";
             //инициируем объект подготовленнного запроса
             preparedStatement = connection.prepareStatement(sql);
             //добавляем в запрос параметр 1 - строку логина

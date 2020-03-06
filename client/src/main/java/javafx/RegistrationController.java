@@ -20,8 +20,10 @@ public class RegistrationController {
     @FXML
     private PasswordField password, passwordConfirm;
 
-    //главный контроллер GUI
+    //принимаем объект главного контроллера GUI
     private GUIController backController;
+    //принимаем объект проверяльщика форм
+    private FormChecker formChecker = FormChecker.getInstance();
 
     /**
      * Метод отрабатывает клик кнопки на кнопку "Registration".
@@ -65,25 +67,66 @@ public class RegistrationController {
      * @param passwordConfirm - введенный второй раз пароль
      * @return - результат проверки корректности введенных данных в регистрационной форме
      */
+//    private boolean isRegistrationDataCorrect(String login, String first_name,
+//        String last_name, String email, String password, String passwordConfirm){
+//        return isLoginPasswordCorrect(login, password) && !first_name.trim().isEmpty() &&
+//                !last_name.trim().isEmpty() && !email.trim().isEmpty() &&
+//                !passwordConfirm.trim().isEmpty() && password.equals(passwordConfirm);
+//    }
     private boolean isRegistrationDataCorrect(String login, String first_name,
-        String last_name, String email, String password, String passwordConfirm){
+                                              String last_name, String email, String password, String passwordConfirm){
         return isLoginPasswordCorrect(login, password) && !first_name.trim().isEmpty() &&
-                !last_name.trim().isEmpty() && !email.trim().isEmpty() &&
+                !last_name.trim().isEmpty() && isEmailValid(email) &&
                 !passwordConfirm.trim().isEmpty() && password.equals(passwordConfirm);
     }
 
     /**
-     * Метод проверяет корректность введенной пары - логин и пароль
+     * Метод-прокладка запускает проверку корректности введенной пары - логин и пароль
      * @param login - введенные логин
      * @param password - введенные пароль
      * @return - результат проверки корректности введенной пары - логин и пароль
      */
+//    private boolean isLoginPasswordCorrect(String login, String password){
+//        //TODO temporarily
+//        System.out.println("LoginController.isLoginPasswordCorrect() - login: " + login
+//                + ", password: " + password);
+//        //FIXME усилить проверку
+//        return !login.trim().isEmpty() && !password.trim().isEmpty();
+//    }
     private boolean isLoginPasswordCorrect(String login, String password){
         //TODO temporarily
-        System.out.println("LoginController.isLoginPasswordCorrect() - login: " + login
-                + ", password: " + password);
-        //FIXME усилить проверку
-        return !login.trim().isEmpty() && !password.trim().isEmpty();
+        writeToLog("RegistrationController.isLoginPasswordCorrect() - " +
+                "login: " + login + ", password: " + password);
+
+        //если логин невалидный
+        if(formChecker.isLoginNotValid(login)){
+            //выводим соотвествующее предупреждение в лог и в метку сообщений в GUI
+            writeToLog("RegistrationController.isLoginPasswordCorrect() - " + formChecker.getMessage());
+            showNoticeInGUI(formChecker.getMessage());
+            return false;
+        //если пароль невалидный
+        } else if (formChecker.isPasswordNotValid(password)){
+            writeToLog("RegistrationController.isLoginPasswordCorrect() - " + formChecker.getMessage());
+            showNoticeInGUI(formChecker.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Метод-прокладка запускает проверку корректности введенного email.
+     * @param email - введенный email
+     * @return - результат проверки
+     */
+    private boolean isEmailValid(String email){
+        //если email невалидный
+        if(!formChecker.isEmailValid(email)){
+            //выводим соотвествующее предупреждение в лог и в метку сообщений в GUI
+            writeToLog("RegistrationController.isEmailValid() - " + formChecker.getMessage());
+            showNoticeInGUI(formChecker.getMessage());
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -119,5 +162,13 @@ public class RegistrationController {
 
     public void setBackController(GUIController backController) {
         this.backController = backController;
+    }
+
+    private void showNoticeInGUI(String notice){
+        backController.getNoticeLabel().setText(notice);
+    }
+
+    private void writeToLog(String msg){
+        backController.writeToLog(msg);
     }
 }
