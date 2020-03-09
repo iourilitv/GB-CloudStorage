@@ -68,10 +68,6 @@ public class ChangePasswordController {
      */
     private boolean isNewDataCorrect(String login, String password, String newPassword,
                                      String newPasswordConfirm){
-        //TODO Temporarily
-        System.out.println("LoginController.isLoginPasswordCorrect() - login: " + login
-                + ", password: " + password + ", newPassword: " + newPassword +
-                ", newPasswordConfirm: " + newPasswordConfirm);
         return !login.trim().isEmpty() && !password.trim().isEmpty() &&
                 !newPassword.trim().isEmpty() && !newPasswordConfirm.trim().isEmpty() &&
                 !password.equals(newPassword) && newPassword.equals(newPasswordConfirm);

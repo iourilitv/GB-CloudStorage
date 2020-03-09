@@ -53,7 +53,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
             //десериализуем объект сообщения(команды)
             CommandMessage commandMessage = (CommandMessage) msgObject;
 
-            //TODO temporarily
+            //TODO Upd 21. Добавить в лог.
             printMsg("[client]CommandMessageManager.channelRead() - command: "
                     + commandMessage.getCommand());
 

@@ -22,7 +22,7 @@ public class RenameController {
     @FXML
     public void saveNewName(ActionEvent actionEvent) {
         //если введенное новое имя корректно
-        if(isNewNameCorrect(newName.getText())){
+        if(isNewItemNameCorrect(newName.getText())){
             //записываем новое имя в соответствующую переменную главного контроллера
             backController.setNewName(newName.getText());
             //закрываем модальное окно
@@ -30,8 +30,12 @@ public class RenameController {
         }
     }
 
-    //FIXME
-    private boolean isNewNameCorrect(String newName){
+    /** //FIXME Upd 32. Добавить проверки правильности введенное новое имя объекта списка(файла или папки) для разных файловых систем
+     * Метод проверяет правильность введенного нового имени объекта списка.
+     * @param newName - введенное новое имя объекта списка(файла или папки)
+     * @return - результат проверки
+     */
+    private boolean isNewItemNameCorrect(String newName){
         return !newName.trim().isEmpty();
     }
 

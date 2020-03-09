@@ -41,7 +41,7 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
         //если соединение установлено, отправляем клиенту сообщение
         ctx.writeAndFlush(new CommandMessage(Commands.SERVER_NOTIFICATION_CLIENT_CONNECTED));
 
-        //TODO temporarily
+        //TODO Upd 21. Добавить в лог.
         printMsg("[server]AuthGateway.channelActive() - ctx: " + ctx +
                 ", command: " + Commands.SERVER_NOTIFICATION_CLIENT_CONNECTED);
     }
@@ -55,7 +55,7 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
         //если соединение отвалилось, удаляем объект соединения из коллекции
         usersAuthController.deAuthorizeUser(ctx);
 
-        //TODO temporarily
+        //TODO Upd 21. Добавить в лог.
         printMsg("[server]UsersAuthController.authorizeUser - authorizedUsers: " +
                 usersAuthController.getAuthorizedUsers().toString());
     }
@@ -100,7 +100,7 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
         //отправляем объект сообщения(команды) клиенту
         ctx.writeAndFlush(new CommandMessage(Commands.SERVER_RESPONSE_DISCONNECT_OK));
 
-        //TODO temporarily
+        //TODO Upd 21. Добавить в лог.
         printMsg("[server]AuthGateway.onDisconnectClientRequest() - " +
                 "Unauthorized client has been disconnected! ctx : " + ctx);
 
@@ -118,11 +118,6 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
                                                  CommandMessage commandMessage) {
         //вынимаем объект авторизационного сообщения из объекта сообщения(команды)
         AuthMessage authMessage = (AuthMessage) commandMessage.getMessageObject();
-
-        //TODO temporarily
-        printMsg("[server]AuthGateway.onRegistrationUserClientRequest() - " +
-                "login: " + authMessage.getLogin() + ", password: " + authMessage.getPassword());
-
         //если регистрация клиента в облачном хранилище прошла удачно
         if(usersAuthController.registerUser(authMessage)){
             //меняем команду на успешную
@@ -134,7 +129,7 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
             command = Commands.SERVER_RESPONSE_REGISTRATION_ERROR;
         }
 
-        //TODO temporarily
+        //TODO Upd 21. Добавить в лог.
         printMsg("[server]AuthGateway.onRegistrationUserClientRequest() - ctx: " + ctx +
                 ", command: " + commandMessage.getCommand());
 
@@ -152,11 +147,6 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
     private void onAuthClientRequest(ChannelHandlerContext ctx, CommandMessage commandMessage) {
         //вынимаем объект авторизационного сообщения из объекта сообщения(команды)
         AuthMessage authMessage = (AuthMessage) commandMessage.getMessageObject();
-
-        //TODO temporarily
-        printMsg("[server]AuthGateway.onAuthClientRequest() - " +
-                "login: " + authMessage.getLogin() + ", password: " + authMessage.getPassword());
-
         //если есть директория с именем логина пользователя и
         // авторизации клиента в облачном хранилище прошла удачно
         if(usersAuthController.isUserRootDirExist(authMessage.getLogin()) &&
@@ -176,7 +166,7 @@ public class AuthGateway extends ChannelInboundHandlerAdapter {
             //отправляем объект сообщения(команды) клиенту
             ctx.writeAndFlush(commandMessage);
 
-            //TODO temporarily
+            //TODO Upd 21. Добавить в лог.
             printMsg("[server]AuthGateway.onAuthClientRequest() - ctx: " + ctx +
                     ", command: " + commandMessage.getCommand());
         }

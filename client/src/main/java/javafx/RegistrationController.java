@@ -81,10 +81,6 @@ public class RegistrationController {
      * @return - результат проверки корректности введенной пары - логин и пароль
      */
     private boolean isLoginPasswordCorrect(String login, String password){
-        //TODO temporarily
-        writeToLog("RegistrationController.isLoginPasswordCorrect() - " +
-                "login: " + login + ", password: " + password);
-
         //если логин невалидный
         if(formChecker.isLoginNotValid(login)){
             //выводим соотвествующее предупреждение в лог и в метку сообщений в GUI

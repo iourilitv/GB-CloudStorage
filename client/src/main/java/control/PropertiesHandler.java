@@ -61,7 +61,7 @@ public class PropertiesHandler {
     }
 
     /**
-     * TODO. This way is for studying only.
+     * Note! This way is for studying only.
      *  It could be solved easily by using approach like in the [server]module.
      * Метод из произвольной строки вырезает строку между двумя заданными строками.
      * @param origin - заданная произвольная строка
@@ -116,7 +116,7 @@ public class PropertiesHandler {
     }
 
     /**
-     * TODO. This way is for studying only.
+     * Note! This way is for studying only.
      *  It could be solved easily by using approach like in the [server]module.
      * Метод возвращает значение свойства из коллекции текущих настроек приложения.
      * @param propertyName - имя свойства
@@ -135,7 +135,7 @@ public class PropertiesHandler {
     }
 
     /**
-     * TODO. This way is for studying only.
+     * Note! This way is for studying only.
      *  It could be solved easily by using approach like in the [server]module.
      * Метод заменяет элемент свойства в текущей коллекции настроек и
      * перезаписывает концигурационный файл.

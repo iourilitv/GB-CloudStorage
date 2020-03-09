@@ -72,7 +72,7 @@ public class FileUtils {
     public void cutAndSendFileByFrags(Item toDirItem, Item item,
                                       long fullFileSize, Path rootPath,
                                       ChannelHandlerContext ctx, Commands command) {
-        //TODO temporarily
+        //TODO Upd 21. Добавить в лог.
         long start = System.currentTimeMillis();
         //запускаем в отдельном процессе, чтобы не тормозить основные процессы(подвисает GUI)
         new Thread(() -> {
@@ -91,7 +91,7 @@ public class FileUtils {
                 int totalFragsNumber = (finalFileFragmentSize == 0) ?
                         totalEntireFragsNumber : totalEntireFragsNumber + 1;
 
-                //TODO temporarily
+                //TODO Upd 21. Добавить в лог.
                 System.out.println("FileUtils.cutAndSendFileByFrags() - fullFileSize: " + fullFileSize);
                 System.out.println("FileUtils.cutAndSendFileByFrags() - totalFragsNumber: " + totalFragsNumber);
                 System.out.println("FileUtils.cutAndSendFileByFrags() - totalEntireFragsNumber: " + totalEntireFragsNumber);
@@ -113,7 +113,7 @@ public class FileUtils {
                     startByte += FileFragmentMessage.CONST_FRAG_SIZE;
                 }
 
-                //TODO temporarily
+                //TODO Upd 21. Добавить в лог.
                 System.out.println("FileUtils.cutAndSendFileByFrags() - currentFragNumber: " + totalFragsNumber);
                 System.out.println("FileUtils.cutAndSendFileByFrags() - finalFileFragmentSize: " + finalFileFragmentSize);
 
@@ -131,7 +131,7 @@ public class FileUtils {
             }
         }).start();
 
-        //TODO temporarily
+        //TODO Upd 21. Добавить в лог.
         long finish = System.currentTimeMillis() - start;
         System.out.println("FileUtils.cutAndSendFileByFrags() - duration(mc): " + finish);
     }
@@ -262,7 +262,7 @@ public class FileUtils {
      */
     public boolean compileFileFragments(Path realToTempDirPath, Path realToFilePath,
                                         FileFragmentMessage fileFragMsg) {
-        //TODO temporarily
+        //TODO Upd 21. Добавить в лог.
         long start = System.currentTimeMillis();
 
         try {
@@ -301,7 +301,7 @@ public class FileUtils {
             return false;
         }
 
-        //TODO temporarily
+        //TODO Upd 21. Добавить в лог.
         long finish = System.currentTimeMillis() - start;
         System.out.println("FileUtils.compileUploadedFileFragments() - duration(mc): " + finish);
 

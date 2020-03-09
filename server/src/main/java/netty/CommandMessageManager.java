@@ -176,7 +176,7 @@ public class CommandMessageManager extends ChannelInboundHandlerAdapter {
         //удаляем пользователя из списка авторизованных, если он был авторизован
         storageServer.getUsersAuthController().deAuthorizeUser(login);
 
-        //TODO temporarily
+        //TODO Upd 21. Добавить в лог.
         printMsg("[server]AuthGateway.onDisconnectClientRequest() - " +
                 "Authorized user \"" + login + "\" has been disconnected! ctx : " + ctx);
 

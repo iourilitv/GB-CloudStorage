@@ -4,15 +4,10 @@ import control.CloudStorageClient;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import utils.Item;
 
 import java.io.IOException;
@@ -363,8 +358,10 @@ public class GUIController implements Initializable {
                 //переименовываем файловый объект
                 //если произошла ошибка при переименовании
                 if(!storageClient.renameClientItem(origin, newName)){
-                    //TODO добавить диалоговое окно - предупреждение об ошибке
-                    writeToLog("GUIController.menuItemRename() - Some thing wrong with item renaming!");
+                    //выводим сообщение в метку оповещений
+                    noticeLabel.setText("Something wrong with item renaming!");
+                    //печатаем в лог сообщение об ошибке
+                    writeToLog("GUIController.menuItemRename() - Something wrong with item renaming!");
                 }
                 //обновляем список объектов элемента в текущей директории
                 updateClientItemListInGUI(clientCurrentDirItem);
@@ -392,7 +389,7 @@ public class GUIController implements Initializable {
         MenuItem menuItemDelete = new MenuItem("Delete");
         //устанавливаем обработчика нажатия на этот пункт контекстного меню
         menuItemDelete.setOnAction(event -> {
-            //TODO добавить диалоговое окно - предупреждение-подтверждение
+            //TODO Upd 33. добавить диалоговое окно - предупреждение-подтверждение на удаление
 
             //запоминаем выбранный элемент списка
             Item item = listView.getSelectionModel().getSelectedItem();
@@ -401,8 +398,10 @@ public class GUIController implements Initializable {
                 //удаляем файл или папку в текущей директории на клиенте
                 //если произошла ошибка при удалении
                 if(!storageClient.deleteClientItem(item)){
-                    //TODO добавить диалоговое окно - предупреждение об ошибке
-                    writeToLog("GUIController.menuItemRename() - Some thing wrong with item deleting!");
+                    //выводим сообщение в метку оповещений
+                    noticeLabel.setText("Something wrong with item deleting!");
+                    //печатаем в лог сообщение об ошибке
+                    writeToLog("GUIController.menuItemRename() - Something wrong with item deleting!");
                 }
                 //обновляем список элементов списка клиентской части
                 updateClientItemListInGUI(clientCurrentDirItem);
@@ -428,39 +427,14 @@ public class GUIController implements Initializable {
         windowsManager.openAboutScene();
     }
 
-    /** //FIXME Убрать задвоение - вызвать перегруженный метод openNewNameWindow(Item origin)
+    /**
      * Метод отрабатывает нажатие на пунтк меню "Change Client Root".
      * @param actionEvent - событие(здесь клик мыши)
      */
     @FXML
     public void onChangeClientRootMenuItemClick(ActionEvent actionEvent) {
-        try {
-            Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/changeRoot.fxml"));
-            Parent root = loader.load();
-            ChangeRootController changeRootController = loader.getController();
-
-            //определяем действия по событию закрыть окно по крестику через лямбда
-            stage.setOnCloseRequest(event -> {
-                writeToLog("GUIController.menuItemRename() - " +
-                        "the newNameWindow was closed forcibly!");
-                //сбрасываем текстовое поле имени пути
-                changeRootController.setNewPathnameText("");
-            });
-
-            //записываем текущее имя в текстовое поле
-            changeRootController.setNewPathnameText(CloudStorageClient.CLIENT_ROOT_PATH.toAbsolutePath().toString());
-            changeRootController.setBackController(this);
-
-            stage.setTitle("insert a new root pathname");
-            stage.setScene(new Scene(root, 800, 50));
-            stage.isAlwaysOnTop();
-            stage.setResizable(false);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //открываем окно для ввода строки нового абсолютного пути к корневой директории клиента
+        windowsManager.openChangingClientRootWindow();
     }
 
     /**

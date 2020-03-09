@@ -1,5 +1,7 @@
 package javafx;
 
+import control.CloudStorageClient;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -43,7 +45,11 @@ public class WindowsManager {
      */
     void openAuthorisationWindow() {
         //вызываем перегруженный метод с пустыми логином и паролем
-        openAuthorisationWindow("", "");
+//        openAuthorisationWindow("", "");
+
+        // TODO temporarily default login/password.
+        openAuthorisationWindow("login1", "!1qwertY");
+//        openAuthorisationWindow("login2", "@2qwertY");
     }
 
     /**
@@ -115,7 +121,7 @@ public class WindowsManager {
         }
     }
 
-    /** //FIXME Убрать задвоение - вызвать универсальный метод открытия модального окна
+    /** //FIXME Upd 22. Убрать задвоение - вызвать универсальный метод открытия модального окна
      * Метод открывает модальное окно с формой изменения пароля.
      */
     void openChangingPasswordWindow() {
@@ -146,7 +152,7 @@ public class WindowsManager {
         }
     }
 
-    /** //FIXME Убрать задвоение - вызвать перегруженный метод openNewNameWindow(Item origin)
+    /** //FIXME Upd 22. Убрать задвоение - вызвать перегруженный метод openNewNameWindow(Item origin)
      * Перегруженный метод открывает модальное окно для ввода нового имени элемента списка.
      */
     void openNewNameWindow() {
@@ -154,7 +160,7 @@ public class WindowsManager {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
             Parent root = loader.load();
-            RenameController renameController = loader.getController();//TODO вынести в класс
+            RenameController renameController = loader.getController();//TODO вынести в класс?
             //запоминаем текущий контроллер для возврата
             renameController.setBackController(guiController);
 
@@ -188,7 +194,7 @@ public class WindowsManager {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
             Parent root = loader.load();
-            RenameController renameController = loader.getController();//TODO вынести в класс
+            RenameController renameController = loader.getController();//TODO вынести в класс?
             //запоминаем текущий контроллер для возврата
             renameController.setBackController(guiController);
             //записываем текущее имя в текстовое поле
@@ -237,6 +243,39 @@ public class WindowsManager {
         pane.getChildren().addAll(label, backBtn);
         Scene aboutScene = new Scene(pane, 410, 220);
         stage.setScene(aboutScene);
+    }
+
+    /**  //FIXME Upd 22. Убрать задвоение - вызвать перегруженный метод openNewNameWindow(Item origin)
+     * Метод открывает окно для ввода строки нового абсолютного пути к корневой директории клиента.
+     */
+    public void openChangingClientRootWindow() {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/changeRoot.fxml"));
+            Parent root = loader.load();
+            ChangeRootController changeRootController = loader.getController();
+
+            //определяем действия по событию закрыть окно по крестику через лямбда
+            stage.setOnCloseRequest(event -> {
+                writeToLog("GUIController.menuItemRename() - " +
+                        "the newNameWindow was closed forcibly!");
+                //сбрасываем текстовое поле имени пути
+                changeRootController.setNewPathnameText("");
+            });
+
+            //записываем текущее имя в текстовое поле
+            changeRootController.setNewPathnameText(CloudStorageClient.CLIENT_ROOT_PATH.toAbsolutePath().toString());
+            changeRootController.setBackController(guiController);
+
+            stage.setTitle("insert a new root pathname");
+            stage.setScene(new Scene(root, 800, 50));
+            stage.isAlwaysOnTop();
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Stage getStage() {

@@ -6,7 +6,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
 /**
- * This class responds for control the "new client root path window" operations.
+ * This class is responsible for control of the "new client root path window" operations.
  */
 public class ChangeRootController {
 
@@ -33,7 +33,11 @@ public class ChangeRootController {
         }
     }
 
-    //FIXME
+    /** //FIXME Upd 31. Добавить проверку через Path
+     * Метод проверяет правильность введенной строки абсолютного пути к новой директории.
+     * @param newPathname - строка абсолютного пути к новой директории
+     * @return - результат проверки
+     */
     private boolean isNewPathnameCorrect(String newPathname){
         return !newPathname.trim().isEmpty();
     }

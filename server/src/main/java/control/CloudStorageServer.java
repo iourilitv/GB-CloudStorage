@@ -210,7 +210,7 @@ public class CloudStorageServer {
                              ChannelHandlerContext ctx) throws IOException {
         //если объект элемента - это директория
         if(fileMessage.getItem().isDirectory()){
-            //FIXME что-то делаем, а пока выходим
+            //FIXME Upd 26. что-то делаем, а пока выходим
             printMsg("[server]CloudStorageServer.downloadItem() - Directory downloading is not allowed!");
             return;
         }
