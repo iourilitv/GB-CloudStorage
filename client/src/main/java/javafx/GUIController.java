@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -200,16 +199,6 @@ public class GUIController implements Initializable {
      * @param listView - коллекция объектов элемента
      * @param items - массив объектов элемента
      */
-//    private void updateListView(ListView<Item> listView, Item[] items) {
-//        //очищаем список элементов
-//        listView.getItems().clear();
-//        //обновляем список элементов списка
-//        listView.getItems().addAll(items);
-//        //инициируем объект кастомизированного элемента списка
-//        listView.setCellFactory(itemListView -> new FileListCell());
-//        //инициируем контекстное меню
-//        setContextMenu(listView);
-//    }
     private void updateListView(ListView<Item> listView, Item[] items) {
         //очищаем коллекцию элементов
         listView.getItems().clear();
