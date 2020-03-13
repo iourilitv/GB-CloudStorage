@@ -37,7 +37,6 @@
                <Font name="System Bold" size="14.0" />
             </font>
             </Label>
-<!--            <HBox spacing="2.0" VBox.vgrow="ALWAYS">-->
             <HBox spacing="2.0">
                 <Button fx:id="clientHomeButton" onMouseClicked="#onClientHomeBtnClicked" text="Home" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                     <graphic>
@@ -109,7 +108,6 @@
                     <Font name="System Bold" size="14.0" />
                 </font>
             </Label>
-<!--            <HBox spacing="2.0" VBox.vgrow="ALWAYS">-->
             <HBox spacing="2.0">
                 <Button fx:id="storageHomeButton" disable="true" onMouseClicked="#onStorageHomeBtnClicked" text="Home" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                     <graphic>
@@ -167,7 +165,6 @@
                 <VBox.margin>
                     <Insets bottom="2.0" left="2.0" right="2.0" />
                 </VBox.margin></ListView>
-<!--            <StackPane fx:id="connectToCloudStorageStackPane" prefHeight="403.0" style="-fx-background-image: url(images/wall.png);">-->
             <StackPane fx:id="connectToCloudStorageStackPane" style="-fx-background-image: url(images/wall.png);" maxHeight="Infinity" VBox.vgrow="ALWAYS">
                 <Button fx:id="connectToCloudStorageButton" defaultButton="true" onAction="#onConnectToCloudStorageButtonClick" prefHeight="26.0" prefWidth="180.0" text="Connect to the Cloud Storage">
                     <padding>
