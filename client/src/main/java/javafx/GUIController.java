@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -199,11 +200,35 @@ public class GUIController implements Initializable {
      * @param listView - коллекция объектов элемента
      * @param items - массив объектов элемента
      */
+//    private void updateListView(ListView<Item> listView, Item[] items) {
+//        //очищаем список элементов
+//        listView.getItems().clear();
+//        //обновляем список элементов списка
+//        listView.getItems().addAll(items);
+//        //инициируем объект кастомизированного элемента списка
+//        listView.setCellFactory(itemListView -> new FileListCell());
+//        //инициируем контекстное меню
+//        setContextMenu(listView);
+//    }
     private void updateListView(ListView<Item> listView, Item[] items) {
-        //очищаем список элементов
+        //очищаем коллекцию элементов
         listView.getItems().clear();
-        //обновляем список элементов списка
+        //обновляем коллекцию элементов списка
         listView.getItems().addAll(items);
+        //сортируем коллекцию элементов списка(папки вверху)
+        listView.getItems().sort((o1, o2) -> {
+            //если оба элемента одного типа(директория или файл)
+            if(o1.isDirectory() && o2.isDirectory() ||
+                    !o1.isDirectory() && !o2.isDirectory()) {
+                //то сравниваем их по именам
+                //Внимание! Без .toLowerCase() учитывается регистр при сортировке,
+                // из-за чего m и M оказывались в разных местах списка
+                return o1.getItemName().toLowerCase().compareTo(o2.getItemName().toLowerCase());
+            }
+            //отсортировываем директории(выше) и файлы
+                return (int) (o1.getItemSize() - o2.getItemSize());//мой вариант - работает
+//            return new Long(o1.getItemSize() - o2.getItemSize()).intValue();//его вариант - работает
+        });
         //инициируем объект кастомизированного элемента списка
         listView.setCellFactory(itemListView -> new FileListCell());
         //инициируем контекстное меню

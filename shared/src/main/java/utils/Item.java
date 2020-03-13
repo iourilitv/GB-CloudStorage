@@ -10,8 +10,8 @@ public class Item implements Serializable {
 
     private boolean isDirectory;
     private boolean isDefaultDirectory;
-    //объявляем переменную размера файла(в байтах)
-    private long fullFileSize;
+    //объявляем переменную размера файлового объекта(в байтах)
+    private long itemSize;
 
     public Item(String DEFAULT_DIR) {
         this.itemName = DEFAULT_DIR;
@@ -19,6 +19,7 @@ public class Item implements Serializable {
         this.itemPathname = DEFAULT_DIR;
         this.parentPathname = DEFAULT_DIR;
         this.isDirectory = true;
+        this.itemSize = -1L;
         this.isDefaultDirectory = true;
     }
 
@@ -29,6 +30,10 @@ public class Item implements Serializable {
         this.itemPathname = itemPathname;
         this.parentPathname = parentPathname;
         this.isDirectory = isDirectory;
+        //если это директория
+        if(isDirectory) {
+            this.itemSize = -1L;
+        }
         this.isDefaultDirectory = false;
     }
 
@@ -54,6 +59,14 @@ public class Item implements Serializable {
 
     public boolean isDefaultDirectory() {
         return isDefaultDirectory;
+    }
+
+    public long getItemSize() {
+        return itemSize;
+    }
+
+    public void setItemSize(long itemSize) {
+        this.itemSize = itemSize;
     }
 
     @Override
