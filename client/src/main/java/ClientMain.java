@@ -36,7 +36,7 @@ public class ClientMain extends Application {
         });
 
         primaryStage.setTitle("The Cloud Storage by LYS");
-        Scene scene = new Scene(root, 1024, 500);
+        Scene scene = new Scene(root, 1024, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

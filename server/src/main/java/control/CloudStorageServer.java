@@ -35,7 +35,7 @@ public class CloudStorageServer {
     //объявляем объект файлового обработчика
     private final FileUtils fileUtils = FileUtils.getOwnObject();
     //принимаем объект обработчика операций с объектами элементов списков в GUI
-    private final ItemUtils itemUtils = ItemUtils.getOwnObject();
+    private final ItemUtils itemUtils = ItemUtils.getInstance();
     //принимаем объект хендлера настроек приложения
     private final PropertiesHandler propertiesHandler = PropertiesHandler.getOwnObject();
 
