@@ -160,8 +160,10 @@ public class PropertiesHandler {
         printMsg("PropertiesHandler.savePropertyIntoConfigFile() - " +
                 "currentProperties: " + currentProperties);
 
-        //переписываем конфигурационный файл, копируем в него текущую коллекцию свойств
         try {
+            //удаляем существующий файл, чтобы не плодить артифакты(root_absolute)
+            Files.deleteIfExists(Paths.get(cfgFilePathname));
+            //создаем новый конфигурационный файл, копируем в него текущую коллекцию свойств
             Files.write(Paths.get(cfgFilePathname), currentProperties, StandardOpenOption.CREATE);
         } catch (IOException e) {
             e.printStackTrace();

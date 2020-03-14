@@ -398,38 +398,6 @@ public class GUIController implements Initializable {
      * @param listView - текущий список объектов элемента
      * @return - объект элемента контекстного меню "Delete"
      */
-//    private MenuItem menuItemDelete(ListView<Item> listView) {
-//        //инициируем пункт контекстного меню "Удалить"
-//        MenuItem menuItemDelete = new MenuItem("Delete");
-//        //устанавливаем обработчика нажатия на этот пункт контекстного меню
-//        menuItemDelete.setOnAction(event -> {
-//            //TODO Upd 33. добавить диалоговое окно - предупреждение-подтверждение на удаление
-//
-//            //запоминаем выбранный элемент списка
-//            Item item = listView.getSelectionModel().getSelectedItem();
-//            //если текущий список клиентский
-//            if(listView.equals(clientItemListView)){
-//                //удаляем файл или папку в текущей директории на клиенте
-//                //если произошла ошибка при удалении
-//                if(!storageClient.deleteClientItem(item)){
-//                    //выводим сообщение в метку оповещений
-//                    noticeLabel.setText("Something wrong with item deleting!");
-//                    //печатаем в лог сообщение об ошибке
-//                    writeToLog("GUIController.menuItemRename() - Something wrong with item deleting!");
-//                }
-//                //обновляем список элементов списка клиентской части
-//                updateClientItemListInGUI(clientCurrentDirItem);
-//            //если текущий список облачного хранилища
-//            } else if(listView.equals(storageItemListView)){
-//                //отправляем на сервер запрос на удаление объекта в заданной директории
-//                //пользователя в сетевом хранилище
-//                storageClient.demandDeleteItem(storageCurrentDirItem, item);
-//            }
-//            //сбрасываем выделение после действия
-//            listView.getSelectionModel().clearSelection();
-//        });
-//        return menuItemDelete;
-//    }
     private MenuItem menuItemDelete(ListView<Item> listView) {
         //инициируем пункт контекстного меню "Удалить"
         MenuItem menuItemDelete = new MenuItem("Delete");
