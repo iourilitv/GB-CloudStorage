@@ -23,9 +23,7 @@ public class PropertiesHandler {
     }
 
     //инициируем константу строки пути к файлу настроек(в папке, где разварачивается jar-архив)
-//    private final String filePathname = "config.json";
     private final Path toCfgFilePath = Paths.get("config.json");
-
     //инициируем объект для работы с json-файлами
     private final Gson gson = new Gson();
     //объявляем объект текущих свойств приложения
@@ -37,33 +35,6 @@ public class PropertiesHandler {
      * Метод первом запуске приложения создает новый конфигурационный json-файл и записывает
      * в него дефолтные настройки приложения и десериализует объект настроек при последующих.
      */
-//    void setConfiguration() {
-//        //создаем в корневой папке приложения(где разворачивается jar-файл)
-//        // копию файла из jar-архива
-//        //ВНИМАНИЕ! Файл источник должен находиться в [server]src/main/resources/ в папке с именем таким же,
-//        // как и у класса откуда вызывается этот файла (в данном примере utils/)
-//        fileManager.copyFileToRuntimeRoot("readme.txt", "readme.txt");
-//
-//        //инициируем объект файла
-//        File cfgFile = new File(filePathname);
-//        try {
-//            //если это первый запуск приложения
-//            if (!cfgFile.exists()) {
-//                //сериализуем в json-строку объект свойств по умолчанию
-//                String jsonString = gson.toJson(new Properties());
-//                //создаем конфигурационный файл и записываем в него json-строку
-//                Files.write(cfgFile.toPath(), jsonString.getBytes(), StandardOpenOption.CREATE);
-//            }
-//            // читаем в json-строку данные из json-файла
-//            String fromJsonString =  Files.lines(cfgFile.toPath()).collect(Collectors.joining());
-//            // десериализуем в json-строку файл
-//            currentProperties = gson.fromJson(fromJsonString, Properties.class);
-//            //выводим в лог конфигурацию настроек приложения
-//            printConfiguration(currentProperties);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
     void setConfiguration() {
         //создаем в корневой папке приложения(где разворачивается jar-файл)
         // копию файла из jar-архива

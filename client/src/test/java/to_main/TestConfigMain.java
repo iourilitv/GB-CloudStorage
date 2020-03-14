@@ -9,7 +9,7 @@ import java.nio.file.*;
 
 public class TestConfigMain {
 
-    private static FileUtils fileUtils = FileUtils.getOwnObject();
+    private static FileUtils fileUtils = FileUtils.getInstance();
 
     public static void main(String[] args) {
         initConfiguration("utils/client_default.cfg", "client.cfg");

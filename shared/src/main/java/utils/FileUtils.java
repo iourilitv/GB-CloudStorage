@@ -11,21 +11,20 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * The common class for operations with fileObjects.
+ * The common class is for operations with fileObjects.
  */
 public class FileUtils {
     //инициируем синглтон(объект класса)
-    private static FileUtils ownObject = new FileUtils();
+    private static FileUtils ownInstance = new FileUtils();
 
-    public static FileUtils getOwnObject() {
-        return ownObject;
+    public static FileUtils getInstance() {
+        return ownInstance;
     }
 
     //принимаем объект обработчика операций с объектами элементов списков в GUI
@@ -397,16 +396,6 @@ public class FileUtils {
         //возвращаем результат создания новой папки
         return dir.mkdir();
     }
-
-//    /**
-//     * Метод проверяет есть ли уже директория с заданным именем.
-//     * @param realDirPathname - строка пути к новой папке
-//     * @return - результат проверки
-//     */
-//    public boolean isDirectoryExist(String realDirPathname) {
-//        //возвращаем результат проверки
-//        return new File(realDirPathname).exists();
-//    }
 
     public CountDownLatch getCountDownLatch() {
         return countDownLatch;

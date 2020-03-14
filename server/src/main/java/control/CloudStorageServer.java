@@ -33,7 +33,7 @@ public class CloudStorageServer {
     //принимаем объект контроллера авторизации пользователей
     private final UsersAuthController usersAuthController = UsersAuthController.getOwnInstance();
     //объявляем объект файлового обработчика
-    private final FileUtils fileUtils = FileUtils.getOwnObject();
+    private final FileUtils fileUtils = FileUtils.getInstance();
     //принимаем объект обработчика операций с объектами элементов списков в GUI
     private final ItemUtils itemUtils = ItemUtils.getInstance();
     //принимаем объект хендлера настроек приложения
@@ -70,16 +70,6 @@ public class CloudStorageServer {
         }
         //выводим в лог примененное значение пути к корню
         printMsg("CloudStorageClient() - STORAGE_ROOT_PATH: " + STORAGE_ROOT_PATH);
-
-        //TODO не надо давать пользователю создавать в конфиг-файле новый каталог
-//        //создаем объект файла корневой директории хранилища
-//        File rootFolder = new File(STORAGE_ROOT_PATH.toString());
-//        //если деректория еще не создана
-//        if(!rootFolder.exists()){
-//            //создаем новую корневую директорию и выводим результат в лог
-//            printMsg("CloudStorageServer() - " +
-//                    "rootFolder.mkdir(): " + rootFolder.mkdir());
-//        }
     }
 
     /**
@@ -350,19 +340,11 @@ public class CloudStorageServer {
     }
 
     /**
-     * Метод-прокладка запускает проверку есть ли уже корневая директория для заданного логина.
+     * Метод проверяет есть ли уже корневая директория для заданного логина.
      * @param login - логин нового пользователя
      * @return - результат проверки есть ли уже корневая директория для заданного логина
      */
-//    public boolean isUserRootDirExist(String login) {
-//        //инициируем объект пути к новой корневой директории нового пользователя
-//        String realDirPathname = Paths.get(STORAGE_ROOT_PATH.toString(), login).toString();
-//        //возвращаем результат проверки присутствия папки
-//        return fileUtils.isDirectoryExist(realDirPathname);
-//    }
     public boolean isUserRootDirExist(String login) {
-        //возвращаем результат проверки присутствия папки
-//        return Files.exists(Paths.get(STORAGE_ROOT_PATH.toString(), login));
         return Files.exists(STORAGE_ROOT_PATH.resolve(login));
     }
 
