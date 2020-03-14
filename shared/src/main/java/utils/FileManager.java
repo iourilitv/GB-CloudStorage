@@ -10,10 +10,10 @@ import java.nio.file.StandardCopyOption;
  */
 public class FileManager {
     //инициируем синглтон хендлера настроек
-    private static final FileManager ownObject = new FileManager();
+    private static final FileManager ownInstance = new FileManager();
 
-    public static FileManager getOwnObject() {
-        return ownObject;
+    public static FileManager getInstance() {
+        return ownInstance;
     }
 
     /**

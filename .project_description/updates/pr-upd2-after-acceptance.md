@@ -46,19 +46,19 @@ GeekBrains. Курсовая работа: Итоговый проект Cloud S
     но в папке [server]target/classes(там же где и jar) нет классов модуля [shared].
 30. GUI. Добавить отдельное модальное окно для отображения процесса upload/download.
     В окне процесс должен отражаться на слайсере и в виде процентов.
-31. GUI. В метод isNewPathnameCorrect() класса ChangeRootController добавить проверку правильности 
+31. CANCELED. GUI. В метод isNewPathnameCorrect() класса ChangeRootController добавить проверку правильности 
     введенной строки абсолютного пути к новой директории(через Path).
-32. GUI. В метод isNewItemNameCorrect() класса RenameController добавить проверки правильности 
+32. CANCELED. GUI. В метод isNewItemNameCorrect() класса RenameController добавить проверки правильности 
     введенное новое имя объекта списка(файла или папки) для разных файловых систем.
-33. Done. GUI. В метод menuItemDelete() класса GUIController добавить диалоговое окно - 
+33. DONE. GUI. В метод menuItemDelete() класса GUIController добавить диалоговое окно - 
     предупреждение-подтверждение на удаление.
-34. DONE. File. Заменить все io на nio и Stream API. 
+34. File. Заменить все io на nio и Stream API. 
     Иначе могут быть проблемы с внешними носителями.
     Но и сейчас работает с таким клиентстким путем: \\IOURI-X555L\Movies(сеть) и с usb и DVD.
     Как в проекте D:\GeekBrains\_MyJavaProjectsAndSamples\JavaFX\simple_file_manager.
 35. GUI. Все предупреждения и ошибки реализовать через Alert.
     Как в проекте D:\GeekBrains\_MyJavaProjectsAndSamples\JavaFX\simple_file_manager.  
-36. Done. GUI. Размер файла.
+36. DONE. GUI. Размер файла.
     a. Добавить в Item: размер файла. 
     b. Добавить его наполнение при создании Item.
 37. GUI. Добавить отображение размера файла в листвью.
@@ -66,11 +66,11 @@ GeekBrains. Курсовая работа: Итоговый проект Cloud S
 38. JDBC. В [server]модуле в файл readme.txt добавить информацию о подключении к БД.
     Добавить в config.json поля для подключения к MySQL(логин, пароль и т.п.), чтобы 
     развернуть сервер на стороннем ПК.
-39. GUI.[client]module. При повторном запуске клиента.
+39. DONE. GUI.[client]module. При повторном запуске клиента.
     Устранить исключение, если указаный в client.cfg абсолютный путь не существует.
     Например, если указать usb-носитель и вынуть его. 
     Можно установить директорию клиента по умолчанию.
-40. GUI. В clientDirLabel и serverDirLabel исправить вывод длинного пути к текущей папке.
+40. GUI. В clientDirLabel и serverDirLabel исправить отображение длинного пути к текущей папке.
     Нужно показывать последние подпапки, которые входят в поле.
     Или заменить на TextField? Тогда получается что-то похожее.
     См. в проекте D:\GeekBrains\_MyJavaProjectsAndSamples\JavaFX\simple_file_manager.

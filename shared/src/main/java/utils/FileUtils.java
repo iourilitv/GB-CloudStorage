@@ -11,6 +11,7 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
@@ -397,15 +398,15 @@ public class FileUtils {
         return dir.mkdir();
     }
 
-    /**
-     * Метод проверяет есть ли уже директория с заданным именем.
-     * @param realDirPathname - строка пути к новой папке
-     * @return - результат проверки
-     */
-    public boolean isDirectoryExist(String realDirPathname) {
-        //возвращаем результат проверки
-        return new File(realDirPathname).exists();
-    }
+//    /**
+//     * Метод проверяет есть ли уже директория с заданным именем.
+//     * @param realDirPathname - строка пути к новой папке
+//     * @return - результат проверки
+//     */
+//    public boolean isDirectoryExist(String realDirPathname) {
+//        //возвращаем результат проверки
+//        return new File(realDirPathname).exists();
+//    }
 
     public CountDownLatch getCountDownLatch() {
         return countDownLatch;

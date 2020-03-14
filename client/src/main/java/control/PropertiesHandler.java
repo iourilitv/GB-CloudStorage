@@ -28,7 +28,7 @@ public class PropertiesHandler {
     //инициируем коллекцию текущих настроек приложения
     private List<String> currentProperties = new ArrayList<>();
     //инициируем объект менеджера для работы с файлами в jar-архиве
-    private final FileManager fileManager = FileManager.getOwnObject();
+    private final FileManager fileManager = FileManager.getInstance();
 
     /**
      * Метод первом запуске приложения создает копию конфигурационного файла и файла readme.

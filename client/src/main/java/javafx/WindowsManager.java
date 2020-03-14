@@ -1,7 +1,6 @@
 package javafx;
 
 import control.CloudStorageClient;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
