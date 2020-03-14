@@ -57,8 +57,8 @@ GeekBrains. Курсовая работа: Итоговый проект Cloud S
     Как в проекте D:\GeekBrains\_MyJavaProjectsAndSamples\JavaFX\simple_file_manager.
 35. GUI. Все предупреждения и ошибки реализовать через Alert.
     Как в проекте D:\GeekBrains\_MyJavaProjectsAndSamples\JavaFX\simple_file_manager.  
-36. GUI. Размер файла.
-    Done. a. Добавить в Item: размер файла. 
+36. Done. GUI. Размер файла.
+    a. Добавить в Item: размер файла. 
     b. Добавить его наполнение при создании Item.
 37. GUI. Добавить отображение размера файла в листвью.
     Как в проекте D:\GeekBrains\_MyJavaProjectsAndSamples\JavaFX\simple_file_manager.
@@ -70,12 +70,12 @@ GeekBrains. Курсовая работа: Итоговый проект Cloud S
     Например, если указать usb-носитель и вынуть его. 
     Можно установить директорию клиента по умолчанию.
 40. GUI. В clientDirLabel и serverDirLabel исправить вывод длинного пути к текущей папке.
-    Нужно показывать последние подпапки, которые входят.
+    Нужно показывать последние подпапки, которые входят в поле.
     Или заменить на TextField? Тогда получается что-то похожее.
     См. в проекте D:\GeekBrains\_MyJavaProjectsAndSamples\JavaFX\simple_file_manager.
-41. ?GUI.[client]module. В clientDirLabel исправить вывод длинного пути к текущей папке.
-    Добавить отображать абсолютный путь, если он задан в client.cfg?
+41. ?GUI.[client]module. В clientDirLabel добавить отображать абсолютный путь, 
+    если он задан в client.cfg?
     Но тогда нужно менять логику и позволять выйти выше корневой директории.
-42. GUI. Добавить css для MainClient и других окон.
+42. GUI. Добавить .css для MainClient и других окон.
     И перенести в него все стили из .fxml.
 43. 

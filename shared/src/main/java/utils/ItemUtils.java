@@ -44,25 +44,6 @@ public class ItemUtils {
      * @param rootPath - объект пути к реальной корневой директории
      * @return - массив объектов элементов в заданной директории
      */
-//    public Item[] getItemsList(Item directoryItem, Path rootPath) {
-//        //инициируем временный файловый объект заданной директории
-//        File dirFileObject = new File(getRealPath(directoryItem.getItemPathname(), rootPath).toString());
-//        //инициируем и получаем массив файловых объектов заданной директории
-//        File[] files = dirFileObject.listFiles();
-//        assert files != null;
-//        //инициируем массив объектов элементов в заданной директории
-//        Item[] items = new Item[files.length];
-//        for (int i = 0; i < files.length; i++) {
-//            //инициируем переменную имени элемента
-//            String itemName = files[i].getName();
-//            //инициируем строковыю переменную пути к элементу относительно директории по умолчанию
-//            String itemPathname = getItemPathname(files[i].getPath(), rootPath);
-//            //инициируем объект элемента в заданной директории
-//            items[i] = new Item(itemName, directoryItem.getItemName(), itemPathname,
-//                    directoryItem.getItemPathname(), files[i].isDirectory());
-//        }
-//        return items;
-//    }
     public Item[] getItemsList(Item directoryItem, Path rootPath) {
         //инициируем временный файловый объект заданной директории
         File dirFileObject = new File(getRealPath(directoryItem.getItemPathname(), rootPath).toString());
