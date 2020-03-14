@@ -6,7 +6,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -14,6 +16,7 @@ import javafx.stage.Stage;
 import utils.Item;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -277,6 +280,44 @@ public class WindowsManager {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Метод открывает модальное окно подтверждения удаления файла.
+     * @param itemPathname - строка пути к объекту элемента списка.
+     * @return true, если нажата кнопка OK
+     */
+    public boolean openDeleteConfirmationWindow(String itemPathname) {
+        //инициируем объект модального окна
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete File");
+        alert.setHeaderText("Press OK to confirm deleting the item below:");
+        alert.setContentText(">> " + itemPathname);
+        //инициируем объект опции
+        Optional<ButtonType> option = alert.showAndWait();
+        return option.filter(buttonType -> buttonType == ButtonType.OK).isPresent();
+    }
+
+//    public void openAlertWindow(Alert.AlertType alertType, String message) {
+////        Alert.AlertType alertType = Alert.AlertType.INFORMATION;
+//        Alert alert = new Alert(alertType, message);
+//        alert.setTitle("Delete File");
+//        alert.setHeaderText("Press OK to confirm deleting the file");
+//        alert.setContentText("C:/MyFile.txt");
+//
+//        // option != null.
+//        Optional<ButtonType> option = alert.showAndWait();
+//
+//        if (option.get() == null) {
+//            this.label.setText("No selection!");
+//        } else if (option.get() == ButtonType.OK) {
+//            this.label.setText("File deleted!");
+//        } else if (option.get() == ButtonType.CANCEL) {
+//            this.label.setText("Cancelled!");
+//        } else {
+//            this.label.setText("-");
+//        }
+//        alert.showAndWait();
+//    }
 
     public Stage getStage() {
         return stage;
