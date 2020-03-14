@@ -289,35 +289,16 @@ public class WindowsManager {
     public boolean openDeleteConfirmationWindow(String itemPathname) {
         //инициируем объект модального окна
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        //выводим текст в название окна
         alert.setTitle("Delete File");
+        //выводим текст в хедер
         alert.setHeaderText("Press OK to confirm deleting the item below:");
-        alert.setContentText(">> " + itemPathname);
+        //выводим путь к элементу списка
+         alert.setContentText(">>" + itemPathname);
         //инициируем объект опции
         Optional<ButtonType> option = alert.showAndWait();
         return option.filter(buttonType -> buttonType == ButtonType.OK).isPresent();
     }
-
-//    public void openAlertWindow(Alert.AlertType alertType, String message) {
-////        Alert.AlertType alertType = Alert.AlertType.INFORMATION;
-//        Alert alert = new Alert(alertType, message);
-//        alert.setTitle("Delete File");
-//        alert.setHeaderText("Press OK to confirm deleting the file");
-//        alert.setContentText("C:/MyFile.txt");
-//
-//        // option != null.
-//        Optional<ButtonType> option = alert.showAndWait();
-//
-//        if (option.get() == null) {
-//            this.label.setText("No selection!");
-//        } else if (option.get() == ButtonType.OK) {
-//            this.label.setText("File deleted!");
-//        } else if (option.get() == ButtonType.CANCEL) {
-//            this.label.setText("Cancelled!");
-//        } else {
-//            this.label.setText("-");
-//        }
-//        alert.showAndWait();
-//    }
 
     public Stage getStage() {
         return stage;

@@ -214,9 +214,9 @@ public class GUIController implements Initializable {
                 // из-за чего m и M оказывались в разных местах списка
                 return o1.getItemName().toLowerCase().compareTo(o2.getItemName().toLowerCase());
             }
-            //отсортировываем директории(выше) и файлы
-                return (int) (o1.getItemSize() - o2.getItemSize());//мой вариант - работает
-//            return new Long(o1.getItemSize() - o2.getItemSize()).intValue();//его вариант - работает
+            //если первый сравниваемый элемент директория, а второй - файл
+            //папки выше файлов
+            return o1.isDirectory() && !o2.isDirectory() ? -1 : 1;
         });
         //инициируем объект кастомизированного элемента списка
         listView.setCellFactory(itemListView -> new FileListCell());
