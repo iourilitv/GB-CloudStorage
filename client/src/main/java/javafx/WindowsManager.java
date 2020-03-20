@@ -12,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import utils.Item;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -154,89 +153,10 @@ public class WindowsManager {
         }
     }
 
-//    /** //FIXME Upd 22. Убрать задвоение - вызвать перегруженный метод openNewNameWindow(Item origin)
-//     * Перегруженный метод открывает модальное окно для ввода нового имени элемента списка.
-//     */
-////    void openNewNameWindow() {
-////        try {
-////            Stage stage = new Stage();
-////            FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
-////            Parent root = loader.load();
-////            RenameController renameController = loader.getController();//TODO вынести в класс?
-////            //запоминаем текущий контроллер для возврата
-////            renameController.setBackController(guiController);
-////
-////            //определяем действия по событию закрыть окно по крестику через лямбда
-////            stage.setOnCloseRequest(event -> {
-////                writeToLog("GUIController.menuItemRename() - " +
-////                        "the newNameWindow was closed forcibly!");
-////                //сбрасываем текстовое поле имени
-////                guiController.setNewName("");
-////            });
-////
-////            stage.setTitle("insert a new name");
-////            stage.setScene(new Scene(root, 200, 50));
-////            stage.isAlwaysOnTop();
-////            stage.setResizable(false);
-////            stage.initModality(Modality.APPLICATION_MODAL);
-////            stage.showAndWait();
-////        } catch (IOException e) {
-////            e.printStackTrace();
-////        }
-////    }
-//    void openNewNameWindow() {
-//        openNewNameWindow("");
-//    }
-
-//    /**
-//     * Перегруженный метод открывает модальное окно для ввода нового имени элемента списка.
-//     * @param origin - объект элемента - оригинал
-//     * @return false - если закрыть окно принудительно, true - при штатном вводе
-//     */
-//    boolean openNewNameWindow(Item origin) {
-////    void openNewNameWindow(Item origin) {
-////        AtomicBoolean flag = new AtomicBoolean(false);
-//        AtomicBoolean flag = new AtomicBoolean(true);
-//
-//        try {
-//            Stage stage = new Stage();
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
-//            Parent root = loader.load();
-//            RenameController renameController = loader.getController();//TODO вынести в класс?
-//            //запоминаем текущий контроллер для возврата
-//            renameController.setBackController(guiController);
-//            //записываем текущее имя в текстовое поле
-//            renameController.setNewNameString(origin.getItemName());
-//
-//            //определяем действия по событию закрыть окно по крестику через лямбда
-//            stage.setOnCloseRequest(event -> {
-//                writeToLog("GUIController.menuItemRename() - " +
-//                        "the newNameWindow was closed forcibly!");
-//                //сбрасываем флаг
-//                flag.set(false);
-//
-//                //сбрасываем текстовое поле имени
-//                guiController.setNewName("");
-//            });
-//
-//            stage.setTitle("insert a new name");
-//            stage.setScene(new Scene(root, 200, 50));
-//            stage.isAlwaysOnTop();
-//            stage.setResizable(false);
-//            stage.initModality(Modality.APPLICATION_MODAL);
-//            stage.showAndWait();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-////        return true;
-//        return flag.get();
-//
-//    }
     /**
      * Перегруженный метод открывает модальное окно для ввода нового имени элемента списка.
      * @param originName - имя элемента-оригинала
-     * @return false - если закрыть окно принудительно, true - при штатном вводе
+     * @return true - если закрыть окно принудительно, false - при штатном вводе
      */
     boolean openNewNameWindow(String originName) {
         AtomicBoolean flag = new AtomicBoolean(false);
@@ -244,7 +164,7 @@ public class WindowsManager {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/rename.fxml"));
             Parent root = loader.load();
-            RenameController renameController = loader.getController();//TODO вынести в класс?
+            RenameController renameController = loader.getController();
             //запоминаем текущий контроллер для возврата
             renameController.setBackController(guiController);
             //записываем текущее имя в текстовое поле

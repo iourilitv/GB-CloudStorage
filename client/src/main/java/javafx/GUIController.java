@@ -361,16 +361,11 @@ public class GUIController implements Initializable {
         menuItemRename.setOnAction(event -> {
             //запоминаем выбранный элемент списка
             Item origin = listView.getSelectionModel().getSelectedItem();
-
             //открываем диалоговое окно переименования файлового объекта
             //если окно было просто закрыто по крестику, то выходим без действий
-//            if(!windowsManager.openNewNameWindow(origin)){
-//                return;
-//            }
             if(windowsManager.openNewNameWindow(origin.getItemName())){
                 return;
             }
-
             //если текущий список клиентский
             if(listView.equals(clientItemListView)){
                 //переименовываем файловый объект
@@ -552,21 +547,6 @@ public class GUIController implements Initializable {
      * @param mouseEvent - любой клик мышкой
      */
     @FXML
-//    public void onClientNewFolderBtnClicked(MouseEvent mouseEvent) {
-//        //открываем модальное окно для ввода нового имени
-//        windowsManager.openNewNameWindow();
-//        //если окно было закрыто штатно, а не по крестику выхода
-//        if(newName.isEmpty()){
-//            return;
-//        }
-//        //если новая папка создана удачно
-//        if(!storageClient.createNewFolder(storageCurrentDirItem.getItemPathname(), newName)){
-//            noticeLabel.setText("A folder has not created!");
-//            return;
-//        }
-//        //обновляем список объектов в текущей клиентской директории
-//        updateClientItemListInGUI(clientCurrentDirItem);
-//    }
     public void onClientNewFolderBtnClicked(MouseEvent mouseEvent) {
         //открываем диалоговое окно переименования файлового объекта
         //если окно было просто закрыто по крестику, то выходим без действий
@@ -587,18 +567,6 @@ public class GUIController implements Initializable {
      * Запрашивает у сервера создать новую папку в текущей директории в серверной части
      * @param mouseEvent - любой клик мышкой
      */
-//    @FXML
-//    public void onStorageNewFolderBtnClicked(MouseEvent mouseEvent) {
-//        //открываем модальное окно для ввода нового имени
-//        windowsManager.openNewNameWindow();
-//        //если окно было закрыто штатно, а не по крестику выхода
-//        if(newName.isEmpty()){
-//            return;
-//        }
-//        //отправляем на сервер запрос на получение списка элементов заданной директории
-//        //пользователя в сетевом хранилище
-//        storageClient.demandCreateNewDirectory(storageCurrentDirItem.getItemPathname(), newName);
-//    }
     @FXML
     public void onStorageNewFolderBtnClicked(MouseEvent mouseEvent) {
         //открываем диалоговое окно переименования файлового объекта
