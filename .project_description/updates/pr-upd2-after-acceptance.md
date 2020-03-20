@@ -18,7 +18,7 @@ GeekBrains. Курсовая работа: Итоговый проект Cloud S
     Добавил в <properties> pom.xml[project] строку 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>.
 21. System. Добавить логирование в файл и реорганизовать логирование в консоль.
-22. GUI. Устранить дублирование открытия модальных окон.
+22. DONE. GUI. Устранить дублирование открытия модальных окон.
     DONE. Выделить сервис модальных окон в отдельный класс WindowsManager.
 23. GUI. Добавить в пункт меню Disconnect режим Connect. 
     Disconnect показывать в режиме подключен, Connect - отключен.

@@ -122,7 +122,7 @@ public class WindowsManager {
         }
     }
 
-    /** //FIXME Upd 22. Убрать задвоение - вызвать универсальный метод открытия модального окна
+    /**
      * Метод открывает модальное окно с формой изменения пароля.
      */
     void openChangingPasswordWindow() {
@@ -172,7 +172,7 @@ public class WindowsManager {
 
             //определяем действия по событию закрыть окно по крестику через лямбда
             stage.setOnCloseRequest(event -> {
-                writeToLog("GUIController.menuItemRename() - " +
+                writeToLog("WindowsManager.openNewNameWindow() - " +
                         "the newNameWindow was closed forcibly!");
                 //сбрасываем флаг
                 flag.set(true);
@@ -215,7 +215,7 @@ public class WindowsManager {
         stage.setScene(aboutScene);
     }
 
-    /**  //FIXME Upd 22. Убрать задвоение - вызвать перегруженный метод openNewNameWindow(Item origin)
+    /**
      * Метод открывает окно для ввода строки нового абсолютного пути к корневой директории клиента.
      */
     public void openChangingClientRootWindow() {
@@ -227,8 +227,8 @@ public class WindowsManager {
 
             //определяем действия по событию закрыть окно по крестику через лямбда
             stage.setOnCloseRequest(event -> {
-                writeToLog("GUIController.menuItemRename() - " +
-                        "the newNameWindow was closed forcibly!");
+                writeToLog("WindowsManager.openChangingClientRootWindow() - " +
+                        "the ChangingClientRootWindow was closed forcibly!");
                 //сбрасываем текстовое поле имени пути
                 changeRootController.setNewPathnameText("");
             });
