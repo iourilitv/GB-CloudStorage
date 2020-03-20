@@ -3,7 +3,6 @@ package javafx;
 import control.CloudStorageClient;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -89,8 +88,8 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод обрабатывает нажатие connectToCloudStorageButton и запускает процесс
-     * подключения к серверу облачного хранилища.
+     * Метод обрабатывает нажатие connectToCloudStorageButton или пункт меню "Connect"
+     * и запускает процесс подключения к серверу облачного хранилища.
      */
     @FXML
     private void onConnectToCloudStorageButtonClick() {
@@ -466,8 +465,8 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод отрабатывает нажатие на пункт меню "Disconnect".
-     * @param actionEvent - событие(здесь клик мыши)
+     * Метод отрабатывает нажатие на пункт меню "Connect/Disconnect".
+     * @param actionEvent - событие(здесь клик мыши на Disconnect)
      */
     @FXML
     public void onDisconnectMenuItemClick(ActionEvent actionEvent) {
@@ -593,29 +592,6 @@ public class GUIController implements Initializable {
      * Метод устанавливает режим отображения GUI "Отсоединен" или "Подсоединен".
      * @param isDisconnectedMode - если true - "Отсоединен"
      */
-//    public void setDisconnectedMode(boolean isDisconnectedMode) {
-//        //показываем и активируем(если isDisconnectedMode = true)
-//        // панель с кнопкой подключения к серверу
-//        connectToCloudStorageStackPane.setManaged(isDisconnectedMode);
-//        connectToCloudStorageStackPane.setVisible(isDisconnectedMode);
-//        //активируем кнопку connectToCloudStorageButton
-//        connectToCloudStorageButton.setDisable(!isDisconnectedMode);
-//
-//        //скрываем и деактивируем (если isDisconnectedMode = true)
-//        //деактивируем кнопки сетевого хранилища
-//        storageHomeButton.setDisable(isDisconnectedMode);
-//        storageGoUpButton.setDisable(isDisconnectedMode);
-//        storageRefreshButton.setDisable(isDisconnectedMode);
-//        storageNewFolderButton.setDisable(isDisconnectedMode);
-//        // список объектов в сетевом хранилище
-//        storageItemListView.setManaged(!isDisconnectedMode);
-//        storageItemListView.setVisible(!isDisconnectedMode);
-//
-//        //деактивируем пункт меню Disconnect
-//        disconnectMenuItem.setDisable(isDisconnectedMode);
-//        //деактивируем пункт меню ChangePassword
-//        changePasswordMenuItem.setDisable(isDisconnectedMode);
-//    }
     public void setDisconnectedMode(boolean isDisconnectedMode) {
         //показываем и активируем(если isDisconnectedMode = true)
         // панель с кнопкой подключения к серверу
@@ -636,18 +612,18 @@ public class GUIController implements Initializable {
 
         //если установлен режим отсоединен
         if(isDisconnectedMode) {
+            //меняем текст пункта меню
             connectDisconnectMenuItem.setText("Connect");
+            //устанавливаем хэндлер события
             connectDisconnectMenuItem.setOnAction(event ->
                     onConnectToCloudStorageButtonClick());
         //если установлен режим соединен
         } else {
-//            //деактивируем пункт меню Disconnect
-//            disconnectMenuItem.setDisable(false);
-
+            //меняем текст пункта меню
             connectDisconnectMenuItem.setText("Disconnect");
+            //устанавливаем хэндлер события
             connectDisconnectMenuItem.setOnAction(this::onDisconnectMenuItemClick);
         }
-
         //деактивируем пункт меню ChangePassword
         changePasswordMenuItem.setDisable(isDisconnectedMode);
     }
