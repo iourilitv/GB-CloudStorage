@@ -45,6 +45,48 @@ public class CloudStorageClient {
     /**
      * Метод инициирует процесс настройки серверного приложения.
      */
+//    public void initConfiguration() {
+//        //запускаем процесс применения конфигурации приложения
+//        propertiesHandler.setConfiguration();
+//        //инициируем переменную IP адреса сервера
+//        String ip_addr = propertiesHandler.getProperty("IP_ADDR");
+//        //если пользователем задано другое значение IP адреса
+//        if(!ip_addr.isEmpty()){
+//            //применяем значение пользователя
+//            IP_ADDR = ip_addr;
+//        } else {
+//            //в противном случае применяем дефорлтное значение IP адреса
+//            IP_ADDR = propertiesHandler.getProperty("IP_ADDR_DEFAULT");
+//        }
+//        //выводим в лог значение ip-адреса сервера
+//        writeToLog("CloudStorageClient.initConfiguration() - IP_ADDR: " + IP_ADDR);
+//
+//        //инициируем переменную порта соединения
+//        String port = propertiesHandler.getProperty("PORT");
+//        //если пользователем задано другое значение порта
+//        if(!port.isEmpty()){
+//            //применяем значение пользователя
+//            PORT = Integer.parseInt(port);
+//        } else {
+//            //в противном случае применяем дефорлтное значение порта
+//            PORT = Integer.parseInt(propertiesHandler.getProperty("PORT_DEFAULT"));
+//        }
+//        //выводим в лог значение порта сервера
+//        writeToLog("CloudStorageClient.initConfiguration() - PORT: " + PORT);
+//
+//        //инициируем переменную объект пути к корневой директории для списка в клиентской части GUI
+//        String root_absolute = propertiesHandler.getProperty("Root_absolute");
+//        //если поле свойства не пустое и путь реально существует(например, usb-флешка вставлена)
+//        if(!root_absolute.isEmpty() && Files.exists(Paths.get(root_absolute))){
+//            //применяем значение пользователя
+//            CLIENT_ROOT_PATH = Paths.get(root_absolute);
+//        } else {
+//            //в противном случае применяем дефорлтное значение пути к корневой директории
+//            CLIENT_ROOT_PATH = Paths.get(propertiesHandler.getProperty("Root_default"));
+//        }
+//        //выводим в лог значение корневой директории клиента
+//        writeToLog("CloudStorageClient.initConfiguration() - CLIENT_ROOT_PATH: " + CLIENT_ROOT_PATH);
+//    }
     public void initConfiguration() {
         //запускаем процесс применения конфигурации приложения
         propertiesHandler.setConfiguration();
@@ -83,6 +125,15 @@ public class CloudStorageClient {
         } else {
             //в противном случае применяем дефорлтное значение пути к корневой директории
             CLIENT_ROOT_PATH = Paths.get(propertiesHandler.getProperty("Root_default"));
+
+            try {
+                //создаем новую клиентскую директорию, если еще не создана
+                Files.createDirectory(CLIENT_ROOT_PATH);
+            } catch (IOException e) {
+//                e.printStackTrace();
+                writeToLog("[client]CloudStorageClient.initConfiguration() - " +
+                        "Something wrong with new client root directory creating. Possible it does already exist!");
+            }
         }
         //выводим в лог значение корневой директории клиента
         writeToLog("CloudStorageClient.initConfiguration() - CLIENT_ROOT_PATH: " + CLIENT_ROOT_PATH);

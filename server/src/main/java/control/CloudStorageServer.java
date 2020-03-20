@@ -42,6 +42,44 @@ public class CloudStorageServer {
     /**
      * Метод инициирует процесс настройки приложения.
      */
+//    public void initConfiguration() {
+//        //запускаем процесс применения конфигурации приложения
+//        propertiesHandler.setConfiguration();
+//        //инициируем переменную порта соединения
+//        int port = propertiesHandler.getCurrentProperties().getPort_custom();
+//        //если пользователем задано другое значение порта
+//        if(port > 0){
+//            //применяем значение пользователя
+//            PORT = port;
+//        } else {
+//            //в противном случае применяем дефорлтное значение порта
+//            PORT = propertiesHandler.getCurrentProperties().getPORT_DEFAULT();
+//        }
+//        //выводим в лог примененное значение порта
+//        printMsg("CloudStorageClient() - PORT: " + PORT);
+//
+//        //инициируем строку установленного пользователем пути к корневой директории
+//        String root_absolute = propertiesHandler.getCurrentProperties().getRoot_absolute();
+//        //если пользователем задано другое значение пути к корневой папке хранилища
+//        if(!root_absolute.isEmpty()){
+//            //применяем значение пользователя
+//            STORAGE_ROOT_PATH = Paths.get(root_absolute);
+//        } else {
+//            //в противном случае применяем дефорлтное значение пути к корню
+//            STORAGE_ROOT_PATH = Paths.get(propertiesHandler.getCurrentProperties().getROOT_DEFAULT());
+//        }
+//        //выводим в лог примененное значение пути к корню
+//        printMsg("CloudStorageClient() - STORAGE_ROOT_PATH: " + STORAGE_ROOT_PATH);
+//
+//        //создаем объект файла корневой директории хранилища
+//        File rootFolder = new File(STORAGE_ROOT_PATH.toString());
+//        //если деректория еще не создана
+//        if(!rootFolder.exists()){
+//            //создаем новую корневую директорию и выводим результат в лог
+//            printMsg("CloudStorageServer() - " +
+//                    "rootFolder.mkdir(): " + rootFolder.mkdir());
+//        }
+//    }
     public void initConfiguration() {
         //запускаем процесс применения конфигурации приложения
         propertiesHandler.setConfiguration();
@@ -56,20 +94,31 @@ public class CloudStorageServer {
             PORT = propertiesHandler.getCurrentProperties().getPORT_DEFAULT();
         }
         //выводим в лог примененное значение порта
-        printMsg("CloudStorageClient() - PORT: " + PORT);
+        printMsg("[server]CloudStorageServer.initConfiguration() - PORT: " + PORT);
 
         //инициируем строку установленного пользователем пути к корневой директории
         String root_absolute = propertiesHandler.getCurrentProperties().getRoot_absolute();
-        //если пользователем задано другое значение пути к корневой папке хранилища
-        if(!root_absolute.isEmpty()){
+//        //если пользователем задано другое значение пути к корневой папке хранилища
+//        if(!root_absolute.isEmpty()){
+        //если поле свойства не пустое и путь реально существует(например, usb-флешка вставлена)
+        if(!root_absolute.isEmpty() && Files.exists(Paths.get(root_absolute))){
             //применяем значение пользователя
             STORAGE_ROOT_PATH = Paths.get(root_absolute);
         } else {
             //в противном случае применяем дефорлтное значение пути к корню
             STORAGE_ROOT_PATH = Paths.get(propertiesHandler.getCurrentProperties().getROOT_DEFAULT());
+
+            try {
+                //создаем новую клиентскую директорию, если еще не создана
+                Files.createDirectory(STORAGE_ROOT_PATH);
+            } catch (IOException e) {
+//                e.printStackTrace();
+                printMsg("[server]CloudStorageServer.initConfiguration() - " +
+                        "Something wrong with new storage root directory creating. Possible it does already exist!");
+            }
         }
         //выводим в лог примененное значение пути к корню
-        printMsg("CloudStorageClient() - STORAGE_ROOT_PATH: " + STORAGE_ROOT_PATH);
+        printMsg("[server]CloudStorageServer.initConfiguration() - STORAGE_ROOT_PATH: " + STORAGE_ROOT_PATH);
     }
 
     /**
