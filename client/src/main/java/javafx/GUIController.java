@@ -3,6 +3,7 @@ package javafx;
 import control.CloudStorageClient;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -23,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class GUIController implements Initializable {
     //объявляем объекты пунктов верхнего меню
     @FXML
-    private MenuItem disconnectMenuItem, changePasswordMenuItem;
+    private MenuItem connectDisconnectMenuItem, changePasswordMenuItem;
 
     @FXML
     private StackPane connectToCloudStorageStackPane;
@@ -592,6 +593,29 @@ public class GUIController implements Initializable {
      * Метод устанавливает режим отображения GUI "Отсоединен" или "Подсоединен".
      * @param isDisconnectedMode - если true - "Отсоединен"
      */
+//    public void setDisconnectedMode(boolean isDisconnectedMode) {
+//        //показываем и активируем(если isDisconnectedMode = true)
+//        // панель с кнопкой подключения к серверу
+//        connectToCloudStorageStackPane.setManaged(isDisconnectedMode);
+//        connectToCloudStorageStackPane.setVisible(isDisconnectedMode);
+//        //активируем кнопку connectToCloudStorageButton
+//        connectToCloudStorageButton.setDisable(!isDisconnectedMode);
+//
+//        //скрываем и деактивируем (если isDisconnectedMode = true)
+//        //деактивируем кнопки сетевого хранилища
+//        storageHomeButton.setDisable(isDisconnectedMode);
+//        storageGoUpButton.setDisable(isDisconnectedMode);
+//        storageRefreshButton.setDisable(isDisconnectedMode);
+//        storageNewFolderButton.setDisable(isDisconnectedMode);
+//        // список объектов в сетевом хранилище
+//        storageItemListView.setManaged(!isDisconnectedMode);
+//        storageItemListView.setVisible(!isDisconnectedMode);
+//
+//        //деактивируем пункт меню Disconnect
+//        disconnectMenuItem.setDisable(isDisconnectedMode);
+//        //деактивируем пункт меню ChangePassword
+//        changePasswordMenuItem.setDisable(isDisconnectedMode);
+//    }
     public void setDisconnectedMode(boolean isDisconnectedMode) {
         //показываем и активируем(если isDisconnectedMode = true)
         // панель с кнопкой подключения к серверу
@@ -610,8 +634,20 @@ public class GUIController implements Initializable {
         storageItemListView.setManaged(!isDisconnectedMode);
         storageItemListView.setVisible(!isDisconnectedMode);
 
-        //деактивируем пункт меню Disconnect
-        disconnectMenuItem.setDisable(isDisconnectedMode);
+        //если установлен режим отсоединен
+        if(isDisconnectedMode) {
+            connectDisconnectMenuItem.setText("Connect");
+            connectDisconnectMenuItem.setOnAction(event ->
+                    onConnectToCloudStorageButtonClick());
+        //если установлен режим соединен
+        } else {
+//            //деактивируем пункт меню Disconnect
+//            disconnectMenuItem.setDisable(false);
+
+            connectDisconnectMenuItem.setText("Disconnect");
+            connectDisconnectMenuItem.setOnAction(this::onDisconnectMenuItemClick);
+        }
+
         //деактивируем пункт меню ChangePassword
         changePasswordMenuItem.setDisable(isDisconnectedMode);
     }
