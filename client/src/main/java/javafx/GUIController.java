@@ -164,15 +164,35 @@ public class GUIController implements Initializable {
      * Метод обновляет список элементов списка в заданной директории клиентской части
      * @param directoryItem - объект элемента заданной директории
      */
+//    public void updateClientItemListInGUI(Item directoryItem) {
+//        //обновляем объект текущей директории
+//        clientCurrentDirItem = directoryItem;
+//        //в отдельном потоке запускаем обновление интерфейса
+//        Platform.runLater(() -> {
+//            //записываем в метку относительный строковый путь текущей директории
+//            clientDirLabel.setText(">>" + clientCurrentDirItem.getItemPathname());
+//            //обновляем заданный список объектов элемента
+//            updateListView(clientItemListView, storageClient.clientItemsList(clientCurrentDirItem));
+//        });
+//    }
     public void updateClientItemListInGUI(Item directoryItem) {
-        //обновляем объект текущей директории
-        clientCurrentDirItem = directoryItem;
         //в отдельном потоке запускаем обновление интерфейса
         Platform.runLater(() -> {
-            //записываем в метку относительный строковый путь текущей директории
-            clientDirLabel.setText(">>" + clientCurrentDirItem.getItemPathname());
-            //обновляем заданный список объектов элемента
-            updateListView(clientItemListView, storageClient.clientItemsList(clientCurrentDirItem));
+            //если папка доступна
+            if(storageClient.clientItemsList(directoryItem) != null) {
+                //обновляем объект текущей директории
+                clientCurrentDirItem = directoryItem;
+                //обновляем заданный список объектов элемента
+                updateListView(clientItemListView,
+                        storageClient.clientItemsList(clientCurrentDirItem));
+                //записываем в метку относительный строковый путь текущей директории
+                clientDirLabel.setText(">>" + clientCurrentDirItem.getItemPathname());
+            } else {
+                //выводим сообщение в модальное окно предупреждения
+                Alert alert = new Alert(Alert.AlertType.WARNING,
+                        "This folder is system or not accessible!");
+                alert.showAndWait();
+            }
         });
     }
 
@@ -182,15 +202,34 @@ public class GUIController implements Initializable {
      * @param directoryItem - объект полученной пользовательской директории в сетевом хранилище
      * @param items - массив объектов элементов в директории
      */
+//    public void updateStorageItemListInGUI(Item directoryItem, Item[] items){
+//        //обновляем объект текущей директории
+//        storageCurrentDirItem = directoryItem;
+//        //в отдельном потоке запускаем обновление интерфейса
+//        Platform.runLater(() -> {
+//            //выводим текущую директорию в метку серверной части
+//            storageDirLabel.setText(">>" + storageCurrentDirItem.getItemPathname());
+//            //обновляем заданный список файловых объектов
+//            updateListView(storageItemListView, items);
+//        });
+//    }
     public void updateStorageItemListInGUI(Item directoryItem, Item[] items){
-        //обновляем объект текущей директории
-        storageCurrentDirItem = directoryItem;
         //в отдельном потоке запускаем обновление интерфейса
         Platform.runLater(() -> {
-            //выводим текущую директорию в метку серверной части
-            storageDirLabel.setText(">>" + storageCurrentDirItem.getItemPathname());
-            //обновляем заданный список файловых объектов
-            updateListView(storageItemListView, items);
+            //если папка доступна
+            if(items != null) {
+                //обновляем объект текущей директории
+                storageCurrentDirItem = directoryItem;
+                //обновляем заданный список объектов элемента
+                updateListView(storageItemListView, items);
+                //записываем в метку относительный строковый путь текущей директории
+                storageDirLabel.setText(">>" + storageCurrentDirItem.getItemPathname());
+            } else {
+                //выводим сообщение в модальное окно предупреждения
+                Alert alert = new Alert(Alert.AlertType.WARNING,
+                        "This folder is system or not accessible!");
+                alert.showAndWait();
+            }
         });
     }
 

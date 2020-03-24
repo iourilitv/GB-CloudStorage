@@ -363,7 +363,28 @@ public class FileUtils {
      * @param folder - файловый объект заданной папки
      * @return true - удалена папка и все объекты в ней
      */
+//    private boolean deleteFolder(File folder) {
+//        //в цикле листаем временную папку и удаляем все файлы-фрагменты
+//        for (File f : Objects.requireNonNull(folder.listFiles())) {
+//            //если это директория
+//            if(f.isDirectory()){
+//                //очищаем и удаляем папку
+//                deleteFolder(f);
+//            } else{
+//                //удаляем файл
+//                System.out.println("FileUtils.deleteFolder() - f.delete(): " + f.delete());
+//            }
+//        }
+//        //теперь можем удалить пустую папку
+//        return Objects.requireNonNull(folder.listFiles()).length == 0 && folder.delete();
+//    }
     private boolean deleteFolder(File folder) {
+        //если папка недоступна, выходим с false
+        if(folder.listFiles() == null) {
+            System.out.println("FileUtils.deleteFolder() - " +
+                    "This folder is system or not accessible!");
+            return false;
+        }
         //в цикле листаем временную папку и удаляем все файлы-фрагменты
         for (File f : Objects.requireNonNull(folder.listFiles())) {
             //если это директория
