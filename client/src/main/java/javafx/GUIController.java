@@ -250,191 +250,43 @@ public class GUIController implements Initializable {
     }
 
     /**
-     * Метод инициирует контекстное меню для переданной в параметре коллекции объектов элемента.
+     * Метод инициирует контекстное меню для листвью клиента.
      * @param listView - коллекция объектов элемента
      * @param contextMenu - объект контекстного меню
      */
-//    private void setClientContextMenu(ListView<Item> listView, ContextMenu contextMenu){
-//        // добавляем скопом оставщиеся элементы в контестное меню
-//        contextMenu.getItems().addAll(menuItemUpload(listView),
-//                menuItemRename(listView), menuItemDelete(listView));
-//
-//        //создаем временный элемент контекстного меню
-//        MenuItem menuItem = menuItemGetInto(listView);
-//        //устаналиваем событие на клик правой кнопки мыши по элементу списка
-//        listView.setOnContextMenuRequested(event -> {
-//            //если контекстное меню уже показывается или снова кликнуть на пустой элемент списка
-//            if(contextMenu.isShowing() ||
-//                    listView.getSelectionModel().getSelectedItems().isEmpty()){
-//                //скрываем контекстное меню
-//                contextMenu.hide();
-//                //очищаем выделение
-//                listView.getSelectionModel().clearSelection();
-//                return;
-//            }
-//            // и если выбранный элемент это директория
-//            if(listView.getSelectionModel().getSelectedItem().isDirectory()){
-//                //если контекстное меню не показывается
-//                if(!contextMenu.getItems().contains(menuItem)){
-//                    // добавляем элемент в контестное меню
-//                    contextMenu.getItems().add(0, menuItem);
-//                }
-//                //если не директория
-//            } else {
-//                // удаляем элемент из контестного меню
-//                contextMenu.getItems().remove(menuItem);
-//            }
-//            //показываем контекстное меню в точке клика(позиция левого-верхнего угла контекстного меню)
-//            contextMenu.show(listView, event.getScreenX(), event.getScreenY());
-//        });
-//    }
     private void setClientContextMenu(ListView<Item> listView, ContextMenu contextMenu){
         // добавляем скопом элементы в контестное меню
         contextMenu.getItems().addAll(menuItemUpload(listView),
                 menuItemRename(listView), menuItemDelete(listView));
-
+        //инициируем коллекцию изменяемых элементов контектстного меню(только для директорий)
         List<MenuItem> dirMenuItems = Arrays.asList(menuItemGetInto(listView), menuItemSetAsRoot(listView));
-//        List<MenuItem> dirMenuItems = Collections.singletonList(menuItemGetInto(listView));
-        //
+        //устанавливаем настройки контектстного меню
         setContextMenu(listView, contextMenu, dirMenuItems);
-//        //создаем временный элемент контекстного меню
-//        MenuItem menuItem = menuItemGetInto(listView);
-
-//        //устаналиваем событие на клик правой кнопки мыши по элементу списка
-//        listView.setOnContextMenuRequested(event -> {
-//            //если контекстное меню уже показывается или снова кликнуть на пустой элемент списка
-//            if(contextMenu.isShowing() ||
-//                    listView.getSelectionModel().getSelectedItems().isEmpty()){
-//                //скрываем контекстное меню
-//                contextMenu.hide();
-//                //очищаем выделение
-//                listView.getSelectionModel().clearSelection();
-//                return;
-//            }
-//            // и если выбранный элемент это директория
-//            if(listView.getSelectionModel().getSelectedItem().isDirectory()){
-//                //если контекстное меню не показывается
-//                if(!contextMenu.getItems().contains(menuItem)){
-//                    // добавляем элемент в контестное меню
-//                    contextMenu.getItems().add(0, menuItem);
-//                }
-//                //если не директория
-//            } else {
-//                // удаляем элемент из контестного меню
-//                contextMenu.getItems().remove(menuItem);
-//            }
-//            //показываем контекстное меню в точке клика(позиция левого-верхнего угла контекстного меню)
-//            contextMenu.show(listView, event.getScreenX(), event.getScreenY());
-//        });
     }
 
-
-//    private void setStorageContextMenu(ListView<Item> listView, ContextMenu contextMenu){
-//        // добавляем скопом оставщиеся элементы в контестное меню
-//        contextMenu.getItems().addAll(menuItemDownload(listView),
-//                menuItemRename(listView), menuItemDelete(listView));
-//        //создаем временный элемент контекстного меню
-//        MenuItem menuItem = menuItemGetInto(listView);
-//        //устаналиваем событие на клик правой кнопки мыши по элементу списка
-//        listView.setOnContextMenuRequested(event -> {
-//            //если контекстное меню уже показывается или снова кликнуть на пустой элемент списка
-//            if(contextMenu.isShowing() ||
-//                    listView.getSelectionModel().getSelectedItems().isEmpty()){
-//                //скрываем контекстное меню
-//                contextMenu.hide();
-//                //очищаем выделение
-//                listView.getSelectionModel().clearSelection();
-//                return;
-//            }
-//            // и если выбранный элемент это директория
-//            if(listView.getSelectionModel().getSelectedItem().isDirectory()){
-//                //если контекстное меню не показывается
-//                if(!contextMenu.getItems().contains(menuItem)){
-//                    // добавляем элемент в контестное меню
-//                    contextMenu.getItems().add(0, menuItem);
-//                }
-//            //если не директория
-//            } else {
-//                // удаляем элемент из контестного меню
-//                contextMenu.getItems().remove(menuItem);
-//            }
-//            //показываем контекстное меню в точке клика(позиция левого-верхнего угла контекстного меню)
-//            contextMenu.show(listView, event.getScreenX(), event.getScreenY());
-//        });
-//    }
+    /**
+     * Метод инициирует контекстное меню для листвью сетевого хранилища.
+     * @param listView - коллекция объектов элемента
+     * @param contextMenu - объект контекстного меню
+     */
     private void setStorageContextMenu(ListView<Item> listView, ContextMenu contextMenu){
-        // добавляем скопом оставщиеся элементы в контестное меню
+        // добавляем скопом неизменяемые элементы в контестное меню
         contextMenu.getItems().addAll(menuItemDownload(listView),
                 menuItemRename(listView), menuItemDelete(listView));
-
-//        List<MenuItem> dirMenuItems = Arrays.asList(menuItemGetInto(listView), menuItemGetInto(listView));
+        //инициируем коллекцию изменяемых элементов контектстного меню(только для директорий)
         List<MenuItem> dirMenuItems = Collections.singletonList(menuItemGetInto(listView));
-        //
+        //устанавливаем настройки контектстного меню
         setContextMenu(listView, contextMenu, dirMenuItems);
     }
 
-//    private void setContextMenu(ListView<Item> listView, ContextMenu contextMenu){
-//        //создаем временный элемент контекстного меню
-//        MenuItem menuItem = menuItemGetInto(listView);
-//        //устаналиваем событие на клик правой кнопки мыши по элементу списка
-//        listView.setOnContextMenuRequested(event -> {
-//            //если контекстное меню уже показывается или снова кликнуть на пустой элемент списка
-//            if(contextMenu.isShowing() ||
-//                    listView.getSelectionModel().getSelectedItems().isEmpty()){
-//                //скрываем контекстное меню
-//                contextMenu.hide();
-//                //очищаем выделение
-//                listView.getSelectionModel().clearSelection();
-//                return;
-//            }
-//            // и если выбранный элемент это директория
-//            if(listView.getSelectionModel().getSelectedItem().isDirectory()){
-//                //если контекстное меню не показывается
-//                if(!contextMenu.getItems().contains(menuItem)){
-//                    // добавляем элемент в контестное меню
-//                    contextMenu.getItems().add(0, menuItem);
-//                }
-//                //если не директория
-//            } else {
-//                // удаляем элемент из контестного меню
-//                contextMenu.getItems().remove(menuItem);
-//            }
-//            //показываем контекстное меню в точке клика(позиция левого-верхнего угла контекстного меню)
-//            contextMenu.show(listView, event.getScreenX(), event.getScreenY());
-//        });
-//    }
-//    private void setContextMenu(ListView<Item> listView, ContextMenu contextMenu){
-//    //создаем временный элемент контекстного меню
-//    MenuItem menuItem = menuItemGetInto(listView);
-//    //устаналиваем событие на клик правой кнопки мыши по элементу списка
-//    listView.setOnContextMenuRequested(event -> {
-//        //если контекстное меню уже показывается или снова кликнуть на пустой элемент списка
-//        if(contextMenu.isShowing() ||
-//                listView.getSelectionModel().getSelectedItems().isEmpty()){
-//            //скрываем контекстное меню
-//            contextMenu.hide();
-//            //очищаем выделение
-//            listView.getSelectionModel().clearSelection();
-//            return;
-//        }
-//        // и если выбранный элемент это директория
-//        if(listView.getSelectionModel().getSelectedItem().isDirectory()){
-//            // добавляем элемент в контестное меню
-//            contextMenu.getItems().add(0, menuItem);
-//
-//        //если не директория
-//        } else {
-//            // удаляем элемент из контестного меню
-//            contextMenu.getItems().remove(menuItem);
-//        }
-//        //показываем контекстное меню в точке клика(позиция левого-верхнего угла контекстного меню)
-//        contextMenu.show(listView, event.getScreenX(), event.getScreenY());
-//    });
-//}
+    /**
+     * Приватный общий метод устанавливает настройки вызова заданного контекстного меню.
+     * @param listView - объект заданного листвью
+     * @param contextMenu - объект заданного контектстного меню
+     * @param dirMenuItems - коллекция объектов элементов меню только для директорий
+     */
     private void setContextMenu(ListView<Item> listView, ContextMenu contextMenu,
                                 List<MenuItem> dirMenuItems){
-//    //создаем временный элемент контекстного меню
-//    MenuItem menuItem = menuItemGetInto(listView);
     //устаналиваем событие на клик правой кнопки мыши по элементу списка
     listView.setOnContextMenuRequested(event -> {
         //если контекстное меню уже показывается или снова кликнуть на пустой элемент списка
@@ -448,23 +300,14 @@ public class GUIController implements Initializable {
         }
         // и если выбранный элемент это директория
         if(listView.getSelectionModel().getSelectedItem().isDirectory()){
-//            // добавляем элемент в контестное меню
-//            contextMenu.getItems().add(0, menuItem);
-//            contextMenu.getItems().addAll(0, dirMenuItems);
-
-//            contextMenu.getItems().add(0, dirMenuItems.get(0));
-//            contextMenu.getItems().add(1, dirMenuItems.get(1));
-
+            // добавляем элементы в контестное меню(сверху)
             for (int i = 0; i < dirMenuItems.size(); i++) {
                 contextMenu.getItems().add(i, dirMenuItems.get(i));
             }
-
-            //если не директория
+        //если не директория
         } else {
-//            // удаляем элемент из контестного меню
-//            contextMenu.getItems().remove(menuItem);
+            // удаляем элементы из контестного меню
             contextMenu.getItems().removeAll(dirMenuItems);
-
         }
         //показываем контекстное меню в точке клика(позиция левого-верхнего угла контекстного меню)
         contextMenu.show(listView, event.getScreenX(), event.getScreenY());
@@ -500,32 +343,24 @@ public class GUIController implements Initializable {
         return menuItemGetInto;
     }
 
+    /**
+     * Метод инициирует элемент контекстного меню "Set As Root".
+     * Устанавливает выбранную директорию в качестве корневой директории клиента.
+     * @param listView - текущий список объектов элемента
+     * @return - объект элемента контекстного меню "Set As Root"
+     */
     private MenuItem menuItemSetAsRoot(ListView<Item> listView) {
-        //инициируем пункт контекстного меню "Получить список файловых объектов"
+        //инициируем пункт контекстного меню "Установить выбранный элемент, как корневую"
         MenuItem menuItemSetAsRoot = new MenuItem("Set As Root");
         //устанавливаем обработчика нажатия на этот пункт контекстного меню
         menuItemSetAsRoot.setOnAction(event -> {
             //запоминаем кликнутый элемент списка
             Item item = listView.getSelectionModel().getSelectedItem();
-
-//            //если текущий список клиентский
-//            if(listView.equals(clientItemListView)){
-//                //обновляем список объектов элемента клиентской части
-//                updateClientItemListInGUI(item);
-//                //если текущий список облачного хранилища
-//            } else if(listView.equals(storageItemListView)){
-//                //отправляем на сервер запрос на получение списка элементов заданной директории
-//                //пользователя в сетевом хранилище
-//                storageClient.demandDirectoryItemList(item.getItemPathname());
-//            }
-//            setNewRootPathname(String newPathname);
-
             //формируем реальный путь новой директории
             Path path = CloudStorageClient.CLIENT_ROOT_PATH.toAbsolutePath()
                     .resolve(item.getItemPathname());
             //записываем новый абсолютный путь к корневой директории клиента
             setNewRootPathname(path.toString());
-
             //сбрасываем выделение после действия
             listView.getSelectionModel().clearSelection();
         });
