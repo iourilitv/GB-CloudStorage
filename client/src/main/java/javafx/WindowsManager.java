@@ -238,7 +238,7 @@ public class WindowsManager {
             changeRootController.setBackController(guiController);
 
             stage.setTitle("insert a new root pathname");
-            stage.setScene(new Scene(root, 800, 50));
+            stage.setScene(new Scene(root, 1024, 50));
             stage.isAlwaysOnTop();
             stage.setResizable(false);
             stage.initModality(Modality.APPLICATION_MODAL);
