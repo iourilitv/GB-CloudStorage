@@ -73,7 +73,7 @@ public class CloudStorageServer {
                 Files.createDirectory(STORAGE_ROOT_PATH);
             } catch (IOException e) {
                 printMsg("[server]CloudStorageServer.initConfiguration() - " +
-                        "Something wrong with new storage root directory creating. Possible it does already exist!");
+                        "Something wrong with new storage root directory creating. Probably it does already exist!");
             }
         }
         //выводим в лог примененное значение пути к корню

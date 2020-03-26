@@ -89,7 +89,7 @@ public class CloudStorageClient {
                 Files.createDirectory(CLIENT_ROOT_PATH);
             } catch (IOException e) {
                 writeToLog("[client]CloudStorageClient.initConfiguration() - " +
-                        "Something wrong with new client root directory creating. Possible it does already exist!");
+                        "Something wrong with new client root directory creating. Probably it does already exist!");
             }
         }
         //выводим в лог значение корневой директории клиента

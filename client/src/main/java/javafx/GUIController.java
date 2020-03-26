@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 /**
  * The client class is for operations with GUI.
@@ -144,9 +145,18 @@ public class GUIController implements Initializable {
     /**
      * Метод инициирует в клиентской части интерфейса список объектов в директории по умолчанию
      */
+//    public void initializeClientItemListView() {
+//        //выводим в клиентской части интерфейса список объектов в директории по умолчанию
+//        updateClientItemListInGUI(clientDefaultDirItem);
+//    }
     public void initializeClientItemListView() {
         //выводим в клиентской части интерфейса список объектов в директории по умолчанию
         updateClientItemListInGUI(clientDefaultDirItem);
+
+        //инициируем объект кастомизированного элемента списка
+        clientItemListView.setCellFactory(itemListView -> new FileListCell());
+        //инициируем контекстное меню
+        setClientContextMenu(clientItemListView, clientContextMenu);
     }
 
     /**
@@ -158,6 +168,11 @@ public class GUIController implements Initializable {
                 new Item[]{new Item("waiting for an item list from the server...",
                         "", "waiting for an item list from the server...",
                         "", false)});
+
+        //инициируем объект кастомизированного элемента списка
+        storageItemListView.setCellFactory(itemListView -> new FileListCell());
+        //инициируем контекстное меню
+        setStorageContextMenu(storageItemListView, storageContextMenu);
     }
 
     /**
@@ -216,6 +231,30 @@ public class GUIController implements Initializable {
      * @param listView - коллекция объектов элемента
      * @param items - массив объектов элемента
      */
+//    private void updateListView(ListView<Item> listView, Item[] items) {
+//        //очищаем коллекцию элементов
+//        listView.getItems().clear();
+//        //обновляем коллекцию элементов списка
+//        listView.getItems().addAll(items);
+//        //сортируем коллекцию элементов списка(папки вверху)
+//        listView.getItems().sort((o1, o2) -> {
+//            //если оба элемента одного типа(директория или файл)
+//            if(o1.isDirectory() && o2.isDirectory() ||
+//                    !o1.isDirectory() && !o2.isDirectory()) {
+//                //то сравниваем их по именам
+//                //Внимание! Без .toLowerCase() учитывается регистр при сортировке,
+//                // из-за чего m и M оказывались в разных местах списка
+//                return o1.getItemName().toLowerCase().compareTo(o2.getItemName().toLowerCase());
+//            }
+//            //если первый сравниваемый элемент директория, а второй - файл
+//            //папки выше файлов
+//            return o1.isDirectory() && !o2.isDirectory() ? -1 : 1;
+//        });
+//        //инициируем объект кастомизированного элемента списка
+//        listView.setCellFactory(itemListView -> new FileListCell());
+//        //инициируем контекстное меню
+//        setContextMenu(listView);
+//    }
     private void updateListView(ListView<Item> listView, Item[] items) {
         //очищаем коллекцию элементов
         listView.getItems().clear();
@@ -235,30 +274,100 @@ public class GUIController implements Initializable {
             //папки выше файлов
             return o1.isDirectory() && !o2.isDirectory() ? -1 : 1;
         });
-        //инициируем объект кастомизированного элемента списка
-        listView.setCellFactory(itemListView -> new FileListCell());
-        //инициируем контекстное меню
-        setContextMenu(listView);
     }
 
-    /**
-     * Метод инициирует контекстное меню для переданной в параметре коллекции объектов элемента.
-     * @param listView - коллекция объектов элемента
-     */
-    private void setContextMenu(ListView<Item> listView){
-        //инициируем объект контестного меню
-        ContextMenu contextMenu = new ContextMenu();
-        //если текущий список клиентский
-        if(listView.equals(clientItemListView)){
-            // добавляем скопом элементы в контестное меню
-            contextMenu.getItems().add(menuItemUpload(listView));
-            //если текущий список облачного хранилища
-        } else if(listView.equals(storageItemListView)){
-            // добавляем скопом элементы в контестное меню
-            contextMenu.getItems().add(menuItemDownload(listView));
-        }
+//    /**
+//     * Метод инициирует контекстное меню для переданной в параметре коллекции объектов элемента.
+//     * @param listView - коллекция объектов элемента
+//     */
+//    private void setContextMenu(ListView<Item> listView){
+//        //инициируем объект контестного меню
+//        ContextMenu contextMenu = new ContextMenu();
+//        //если текущий список клиентский
+//        if(listView.equals(clientItemListView)){
+//            // добавляем скопом элементы в контестное меню
+//            contextMenu.getItems().add(menuItemUpload(listView));
+//            //если текущий список облачного хранилища
+//        } else if(listView.equals(storageItemListView)){
+//            // добавляем скопом элементы в контестное меню
+//            contextMenu.getItems().add(menuItemDownload(listView));
+//        }
+//        // добавляем скопом оставщиеся элементы в контестное меню
+//        contextMenu.getItems().addAll(menuItemRename(listView), menuItemDelete(listView));
+//        //создаем временный элемент контекстного меню
+//        MenuItem menuItem = menuItemGetInto(listView);
+//        //устаналиваем событие на клик правой кнопки мыши по элементу списка
+//        listView.setOnContextMenuRequested(event -> {
+//            //если контекстное меню уже показывается или снова кликнуть на пустой элемент списка
+//            if(contextMenu.isShowing() ||
+//                    listView.getSelectionModel().getSelectedItems().isEmpty()){
+//                //скрываем контекстное меню
+//                contextMenu.hide();
+//                //очищаем выделение
+//                listView.getSelectionModel().clearSelection();
+//                return;
+//            }
+//            // и если выбранный элемент это директория
+//            if(listView.getSelectionModel().getSelectedItem().isDirectory()){
+//                //если контекстное меню не показывается
+//                if(!contextMenu.getItems().contains(menuItem)){
+//                    // добавляем элемент в контестное меню
+//                    contextMenu.getItems().add(0, menuItem);
+//                }
+//            //если не директория
+//            } else {
+//                // удаляем элемент из контестного меню
+//                contextMenu.getItems().remove(menuItem);
+//            }
+//            //показываем контекстное меню в точке клика(позиция левого-верхнего угла контекстного меню)
+//            contextMenu.show(listView, event.getScreenX(), event.getScreenY());
+//        });
+//    }
+    //инициируем объект контестного меню
+    ContextMenu clientContextMenu = new ContextMenu();
+    ContextMenu storageContextMenu = new ContextMenu();
+    private void setClientContextMenu(ListView<Item> listView, ContextMenu contextMenu){
         // добавляем скопом оставщиеся элементы в контестное меню
-        contextMenu.getItems().addAll(menuItemRename(listView), menuItemDelete(listView));
+        contextMenu.getItems().addAll(menuItemUpload(listView),
+                menuItemRename(listView), menuItemDelete(listView));
+
+        //создаем временный элемент контекстного меню
+        MenuItem menuItem = menuItemGetInto(listView);
+
+//        listView.setContextMenu(contextMenu);
+
+        //устаналиваем событие на клик правой кнопки мыши по элементу списка
+        listView.setOnContextMenuRequested(event -> {
+            //если контекстное меню уже показывается или снова кликнуть на пустой элемент списка
+            if(contextMenu.isShowing() ||
+                    listView.getSelectionModel().getSelectedItems().isEmpty()){
+                //скрываем контекстное меню
+                contextMenu.hide();
+                //очищаем выделение
+                listView.getSelectionModel().clearSelection();
+                return;
+            }
+            // и если выбранный элемент это директория
+            if(listView.getSelectionModel().getSelectedItem().isDirectory()){
+                //если контекстное меню не показывается
+                if(!contextMenu.getItems().contains(menuItem)){
+                    // добавляем элемент в контестное меню
+                    contextMenu.getItems().add(0, menuItem);
+                }
+                //если не директория
+            } else {
+                // удаляем элемент из контестного меню
+                contextMenu.getItems().remove(menuItem);
+            }
+            //показываем контекстное меню в точке клика(позиция левого-верхнего угла контекстного меню)
+            contextMenu.show(listView, event.getScreenX(), event.getScreenY());
+        });
+    }
+
+    private void setStorageContextMenu(ListView<Item> listView, ContextMenu contextMenu){
+        // добавляем скопом оставщиеся элементы в контестное меню
+        contextMenu.getItems().addAll(menuItemDownload(listView),
+                menuItemRename(listView), menuItemDelete(listView));
         //создаем временный элемент контекстного меню
         MenuItem menuItem = menuItemGetInto(listView);
         //устаналиваем событие на клик правой кнопки мыши по элементу списка
@@ -449,6 +558,197 @@ public class GUIController implements Initializable {
             listView.getSelectionModel().clearSelection();
         });
         return menuItemDelete;
+    }
+
+//    @FXML
+//    public void onMouseClickAction(MouseEvent mouseEvent) {
+//        ListView<Item> listView = (ListView<Item>)mouseEvent.getSource();
+//
+//        ContextMenu contextMenu;
+//
+//        if(listView.equals(clientItemListView)) {
+//            listView = clientItemListView;
+//            contextMenu = clientContextMenu;
+//        } else {
+//            listView = storageItemListView;
+//            contextMenu = storageContextMenu;
+//        }
+//
+//        if(mouseEvent.getClickCount() == 2) {
+//
+//            if(contextMenu.isShowing()) {
+//
+//                contextMenu.hide();
+//                return;
+//            }
+//            if(listView.getSelectionModel().getSelectedItem().isDirectory()) {
+//
+//                //обновляем список объектов элемента клиентской части
+//                updateClientItemListInGUI(listView.getSelectionModel().getSelectedItem());
+//            }
+//
+//        }
+//    }
+//    @FXML
+//    public void onClientListViewMouseClickAction(MouseEvent mouseEvent) {
+//        System.out.println(mouseEvent.getButton().name());
+//        if(mouseEvent.getButton().name().equals("PRIMARY")
+//                && mouseEvent.getClickCount() == 1) {
+//            if (clientContextMenu.isShowing()) {
+//                clientContextMenu.hide();
+////                clearListViewsSelection();
+////                return;
+//            }
+//            clearListViewsSelection();
+//        }
+//
+//        if(mouseEvent.getClickCount() == 2) {
+//            if(clientContextMenu.isShowing()) {
+//                clientContextMenu.hide();
+////                return;
+//            } else {
+//                Item item = clientItemListView.getSelectionModel().getSelectedItem();
+//                if (item != null && item.isDirectory()) {
+//                    //обновляем список объектов элемента клиентской части
+//                    updateClientItemListInGUI(item);
+//                }
+//            }
+//            //сбрасываем выделение после действия
+////            clientItemListView.getSelectionModel().clearSelection();
+//            clearListViewsSelection();
+//        }
+//    }
+//    @FXML
+//    public void onClientListViewMouseClickAction(MouseEvent mouseEvent) {
+//    //если нажата левая кнопка мыши
+//    if(mouseEvent.getButton().name().equals("PRIMARY")) {
+//        //если контекстное меню показывается
+//        if (clientContextMenu.isShowing()) {
+//            //закрываем контекстное меню
+//            clientContextMenu.hide();
+//        //если двойное нажатие
+//        } else if (mouseEvent.getClickCount() == 2){
+//            Item item = clientItemListView.getSelectionModel().getSelectedItem();
+//            //если нажатый элемент списка не пустой или директория
+//            if (item != null && item.isDirectory()) {
+//                //обновляем список объектов элемента клиентской части
+////                updateClientItemListInGUI(item);
+//
+//                Consumer<Object> consumer = new Consumer<Object>() {
+//                    @Override
+//                    public void accept(Object o) {
+//                        updateClientItemListInGUI(item);
+//                    }
+//                };
+//                consumer.accept(new Object());
+//            }
+//        }
+//        clearListViewsSelection();
+//    }
+//}
+//    @FXML
+//    public void onClientListViewMouseClickAction(MouseEvent mouseEvent) {
+//        //инициируем объект выполняемого метода
+//        Consumer<Item> consumer = new Consumer<Item>() {
+//                        @Override
+//                        public void accept(Item item) {
+//                            updateClientItemListInGUI(item);
+//                        }
+//                    };
+//        onListViewMouseClickAction(mouseEvent, clientContextMenu, clientItemListView,
+//                consumer);
+//    }
+    @FXML
+    public void onClientListViewMouseClickAction(MouseEvent mouseEvent) {
+        onListViewMouseClickAction(mouseEvent, clientContextMenu, clientItemListView,
+                this::updateClientItemListInGUI);
+    }
+
+//    @FXML
+//    public void onStorageListViewMouseClickAction(MouseEvent mouseEvent) {
+//        if(mouseEvent.getClickCount() == 2) {
+//            if(storageContextMenu.isShowing()) {
+//                storageContextMenu.hide();
+////                return;
+//            } else {
+//                Item item = storageItemListView.getSelectionModel().getSelectedItem();
+//                if (item != null && item.isDirectory()) {
+//                    //отправляем на сервер запрос на получение списка элементов заданной директории
+//                    //пользователя в сетевом хранилище
+//                    storageClient.demandDirectoryItemList(item.getItemPathname());
+//                }
+//            }
+////            //сбрасываем выделение после действия
+////            storageItemListView.getSelectionModel().clearSelection();
+//            clearListViewsSelection();
+//        }
+//    }
+//    @FXML
+//    public void onStorageListViewMouseClickAction(MouseEvent mouseEvent) {
+//        //если нажата левая кнопка мыши
+//        if(mouseEvent.getButton().name().equals("PRIMARY")) {
+//            //если контекстное меню показывается
+//            if (storageContextMenu.isShowing()) {
+//                //закрываем контекстное меню
+//                storageContextMenu.hide();
+//                //если двойное нажатие
+//            } else if (mouseEvent.getClickCount() == 2){
+//                Item item = storageItemListView.getSelectionModel().getSelectedItem();
+//                //если нажатый элемент списка не пустой или директория
+//                if (item != null && item.isDirectory()) {
+//                    //отправляем на сервер запрос на получение списка элементов
+//                    // заданной директории пользователя в сетевом хранилище
+//                    storageClient.demandDirectoryItemList(item.getItemPathname());
+//                }
+//            }
+//            clearListViewsSelection();
+//        }
+//    }
+//    @FXML
+//    public void onStorageListViewMouseClickAction(MouseEvent mouseEvent) {
+//        //инициируем объект выполняемого метода
+//        Consumer<Item> consumer = new Consumer<Item>() {
+//            @Override
+//            public void accept(Item item) {
+//                storageClient.demandDirectoryItemList(item.getItemPathname());
+//            }
+//        };
+//        onListViewMouseClickAction(mouseEvent, storageContextMenu, storageItemListView,
+//                consumer);
+//    }
+    @FXML
+    public void onStorageListViewMouseClickAction(MouseEvent mouseEvent) {
+        //инициируем объект выполняемого метода
+        Consumer<Item> consumer = item -> storageClient.demandDirectoryItemList(item.getItemPathname());
+        onListViewMouseClickAction(mouseEvent, storageContextMenu, storageItemListView,
+                consumer);
+    }
+
+
+    private void onListViewMouseClickAction(MouseEvent mouseEvent, ContextMenu contextMenu,
+                                           ListView<Item> listView, Consumer<Item> consumer) {
+        //если нажата левая кнопка мыши
+        if(mouseEvent.getButton().name().equals("PRIMARY")) {
+            //если контекстное меню показывается
+            if (contextMenu.isShowing()) {
+                //закрываем контекстное меню
+                contextMenu.hide();
+                //если двойное нажатие
+            } else if (mouseEvent.getClickCount() == 2){
+                Item item = listView.getSelectionModel().getSelectedItem();
+                //если нажатый элемент списка не пустой или директория
+                if (item != null && item.isDirectory()) {
+                    //обновляем список объектов элемента клиентской части
+                    consumer.accept(item);
+                }
+            }
+            clearListViewsSelection();
+        }
+    }
+
+    private void clearListViewsSelection() {
+        clientItemListView.getSelectionModel().clearSelection();
+        storageItemListView.getSelectionModel().clearSelection();
     }
 
     /**

@@ -90,7 +90,7 @@
                <Insets left="2.0" right="2.0" />
             </VBox.margin>
              </Label>
-            <ListView fx:id="clientItemListView" maxHeight="Infinity" VBox.vgrow="ALWAYS">
+            <ListView fx:id="clientItemListView" onMouseClicked="#onClientListViewMouseClickAction" maxHeight="Infinity" VBox.vgrow="ALWAYS">
             <VBox.margin>
                <Insets bottom="2.0" left="2.0" right="2.0" />
             </VBox.margin></ListView>
@@ -161,7 +161,7 @@
                     <Insets left="2.0" right="2.0" />
                 </VBox.margin>
             </Label>
-            <ListView fx:id="storageItemListView" managed="false" visible="false" maxHeight="Infinity" VBox.vgrow="ALWAYS">
+            <ListView fx:id="storageItemListView" onMouseClicked="#onStorageListViewMouseClickAction" managed="false" visible="false" maxHeight="Infinity" VBox.vgrow="ALWAYS">
                 <VBox.margin>
                     <Insets bottom="2.0" left="2.0" right="2.0" />
                 </VBox.margin></ListView>
